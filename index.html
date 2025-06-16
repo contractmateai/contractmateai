@@ -2,24 +2,158 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ContractMate AI</title>
   <style>
     body {
-      background: #000;
-      color: white;
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: white;
+    }
+    header {
+      display: flex;
+      align-items: center;
       padding: 20px;
+      background-color: #000;
+    }
+    header img {
+      height: 48px;
+      margin-right: 12px;
+    }
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+    .section {
+      padding: 40px 20px;
       text-align: center;
     }
-    h1 {
-      font-size: 2rem;
+    .cta-button {
+      padding: 14px 28px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .upload-input {
+      margin-top: 20px;
+    }
+    .upload-input input {
+      background: white;
+      color: black;
+      border-radius: 8px;
+      padding: 10px;
+      border: none;
+    }
+    .video-placeholder iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
+    }
+    .testimonials-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 0 20px;
+      scroll-behavior: smooth;
+      animation: scroll 20s linear infinite;
+    }
+    .testimonial {
+      flex: 0 0 280px;
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 16px;
+    }
+    .testimonials-container:hover {
+      animation-play-state: paused;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    footer {
+      background-color: #000;
+      color: #ccc;
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .footer-icons img {
+      height: 24px;
+      margin: 0 8px;
+    }
+    .review-link {
+      color: #3B82F6;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <h1>ContractMate AI</h1>
-  <p>Smart contract review. Instant. Free. Simple.</p>
+  <header>
+    <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Logo" />
+    <h1>ContractMate AI</h1>
+  </header>
+
+  <div class="section">
+    <button class="cta-button" onclick="document.getElementById('fileInput').click();">Review My Contract</button>
+    <div class="upload-input">
+      <input type="file" id="fileInput" accept=".pdf,.doc,.docx,image/*" multiple capture style="display: none;">
+    </div>
+  </div>
+
+  <div class="section">
+    <p><strong>ContractMate AI</strong> is built for legal professionals and learners.<br>
+    Whether you're a lawyer, paralegal, law student, or freelancer reviewing your own contracts — our tool gives you instant clarity.</p>
+  </div>
+
+  <div class="section video-placeholder">
+    <h2>See How It Works</h2>
+    <iframe src="#" title="How It Works Coming Soon"></iframe>
+  </div>
+
+  <div class="section">
+    <h2>What do users say?</h2>
+    <div class="testimonials-container">
+      <div class="testimonial">
+        ⭐⭐⭐⭐⭐<br>
+        "This helped me understand a complex NDA in 30 seconds."<br>
+        <strong>— Aisha M., Startup Founder</strong>
+      </div>
+      <div class="testimonial">
+        ⭐⭐⭐⭐⭐<br>
+        "Clear, fast, and surprisingly accurate contract analysis. I love it."
+        <br><strong>— Marco T., Freelance Developer</strong>
+      </div>
+      <div class="testimonial">
+        ⭐⭐⭐⭐⭐<br>
+        "Saves time and gives real insight into contracts without needing a lawyer."
+        <br><strong>— Linnea R., Law Student</strong>
+      </div>
+      <div class="testimonial">
+        ⭐⭐⭐⭐⭐<br>
+        "The best contract tool I’ve used. Clean design and genuinely helpful output."
+        <br><strong>— James K., Paralegal</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p>Want to leave your own review? <a class="review-link" href="#">Leave a review here.</a></p>
+  </div>
+
+  <footer>
+    <p>Not legal advice. For informational use only.</p>
+    <div class="footer-icons">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="X">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+    </div>
+    <p>© 2025 ContractMate AI</p>
+  </footer>
 </body>
 </html>
