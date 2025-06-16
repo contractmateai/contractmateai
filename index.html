@@ -13,9 +13,14 @@
     }
     header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       padding: 20px;
       background-color: #000;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
     }
     header img {
       height: 48px;
@@ -25,19 +30,53 @@
       font-size: 24px;
       margin: 0;
     }
+    .menu {
+      position: relative;
+    }
+    .menu-button {
+      background: none;
+      border: 2px solid white;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .menu-content {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background-color: #111;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 1000;
+    }
+    .menu-content a {
+      display: block;
+      padding: 8px;
+      color: white;
+      text-decoration: none;
+    }
+    .menu-content a:hover {
+      background-color: #222;
+    }
+    .menu:hover .menu-content {
+      display: block;
+    }
     .section {
-      padding: 40px 20px;
+      padding: 60px 20px;
       text-align: center;
     }
     .cta-button {
-      padding: 14px 28px;
+      padding: 18px 36px;
       border: 2px solid white;
       background: transparent;
       color: white;
-      font-size: 16px;
+      font-size: 20px;
       border-radius: 10px;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: 30px;
     }
     .upload-input {
       margin-top: 20px;
@@ -51,31 +90,23 @@
     }
     .video-placeholder iframe {
       width: 100%;
-      max-width: 560px;
-      height: 315px;
+      max-width: 720px;
+      height: 405px;
       border: none;
     }
     .testimonials-container {
       display: flex;
-      overflow-x: auto;
-      gap: 20px;
-      padding: 0 20px;
-      scroll-behavior: smooth;
-      animation: scroll 20s linear infinite;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 40px;
     }
     .testimonial {
-      flex: 0 0 280px;
       background: white;
       color: black;
-      padding: 20px;
+      padding: 24px;
       border-radius: 16px;
-    }
-    .testimonials-container:hover {
-      animation-play-state: paused;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      width: 280px;
     }
     footer {
       background-color: #000;
@@ -83,20 +114,45 @@
       text-align: center;
       padding: 40px 20px 20px;
     }
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin: 16px 0;
+    }
     .footer-icons img {
-      height: 24px;
-      margin: 0 8px;
+      height: 30px;
+      filter: brightness(150%);
     }
     .review-link {
       color: #3B82F6;
+      text-decoration: underline;
+    }
+    .footer-nav {
+      margin-top: 16px;
+    }
+    .footer-nav a {
+      color: #ccc;
+      margin: 0 10px;
       text-decoration: none;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Logo" />
-    <h1>ContractMate AI</h1>
+    <div class="logo">
+      <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Logo" />
+      <h1>ContractMate AI</h1>
+    </div>
+    <div class="menu">
+      <button class="menu-button">☰</button>
+      <div class="menu-content">
+        <a href="#">Home</a>
+        <a href="#">See How It Works</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
   </header>
 
   <div class="section">
@@ -143,15 +199,18 @@
   </div>
 
   <div class="section">
-    <p>Want to leave your own review? <a class="review-link" href="#">Leave a review here.</a></p>
+    <p>Want to leave your own review? <a class="review-link" href="#">Leave a review</a></p>
   </div>
 
   <footer>
     <p>Not legal advice. For informational use only.</p>
     <div class="footer-icons">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="X">
       <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
       <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="X">
+    </div>
+    <div class="footer-nav">
+      <a href="#">Home</a> | <a href="#">Contact</a>
     </div>
     <p>© 2025 ContractMate AI</p>
   </footer>
