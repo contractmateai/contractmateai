@@ -38,32 +38,36 @@
       position: relative;
     }
     .menu-button {
-      background: transparent;
-      border: none;
+      background: #1a1a20;
+      border: 2px solid #ccc;
+      padding: 8px 10px;
+      border-radius: 12px;
       cursor: pointer;
     }
-    .menu-button img {
-      width: 32px;
+    .menu-button::before {
+      content: "≡";
+      color: #ccc;
+      font-size: 24px;
     }
     .menu-content {
       display: none;
       position: absolute;
       top: 48px;
       right: 0;
-      background: #1a1a20;
-      border: 1px solid #444;
+      background: #2a2a2f;
       border-radius: 10px;
       z-index: 10;
+      padding: 12px 0;
     }
     .menu-content a {
       display: block;
-      padding: 12px 16px;
+      padding: 10px 20px;
       text-decoration: none;
       color: #fff;
       font-size: 16px;
     }
     .menu-content a:hover {
-      background: #292934;
+      background-color: #444;
     }
     .menu:hover .menu-content {
       display: block;
@@ -83,12 +87,10 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
       background: transparent;
       transition: all 0.3s ease;
-    }
-    .cta-button img {
-      height: 28px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
     }
 
     .card {
@@ -112,7 +114,7 @@
       background: #2a2a2f;
       border-radius: 20px;
       margin: 20px 0;
-      height: 10px;
+      height: 6px;
       overflow: hidden;
     }
     .bar span {
@@ -133,16 +135,17 @@
     .pdf-button {
       display: inline-flex;
       align-items: center;
-      background: #1c1c26;
+      background: transparent;
+      border: 2px solid #00ffff;
       border-radius: 12px;
       padding: 14px 24px;
       font-size: 18px;
       font-weight: bold;
-      color: #fff;
-      border: none;
+      color: #00ffff;
       cursor: pointer;
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 32px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
     }
     .pdf-button img {
       height: 26px;
@@ -159,7 +162,7 @@
       justify-content: center;
       align-items: center;
       gap: 40px;
-      margin: 16px 0;
+      margin: 12px 0;
     }
     .footer-icons img {
       height: 36px;
@@ -180,7 +183,7 @@
       <h1>ContractMate AI</h1>
     </a>
     <div class="menu">
-      <button class="menu-button"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="menu" /></button>
+      <button class="menu-button"></button>
       <div class="menu-content">
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
@@ -190,10 +193,7 @@
   </header>
 
   <div class="section">
-    <button class="cta-button">
-      <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Review" />
-      Review another one
-    </button>
+    <button class="cta-button">Review Another One</button>
   </div>
 
   <div class="section">
@@ -217,7 +217,7 @@
   </div>
 
   <div class="section">
-    <h2>🧾 Key Clauses</h2>
+    <h2>Key Clauses</h2>
     <div class="card">
       <ul>
         <li><strong>Termination Clause</strong> – 14 days’ written notice.</li>
@@ -248,14 +248,15 @@
         <li>Request portfolio usage rights</li>
         <li>Limit revision rounds</li>
       </ul>
-      <button class="pdf-button">
-        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF" />
-        Download PDF Report
-      </button>
     </div>
+    <button class="pdf-button">
+      <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF" />
+      Download PDF Report
+    </button>
   </div>
 
   <footer>
+    <p style="margin: 0 0 8px; font-size: 14px;">Not legal advice. For informational use only.</p>
     <div class="footer-icons">
       <a href="#"><img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" alt="Instagram" /></a>
       <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" /></a>
@@ -265,7 +266,7 @@
       <a href="index.html">Home</a> |
       <a href="contact.html">Contact</a>
     </div>
-    <p style="margin-top: 10px; font-size: 14px;">© 2025 ContractMate AI — Not legal advice</p>
+    <p style="margin-top: 10px; font-size: 14px;">© 2025 ContractMate AI</p>
   </footer>
 
   <script>
@@ -279,13 +280,13 @@
 
       let color;
       if (isReverse) {
-        if (score <= 3) color = '#33cc33';
+        if (score <= 3) color = '#00e67f';
         else if (score <= 6) color = '#ffcc00';
-        else color = '#e60000';
+        else color = '#ff4444';
       } else {
-        if (score >= 7) color = '#33cc33';
+        if (score >= 7) color = '#00e67f';
         else if (score >= 4) color = '#ffcc00';
-        else color = '#e60000';
+        else color = '#ff4444';
       }
       span.style.backgroundColor = color;
     }
