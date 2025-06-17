@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contract Review – ContractMate AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review – ContractMate AI</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -26,53 +26,54 @@
       text-decoration: none;
     }
     .logo img {
-      height: 52px;
-      margin-right: 14px;
+      height: 48px;
+      margin-right: 12px;
     }
     .logo h1 {
-      font-size: 26px;
+      font-size: 24px;
       margin: 0;
-      color: #ffffff;
+      color: #fff;
     }
     .menu {
       position: relative;
     }
     .menu-button {
-      font-size: 28px;
-      color: #ccc;
-      background: none;
+      background: transparent;
       border: none;
       cursor: pointer;
+    }
+    .menu-button img {
+      width: 32px;
     }
     .menu-content {
       display: none;
       position: absolute;
-      top: 40px;
+      top: 48px;
       right: 0;
-      background-color: #1a1a20;
-      border: 1px solid #333;
+      background: #1a1a20;
+      border: 1px solid #444;
       border-radius: 10px;
-      padding: 12px;
-      z-index: 1000;
-      width: 180px;
+      z-index: 10;
     }
     .menu-content a {
       display: block;
-      padding: 10px;
-      color: #f5f5f5;
+      padding: 12px 16px;
       text-decoration: none;
+      color: #fff;
       font-size: 16px;
     }
     .menu-content a:hover {
-      background-color: #292934;
+      background: #292934;
     }
     .menu:hover .menu-content {
       display: block;
     }
+
     .section {
       padding: 48px 24px;
       text-align: center;
     }
+
     .cta-button {
       border: 2px solid #00ffff;
       color: #00ffff;
@@ -83,13 +84,13 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 40px;
       background: transparent;
       transition: all 0.3s ease;
     }
     .cta-button img {
       height: 28px;
     }
+
     .card {
       background-color: #1a1a20;
       padding: 30px;
@@ -101,6 +102,12 @@
       font-size: 18px;
       box-shadow: 0 0 12px rgba(0, 255, 255, 0.05);
     }
+
+    .bar-label {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
     .bar {
       background: #2a2a2f;
       border-radius: 20px;
@@ -113,13 +120,16 @@
       height: 100%;
       border-radius: 20px;
     }
-    .bar-label {
-      font-weight: 600;
-      margin-bottom: 10px;
-      font-size: 18px;
+
+    ul {
+      padding-left: 20px;
     }
-    .highlight-orange { color: #ff9933; font-weight: bold; }
-    .highlight-green { color: #00cc99; font-weight: bold; }
+    li {
+      margin: 14px 0;
+      font-size: 18px;
+      color: #ddd;
+    }
+
     .pdf-button {
       display: inline-flex;
       align-items: center;
@@ -132,10 +142,12 @@
       border: none;
       cursor: pointer;
       gap: 10px;
+      margin-top: 24px;
     }
     .pdf-button img {
       height: 26px;
     }
+
     footer {
       background-color: #15151e;
       color: #bbb;
@@ -159,11 +171,6 @@
       margin: 0 10px;
       text-decoration: none;
     }
-    li {
-      margin: 14px 0;
-      font-size: 18px;
-      color: #ddd;
-    }
   </style>
 </head>
 <body>
@@ -173,17 +180,18 @@
       <h1>ContractMate AI</h1>
     </a>
     <div class="menu">
-      <button class="menu-button">&#9776;</button>
+      <button class="menu-button"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="menu" /></button>
       <div class="menu-content">
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
+        <a href="#">See How It Works</a>
       </div>
     </div>
   </header>
 
   <div class="section">
     <button class="cta-button">
-      <img src="https://i.imgur.com/zWw7dvD.jpeg" alt="Upload" />
+      <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Review" />
       Review another one
     </button>
   </div>
@@ -191,7 +199,7 @@
   <div class="section">
     <h2 style="font-size: 28px;">AI Summary</h2>
     <div class="card">
-      <p>This agreement is between <span class="highlight-orange">John Smith (Contractor)</span> and <span class="highlight-green">LumaTech LLC (Client)</span>. The Contractor agrees to deliver monthly content.</p>
+      <p>This agreement is between <span style="color:#ff9933;"><strong>John Smith (Contractor)</strong></span> and <span style="color:#00cc99;"><strong>LumaTech LLC (Client)</strong></span>. The Contractor agrees to deliver monthly content.</p>
       <p>The Client agrees to pay $2,500/month within 10 days of invoicing. Termination terms favor the Client, with a 14-day notice clause.</p>
     </div>
   </div>
@@ -209,14 +217,14 @@
   </div>
 
   <div class="section">
-    <h2 style="font-size: 30px;">Key Clauses 🧾</h2>
+    <h2>🧾 Key Clauses</h2>
     <div class="card">
       <ul>
         <li><strong>Termination Clause</strong> – 14 days’ written notice.</li>
         <li><strong>Payment Terms</strong> – $2,500/month within 10 days.</li>
-        <li><strong>Intellectual Property</strong> – Client owns work after payment.</li>
-        <li><strong>Confidentiality</strong> – Both parties agree not to disclose.</li>
-        <li><strong>Governing Law</strong> – State of California.</li>
+        <li><strong>IP Ownership</strong> – Client owns work post-payment.</li>
+        <li><strong>Confidentiality</strong> – Both sides agree not to disclose.</li>
+        <li><strong>Governing Law</strong> – California law applies.</li>
       </ul>
     </div>
   </div>
@@ -225,11 +233,10 @@
     <h2>🚩 Risk Flags</h2>
     <div class="card">
       <ul>
-        <li>❌ No Late Payment Clause (High)<br><small>There is no penalty or interest clause for delayed payments.</small></li>
-        <li>⚠️ One-Sided IP Clause (Medium)<br><small>The contract transfers all rights to the client with no creator credit or usage rights for the contractor.</small></li>
-        <li>✅ Balanced NDA (Low)<br><small>The confidentiality clause applies fairly to both parties.</small></li>
+        <li>❌ No Late Payment Clause – High Risk</li>
+        <li>⚠️ One-Sided IP Ownership – Medium</li>
+        <li>✅ Balanced NDA – Low</li>
       </ul>
-      <p>These are clauses that may pose legal or financial risk and are ranked by severity.</p>
     </div>
   </div>
 
@@ -237,16 +244,15 @@
     <h2>💡 Smart Suggestions</h2>
     <div class="card">
       <ul>
-        <li>Add a late payment fee (e.g. 5% after 10 days)</li>
-        <li>Ask for portfolio rights</li>
-        <li>Include prorated termination<br>Mention dispute resolution method.</li>
+        <li>Include a late payment penalty</li>
+        <li>Request portfolio usage rights</li>
+        <li>Limit revision rounds</li>
       </ul>
+      <button class="pdf-button">
+        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF" />
+        Download PDF Report
+      </button>
     </div>
-    <br />
-    <button class="pdf-button">
-      <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF" />
-      Download PDF Report
-    </button>
   </div>
 
   <footer>
@@ -290,3 +296,4 @@
   </script>
 </body>
 </html>
+
