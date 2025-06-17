@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contract Review – ContractMate AI</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
@@ -29,38 +30,81 @@
       margin-right: 14px;
     }
     .logo h1 {
-      font-size: 24px;
+      font-size: 26px;
       margin: 0;
-      color: #fff;
+      color: #ffffff;
+    }
+    .menu {
+      position: relative;
+    }
+    .menu-button {
+      background: none;
+      border: 2px solid #00ffff;
+      color: #00ffff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .menu-content {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #1a1a20;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px;
+      z-index: 1000;
+      width: 180px;
+    }
+    .menu-content a {
+      display: block;
+      padding: 10px;
+      color: #f5f5f5;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .menu-content a:hover {
+      background-color: #292934;
+    }
+    .menu:hover .menu-content {
+      display: block;
     }
     .section {
-      padding: 32px 24px;
+      padding: 64px 24px;
       text-align: center;
     }
     .cta-button {
-      background-color: #dd6b20;
-      color: #fff;
-      padding: 14px 20px;
-      font-size: 18px;
-      border: none;
+      border: 2px solid #00ffff;
+      color: #00ffff;
+      padding: 14px 24px;
+      font-size: 20px;
       border-radius: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 30px;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+    .cta-button:hover {
+      background-color: #1a1a1a;
+      box-shadow: 0 0 16px rgba(0, 255, 255, 0.4), 0 -2px 8px rgba(0, 255, 255, 0.3);
     }
     .cta-button img {
       height: 28px;
     }
     .card {
       background-color: #1a1a20;
-      padding: 20px;
-      border-radius: 14px;
-      max-width: 720px;
-      margin: 0 auto 40px;
+      padding: 28px;
+      border-radius: 18px;
+      max-width: 800px;
+      margin: 0 auto 50px;
       border: 2px solid #333;
       text-align: left;
+      font-size: 18px;
     }
     .card h3 {
       color: #fff;
@@ -68,19 +112,20 @@
     }
     .bar {
       background: #333;
-      border-radius: 10px;
-      margin: 16px 0;
-      height: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      height: 24px;
       position: relative;
     }
     .bar span {
       display: block;
       height: 100%;
-      border-radius: 10px;
+      border-radius: 12px;
     }
     .bar-label {
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
+      font-size: 18px;
     }
     .bar-risk span {
       background: green;
@@ -101,7 +146,8 @@
       align-items: center;
       background: #1c1c26;
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 14px 22px;
+      font-size: 18px;
       font-weight: bold;
       color: #fff;
       border: none;
@@ -109,7 +155,7 @@
       gap: 10px;
     }
     .pdf-button img {
-      height: 24px;
+      height: 26px;
     }
     footer {
       background-color: #1a1a24;
@@ -142,17 +188,25 @@
       <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Logo" />
       <h1>ContractMate AI</h1>
     </a>
+    <div class="menu">
+      <button class="menu-button">☰</button>
+      <div class="menu-content">
+        <a href="index.html">Home</a>
+        <a href="#">See How It Works</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
   </header>
 
   <div class="section">
     <button class="cta-button">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/contract.png" alt="icon" />
+      <img src="https://img.icons8.com/ios-filled/50/00ffff/contract.png" alt="icon" />
       Review another one
     </button>
   </div>
 
   <div class="section">
-    <h2>AI Summary</h2>
+    <h2 style="font-size: 28px; margin-bottom: 16px;">AI Summary</h2>
     <div class="card">
       <p>This agreement is between <span class="highlight-orange">John Smith (Contractor)</span> and <span class="highlight-green">LumaTech LLC (Client)</span>. The Contractor agrees to deliver monthly content.</p>
       <p>The Client agrees to pay $2,500/month within 10 days of invoicing. Termination terms favor the Client, with a 14-day notice clause.</p>
@@ -160,7 +214,7 @@
   </div>
 
   <div class="section">
-    <h2>Results</h2>
+    <h2 style="font-size: 28px;">Results</h2>
     <div class="card">
       <div class="bar-label">Risk Safety</div>
       <div class="bar bar-risk"><span></span></div>
@@ -172,7 +226,7 @@
   </div>
 
   <div class="section">
-    <h2>Key Clauses 🧾</h2>
+    <h2 style="font-size: 28px;">Key Clauses 🧾</h2>
     <div class="card">
       <ul>
         <li><strong>Termination Clause</strong> – 14 days’ written notice.</li>
@@ -185,7 +239,7 @@
   </div>
 
   <div class="section">
-    <h2>Risk Flags 🚩</h2>
+    <h2 style="font-size: 28px;">Risk Flags 🚩</h2>
     <div class="card">
       <p>❌ <strong>No Late Payment Clause</strong> (High) — No interest/penalty for delays.</p>
       <p>⚠️ <strong>One-Sided IP Clause</strong> (Medium) — Client owns everything, no creator credit.</p>
@@ -202,7 +256,7 @@
   </div>
 
   <div class="section">
-    <h2>Smart Suggestions 💡</h2>
+    <h2 style="font-size: 28px;">Smart Suggestions 💡</h2>
     <div class="card">
       <ul>
         <li>Add a late payment fee (e.g. 5% after 10 days)</li>
@@ -215,7 +269,7 @@
 
   <div class="section">
     <button class="cta-button">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/contract.png" alt="icon" />
+      <img src="https://img.icons8.com/ios-filled/50/00ffff/contract.png" alt="icon" />
       Review another one
     </button>
   </div>
@@ -234,3 +288,4 @@
   </footer>
 </body>
 </html>
+
