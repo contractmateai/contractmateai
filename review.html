@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contract Review – ContractMate AI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0b0f;
+      color: #f5f5f5;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 32px;
+      background-color: #0b0b0f;
+      border-bottom: 1px solid #444;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .logo img {
+      height: 52px;
+      margin-right: 14px;
+    }
+    .logo h1 {
+      font-size: 24px;
+      margin: 0;
+      color: #fff;
+    }
+    .section {
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .cta-button {
+      background-color: #dd6b20;
+      color: #fff;
+      padding: 14px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .cta-button img {
+      height: 28px;
+    }
+    .card {
+      background-color: #1a1a20;
+      padding: 20px;
+      border-radius: 14px;
+      max-width: 720px;
+      margin: 0 auto 40px;
+      border: 2px solid #333;
+      text-align: left;
+    }
+    .card h3 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .bar {
+      background: #333;
+      border-radius: 10px;
+      margin: 16px 0;
+      height: 20px;
+      position: relative;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: 10px;
+    }
+    .bar-label {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .bar-risk span {
+      background: green;
+      width: 20%;
+    }
+    .bar-clarity span {
+      background: orange;
+      width: 60%;
+    }
+    .bar-fairness span {
+      background: orange;
+      width: 75%;
+    }
+    .highlight-orange { color: orange; font-weight: bold; }
+    .highlight-green { color: #00ff99; font-weight: bold; }
+    .pdf-button {
+      display: inline-flex;
+      align-items: center;
+      background: #1c1c26;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      gap: 10px;
+    }
+    .pdf-button img {
+      height: 24px;
+    }
+    footer {
+      background-color: #1a1a24;
+      color: #bbb;
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin: 16px 0;
+    }
+    .footer-icons img {
+      height: 36px;
+      filter: brightness(200%);
+      border-radius: 8px;
+    }
+    .footer-nav a {
+      color: #bbb;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="https://i.imgur.com/i0Ar0wa.jpeg" alt="Logo" />
+      <h1>ContractMate AI</h1>
+    </a>
+  </header>
+
+  <div class="section">
+    <button class="cta-button">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/contract.png" alt="icon" />
+      Review another one
+    </button>
+  </div>
+
+  <div class="section">
+    <h2>AI Summary</h2>
+    <div class="card">
+      <p>This agreement is between <span class="highlight-orange">John Smith (Contractor)</span> and <span class="highlight-green">LumaTech LLC (Client)</span>. The Contractor agrees to deliver monthly content.</p>
+      <p>The Client agrees to pay $2,500/month within 10 days of invoicing. Termination terms favor the Client, with a 14-day notice clause.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Results</h2>
+    <div class="card">
+      <div class="bar-label">Risk Safety</div>
+      <div class="bar bar-risk"><span></span></div>
+      <div class="bar-label">Clause Clarity</div>
+      <div class="bar bar-clarity"><span></span></div>
+      <div class="bar-label">Fairness</div>
+      <div class="bar bar-fairness"><span></span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Key Clauses 🧾</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Termination Clause</strong> – 14 days’ written notice.</li>
+        <li><strong>Payment Terms</strong> – $2,500/month within 10 days.</li>
+        <li><strong>Intellectual Property</strong> – Client owns work after payment.</li>
+        <li><strong>Confidentiality</strong> – Both parties agree not to disclose.</li>
+        <li><strong>Governing Law</strong> – State of California.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Risk Flags 🚩</h2>
+    <div class="card">
+      <p>❌ <strong>No Late Payment Clause</strong> (High) — No interest/penalty for delays.</p>
+      <p>⚠️ <strong>One-Sided IP Clause</strong> (Medium) — Client owns everything, no creator credit.</p>
+      <p>✅ <strong>Balanced NDA</strong> (Low) — Fair protection for both parties.</p>
+      <p style="margin-top: 14px; color: #aaa;">These clauses may pose risk and are ranked by severity.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="pdf-button">
+      <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF Icon" />
+      Download PDF Report
+    </button>
+  </div>
+
+  <div class="section">
+    <h2>Smart Suggestions 💡</h2>
+    <div class="card">
+      <ul>
+        <li>Add a late payment fee (e.g. 5% after 10 days)</li>
+        <li>Ask for portfolio rights</li>
+        <li>Include prorated termination</li>
+        <li>Mention dispute resolution method</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="cta-button">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/contract.png" alt="icon" />
+      Review another one
+    </button>
+  </div>
+
+  <footer>
+    <p style="color: #ccc; font-weight: 500;">Not legal advice. For informational use only.</p>
+    <div class="footer-icons">
+      <a href="#" target="_blank"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="X"></a>
+      <a href="#" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram"></a>
+      <a href="#" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube"></a>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Home</a> | <a href="contact.html">Contact</a>
+    </div>
+    <p>© 2025 ContractMate AI</p>
+  </footer>
+</body>
+</html>
