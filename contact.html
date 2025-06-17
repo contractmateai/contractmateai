@@ -81,12 +81,33 @@
     .section p {
       font-size: 18px;
       color: #ccc;
+      margin-bottom: 12px;
     }
+    a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
     footer {
       background-color: #1a1a24;
       color: #bbb;
       text-align: center;
       padding: 40px 20px 20px;
+    }
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin: 16px 0;
+    }
+    .footer-icons img {
+      height: 36px;
+      filter: brightness(200%);
+      border-radius: 8px;
+    }
+    .footer-nav {
+      margin-top: 16px;
     }
     .footer-nav a {
       color: #bbb;
@@ -113,12 +134,18 @@
 
   <div class="section">
     <h2>Contact Us</h2>
-    <p>Email: <a href="mailto:contractmateai@gmail.com" style="color:#00ffff;">contractmateai@gmail.com</a></p>
+    <p>For further inquiries or assistance, feel free to reach out to us:</p>
+    <p>Email: <a href="mailto:contractmateai@gmail.com">contractmateai@gmail.com</a></p>
     <p>WhatsApp: +123456789</p>
   </div>
 
   <footer>
-    <p style="color: #ccc;">Not legal advice. For informational use only.</p>
+    <p style="color: #ccc; font-weight: 500;">Not legal advice. For informational use only.</p>
+    <div class="footer-icons">
+      <a href="#" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram"></a>
+      <a href="#" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube"></a>
+      <a href="#" target="_blank"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?semt=ais_hybrid&w=740" alt="X Logo"></a>
+    </div>
     <div class="footer-nav">
       <a href="index.html">Home</a> | <a href="contact.html">Contact</a>
     </div>
@@ -126,4 +153,3 @@
   </footer>
 </body>
 </html>
-
