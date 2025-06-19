@@ -253,7 +253,7 @@ document.getElementById("fileInput").addEventListener("change", async function(e
   formData.append("file", file);
 
   try {
-    const response = await fetch("https://contractmate-api.vercel.app/api/analyze", {
+   const response = await fetch("https://contractmate-api.vercel.app/api/analyze", {
       method: "POST",
       body: formData
     });
