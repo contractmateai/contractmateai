@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ContractMate AI</title>
-  <link rel="icon" href="https://i.imgur.com/48hFHmr.jpeg" type="image/jpeg">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='100%25' viewBox='0 0 1080 1080' enable-background='new 0 0 1080 1080' xml:space='preserve'%3E%3Cpath fill='%232267bf' opacity='1.000000' stroke='none' d='M897.417847,596.645386 C965.461670,616.078186 1011.347046,659.101807 1030.374268,726.571960 C1051.797363,802.537964 1031.625366,868.789429 972.968140,921.821594 C939.777283,951.829651 899.649963,966.997864 854.701355,967.039490 C626.711365,967.250732 398.721008,967.154297 170.730820,967.152649 C159.853333,967.152588 154.920639,962.183960 154.920334,951.273071 C154.912674,677.617065 154.913071,403.960999 154.922424,130.304962 C154.922775,120.003494 159.943832,114.854378 170.085815,114.853226 C324.579803,114.835609 479.073761,114.855774 633.567688,114.775261 C638.826050,114.772522 642.779419,116.583168 646.340393,120.302940 C711.797791,188.679413 777.264771,257.046875 842.879150,325.272552 C847.654663,330.238068 849.562317,335.478363 849.554138,342.232025 C849.457031,422.562042 849.530273,502.892303 849.560547,583.222473 C849.563416,590.811096 849.627930,590.258972 857.018311,591.054993 C870.394653,592.495667 883.692383,594.666931 897.417847,596.645386 z'/%3E%3C/svg%3E">
   <style>
     body {
       margin: 0;
@@ -12,7 +10,6 @@
       background-color: #0b0b0f;
       color: #f5f5f5;
     }
-
     header {
       border-bottom: 1px solid #444;
       display: flex;
@@ -21,73 +18,24 @@
       padding: 24px 32px;
       background-color: #000;
     }
-
     header .logo {
       display: flex;
       align-items: center;
       text-decoration: none;
     }
-
     header img {
       height: 52px;
       margin-right: 14px;
     }
-
     header h1 {
       font-size: 26px;
       margin: 0;
       color: #ffffff;
     }
-
-    .menu {
-      position: relative;
-    }
-
-    .menu-button {
-      background: none;
-      border: 2px solid #888;
-      color: #f5f5f5;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .menu-content {
-      display: none;
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background-color: #1a1a20;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px;
-      z-index: 1000;
-      width: 180px;
-    }
-
-    .menu-content a {
-      display: block;
-      padding: 10px;
-      color: #f5f5f5;
-      text-decoration: none;
-      font-size: 16px;
-    }
-
-    .menu-content a:hover {
-      background-color: #292934;
-    }
-
-    .menu:hover .menu-content,
-    .menu:focus-within .menu-content {
-      display: block;
-    }
-
     .section {
       padding: 40px 24px;
       text-align: center;
     }
-
     .cta-button-wrapper {
       display: inline-flex;
       align-items: center;
@@ -100,74 +48,25 @@
       background-color: transparent;
       box-shadow: 0 0 16px rgba(32, 104, 193, 0.4);
     }
-
     .cta-button-wrapper:hover {
       background-color: #000;
     }
-
     .cta-button-wrapper img {
       height: 40px;
     }
-
     .cta-button-wrapper span {
       font-size: 22px;
       color: #2068c1;
     }
-
     .upload-input {
       display: none;
     }
-
-    .video-placeholder iframe {
-      width: 100%;
-      max-width: 820px;
-      height: 460px;
-      border-radius: 12px;
-      box-shadow: 0 0 16px rgba(32, 104, 193, 0.4);
-      border: none;
-    }
-
-    .testimonials-container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      margin-top: 40px;
-    }
-
-    .testimonial {
-      background: #1c1c26;
-      color: #f5f5f5;
-      padding: 28px;
-      border-radius: 16px;
-      width: 320px;
-      font-size: 18px;
-      box-shadow: 0 0 16px rgba(32, 104, 193, 0.3);
-    }
-
-    .leave-review-btn {
-      margin-top: 30px;
-      font-size: 18px;
-      color: #2068c1;
-      border: 2px solid #2068c1;
-      padding: 14px 22px;
-      border-radius: 10px;
-      background-color: transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .leave-review-btn:hover {
-      background-color: #1a1a1a;
-    }
-
     footer {
       background-color: #1a1a24;
       color: #bbb;
       text-align: center;
       padding: 40px 20px 20px;
     }
-
     .footer-icons {
       display: flex;
       justify-content: center;
@@ -175,30 +74,18 @@
       gap: 40px;
       margin: 16px 0;
     }
-
     .footer-icons img {
       height: 36px;
       filter: brightness(200%);
       border-radius: 8px;
     }
-
     .footer-nav {
       margin-top: 16px;
     }
-
     .footer-nav a {
       color: #bbb;
       margin: 0 10px;
       text-decoration: none;
-    }
-
-    @media (max-width: 768px) {
-      .section {
-        padding: 20px 16px 40px;
-      }
-      .cta-button-wrapper {
-        padding: 12px 20px;
-      }
     }
   </style>
 </head>
