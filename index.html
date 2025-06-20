@@ -182,7 +182,7 @@ ui_html = """
     }
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
 <script>
   const openaiKey = "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";
 
@@ -191,45 +191,48 @@ ui_html = """
     const resultDiv = document.getElementById("analysisResult");
     const output = document.getElementById("outputText");
     resultDiv.style.display = "block";
+    output.innerText = "Reading file...";
 
     if (!file || !file.name.endsWith(".pdf")) {
-      alert("Please upload a PDF file.");
+      output.innerText = "Please upload a PDF.";
       return;
     }
 
-    output.innerText = "Reading file...";
+    let textContent = "";
+    try {
+      const pdfData = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
 
-    const pdfData = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-
-    let fullText = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      const strings = content.items.map(item => item.str).join(" ");
-      fullText += strings + "\n";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const strings = content.items.map(item => item.str);
+        textContent += strings.join(" ") + "\n";
+      }
+    } catch (e) {
+      console.error("PDF.js failed:", e);
     }
 
-    // If empty, use OCR instead
-    if (fullText.trim().length < 20) {
-      output.innerText = "No text found, trying OCR...";
-
-      const pdfBlob = new Blob([pdfData], { type: "application/pdf" });
-      const pdfURL = URL.createObjectURL(pdfBlob);
-      const img = await pdfToImage(pdfURL);
-
-      const result = await Tesseract.recognize(img, 'eng');
-      fullText = result.data.text;
+    if (!textContent || textContent.trim().length < 30) {
+      output.innerText = "No text found, running OCR...";
+      const imgData = await pdfToImage(file);
+      const result = await Tesseract.recognize(imgData, 'eng');
+      textContent = result.data.text || "";
     }
 
-    fullText = fullText.trim().replace(/\s+/g, ' ');
-    if (fullText.length > 4000) {
-      fullText = fullText.substring(0, 4000);
+    textContent = textContent.trim().replace(/\s+/g, " ");
+    if (textContent.length > 3500) {
+      textContent = textContent.substring(0, 3500) + "...";
+    }
+
+    if (!textContent) {
+      output.innerText = "Sorry, could not extract any text from this file.";
+      return;
     }
 
     output.innerText = "Sending to GPT...";
 
-    const prompt = You're a legal assistant. Read and analyze the following contract. Identify key terms, risks, unusual clauses, and summarize it clearly:\n\n${fullText};
+    const prompt = You're a contract review AI. Read and analyze the following contract. Summarize it, flag any risks or unusual clauses:\n\n${textContent};
 
     try {
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -246,25 +249,28 @@ ui_html = """
       });
 
       const data = await res.json();
-      output.innerText = data?.choices?.[0]?.message?.content || "No response.";
-    } catch (e) {
-      output.innerText = "Error: " + e.message;
+      const reply = data?.choices?.[0]?.message?.content?.trim();
+
+      output.innerText = reply || "No response from GPT.";
+    } catch (err) {
+      output.innerText = "Error talking to GPT: " + err.message;
     }
   });
 
-  async function pdfToImage(url) {
-    const loadingTask = pdfjsLib.getDocument(url);
-    const pdf = await loadingTask.promise;
+  async function pdfToImage(file) {
+    const pdfData = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
     const page = await pdf.getPage(1);
-    const viewport = page.getViewport({ scale: 2.5 });
+    const scale = 2;
+    const viewport = page.getViewport({ scale });
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    canvas.height = viewport.height;
     canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
     await page.render({ canvasContext: context, viewport }).promise;
-    return canvas.toDataURL("image/png");
+    return canvas.toDataURL();
   }
 </script>
 </head>
