@@ -244,9 +244,7 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <script src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>
-
     document.getElementById("fileInput").addEventListener("change", async function(event) {
       const file = event.target.files[0];
       const resultDiv = document.getElementById("analysisResult");
@@ -266,28 +264,17 @@
           text += pageText + "\n";
         }
 
-        if (!text.trim()) {
-          output.innerText = "Using OCR...";
-          const imgUrl = URL.createObjectURL(file);
-          const ocrResult = await Tesseract.recognize(imgUrl, 'eng');
-          text = ocrResult.data.text;
-        }
+        output.innerText = "Sending to backend...";
+        const response = await fetch("https://YOUR-PIPEDREAM-URL", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text })
+        });
 
-        output.innerText = "Sending to GPT...";
-        const prompt = Analyze this contract:\n\n${text};
-
-       const res = await fetch("https://eofrvegf0rgkyfa.m.pipedream.net", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ text })
-});
-
-        const data = await res.json();
-        const gptResponse = data?.choices?.[0]?.message?.content || "No response.";
-
-        localStorage.setItem("summary", gptResponse);
+        const data = await response.text();
+        localStorage.setItem("summary", data);
         localStorage.setItem("risk", 25);
         localStorage.setItem("clarity", 78);
         localStorage.setItem("compliance", 88);
@@ -296,7 +283,6 @@
         localStorage.setItem("smartSuggestions", JSON.stringify(["Add dispute resolution", "Clarify renewal terms"]));
 
         window.location.href = "analysis.html";
-
       } catch (e) {
         output.innerText = "Error: " + e.message;
       }
