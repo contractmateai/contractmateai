@@ -68,6 +68,7 @@
       padding: 24px;
       border-radius: 14px;
       margin-bottom: 32px;
+      white-space: pre-wrap;
     }
     .circles {
       display: flex;
@@ -195,8 +196,7 @@
   </footer>
 
   <script>
-    // Load localStorage data
-    document.getElementById("summaryText").innerText = localStorage.getItem("summary") || "No summary available";
+    document.getElementById("summaryText").innerText = localStorage.getItem("summary") || "No summary available.";
     document.getElementById("riskScore").innerText = localStorage.getItem("risk") || "–";
     document.getElementById("clarityScore").innerText = localStorage.getItem("clarity") || "–";
     document.getElementById("complianceScore").innerText = localStorage.getItem("compliance") || "–";
@@ -240,7 +240,7 @@ Potential Issues:\n${(JSON.parse(localStorage.getItem("potentialIssues")) || [])
 Smart Suggestions:\n${(JSON.parse(localStorage.getItem("smartSuggestions")) || []).join("\n")}
       `;
 
-      const blob = new Blob([content], { type: "application/pdf" });
+      const blob = new Blob([content], { type: "text/plain" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "ContractMate_Report.txt";
