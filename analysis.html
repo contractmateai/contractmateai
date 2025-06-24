@@ -15,14 +15,10 @@
     header, footer {
       background-color: #000;
       padding: 24px 32px;
+      border-bottom: 1px solid #444;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    header .logo {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
     }
     header img {
       height: 52px;
@@ -30,84 +26,140 @@
     }
     header h1 {
       font-size: 26px;
+      color: #fff;
       margin: 0;
-      color: #ffffff;
     }
-    .section {
-      padding: 40px 24px;
-      text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
+    .menu-button {
+      background: none;
+      border: 2px solid #888;
+      color: #f5f5f5;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
     }
-    .summary-box {
+    .menu-content {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 32px;
+      background-color: #1a1a20;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .menu:hover .menu-content {
+      display: block;
+    }
+    .menu-content a {
+      color: #fff;
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+    }
+    .container {
+      padding: 40px 20px;
+      max-width: 960px;
+      margin: auto;
+    }
+    .summary {
+      font-size: 20px;
       background-color: #1c1c26;
       padding: 24px;
       border-radius: 14px;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
-    .circle-container {
+    .circles {
       display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
+      justify-content: space-around;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 20px;
     }
     .circle {
-      width: 110px;
-      height: 110px;
+      background-color: #1a1a20;
       border-radius: 50%;
+      width: 140px;
+      height: 140px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      font-size: 22px;
       font-weight: bold;
-      font-size: 20px;
+      box-shadow: 0 0 16px rgba(32,104,193,0.4);
+      flex-direction: column;
     }
     .section-block {
       background-color: #1c1c26;
-      padding: 20px;
-      margin-bottom: 30px;
-      border-radius: 10px;
-      text-align: left;
+      margin-bottom: 28px;
+      border-radius: 12px;
+      padding: 20px 28px;
     }
-    .section-block ul {
-      padding-left: 20px;
+    .section-block h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #00bfff;
     }
-    .button-download, .review-link {
-      display: block;
-      margin: 40px auto 10px;
-      padding: 12px 22px;
-      font-size: 18px;
+    #emailInput {
+      width: 260px;
+      padding: 10px;
+      margin-right: 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #121212;
+      color: #fff;
+    }
+    #downloadBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2068c1;
+      border: none;
+      color: #fff;
       border-radius: 8px;
-      text-decoration: none;
       cursor: pointer;
     }
-    .button-download {
-      background-color: transparent;
-      border: 2px solid #2068c1;
-      color: #2068c1;
+    .footer-icons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
     }
-    .review-link {
+    .footer-icons img {
+      height: 36px;
+      border-radius: 8px;
+    }
+    .leave-review {
+      display: block;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 18px;
       color: #2068c1;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <header>
-    <a class="logo" href="index.html">
-      <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" alt="Logo" />
+    <a class="logo" href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+      <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" alt="Logo">
       <h1>AI ContractMate</h1>
     </a>
+    <div class="menu">
+      <button class="menu-button">☰</button>
+      <div class="menu-content">
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
   </header>
 
-  <div class="section">
-    <div class="summary-box">
-      <h2>Summary</h2>
-      <p id="summaryText">Loading summary...</p>
-      <div class="circle-container">
-        <div class="circle" id="riskCircle">--%</div>
-        <div class="circle" id="clarityCircle">--%</div>
-        <div class="circle" id="complianceCircle">--%</div>
-      </div>
+  <div class="container">
+    <div class="summary" id="summaryText"></div>
+
+    <div class="circles">
+      <div class="circle">Risk<br><span id="riskScore">–</span></div>
+      <div class="circle">Clarity<br><span id="clarityScore">–</span></div>
+      <div class="circle">Compliance<br><span id="complianceScore">–</span></div>
     </div>
 
     <div class="section-block">
@@ -117,68 +169,83 @@
 
     <div class="section-block">
       <h3>Potential Issues</h3>
-      <ul id="issuesList"></ul>
+      <ul id="potentialIssuesList"></ul>
     </div>
 
     <div class="section-block">
       <h3>Smart Suggestions</h3>
-      <ul id="suggestionsList"></ul>
+      <ul id="smartSuggestionsList"></ul>
     </div>
 
-    <button class="button-download" onclick="askEmail()">Download PDF Report</button>
-    <a href="contact.html" class="review-link">Leave a Review</a>
+    <div style="margin-top: 40px; text-align: center;">
+      <input type="email" id="emailInput" placeholder="Enter your email" />
+      <button id="downloadBtn">Download PDF Report</button>
+    </div>
+
+    <a class="leave-review" href="https://forms.gle/yourreviewform" target="_blank">Leave a Review</a>
   </div>
 
   <footer>
-    <p style="color:#bbb;">©️ 2025 AI ContractMate</p>
+    <div class="footer-icons">
+      <a href="#"><img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" alt="Instagram"></a>
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
+      <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="X"></a>
+    </div>
+    <p style="color:gray; text-align:center;">©️ 2025 AI ContractMate</p>
   </footer>
 
   <script>
-    const summary = localStorage.getItem("summary") || "No summary found.";
-    const risk = parseInt(localStorage.getItem("risk") || "0");
-    const clarity = parseInt(localStorage.getItem("clarity") || "0");
-    const compliance = parseInt(localStorage.getItem("compliance") || "0");
-    const keyClauses = JSON.parse(localStorage.getItem("keyClauses") || "[]");
-    const issues = JSON.parse(localStorage.getItem("potentialIssues") || "[]");
-    const suggestions = JSON.parse(localStorage.getItem("smartSuggestions") || "[]");
+    // Load localStorage data
+    document.getElementById("summaryText").innerText = localStorage.getItem("summary") || "No summary available";
+    document.getElementById("riskScore").innerText = localStorage.getItem("risk") || "–";
+    document.getElementById("clarityScore").innerText = localStorage.getItem("clarity") || "–";
+    document.getElementById("complianceScore").innerText = localStorage.getItem("compliance") || "–";
 
-    document.getElementById("summaryText").innerText = summary;
-    document.getElementById("riskCircle").innerText = risk + "%";
-    document.getElementById("clarityCircle").innerText = clarity + "%";
-    document.getElementById("complianceCircle").innerText = compliance + "%";
-
-    // Set colors
-    function setColor(circle, val, type) {
-      if (type === "risk") {
-        circle.style.backgroundColor = val < 20 ? "green" : val < 45 ? "orange" : "red";
-      } else {
-        circle.style.backgroundColor = val < 35 ? "red" : val < 70 ? "orange" : "green";
-      }
-    }
-
-    setColor(document.getElementById("riskCircle"), risk, "risk");
-    setColor(document.getElementById("clarityCircle"), clarity, "clarity");
-    setColor(document.getElementById("complianceCircle"), compliance, "compliance");
-
-    function fillList(id, arr) {
+    function populateList(id, items) {
       const ul = document.getElementById(id);
-      arr.forEach(item => {
+      ul.innerHTML = "";
+      if (!items || !items.length) {
+        ul.innerHTML = "<li>None</li>";
+        return;
+      }
+      items.forEach(item => {
         const li = document.createElement("li");
         li.innerText = item;
         ul.appendChild(li);
       });
     }
 
-    fillList("keyClausesList", keyClauses);
-    fillList("issuesList", issues);
-    fillList("suggestionsList", suggestions);
-
-    function askEmail() {
-      const email = prompt("Enter your email to receive the report:");
-      if (email) {
-        alert("Thank you! PDF will be downloaded (feature to be implemented).");
-      }
+    try {
+      populateList("keyClausesList", JSON.parse(localStorage.getItem("keyClauses")));
+      populateList("potentialIssuesList", JSON.parse(localStorage.getItem("potentialIssues")));
+      populateList("smartSuggestionsList", JSON.parse(localStorage.getItem("smartSuggestions")));
+    } catch (e) {
+      console.error("Failed to parse list data", e);
     }
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const email = document.getElementById("emailInput").value;
+      if (!email || !email.includes("@")) {
+        alert("Please enter a valid email.");
+        return;
+      }
+
+      const content = `
+Contract Summary:\n${localStorage.getItem("summary")}\n\n
+Risk: ${localStorage.getItem("risk")}
+Clarity: ${localStorage.getItem("clarity")}
+Compliance: ${localStorage.getItem("compliance")}\n\n
+Key Clauses:\n${(JSON.parse(localStorage.getItem("keyClauses")) || []).join("\n")}\n\n
+Potential Issues:\n${(JSON.parse(localStorage.getItem("potentialIssues")) || []).join("\n")}\n\n
+Smart Suggestions:\n${(JSON.parse(localStorage.getItem("smartSuggestions")) || []).join("\n")}
+      `;
+
+      const blob = new Blob([content], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "ContractMate_Report.txt";
+      link.click();
+    });
   </script>
 </body>
 </html>
