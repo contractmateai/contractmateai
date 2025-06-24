@@ -246,7 +246,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <script src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>
-    const openaiKey = "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";
 
     document.getElementById("fileInput").addEventListener("change", async function(event) {
       const file = event.target.files[0];
@@ -277,17 +276,13 @@
         output.innerText = "Sending to GPT...";
         const prompt = Analyze this contract:\n\n${text};
 
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": Bearer ${openaiKey}
-          },
-          body: JSON.stringify({
-            model: "gpt-4",
-            messages: [{ role: "user", content: prompt }]
-          })
-        });
+       const res = await fetch("https://eofrvegf0rgkyfa.m.pipedream.net", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ text })
+});
 
         const data = await res.json();
         const gptResponse = data?.choices?.[0]?.message?.content || "No response.";
