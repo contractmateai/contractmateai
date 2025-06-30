@@ -210,6 +210,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js";
+
     document.getElementById("fileInput").addEventListener("change", async function(event) {
       const file = event.target.files[0];
       if (!file) return;
