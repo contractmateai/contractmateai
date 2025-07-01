@@ -4,6 +4,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if API key is loaded from environment
+    const openaiKey = process.env.OPENAI_API_KEY;
+    console.log("🔑 ENV KEY:", openaiKey ? "✅ Exists" : "❌ Missing");
+
+    if (!openaiKey) {
+      return res.status(500).json({ error: "Missing OpenAI API Key" });
+    }
+
     const { text } = req.body;
 
     const prompt = `
@@ -26,7 +34,7 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${openaiKey}`,
       },
       body: JSON.stringify({
         model: "gpt-4",
@@ -45,15 +53,27 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
 
+    if (!response.ok) {
+      console.error("🔥 OpenAI Error Response:", data);
+      return res.status(500).json({
+        error: "OpenAI API Error",
+        details: data?.error?.message || "Unknown error from OpenAI",
+      });
+    }
+
+    const content = data?.choices?.[0]?.message?.content || "";
+
+    // Attempt to extract only the JSON part
     const jsonStart = content.indexOf("{");
     const jsonEnd = content.lastIndexOf("}");
     const cleanJson = content.substring(jsonStart, jsonEnd + 1);
+
     const parsed = JSON.parse(cleanJson);
 
     res.status(200).json(parsed);
   } catch (error) {
+    console.error("🔥 Error details:", error);
     res.status(500).json({
       error: "Failed to analyze contract",
       details: error.message,
