@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, targetLanguage } = req.body;
+    const { text } = req.body;
 
     const prompt = `
     Analyze this contract and return only valid JSON in this format:
@@ -47,7 +47,6 @@ export default async function handler(req, res) {
     const data = await response.json();
     const content = data?.choices?.[0]?.message?.content;
 
-    // Try to parse just the JSON part
     const jsonStart = content.indexOf("{");
     const jsonEnd = content.lastIndexOf("}");
     const cleanJson = content.substring(jsonStart, jsonEnd + 1);
