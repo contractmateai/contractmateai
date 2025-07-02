@@ -3,16 +3,44 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // Toggle testing mode here
+  const testing = true; // ⬅️ Set to false to use real OpenAI API
+
   try {
-    // Check if API key is loaded from environment
+    const { text } = req.body;
+
+    if (testing) {
+      // ✅ Fake response for testing (no cost)
+      const fakeResponse = {
+        summary: "This contract outlines a service agreement between two parties, detailing payment terms, responsibilities, and confidentiality.",
+        risk: 25,
+        clarity: 80,
+        compliance: 90,
+        keyClauses: [
+          "Payment due within 30 days",
+          "Work-for-hire clause",
+          "Non-disclosure agreement"
+        ],
+        potentialIssues: [
+          "No clause for late payment penalties",
+          "Termination terms are vague"
+        ],
+        smartSuggestions: [
+          "Add clear termination conditions",
+          "Include a late payment fee clause",
+          "Specify deliverable milestones"
+        ]
+      };
+      return res.status(200).json(fakeResponse);
+    }
+
+    // ✅ Real API call when not testing
     const openaiKey = process.env.OPENAI_API_KEY;
     console.log("🔑 ENV KEY:", openaiKey ? "✅ Exists" : "❌ Missing");
 
     if (!openaiKey) {
       return res.status(500).json({ error: "Missing OpenAI API Key" });
     }
-
-    const { text } = req.body;
 
     const prompt = `
     Analyze this contract and return only valid JSON in this format:
@@ -64,7 +92,7 @@ export default async function handler(req, res) {
 
     const content = data?.choices?.[0]?.message?.content || "";
 
-    // Attempt to extract only the JSON part
+    // Extract JSON from response
     const jsonStart = content.indexOf("{");
     const jsonEnd = content.lastIndexOf("}");
     const cleanJson = content.substring(jsonStart, jsonEnd + 1);
@@ -80,3 +108,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
