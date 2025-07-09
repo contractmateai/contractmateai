@@ -5,158 +5,166 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #f5f7fa;
+      background-color: #f0f4fa;
+      font-family: 'Inter', sans-serif;
     }
 
-    .hero-container {
-      width: 96vw;
+    .gradient-box {
+      width: 94%;
       height: 92vh;
-      margin: 4vh auto;
+      margin: 3vh auto;
+      background: radial-gradient(circle at center, #002740, #cee6ff);
       border-radius: 24px;
-      background: radial-gradient(circle at center, #002740 0%, #cee6ff 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 4vh 3vw;
       color: white;
-      text-align: center;
-      position: relative;
-      padding: 40px;
+      box-sizing: border-box;
     }
 
     .nav {
-      position: absolute;
-      top: 40px;
-      left: 40px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.4rem;
+      color: #ffffff;
+    }
+
+    .logo {
       font-size: 2rem;
-      font-weight: bold;
       display: flex;
       align-items: center;
     }
 
-    .nav img {
-      height: 30px;
-      margin-right: 10px;
+    .logo-icon {
+      font-size: 2.4rem;
+      margin-right: 0.6rem;
     }
 
-    .nav-right {
-      position: absolute;
-      top: 40px;
-      right: 40px;
-      font-size: 1.2rem;
-      color: #e0e0e0;
-    }
-
-    .nav-right a {
-      margin-left: 30px;
-      color: #e0e0e0;
-      text-decoration: none;
-      font-weight: 500;
+    .nav-links {
+      display: flex;
+      gap: 2rem;
     }
 
     .badge {
-      background-color: rgba(0,0,0,0.4);
-      padding: 8px 16px;
-      border-radius: 16px;
-      font-size: 1rem;
-      margin-bottom: 30px;
+      background-color: #1c1c1c;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-size: 1.3rem;
+      margin-top: 2rem;
     }
 
     h1 {
-      font-size: 4.2rem;
-      margin: 0 0 20px;
-      line-height: 1.2;
+      text-align: center;
+      font-weight: 400;
+      font-size: 4rem;
+      margin: 0;
     }
 
-    .subheading {
-      font-size: 1.4rem;
-      color: #d0d8e0;
-      margin-bottom: 40px;
-      max-width: 800px;
+    .tagline {
+      margin-top: 1.5rem;
+      font-size: 1.7rem;
+      color: #d2d2d2;
+      text-align: center;
+      max-width: 900px;
     }
 
-    .buttons {
+    .cta-buttons {
       display: flex;
-      gap: 30px;
-      margin-bottom: 40px;
+      gap: 2rem;
+      margin-top: 3rem;
     }
 
-    .buttons button {
-      padding: 18px 36px;
-      font-size: 1.3rem;
-      border-radius: 40px;
+    .cta-buttons button {
+      padding: 1.2rem 2.4rem;
+      font-size: 1.6rem;
+      border-radius: 30px;
       border: none;
       cursor: pointer;
     }
 
-    .primary {
-      background: #0072ff;
+    .primary-btn {
+      background-color: #0070f3;
       color: white;
       font-weight: bold;
     }
 
-    .secondary {
-      background: transparent;
-      border: 2px solid white;
+    .secondary-btn {
+      background: none;
+      border: 2px solid #ccc;
       color: white;
     }
 
-    .features {
+    .info-bar {
+      background-color: rgba(0, 0, 0, 0.35);
+      padding: 1.4rem 3rem;
+      border-radius: 20px;
+      font-size: 1.5rem;
       display: flex;
-      gap: 30px;
-      font-size: 1.1rem;
-      background-color: rgba(0,0,0,0.25);
-      border-radius: 24px;
-      padding: 14px 36px;
-    }
-
-    .features div {
-      color: white;
-      white-space: nowrap;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 1rem;
     }
 
     @media (max-width: 768px) {
       h1 {
-        font-size: 2.5rem;
+        font-size: 2.4rem;
       }
 
-      .buttons {
-        flex-direction: column;
-        gap: 20px;
+      .tagline {
+        font-size: 1.2rem;
       }
 
-      .features {
+      .cta-buttons {
         flex-direction: column;
         align-items: center;
+      }
+
+      .cta-buttons button {
+        width: 80%;
+        font-size: 1.3rem;
+      }
+
+      .info-bar {
+        flex-direction: column;
+        gap: 1rem;
+        font-size: 1.2rem;
+        padding: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="hero-container">
+  <div class="gradient-box">
     <div class="nav">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Document_icon.svg" alt="Logo">
-      SignSense
+      <div class="logo">
+        <span class="logo-icon">📄✔️</span>
+        SignSense
+      </div>
+      <div class="nav-links">
+        <span>Contact Us</span>
+        <span>See How It Works</span>
+      </div>
     </div>
-    <div class="nav-right">
-      <a href="#">Contact Us</a>
-      <a href="#">See How It Works</a>
+
+    <div class="center-content" style="text-align: center;">
+      <div class="badge">AI Review Tool</div>
+      <h1>Make Sense Of<br/>What You’re Signing</h1>
+      <div class="tagline">
+        SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+      </div>
+      <div class="cta-buttons">
+        <button class="primary-btn">Review Contract</button>
+        <button class="secondary-btn">Learn More</button>
+      </div>
     </div>
-    <div class="badge">AI Review Tool</div>
-    <h1>Make Sense Of<br>What You’re Signing</h1>
-    <div class="subheading">SignSense instantly clarifies contracts for law firms, freelancers, students & more.</div>
-    <div class="buttons">
-      <button class="primary">Review Contract</button>
-      <button class="secondary">Learn More</button>
-    </div>
-    <div class="features">
+
+    <div class="info-bar">
       <div>Spot risks instantly</div>
       <div>No sign-up required</div>
       <div>Completely private</div>
