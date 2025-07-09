@@ -1,163 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f3f3f3;
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f4f4;
     }
 
-    .hero-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 50px 0;
-    }
-
-    .hero-box {
+    .hero {
       width: 96vw;
-      max-width: 1600px;
-      background: linear-gradient(to bottom right, #cee6ff, #002740, #cee6ff);
+      margin: 2vh auto;
       border-radius: 20px;
+      padding: 60px 40px;
+      background: radial-gradient(circle at center, #002740, #cee6ff);
       color: white;
-      padding: 70px 50px 100px;
+      text-align: center;
       box-sizing: border-box;
+      position: relative;
     }
 
-    .top-bar {
+    .navbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 60px;
+      font-size: 22px;
+      margin-bottom: 40px;
     }
 
     .logo {
-      font-size: 32px;
+      display: flex;
+      align-items: center;
+      font-size: 28px;
       font-weight: 600;
     }
 
+    .logo img {
+      height: 36px;
+      margin-right: 10px;
+    }
+
     .nav-links a {
-      margin-left: 50px;
-      text-decoration: none;
+      margin-left: 30px;
       color: white;
-      font-size: 20px;
+      text-decoration: none;
+      font-weight: 400;
     }
 
-    .centered-content {
-      text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .tag {
-      background-color: rgba(0,0,0,0.4);
+    .badge {
       display: inline-block;
-      padding: 8px 18px;
-      font-size: 15px;
+      background: #1f2f3f;
+      color: white;
+      font-size: 16px;
+      padding: 6px 18px;
       border-radius: 20px;
       margin-bottom: 30px;
     }
 
     h1 {
-      font-size: 64px;
+      font-size: 56px;
       font-weight: 400;
-      margin: 0 0 30px;
+      margin: 0;
+      line-height: 1.2;
     }
 
-    p {
-      font-size: 22px;
-      color: #d8d8d8;
-      margin-bottom: 40px;
+    p.subtitle {
+      margin: 20px 0 40px;
+      font-size: 20px;
+      color: #d4d4d4;
     }
 
-    .cta-buttons {
+    .buttons {
       display: flex;
       justify-content: center;
       gap: 30px;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
     }
 
-    .cta-buttons button {
+    .buttons button {
+      padding: 18px 36px;
       font-size: 20px;
-      padding: 16px 36px;
-      border-radius: 35px;
-      border: 2px solid white;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .buttons .primary {
+      background-color: #007aff;
+      color: white;
+    }
+
+    .buttons .secondary {
       background-color: transparent;
       color: white;
-      cursor: pointer;
+      border: 2px solid white;
     }
 
-    .cta-buttons .primary {
-      background-color: #0066ff;
-      border: none;
-    }
-
-    .features-bar {
-      background-color: rgba(0, 0, 0, 0.25);
-      border-radius: 20px;
+    .features {
+      background-color: rgba(0, 0, 0, 0.35);
       display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 24px 30px;
-      font-size: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 25px 30px;
+      border-radius: 18px;
+      font-size: 18px;
       font-weight: 400;
+      max-width: 90%;
+      margin: 0 auto;
     }
 
-    .features-bar div {
-      flex: 1;
+    .features div {
+      color: white;
+      min-width: 180px;
       text-align: center;
-      padding: 10px 0;
     }
 
     @media (max-width: 768px) {
       h1 {
-        font-size: 42px;
+        font-size: 38px;
       }
 
-      .cta-buttons {
+      .navbar {
+        flex-direction: column;
+        font-size: 18px;
+      }
+
+      .logo {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .buttons {
         flex-direction: column;
         gap: 20px;
       }
 
-      .features-bar {
-        flex-direction: column;
-        gap: 12px;
+      .features {
+        font-size: 16px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="hero-container">
-    <div class="hero-box">
-      <div class="top-bar">
-        <div class="logo">📝 SignSense</div>
-        <div class="nav-links">
-          <a href="#">Contact Us</a>
-          <a href="#">See How It Works</a>
-        </div>
+  <div class="hero">
+    <div class="navbar">
+      <div class="logo">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" alt="Logo"/>
+        SignSense
       </div>
-
-      <div class="centered-content">
-        <div class="tag">AI Review Tool</div>
-        <h1>Make Sense Of<br>What You’re Signing</h1>
-        <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
-
-        <div class="cta-buttons">
-          <button class="primary">Review Contract</button>
-          <button>Learn More</button>
-        </div>
-
-        <div class="features-bar">
-          <div>Spot risks instantly</div>
-          <div>No sign-up required</div>
-          <div>Completely private</div>
-          <div>Save money on lawyer fees</div>
-        </div>
+      <div class="nav-links">
+        <a href="#">Contact Us</a>
+        <a href="#">See How It Works</a>
       </div>
+    </div>
+
+    <div class="badge">AI Review Tool</div>
+    <h1>Make Sense Of<br/>What You’re Signing</h1>
+    <p class="subtitle">SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
+
+    <div class="buttons">
+      <button class="primary">Review Contract</button>
+      <button class="secondary">Learn More</button>
+    </div>
+
+    <div class="features">
+      <div>Spot risks instantly</div>
+      <div>No sign-up required</div>
+      <div>Completely private</div>
+      <div>Save money on lawyer fees</div>
     </div>
   </div>
 </body>
