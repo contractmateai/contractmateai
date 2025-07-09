@@ -4,199 +4,156 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      background-color: #f3f4f6;
-      font-family: 'Inter', sans-serif;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f8f9fa;
     }
 
-    .hero-wrapper {
+    .hero-container {
       width: 92vw;
       height: 92vh;
       margin: 4vh auto;
-      background: linear-gradient(to bottom right, #264e78, #7fa6c9);
-      border-radius: 20px;
-      color: white;
-      padding: 40px;
+      border-radius: 24px;
+      background: linear-gradient(90deg, #0f417a 0%, #9dc0e0 100%);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
       position: relative;
     }
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .nav {
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 20px;
+    .nav img {
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 30px;
-      font-size: 15px;
-      color: #dbeafe;
+    .nav-right {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      font-size: 1rem;
+      color: #e0e0e0;
     }
 
-    .center-content {
-      text-align: center;
-      margin-top: 60px;
+    .nav-right a {
+      margin-left: 20px;
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 500;
     }
 
     .badge {
-      display: inline-block;
-      background-color: #1f2937;
-      color: #d1d5db;
-      font-size: 13px;
-      padding: 4px 12px;
+      background-color: rgba(0,0,0,0.3);
+      padding: 6px 12px;
       border-radius: 12px;
+      font-size: 0.8rem;
       margin-bottom: 20px;
     }
 
-    .main-heading {
-      font-size: 46px;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 15px;
+    h1 {
+      font-size: 3.5rem;
+      margin: 0 0 10px;
     }
 
-    .subtext {
-      font-size: 16px;
-      color: #dbeafe;
+    .subheading {
+      font-size: 1.1rem;
+      color: #e0e0e0;
       margin-bottom: 30px;
     }
 
     .buttons {
       display: flex;
-      justify-content: center;
       gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .buttons button {
-      padding: 12px 28px;
-      font-size: 16px;
-      border-radius: 25px;
-      border: 2px solid white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .buttons .primary {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-    }
-
-    .buttons .primary:hover {
-      background-color: #1d4ed8;
-    }
-
-    .buttons .secondary {
-      background: transparent;
-      color: white;
-    }
-
-    .bottom-features {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      background-color: rgba(0, 0, 0, 0.2);
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      color: #f1f5f9;
       margin-bottom: 30px;
     }
 
-    .right-sidebar {
-      position: absolute;
-      right: 30px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .buttons button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
     }
 
-    .circle {
-      width: 14px;
-      height: 14px;
+    .primary {
+      background: #005fff;
+      color: white;
+    }
+
+    .secondary {
+      background: transparent;
       border: 2px solid white;
-      border-radius: 50%;
-      opacity: 0.5;
+      color: white;
     }
 
-    .circle.active {
-      opacity: 1;
-      background-color: white;
+    .features {
+      display: flex;
+      gap: 20px;
+      font-size: 0.9rem;
+      background-color: rgba(0,0,0,0.2);
+      border-radius: 20px;
+      padding: 12px 24px;
+    }
+
+    .features div {
+      color: white;
     }
 
     @media (max-width: 768px) {
-      .main-heading {
-        font-size: 32px;
+      h1 {
+        font-size: 2.2rem;
       }
 
       .buttons {
         flex-direction: column;
       }
 
-      .right-sidebar {
-        display: none;
+      .features {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
 </head>
 <body>
-  <div class="hero-wrapper">
-    <div class="top-bar">
-      <div class="logo">
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" width="26" />
-        <span>SignSense</span>
-      </div>
-      <div class="nav-links">
-        <span>Contact Us</span>
-        <span>See How It Works</span>
-      </div>
+  <div class="hero-container">
+    <div class="nav">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Document_icon.svg" alt="Logo">
+      SignSense
     </div>
-
-    <div class="center-content">
-      <div class="badge">AI Review Tool</div>
-      <div class="main-heading">Make Sense Of<br/>What You’re Signing</div>
-      <div class="subtext">SignSense instantly clarifies contracts for law firms, freelancers, students & more.</div>
-      <div class="buttons">
-        <button class="primary">Review Contract</button>
-        <button class="secondary">Learn More</button>
-      </div>
-      <div class="bottom-features">
-        <div>Spot risks instantly</div>
-        <div>No sign-up required</div>
-        <div>Completely private</div>
-        <div>Save money on lawyer fees</div>
-      </div>
+    <div class="nav-right">
+      <a href="#">Contact Us</a>
+      <a href="#">See How It Works</a>
     </div>
-
-    <div class="right-sidebar">
-      <div class="circle active"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
+    <div class="badge">AI Review Tool</div>
+    <h1>Make Sense Of<br>What You’re Signing</h1>
+    <div class="subheading">SignSense instantly clarifies contracts for law firms, freelancers, students & more.</div>
+    <div class="buttons">
+      <button class="primary">Review Contract</button>
+      <button class="secondary">Learn More</button>
+    </div>
+    <div class="features">
+      <div>Spot risks instantly</div>
+      <div>No sign-up required</div>
+      <div>Completely private</div>
+      <div>Save money on lawyer fees</div>
     </div>
   </div>
 </body>
