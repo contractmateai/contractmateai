@@ -4,299 +4,229 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SignSense – AI Contract Review</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" type="image/png">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #c9d6ff, #e2e2e2);
-      color: #0b0b0f;
+      background: linear-gradient(to bottom, #cee6ff, #002740, #cee6ff);
+      color: #fff;
+      min-height: 100vh;
       overflow-x: hidden;
     }
     header {
-      background: transparent;
-      padding: 20px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 24px 40px;
     }
-    header .logo {
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
       display: flex;
       align-items: center;
-      text-decoration: none;
-      color: #000;
+      color: white;
     }
-    header img { height: 40px; margin-right: 10px; }
+    .logo img {
+      height: 40px;
+      margin-right: 10px;
+    }
     nav a {
       margin-left: 28px;
       text-decoration: none;
-      color: #444;
-      font-weight: 500;
+      color: #ccc;
       font-size: 16px;
     }
     .hero {
       text-align: center;
-      padding: 80px 20px 60px;
-      background: linear-gradient(135deg, #a2b6df, #cedbea);
-      border-radius: 24px;
-      margin: 0 16px;
+      padding: 80px 20px;
     }
     .hero h1 {
-      font-size: 40px;
-      font-weight: 700;
-      color: #0b0b0f;
-      margin-bottom: 20px;
+      font-size: 56px;
+      font-weight: 600;
+      margin-bottom: 16px;
     }
     .hero p {
-      font-size: 18px;
-      color: #333;
-      max-width: 600px;
-      margin: auto;
+      font-size: 20px;
+      color: #ccc;
       margin-bottom: 40px;
     }
-    .badge {
+    .hero .badge {
+      background: #1e2a38;
       display: inline-block;
-      background: #2f2f2f;
-      color: #fff;
       padding: 6px 14px;
       border-radius: 20px;
-      margin-bottom: 16px;
       font-size: 14px;
+      margin-bottom: 16px;
     }
-    .buttons {
+    .hero .cta-buttons {
       display: flex;
       justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
     }
-    .buttons button {
-      padding: 14px 24px;
-      border-radius: 28px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
+    .hero .cta-buttons a {
+      padding: 14px 28px;
+      font-size: 18px;
+      border-radius: 30px;
+      text-decoration: none;
     }
-    .blue-btn {
-      background: #007bff;
+    .btn-primary {
+      background-color: #007aff;
       color: white;
     }
-    .gray-btn {
-      background: #444;
+    .btn-outline {
+      border: 2px solid white;
       color: white;
     }
     .features-bar {
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin: 40px auto;
       flex-wrap: wrap;
-      max-width: 900px;
+      margin: 0 10% 60px;
     }
-    .features-bar div {
-      background: #1f2c3c;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 16px;
-      font-size: 14px;
+    .features-bar span {
+      margin: 10px 20px;
+      font-size: 16px;
+      color: #eee;
     }
     section {
       padding: 60px 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    iframe {
-      width: 100%;
-      height: 440px;
-      border-radius: 16px;
-      box-shadow: 0 0 16px rgba(0,0,0,0.2);
-    }
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      margin-top: 32px;
-    }
-    .info-grid div {
-      background: #f0f0f0;
-      padding: 20px;
-      border-radius: 14px;
-      font-size: 16px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .info-grid img { width: 28px; }
-    .testimonial {
-      background: #e8edf6;
-      padding: 20px;
-      border-radius: 12px;
-      font-style: italic;
-    }
-    .faq-item {
-      background: #f4f4f4;
-      margin-bottom: 10px;
-      padding: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .faq-item.open { background: #ddeaff; }
-    .faq-item p { margin-top: 10px; }
-    footer {
-      background: #0b0b0f;
-      color: #ccc;
-      padding: 40px 20px 20px;
       text-align: center;
     }
-    footer .icons img {
-      height: 32px;
-      margin: 0 12px;
-      border-radius: 6px;
+    h2 {
+      font-size: 36px;
+      margin-bottom: 40px;
     }
-    input[type="file"] { display: none; }
-    #uploadLabel {
-      padding: 14px 24px;
-      background: #007bff;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: rgba(255,255,255,0.08);
+      padding: 20px;
+      border-radius: 16px;
       color: white;
-      border-radius: 28px;
-      font-size: 16px;
-      cursor: pointer;
+    }
+    .faq .card {
+      text-align: left;
+    }
+    footer {
+      padding: 60px 20px;
+      text-align: center;
+      color: #ccc;
+    }
+    .footer-icons {
+      margin: 20px 0;
+    }
+    .footer-icons img {
+      height: 32px;
+      margin: 0 14px;
+      border-radius: 8px;
+    }
+    .footer-links a {
+      color: #ccc;
+      margin: 0 12px;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
+  <header>
+    <div class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" alt="logo">
+      SignSense
+    </div>
+    <nav>
+      <a href="contact.html">Contact Us</a>
+      <a href="#how">See How It Works</a>
+    </nav>
+  </header>
 
-<header>
-  <a href="index.html" class="logo">
-    <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" />
-    <strong>SignSense</strong>
-  </a>
-  <nav>
-    <a href="contact.html">Contact Us</a>
-    <a href="#how">See How It Works</a>
-  </nav>
-</header>
+  <section class="hero">
+    <div class="badge">AI Review Tool</div>
+    <h1>Make Sense Of<br>What You’re Signing</h1>
+    <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
+    <div class="cta-buttons">
+      <a class="btn-primary" href="#upload">Review Contract</a>
+      <a class="btn-outline" href="#how">Learn More</a>
+    </div>
+    <div class="features-bar">
+      <span>Spot risks instantly</span>
+      <span>No sign-up required</span>
+      <span>Completely private</span>
+      <span>Save money on lawyer fees</span>
+    </div>
+  </section>
 
-<div class="hero">
-  <div class="badge">AI Review Tool</div>
-  <h1>Make Sense Of What You’re Signing</h1>
-  <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
-  <div class="buttons">
-    <label id="uploadLabel" for="fileInput">Review Contract</label>
-    <button class="gray-btn" onclick="window.location.href='contact.html'">Get In Touch</button>
-  </div>
-</div>
+  <section id="how">
+    <h2>See How It Works</h2>
+    <iframe width="720" height="400" style="border-radius: 20px; border: none;" src="" allowfullscreen></iframe>
+  </section>
 
-<div class="features-bar">
-  <div>Spot risks instantly</div>
-  <div>No sign-up required</div>
-  <div>Completely private</div>
-  <div>Save money on lawyer fees</div>
-</div>
+  <section>
+    <h2>Your Data Stays Yours</h2>
+    <div class="grid">
+      <div class="card">No storage. No tracking. No third parties.</div>
+      <div class="card">All data is encrypted automatically for your safety.</div>
+      <div class="card">What you upload is analyzed securely, then deleted instantly.</div>
+      <div class="card">There are no hidden fees or subscriptions.</div>
+    </div>
+  </section>
 
-<section id="how">
-  <h2 style="text-align: center; font-size: 26px; margin-bottom: 20px;">See How It Works</h2>
-  <iframe src="https://www.youtube.com/embed/placeholder" title="SignSense Demo"></iframe>
-</section>
+  <section>
+    <h2>What Our Users Say</h2>
+    <div class="grid">
+      <div class="card">
+        "Love the clean interface and how easy it is to upload and get results. Especially appreciate the privacy-first approach."<br><br>
+        <b>Tomasz K.</b><br> SaaS Startup Founder
+      </div>
+      <div class="card">
+        "I tested it on a real client agreement and it spotted two risky clauses I hadn’t noticed. I trust this more than most human reviews."<br><br>
+        <b>Soren M.</b><br> Data Privacy Advisor
+      </div>
+    </div>
+    <div style="margin-top: 32px;">
+      <a href="#" class="btn-outline">Leave A Review</a>
+    </div>
+  </section>
 
-<section>
-  <h2 style="text-align: center;">Your Data Stays Yours</h2>
-  <div class="info-grid">
-    <div><img src="https://cdn-icons-png.flaticon.com/128/2038/2038854.png" /> No storage. No tracking. No third parties.</div>
-    <div><img src="https://cdn-icons-png.flaticon.com/128/2659/2659360.png" /> All data is encrypted automatically for your safety.</div>
-    <div><img src="https://cdn-icons-png.flaticon.com/128/565/565547.png" /> What you upload is analyzed securely, then deleted instantly.</div>
-    <div><img src="https://cdn-icons-png.flaticon.com/128/942/942748.png" /> There are no hidden fees or subscriptions.</div>
-  </div>
-</section>
+  <section class="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="grid">
+      <div class="card">
+        <b>What languages do you support?</b><br>
+        We currently support English, German, French, Italian, Dutch, Romanian and Albanian. More coming soon!
+      </div>
+      <div class="card">
+        <b>Is SignSense legally binding or a replacement for a lawyer?</b><br>
+        No. It provides AI insights but is not a substitute for legal advice.
+      </div>
+      <div class="card">
+        <b>Can I upload a photo of a contract instead of a PDF?</b><br>
+        Yes, photos (JPG/PNG) are supported as well.
+      </div>
+    </div>
+  </section>
 
-<section>
-  <h2 style="text-align:center;">What Our Users Say</h2>
-  <div class="info-grid" style="margin-top: 30px;">
-    <div class="testimonial">"Love the clean interface and how easy it is to upload and get results. Especially appreciate the privacy-first approach."<br><br><strong>Tomasz K.</strong><br>SaaS Startup Founder</div>
-    <div class="testimonial">"I tested it on a real client agreement and it spotted two risky clauses I hadn’t noticed. I trust this more than most human reviews."<br><br><strong>Soren M.</strong><br>Data Privacy Advisor</div>
-    <div class="testimonial">"A powerful tool for reviewing agreements quickly. I wish it had more customization, but it’s super helpful overall."<br><br><strong>Nina L.</strong><br>Freelance Legal Consultant</div>
-  </div>
-  <div style="text-align:center; margin-top:20px;">
-    <button class="gray-btn" onclick="window.location.href='https://forms.gle/your-review'">Leave A Review</button>
-  </div>
-</section>
-
-<section>
-  <h2 style="text-align:center;">Frequently Asked Questions</h2>
-  <div class="faq-item" onclick="this.classList.toggle('open')">
-    <strong>What languages do you support?</strong>
-    <p style="display:none;">We currently support English, German, French, Italian, Dutch, Romanian and Albanian. More coming soon!</p>
-  </div>
-  <div class="faq-item" onclick="this.classList.toggle('open')">
-    <strong>Is SignSense legally binding or a replacement for a lawyer?</strong>
-    <p style="display:none;">No. SignSense provides insights, not legal advice or binding interpretation. Always consult a lawyer if unsure.</p>
-  </div>
-  <div class="faq-item" onclick="this.classList.toggle('open')">
-    <strong>Can I upload a photo of a contract instead of a PDF?</strong>
-    <p style="display:none;">Not yet. Currently, only PDF files are supported.</p>
-  </div>
-</section>
-
-<footer>
-  <p>Not legal advice. For informational use only.</p>
-  <div class="icons" style="margin: 16px 0;">
-    <img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" />
-    <img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" />
-    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" />
-  </div>
-  <p style="font-size: 14px;">© SignSense 2025 | <a href="contact.html" style="color:#ccc;">Contact</a> | <a href="privacy.html" style="color:#ccc;">Privacy Policy</a></p>
-</footer>
-
-<input type="file" id="fileInput" accept=".pdf" />
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-<script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js";
-
-  document.getElementById("fileInput").addEventListener("change", async function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const pdfData = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-    let text = "";
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      const pageText = content.items.map(item => item.str).join(" ");
-      text += pageText + "\n";
-    }
-
-    const response = await fetch("/api/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text })
-    });
-
-    const result = await response.json();
-
-    if (result.error) {
-      alert("Error: " + result.error);
-      return;
-    }
-
-    localStorage.setItem("summary", result.summary || "");
-    localStorage.setItem("risk", result.risk || 0);
-    localStorage.setItem("clarity", result.clarity || 0);
-    localStorage.setItem("compliance", result.compliance || 0);
-    localStorage.setItem("keyClauses", JSON.stringify(result.keyClauses || []));
-    localStorage.setItem("potentialIssues", JSON.stringify(result.potentialIssues || []));
-    localStorage.setItem("smartSuggestions", JSON.stringify(result.smartSuggestions || []));
-    window.location.href = "analysis.html";
-  });
-
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const p = item.querySelector('p');
-      p.style.display = p.style.display === 'block' ? 'none' : 'block';
-    });
-  });
-</script>
+  <footer>
+    <p>Not legal advice. For informational use only.</p>
+    <div class="footer-icons">
+      <a href="#"><img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" alt="Instagram"></a>
+      <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="X"></a>
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
+    </div>
+    <div class="footer-links">
+      © SignSense 2025 &nbsp; | &nbsp;
+      <a href="contact.html">Contact</a> &nbsp; | &nbsp;
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </footer>
 </body>
 </html>
