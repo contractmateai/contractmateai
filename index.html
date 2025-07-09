@@ -15,69 +15,79 @@
       height: 100vh;
     }
 
-    .gradient-box {
+    .box {
       width: 80vw;
-      max-width: 1300px;
-      padding: 60px;
+      max-width: 1200px;
+      padding: 80px 60px;
+      border-radius: 12px;
       background: radial-gradient(circle at center, #062d4d 0%, #b1cde0 100%);
       color: white;
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
 
     .logo {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 30px;
     }
 
     .nav-links {
       display: flex;
-      gap: 50px;
-      font-size: 1.2rem;
+      gap: 40px;
+      font-size: 1rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
     }
 
     .tag {
       display: inline-block;
-      padding: 8px 18px;
+      padding: 6px 16px;
       background: #1d2d3b;
       border-radius: 20px;
-      font-size: 1rem;
-      margin-bottom: 25px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
     }
 
     h1 {
-      font-size: 4.2rem;
+      font-size: 3.8rem;
       line-height: 1.2;
       font-weight: 700;
       margin: 0;
     }
 
     p {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       color: #c5d4e0;
-      margin: 25px 0 50px;
+      margin: 20px 0 40px;
     }
 
     .cta-buttons {
       display: flex;
       justify-content: center;
       gap: 25px;
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
 
     .cta-buttons button {
-      font-size: 1.3rem;
-      padding: 18px 36px;
+      font-size: 1.1rem;
+      padding: 16px 36px;
       border-radius: 30px;
       cursor: pointer;
       font-weight: 600;
@@ -99,24 +109,19 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 35px;
-      background: rgba(0, 0, 0, 0.2);
+      gap: 40px;
+      background: rgba(0,0,0,0.2);
       border-radius: 16px;
       padding: 18px 30px;
-      font-size: 1.1rem;
-    }
-
-    a {
-      color: white;
-      text-decoration: none;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="gradient-box">
+  <div class="box">
     <div class="top-bar">
       <div class="logo">
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" width="36"/>
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" />
         SignSense
       </div>
       <div class="nav-links">
@@ -127,9 +132,13 @@
 
     <div class="tag">AI Review Tool</div>
 
-    <h1>Make Sense Of<br />What You’re Signing</h1>
-
-    <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
+    <h1>
+      Make Sense Of<br />
+      What You’re Signing
+    </h1>
+    <p>
+      SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+    </p>
 
     <div class="cta-buttons">
       <button class="review-btn">Review Contract</button>
