@@ -8,20 +8,22 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at center, #062d4d 0%, #b1cde0 100%);
+      background: white;
       color: white;
-      height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .container {
-      width: 95%;
-      max-width: 1800px;
+    .gradient-box {
+      background: radial-gradient(circle at center, #062d4d 0%, #b1cde0 100%);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 1400px;
       padding: 80px;
-      background: transparent;
       text-align: center;
+      box-shadow: 0 0 60px rgba(0,0,0,0.1);
     }
 
     .top-bar {
@@ -133,7 +135,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="gradient-box">
     <div class="top-bar">
       <div class="logo">
         <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" width="40"/>
