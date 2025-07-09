@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SignSense</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignSense – AI Contract Review</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,86 +16,97 @@
       background-color: #ffffff;
     }
 
+    .main-container {
+      max-width: 1300px;
+      margin: 40px auto;
+      padding: 60px;
+      min-height: 90vh;
+      border-radius: 36px;
+      background: radial-gradient(circle at center, #002740 0%, #cee6ff 100%);
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 40px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     header {
-      padding: 30px 60px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 50px;
     }
 
     .logo {
-      font-size: 30px;
+      font-size: 34px;
       font-weight: 600;
-      color: #002740;
+      color: white;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo::before {
+      content: "📄";
+      font-size: 32px;
+      margin-right: 12px;
     }
 
     nav a {
       margin-left: 40px;
-      color: #4a4a4a;
+      color: #f0f0f0;
       text-decoration: none;
       font-weight: 500;
-      font-size: 18px;
-    }
-
-    .main-container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 80px 60px;
-      border-radius: 32px;
-      background: radial-gradient(circle at center, #002740 0%, #cee6ff 100%);
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 40px rgba(0,0,0,0.05);
+      font-size: 20px;
     }
 
     .badge {
       display: inline-block;
       background-color: #2e3b46;
-      padding: 8px 18px;
+      padding: 10px 20px;
       border-radius: 999px;
-      font-size: 16px;
-      margin-bottom: 24px;
+      font-size: 18px;
+      margin-bottom: 26px;
     }
 
     h1 {
-      font-size: 68px;
+      font-size: 72px;
       line-height: 1.25;
       font-weight: 700;
       margin-bottom: 20px;
     }
 
     .subtitle {
-      font-size: 20px;
+      font-size: 22px;
       color: #cbd9e4;
-      margin-top: 10px;
-      margin-bottom: 40px;
+      margin-bottom: 45px;
     }
 
     .buttons {
       display: flex;
       justify-content: center;
-      gap: 30px;
-      margin-bottom: 50px;
+      gap: 40px;
+      margin-bottom: 60px;
     }
 
     .primary-btn {
       background: #0075ff;
       color: white;
-      padding: 18px 36px;
-      border-radius: 40px;
+      padding: 20px 50px;
+      border-radius: 50px;
       border: none;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 600;
       cursor: pointer;
     }
 
     .secondary-btn {
-      padding: 17px 35px;
-      border-radius: 40px;
+      padding: 19px 48px;
+      border-radius: 50px;
       border: 2px solid #b6ccdd;
       background: transparent;
       color: #e1e7f0;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 500;
       cursor: pointer;
     }
@@ -105,33 +116,33 @@
       padding: 24px 20px;
       display: flex;
       justify-content: center;
-      gap: 60px;
+      gap: 50px;
       border-radius: 20px;
-      font-size: 18px;
+      font-size: 20px;
       color: #dee8f1;
       flex-wrap: wrap;
-    }
-
-    .bottom-features span {
-      white-space: nowrap;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">📄 SignSense</div>
-    <nav>
-      <a href="#">Contact Us</a>
-      <a href="#">See How It Works</a>
-    </nav>
-  </header>
-
   <section class="main-container">
+    <header>
+      <div class="logo">SignSense</div>
+      <nav>
+        <a href="#">Contact Us</a>
+        <a href="#">See How It Works</a>
+      </nav>
+    </header>
+
     <div class="badge">AI Review Tool</div>
+
     <h1>Make Sense Of<br>What You’re Signing</h1>
-    <div class="subtitle">SignSense instantly clarifies contracts for law firms, freelancers, students & more.</div>
-    
+
+    <div class="subtitle">
+      SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+    </div>
+
     <div class="buttons">
       <button class="primary-btn">Review Contract</button>
       <button class="secondary-btn">Learn More</button>
