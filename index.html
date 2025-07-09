@@ -7,9 +7,8 @@
   <style>
     body {
       margin: 0;
+      background-color: white;
       font-family: 'Inter', sans-serif;
-      background: white;
-      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,13 +16,14 @@
     }
 
     .gradient-box {
+      width: 85vw;
+      max-width: 1200px;
+      padding: 60px 40px;
+      border-radius: 16px;
       background: radial-gradient(circle at center, #062d4d 0%, #b1cde0 100%);
-      border-radius: 20px;
-      width: 90%;
-      max-width: 1400px;
-      padding: 80px;
+      color: white;
       text-align: center;
-      box-shadow: 0 0 60px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     }
 
     .top-bar {
@@ -31,40 +31,50 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 60px;
+      font-size: 1.2rem;
     }
 
     .logo {
-      font-size: 2.6rem;
-      font-weight: 600;
+      font-size: 2.5rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+    }
+
+    .logo img {
+      width: 36px;
     }
 
     .nav-links {
       display: flex;
-      gap: 60px;
-      font-size: 1.4rem;
+      gap: 40px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 400;
     }
 
     .tag {
       display: inline-block;
-      padding: 10px 22px;
+      padding: 8px 18px;
       background: #1d2d3b;
       border-radius: 20px;
-      font-size: 1.1rem;
-      margin-bottom: 30px;
+      font-size: 1rem;
+      margin-bottom: 25px;
     }
 
     h1 {
-      font-size: 5rem;
-      line-height: 1.2;
+      font-size: 4rem;
       font-weight: 700;
+      line-height: 1.2;
       margin: 0;
     }
 
     p {
-      font-size: 1.7rem;
+      font-size: 1.4rem;
       color: #c5d4e0;
       margin: 25px 0 50px;
     }
@@ -72,14 +82,14 @@
     .cta-buttons {
       display: flex;
       justify-content: center;
-      gap: 40px;
-      margin-bottom: 60px;
+      gap: 24px;
+      margin-bottom: 50px;
     }
 
     .cta-buttons button {
-      font-size: 1.6rem;
-      padding: 20px 44px;
-      border-radius: 40px;
+      font-size: 1.3rem;
+      padding: 18px 36px;
+      border-radius: 32px;
       cursor: pointer;
       font-weight: 600;
     }
@@ -100,37 +110,11 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 50px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 20px;
-      padding: 20px 40px;
-      font-size: 1.2rem;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2.6rem;
-      }
-
-      .top-bar {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .nav-links {
-        gap: 20px;
-        font-size: 1rem;
-      }
-
-      .cta-buttons {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .feature-bar {
-        flex-direction: column;
-        gap: 16px;
-      }
+      gap: 40px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 18px 32px;
+      border-radius: 14px;
+      font-size: 1rem;
     }
   </style>
 </head>
@@ -138,12 +122,12 @@
   <div class="gradient-box">
     <div class="top-bar">
       <div class="logo">
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" width="40"/>
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/document--v1.png" alt="Logo" />
         SignSense
       </div>
       <div class="nav-links">
-        <a href="#" style="color: white; text-decoration: none;">Contact Us</a>
-        <a href="#" style="color: white; text-decoration: none;">See How It Works</a>
+        <a href="#">Contact Us</a>
+        <a href="#">See How It Works</a>
       </div>
     </div>
 
