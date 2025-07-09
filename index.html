@@ -12,15 +12,15 @@
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background: #f8f9fa;
+      background: #f5f7fa;
     }
 
     .hero-container {
-      width: 92vw;
+      width: 96vw;
       height: 92vh;
       margin: 4vh auto;
       border-radius: 24px;
-      background: linear-gradient(90deg, #0f417a 0%, #9dc0e0 100%);
+      background: radial-gradient(circle at center, #002740 0%, #cee6ff 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -28,73 +28,78 @@
       color: white;
       text-align: center;
       position: relative;
+      padding: 40px;
     }
 
     .nav {
       position: absolute;
       top: 40px;
       left: 40px;
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: bold;
+      display: flex;
+      align-items: center;
     }
 
     .nav img {
-      height: 24px;
-      vertical-align: middle;
-      margin-right: 8px;
+      height: 30px;
+      margin-right: 10px;
     }
 
     .nav-right {
       position: absolute;
       top: 40px;
       right: 40px;
-      font-size: 1rem;
+      font-size: 1.2rem;
       color: #e0e0e0;
     }
 
     .nav-right a {
-      margin-left: 20px;
+      margin-left: 30px;
       color: #e0e0e0;
       text-decoration: none;
       font-weight: 500;
     }
 
     .badge {
-      background-color: rgba(0,0,0,0.3);
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      margin-bottom: 20px;
+      background-color: rgba(0,0,0,0.4);
+      padding: 8px 16px;
+      border-radius: 16px;
+      font-size: 1rem;
+      margin-bottom: 30px;
     }
 
     h1 {
-      font-size: 3.5rem;
-      margin: 0 0 10px;
+      font-size: 4.2rem;
+      margin: 0 0 20px;
+      line-height: 1.2;
     }
 
     .subheading {
-      font-size: 1.1rem;
-      color: #e0e0e0;
-      margin-bottom: 30px;
+      font-size: 1.4rem;
+      color: #d0d8e0;
+      margin-bottom: 40px;
+      max-width: 800px;
     }
 
     .buttons {
       display: flex;
-      gap: 20px;
-      margin-bottom: 30px;
+      gap: 30px;
+      margin-bottom: 40px;
     }
 
     .buttons button {
-      padding: 12px 24px;
-      font-size: 1rem;
-      border-radius: 30px;
+      padding: 18px 36px;
+      font-size: 1.3rem;
+      border-radius: 40px;
       border: none;
       cursor: pointer;
     }
 
     .primary {
-      background: #005fff;
+      background: #0072ff;
       color: white;
+      font-weight: bold;
     }
 
     .secondary {
@@ -105,24 +110,26 @@
 
     .features {
       display: flex;
-      gap: 20px;
-      font-size: 0.9rem;
-      background-color: rgba(0,0,0,0.2);
-      border-radius: 20px;
-      padding: 12px 24px;
+      gap: 30px;
+      font-size: 1.1rem;
+      background-color: rgba(0,0,0,0.25);
+      border-radius: 24px;
+      padding: 14px 36px;
     }
 
     .features div {
       color: white;
+      white-space: nowrap;
     }
 
     @media (max-width: 768px) {
       h1 {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
       }
 
       .buttons {
         flex-direction: column;
+        gap: 20px;
       }
 
       .features {
