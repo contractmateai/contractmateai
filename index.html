@@ -24,37 +24,10 @@
       margin: 2vh auto;
       padding: 40px 60px;
       border-radius: 20px;
-      position: relative;
-      overflow: hidden;
+      background: radial-gradient(circle at center, #002740, #cee6ff);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-    }
-
-    /* 👇 Dark overlay */
-    .overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-
-    .hero video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-    }
-
-    .topbar,
-    .main,
-    .facts {
-      position: relative;
-      z-index: 2;
     }
 
     .topbar {
@@ -195,16 +168,6 @@
 </head>
 <body>
   <div class="hero">
-    <!-- 🎥 Background Video -->
-    <video autoplay loop muted playsinline>
-      <source src="https://player.vimeo.com/external/875692417.sd.mp4?s=640b51d7d1a045b88f52c8fbbdc63d9a0dff5f6c&profile_id=165&oauth2_token_id=57447761" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-
-    <!-- 🔲 Dark overlay -->
-    <div class="overlay"></div>
-
-    <!-- 🔤 Content -->
     <div class="topbar">
       <div class="logo">SignSense</div>
       <div class="nav">
@@ -215,4 +178,22 @@
 
     <div class="main">
       <div class="tag">AI Review Tool</div>
-      <h1>Make Sense Of<br>What
+      <h1>Make Sense Of<br>What You’re Signing</h1>
+      <div class="subtitle">
+        SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+      </div>
+      <div class="buttons">
+        <button class="primary">Review Contract</button>
+        <button class="secondary">Learn More</button>
+      </div>
+    </div>
+
+    <div class="facts">
+      <div>Spot risks instantly</div>
+      <div>No sign-up required</div>
+      <div>Completely private</div>
+      <div>Save money on lawyer fees</div>
+    </div>
+  </div>
+</body>
+</html>
