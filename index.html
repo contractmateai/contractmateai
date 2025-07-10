@@ -31,6 +31,15 @@
       justify-content: space-between;
     }
 
+    /* 👇 Dark overlay */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
     .hero video {
       position: absolute;
       top: 0;
@@ -186,11 +195,24 @@
 </head>
 <body>
   <div class="hero">
-    <!-- 🎥 Working direct video -->
+    <!-- 🎥 Background Video -->
     <video autoplay loop muted playsinline>
       <source src="https://player.vimeo.com/external/875692417.sd.mp4?s=640b51d7d1a045b88f52c8fbbdc63d9a0dff5f6c&profile_id=165&oauth2_token_id=57447761" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
 
+    <!-- 🔲 Dark overlay -->
+    <div class="overlay"></div>
+
+    <!-- 🔤 Content -->
     <div class="topbar">
       <div class="logo">SignSense</div>
+      <div class="nav">
+        <span>Contact Us</span>
+        <span>See How It Works</span>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="tag">AI Review Tool</div>
+      <h1>Make Sense Of<br>What
