@@ -19,15 +19,33 @@
     }
 
     .hero {
+      position: relative;
       width: 96vw;
       height: 90vh;
       margin: 2vh auto;
       padding: 40px 60px;
       border-radius: 20px;
-      background: radial-gradient(circle at center, #002740, #cee6ff);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    }
+
+    .hero video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .topbar,
+    .main,
+    .facts {
+      position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -168,6 +186,11 @@
 </head>
 <body>
   <div class="hero">
+    <!-- Video background only, no overlay -->
+    <video autoplay loop muted playsinline>
+      <source src="https://player.vimeo.com/external/875692417.sd.mp4?s=640b51d7d1a045b88f52c8fbbdc63d9a0dff5f6c&profile_id=165&oauth2_token_id=57447761" type="video/mp4" />
+    </video>
+
     <div class="topbar">
       <div class="logo">SignSense</div>
       <div class="nav">
