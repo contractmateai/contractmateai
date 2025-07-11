@@ -14,23 +14,13 @@
     }
 
     body {
-      background-color: #000;
+      background-color: #f4f6fc;
       color: white;
-      position: relative;
       overflow: hidden;
     }
 
-    video.bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: -1;
-    }
-
     .hero {
+      position: relative;
       width: 96vw;
       height: 90vh;
       margin: 2vh auto;
@@ -39,7 +29,23 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background-color: rgba(0, 0, 0, 0.4); /* slight dark overlay */
+      overflow: hidden;
+    }
+
+    .hero video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -179,41 +185,39 @@
   </style>
 </head>
 <body>
-
-  <!-- ✅ Video background -->
-  <video autoplay muted loop playsinline class="bg-video">
-    <source src="https://github.com/contractmateai/contractmateai/raw/2bf1662638cf850ac063aa6aaf0f0161e1c90717/9695ff4c-1a1b-48c5-a644-463f4f190c32.mp4" type="video/mp4">
-  </video>
-
-  <!-- ✅ Hero content -->
   <div class="hero">
-    <div class="topbar">
-      <div class="logo">SignSense</div>
-      <div class="nav">
-        <span>Contact Us</span>
-        <span>See How It Works</span>
-      </div>
-    </div>
+    <video autoplay muted loop playsinline>
+      <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
+    </video>
 
-    <div class="main">
-      <div class="tag">AI Review Tool</div>
-      <h1>Make Sense Of<br>What You’re Signing</h1>
-      <div class="subtitle">
-        SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+    <div class="content">
+      <div class="topbar">
+        <div class="logo">SignSense</div>
+        <div class="nav">
+          <span>Contact Us</span>
+          <span>See How It Works</span>
+        </div>
       </div>
-      <div class="buttons">
-        <button class="primary">Review Contract</button>
-        <button class="secondary">Learn More</button>
-      </div>
-    </div>
 
-    <div class="facts">
-      <div>Spot risks instantly</div>
-      <div>No sign-up required</div>
-      <div>Completely private</div>
-      <div>Save money on lawyer fees</div>
+      <div class="main">
+        <div class="tag">AI Review Tool</div>
+        <h1>Make Sense Of<br>What You’re Signing</h1>
+        <div class="subtitle">
+          SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+        </div>
+        <div class="buttons">
+          <button class="primary">Review Contract</button>
+          <button class="secondary">Learn More</button>
+        </div>
+      </div>
+
+      <div class="facts">
+        <div>Spot risks instantly</div>
+        <div>No sign-up required</div>
+        <div>Completely private</div>
+        <div>Save money on lawyer fees</div>
+      </div>
     </div>
   </div>
-
 </body>
 </html>
