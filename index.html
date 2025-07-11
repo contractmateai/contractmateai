@@ -14,19 +14,20 @@
     }
 
     body {
-      background-color: #f4f6fc;
+      background-color: #000;
       color: white;
+      position: relative;
       overflow: hidden;
     }
 
-    .video-bg {
+    video.bg-video {
       position: fixed;
       top: 0;
       left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
+      z-index: -1;
     }
 
     .hero {
@@ -38,7 +39,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: transparent;
+      background-color: rgba(0, 0, 0, 0.4); /* slight dark overlay */
     }
 
     .topbar {
@@ -179,13 +180,12 @@
 </head>
 <body>
 
-  <!-- 🔁 Video Background -->
-  <video autoplay loop muted playsinline class="video-bg">
-    <source src="signsense-background.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+  <!-- ✅ Video background -->
+  <video autoplay muted loop playsinline class="bg-video">
+    <source src="https://github.com/contractmateai/contractmateai/raw/2bf1662638cf850ac063aa6aaf0f0161e1c90717/9695ff4c-1a1b-48c5-a644-463f4f190c32.mp4" type="video/mp4">
   </video>
 
-  <!-- 🔹 Content -->
+  <!-- ✅ Hero content -->
   <div class="hero">
     <div class="topbar">
       <div class="logo">SignSense</div>
