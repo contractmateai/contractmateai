@@ -157,26 +157,26 @@
 
     .flags-wrapper {
       overflow: hidden;
-      width: 100%;
       position: relative;
+      width: 100%;
     }
 
-    .flags-track {
+    .flags-scroll {
       display: inline-block;
       white-space: nowrap;
-      animation: scrollFlags 40s linear infinite;
+      animation: scrollFlags 60s linear infinite;
     }
 
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 60px;
+      margin: 0 50px;
       vertical-align: middle;
     }
 
     @keyframes scrollFlags {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
     }
 
     @media (max-width: 768px) {
@@ -225,12 +225,13 @@
     </div>
   </section>
 
-  <!-- Language Flags -->
+  <!-- Flags -->
   <div class="language-section">
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
-      <div class="flags-track">
-        <!-- One loop -->
+      <div class="flags-scroll">
+        <!-- Repeat all flags twice for infinite loop illusion -->
+        <!-- English, German, Dutch, Italian, French, Romanian, Albanian -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
@@ -238,6 +239,7 @@
         <img src="https://flagcdn.com/fr.svg" class="flag" alt="France">
         <img src="https://flagcdn.com/ro.svg" class="flag" alt="Romania">
         <img src="https://flagcdn.com/al.svg" class="flag" alt="Albania">
+        <!-- New: Spanish, Portuguese, Chinese, Hindi, Japanese, Turkish -->
         <img src="https://flagcdn.com/es.svg" class="flag" alt="Spain">
         <img src="https://flagcdn.com/pt.svg" class="flag" alt="Portugal">
         <img src="https://flagcdn.com/cn.svg" class="flag" alt="China">
@@ -245,7 +247,7 @@
         <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
         <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
 
-        <!-- Repeat loop (duplicate for seamless scroll) -->
+        <!-- Repeat again for smooth loop -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
