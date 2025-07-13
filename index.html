@@ -4,249 +4,257 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
     }
 
     body {
+      font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at 50% 50%, #002740, #cee6ff);
-      color: white;
       overflow-x: hidden;
     }
 
-    .topbar {
-      position: fixed;
-      top: 0;
+    /* Top bar */
+    .top-bar {
+      position: absolute;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 95vw;
-      background: rgba(0, 0, 0, 0.82);
+      width: 90%;
+      max-width: 1100px;
+      background-color: rgba(0, 0, 0, 0.82);
       border-radius: 22px;
       border: 1px solid #3b3b3b;
-      padding: 14px 30px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      z-index: 10;
+      justify-content: space-between;
+      padding: 12px 25px;
+      z-index: 1000;
     }
 
-    .logo {
+    .top-bar .logo-area {
       display: flex;
       align-items: center;
-      font-size: 24px;
+      gap: 10px;
+    }
+
+    .top-bar .logo-area img {
+      height: 30px;
+    }
+
+    .top-bar .logo-area span {
+      font-size: 20px;
       font-weight: 600;
       color: #fff9f9;
     }
 
-    .logo img {
-      width: 38px;
-      margin-right: 12px;
-      border-radius: 8px;
-    }
-
-    .nav {
-      display: flex;
-      gap: 32px;
-      font-size: 18px;
+    .top-bar a {
       color: #d8cccc;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 15px;
     }
 
+    /* HERO SECTION */
     .hero {
       position: relative;
-      margin: 0 auto;
-      width: 95vw;
-      height: 82vh;
+      margin-top: 0;
+      width: 100%;
+      height: 100vh;
       overflow: hidden;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
-      margin-top: 60px; /* to account for fixed topbar */
     }
 
     .hero video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0 0 30px 30px;
     }
 
     .hero-content {
       position: relative;
       z-index: 1;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       text-align: center;
-      padding: 20px;
+      padding-top: 160px;
+      color: white;
     }
 
-    .tag {
-      background: rgba(36, 36, 37, 0.71);
-      padding: 10px 24px;
-      border-radius: 53px;
-      font-size: 18px;
+    .tagline {
+      background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      margin-bottom: 20px;
+      padding: 6px 18px;
+      border-radius: 53px;
+      display: inline-block;
+      font-size: 14px;
+      margin-bottom: 15px;
     }
 
-    h1 {
-      font-size: 54px;
-      font-weight: 400;
-      line-height: 1.3;
-      margin-bottom: 14px;
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 600;
+      margin-bottom: 15px;
     }
 
-    .subtitle {
-      font-size: 20px;
-      color: #e0e0e0;
+    .hero p {
+      font-size: 17px;
       margin-bottom: 30px;
     }
 
-    .buttons {
+    .hero-buttons {
       display: flex;
-      gap: 28px;
+      justify-content: center;
+      gap: 20px;
       margin-bottom: 35px;
     }
 
-    .buttons .primary {
-      background: rgba(1, 116, 248, 0.86);
+    .hero-buttons .btn-primary {
+      background-color: rgba(1, 116, 248, 0.86);
       color: white;
+      padding: 12px 26px;
       border: none;
-      padding: 16px 36px;
-      font-size: 20px;
-      font-weight: 600;
       border-radius: 53px;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    .buttons .secondary {
-      background: transparent;
+    .hero-buttons .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.38);
       color: white;
+      padding: 12px 26px;
       border: 4px solid white;
-      padding: 16px 36px;
-      font-size: 20px;
-      font-weight: 500;
       border-radius: 53px;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    .facts {
+    .features-bar {
+      background-color: rgba(255, 255, 255, 0.20);
+      border: 1px solid white;
       display: flex;
       justify-content: center;
-      gap: 50px;
-      padding: 18px 40px;
-      border-radius: 20px;
-      font-size: 18px;
+      gap: 30px;
+      padding: 15px;
+      margin: 0 auto;
+      max-width: 900px;
+      border-radius: 12px;
+      color: white;
       font-weight: 500;
-      border: 1px solid white;
-      background: transparent;
-      width: fit-content;
-      margin: 10px auto 50px;
+      font-size: 15px;
     }
 
-    .flag-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: -15px;
+    .language-section {
+      margin-top: 25px;
+      text-align: center;
     }
 
-    .flag-label {
-      font-size: 18px;
-      color: black;
+    .language-section p {
+      color: white;
+      font-size: 16px;
       margin-bottom: 10px;
     }
 
-    .flag-row {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      margin-bottom: 30px;
+    .flags-wrapper {
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
     }
 
-    .flag-row img {
-      width: 56px;
+    .flags-scroll {
+      display: inline-block;
+      animation: scrollFlags 20s linear infinite;
+    }
+
+    .flag {
+      width: 55px;
       height: auto;
+      margin: 0 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes scrollFlags {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
 
     @media (max-width: 768px) {
-      h1 {
-        font-size: 36px;
+      .hero h1 {
+        font-size: 30px;
       }
 
-      .buttons {
+      .top-bar {
         flex-direction: column;
-        gap: 18px;
+        gap: 10px;
+        padding: 15px;
       }
 
-      .facts {
+      .features-bar {
         flex-direction: column;
-        gap: 14px;
-        text-align: center;
+        gap: 10px;
+        font-size: 14px;
       }
 
-      .flag-row {
-        flex-wrap: wrap;
-        gap: 20px;
+      .hero-buttons {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="topbar" id="topbar">
-    <div class="logo">
-      <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="logo">SignSense
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="logo-area">
+      <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="Logo">
+      <span>SignSense</span>
     </div>
-    <div class="nav">
-      <span>See How It Works</span>
-      <span>Privacy Policy</span>
-      <span>Contact Us</span>
+    <div class="nav-links">
+      <a href="#how">See How It Works</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#contact">Contact Us</a>
     </div>
   </div>
 
-  <div class="hero">
+  <!-- Hero Section -->
+  <section class="hero">
     <video autoplay muted loop playsinline>
-      <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
+      <source src="https://cdn.jsdelivr.net/gh/dgtalhq/assets@main/sensebg.mp4" type="video/mp4" />
     </video>
-
     <div class="hero-content">
-      <div class="tag">AI Review Tool</div>
-      <h1>Make Sense Of<br>What You’re Signing</h1>
-      <div class="subtitle">
-        SignSense instantly clarifies contracts for law firms, freelancers, students & more.
+      <div class="tagline">AI Review Tool</div>
+      <h1>Make Sense Of <br>What You’re Signing</h1>
+      <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary">Review Contract</button>
+        <button class="btn-secondary">Learn More</button>
       </div>
-      <div class="buttons">
-        <button class="primary">Review Contract</button>
-        <button class="secondary">Learn More</button>
-      </div>
-      <div class="facts">
-        <div>Spot risks instantly</div>
-        <div>No sign-up required</div>
-        <div>Completely private</div>
-        <div>Save money on lawyer fees</div>
+      <div class="features-bar">
+        <span>Spot risks instantly</span>
+        <span>No sign-up required</span>
+        <span>Completely private</span>
+        <span>Save money on lawyer fees</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="flag-section">
-    <div class="flag-label">Contract languages we support:</div>
-    <div class="flag-row">
-      <img src="https://flagcdn.com/w80/gb.png" alt="English">
-      <img src="https://flagcdn.com/w80/de.png" alt="German">
-      <img src="https://flagcdn.com/w80/nl.png" alt="Dutch">
-      <img src="https://flagcdn.com/w80/it.png" alt="Italian">
-      <img src="https://flagcdn.com/w80/fr.png" alt="French">
-      <img src="https://flagcdn.com/w80/ro.png" alt="Romanian">
-      <img src="https://flagcdn.com/w80/al.png" alt="Albanian">
+  <!-- Language Flags -->
+  <div class="language-section">
+    <p>Contract languages we support:</p>
+    <div class="flags-wrapper">
+      <div class="flags-scroll">
+        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
+        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
+        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
+        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
+        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
+        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
+        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+      </div>
     </div>
   </div>
 
