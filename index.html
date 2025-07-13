@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
@@ -19,18 +19,54 @@
       overflow-x: hidden;
     }
 
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.82);
+      border-radius: 22px;
+      border: 1px solid #3b3b3b;
+      padding: 18px 36px;
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      z-index: 999;
+    }
+
+    .topbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 26px;
+      font-weight: 600;
+      color: #fff9f9;
+    }
+
+    .topbar .logo::before {
+      content: url("https://i.imgur.com/2w3Od3O.jpeg");
+      width: 28px;
+      height: 28px;
+      margin-right: 12px;
+    }
+
+    .topbar .nav {
+      display: flex;
+      gap: 40px;
+      font-size: 17px;
+      color: #d8cccc;
+    }
+
     .hero {
       position: relative;
       width: 92vw;
-      height: 85vh;
-      margin: 0 auto;
+      height: 82vh;
+      margin: 100px auto 0;
       padding: 40px 60px;
       border-radius: 30px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
-      margin-top: 20px;
     }
 
     .hero video {
@@ -49,46 +85,9 @@
       z-index: 1;
     }
 
-    .topbar {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.82);
-      border-radius: 22px;
-      border: 1px solid #3b3b3b;
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      gap: 80px;
-      z-index: 999;
-    }
-
-    .topbar .logo {
-      display: flex;
-      align-items: center;
-      font-size: 28px;
-      font-weight: 600;
-      color: #fff9f9;
-    }
-
-    .topbar .logo::before {
-      content: url("https://i.imgur.com/2w3Od3O.jpeg");
-      width: 28px;
-      height: 28px;
-      margin-right: 12px;
-    }
-
-    .topbar .nav {
-      display: flex;
-      gap: 40px;
-      font-size: 18px;
-      color: #d8cccc;
-    }
-
     .main {
       text-align: center;
-      margin-top: 120px;
+      margin-top: 50px;
     }
 
     .tag {
@@ -102,16 +101,16 @@
     }
 
     h1 {
-      font-size: 64px;
+      font-size: 58px;
       font-weight: 500;
       margin-bottom: 30px;
       line-height: 1.3;
     }
 
     .subtitle {
-      font-size: 20px;
+      font-size: 19px;
       color: #d3d7df;
-      margin-bottom: 50px;
+      margin-bottom: 45px;
     }
 
     .buttons {
@@ -152,7 +151,7 @@
       font-size: 16px;
       font-weight: 400;
       color: #ffffff;
-      margin: 50px auto 10px;
+      margin: 50px auto 0;
       width: 90%;
       background: transparent;
     }
@@ -176,14 +175,14 @@
 
     .flags-track {
       display: flex;
-      gap: 120px;
+      gap: 140px;
       align-items: center;
-      animation: scrollFlags 35s linear infinite;
+      animation: scrollFlags 40s linear infinite;
       width: max-content;
     }
 
     .flag {
-      height: 72px;
+      height: 76px;
       flex-shrink: 0;
     }
 
@@ -267,27 +266,26 @@
     </div>
   </div>
 
-  <!-- Flags -->
+  <!-- Language flags -->
   <div class="language-section">
     <p>Contract languages we support:</p>
     <div class="flags-container">
       <div class="flags-track">
-        <!-- Repeated twice for seamless infinite scroll -->
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/gb.svg" class="flag" />
+        <img src="https://flagcdn.com/de.svg" class="flag" />
+        <img src="https://flagcdn.com/nl.svg" class="flag" />
+        <img src="https://flagcdn.com/it.svg" class="flag" />
+        <img src="https://flagcdn.com/fr.svg" class="flag" />
+        <img src="https://flagcdn.com/ro.svg" class="flag" />
+        <img src="https://flagcdn.com/al.svg" class="flag" />
 
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/gb.svg" class="flag" />
+        <img src="https://flagcdn.com/de.svg" class="flag" />
+        <img src="https://flagcdn.com/nl.svg" class="flag" />
+        <img src="https://flagcdn.com/it.svg" class="flag" />
+        <img src="https://flagcdn.com/fr.svg" class="flag" />
+        <img src="https://flagcdn.com/ro.svg" class="flag" />
+        <img src="https://flagcdn.com/al.svg" class="flag" />
       </div>
     </div>
   </div>
