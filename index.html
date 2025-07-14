@@ -19,7 +19,7 @@
       transform: translateX(-50%);
       width: 94%;
       max-width: 1200px;
-      background-color: #000; /* solid black */
+      background-color: black;
       border-radius: 22px;
       border: 1px solid #3b3b3b;
       display: flex;
@@ -159,27 +159,26 @@
     }
 
     .flags-wrapper {
-      width: 100%;
       overflow: hidden;
+      width: 100%;
       position: relative;
     }
 
     .flags-scroll {
       display: flex;
-      width: max-content;
-      animation: scrollFlags 90s linear infinite;
+      animation: scrollFlags 80s linear infinite;
     }
 
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 60px;
-      vertical-align: middle;
+      margin: 0 50px;
+      flex-shrink: 0;
     }
 
     @keyframes scrollFlags {
       0% { transform: translateX(0); }
-      100% { transform: translateX(100%); }
+      100% { transform: translateX(50%); }
     }
 
     @media (max-width: 768px) {
@@ -230,36 +229,35 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Repeat flags multiple times for infinite loop -->
-        <!-- Paste 3–4 times if needed -->
-        <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
-        <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
-        <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
-        <img src="https://flagcdn.com/it.svg" class="flag" alt="Italy">
-        <img src="https://flagcdn.com/fr.svg" class="flag" alt="France">
-        <img src="https://flagcdn.com/ro.svg" class="flag" alt="Romania">
-        <img src="https://flagcdn.com/al.svg" class="flag" alt="Albania">
-        <img src="https://flagcdn.com/es.svg" class="flag" alt="Spain">
-        <img src="https://flagcdn.com/br.svg" class="flag" alt="Brazil">
-        <img src="https://flagcdn.com/cn.svg" class="flag" alt="China">
-        <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
-        <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
-        <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
-        
-        <!-- Repeat to fill gap and make loop infinite -->
-        <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
-        <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
-        <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
-        <img src="https://flagcdn.com/it.svg" class="flag" alt="Italy">
-        <img src="https://flagcdn.com/fr.svg" class="flag" alt="France">
-        <img src="https://flagcdn.com/ro.svg" class="flag" alt="Romania">
-        <img src="https://flagcdn.com/al.svg" class="flag" alt="Albania">
-        <img src="https://flagcdn.com/es.svg" class="flag" alt="Spain">
-        <img src="https://flagcdn.com/br.svg" class="flag" alt="Brazil">
-        <img src="https://flagcdn.com/cn.svg" class="flag" alt="China">
-        <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
-        <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
-        <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
+        <!-- Repeating flags twice for infinite loop effect -->
+        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
+        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
+        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
+        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
+        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
+        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
+        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
+        <img src="https://flagcdn.com/br.svg" alt="Brazil" class="flag">
+        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
+        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
+        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
+        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+
+        <!-- repeat again for looping -->
+        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
+        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
+        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
+        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
+        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
+        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
+        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
+        <img src="https://flagcdn.com/br.svg" alt="Brazil" class="flag">
+        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
+        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
+        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
+        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
       </div>
     </div>
   </div>
