@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
+  <!-- Tab Icon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="https://img.icons8.com/ios/50/ffffff/contract--v1.png"/>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -19,7 +21,7 @@
       transform: translateX(-50%);
       width: 94%;
       max-width: 1200px;
-      background-color: black;
+      background-color: #000;
       border-radius: 22px;
       border: 1px solid #3b3b3b;
       display: flex;
@@ -36,7 +38,7 @@
     }
 
     .top-bar .logo-area img {
-      height: 34px;
+      height: 28px;
     }
 
     .top-bar .logo-area span {
@@ -49,7 +51,7 @@
       color: #d8cccc;
       text-decoration: none;
       margin-left: 22px;
-      font-size: 16.5px;
+      font-size: 17px;
     }
 
     .hero {
@@ -74,7 +76,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 155px; /* slightly increased to lower tagline */
+      padding-top: 170px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -85,50 +87,50 @@
     .tagline {
       background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 10px 24px;
+      padding: 6px 18px;
       border-radius: 53px;
       display: inline-block;
-      font-size: 20px;
-      margin-bottom: 24px;
-      max-width: 240px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      width: 160px;
     }
 
     .hero h1 {
-      font-size: 64px;
+      font-size: 62px;
       font-weight: 500;
-      margin-bottom: 18px;
+      margin-bottom: 15px;
     }
 
     .hero p {
-      font-size: 22px;
-      margin-bottom: 38px;
-      max-width: 680px;
+      font-size: 20px;
+      margin-bottom: 30px;
+      max-width: 650px;
     }
 
     .hero-buttons {
       display: flex;
       justify-content: center;
-      gap: 28px;
-      margin-bottom: 40px;
+      gap: 25px;
+      margin-bottom: 35px;
     }
 
     .btn-primary {
       background-color: rgba(1, 116, 248, 0.86);
       color: white;
-      padding: 20px 44px;
+      padding: 16px 34px;
       border: none;
       border-radius: 53px;
-      font-size: 22px;
+      font-size: 18px;
       cursor: pointer;
     }
 
     .btn-secondary {
       background-color: transparent;
       color: white;
-      padding: 20px 44px;
-      border: 1px solid rgba(255, 255, 255, 0.38);
+      padding: 16px 34px;
+      border: 1.5px solid rgba(255, 255, 255, 0.38);
       border-radius: 53px;
-      font-size: 22px;
+      font-size: 18px;
       cursor: pointer;
     }
 
@@ -137,25 +139,25 @@
       border: 1px solid rgba(255, 255, 255, 0.20);
       display: flex;
       justify-content: center;
-      gap: 50px;
-      padding: 24px 30px;
-      margin-top: 10px;
+      gap: 40px;
+      padding: 22px 30px;
+      margin-top: auto;
+      margin-bottom: 20px;
+      width: auto;
       border-radius: 14px;
       color: white;
       font-weight: 400;
       font-size: 20px;
-      width: fit-content;
-      max-width: 100%;
     }
 
     .language-section {
-      margin-top: 20px; /* raised slightly */
+      margin-top: 30px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
-      font-size: 18px;
+      font-size: 17px;
       margin-bottom: 12px;
     }
 
@@ -168,25 +170,25 @@
     .flags-scroll {
       display: inline-block;
       white-space: nowrap;
-      animation: scrollFlags 30s linear infinite;
+      animation: scrollFlags 40s linear infinite reverse;
     }
 
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 58px; /* slightly reduced spacing */
+      margin: 0 40px;
       vertical-align: middle;
     }
 
     @keyframes scrollFlags {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
     @media (max-width: 768px) {
-      .hero h1 { font-size: 32px; }
+      .hero h1 { font-size: 34px; }
       .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
-      .features-bar { flex-direction: column; gap: 10px; font-size: 15px; }
+      .features-bar { flex-direction: column; gap: 10px; font-size: 16px; }
       .hero-buttons { flex-direction: column; }
       .flag { width: 60px; margin: 0 15px; }
     }
@@ -194,9 +196,10 @@
 </head>
 <body>
 
+  <!-- Top Bar -->
   <div class="top-bar">
     <div class="logo-area">
-      <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="Logo">
+      <img src="https://img.icons8.com/ios/50/ffffff/contract--v1.png" alt="Logo">
       <span>SignSense</span>
     </div>
     <div class="nav-links">
@@ -206,6 +209,7 @@
     </div>
   </div>
 
+  <!-- Hero -->
   <section class="hero">
     <video autoplay muted loop playsinline>
       <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
@@ -227,36 +231,39 @@
     </div>
   </section>
 
+  <!-- Flags -->
   <div class="language-section">
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- Loop x2 -->
+        <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
+        <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
+        <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
+        <img src="https://flagcdn.com/it.svg" class="flag" alt="Italy">
+        <img src="https://flagcdn.com/fr.svg" class="flag" alt="France">
+        <img src="https://flagcdn.com/ro.svg" class="flag" alt="Romania">
+        <img src="https://flagcdn.com/al.svg" class="flag" alt="Albania">
+        <img src="https://flagcdn.com/es.svg" class="flag" alt="Spain">
+        <img src="https://flagcdn.com/pt.svg" class="flag" alt="Portugal">
+        <img src="https://flagcdn.com/cn.svg" class="flag" alt="China">
+        <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
+        <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
+        <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
+        <!-- Repeated -->
+        <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
+        <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
+        <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
+        <img src="https://flagcdn.com/it.svg" class="flag" alt="Italy">
+        <img src="https://flagcdn.com/fr.svg" class="flag" alt="France">
+        <img src="https://flagcdn.com/ro.svg" class="flag" alt="Romania">
+        <img src="https://flagcdn.com/al.svg" class="flag" alt="Albania">
+        <img src="https://flagcdn.com/es.svg" class="flag" alt="Spain">
+        <img src="https://flagcdn.com/pt.svg" class="flag" alt="Portugal">
+        <img src="https://flagcdn.com/cn.svg" class="flag" alt="China">
+        <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
+        <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
+        <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
       </div>
     </div>
   </div>
