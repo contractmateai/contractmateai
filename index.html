@@ -164,21 +164,22 @@
       position: relative;
     }
 
-    .flags-scroll {
+    .flags-track {
       display: flex;
-      animation: scrollFlags 80s linear infinite;
+      width: max-content;
+      animation: scrollLeftToRight 30s linear infinite;
     }
 
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 50px;
+      margin: 0 35px;
       flex-shrink: 0;
     }
 
-    @keyframes scrollFlags {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(50%); }
+    @keyframes scrollLeftToRight {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
     }
 
     @media (max-width: 768px) {
@@ -228,8 +229,8 @@
   <div class="language-section">
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
-      <div class="flags-scroll">
-        <!-- Repeating flags twice for infinite loop effect -->
+      <div class="flags-track">
+        <!-- duplicated once for seamless loop -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
@@ -244,7 +245,7 @@
         <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
         <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
 
-        <!-- repeat again for looping -->
+        <!-- repeat again -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
