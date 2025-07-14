@@ -74,7 +74,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 230px; /* ⬅️ Moved hero content LOWER */
+      padding-top: 220px;
       color: white;
     }
 
@@ -84,35 +84,35 @@
       padding: 12px 26px;
       border-radius: 53px;
       display: inline-block;
-      font-size: 20px;
+      font-size: 22px;
       margin-bottom: 12px;
     }
 
     .hero h1 {
-      font-size: 60px;
+      font-size: 66px;
       font-weight: 400;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .hero p {
-      font-size: 22px;
+      font-size: 26px;
       margin-bottom: 40px;
     }
 
     .hero-buttons {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 32px;
       margin-bottom: 60px;
     }
 
     .btn-primary {
       background-color: rgba(1, 116, 248, 0.86);
       color: white;
-      padding: 18px 36px;
+      padding: 20px 40px;
       border: none;
       border-radius: 53px;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 500;
       cursor: pointer;
     }
@@ -120,10 +120,10 @@
     .btn-secondary {
       background-color: transparent;
       color: white;
-      padding: 18px 36px;
+      padding: 20px 40px;
       border: 1px solid rgba(255, 255, 255, 0.38);
       border-radius: 53px;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 500;
       cursor: pointer;
     }
@@ -133,25 +133,25 @@
       border: 1px solid rgba(255, 255, 255, 0.20);
       display: flex;
       justify-content: center;
-      gap: 50px;
-      padding: 24px;
+      gap: 60px;
+      padding: 26px;
       margin: 30px auto 0;
       max-width: 1100px;
       border-radius: 14px;
       color: white;
       font-weight: 400;
-      font-size: 18px;
+      font-size: 20px;
     }
 
     .language-section {
-      margin-top: 25px;
+      margin-top: 40px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
-      font-size: 21px;
-      margin-bottom: 20px;
+      font-size: 22px;
+      margin-bottom: 16px;
     }
 
     .flags-wrapper {
@@ -169,7 +169,7 @@
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 50px;
+      margin: 0 55px;
       vertical-align: middle;
     }
 
@@ -179,9 +179,9 @@
     }
 
     @media (max-width: 768px) {
-      .hero h1 { font-size: 32px; }
+      .hero h1 { font-size: 38px; }
       .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
-      .features-bar { flex-direction: column; gap: 10px; font-size: 15px; }
+      .features-bar { flex-direction: column; gap: 10px; font-size: 16px; }
       .hero-buttons { flex-direction: column; }
       .flag { width: 60px; margin: 0 15px; }
     }
@@ -226,7 +226,6 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- 14 flags ×2 loop -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
