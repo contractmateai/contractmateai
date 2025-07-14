@@ -19,7 +19,7 @@
       transform: translateX(-50%);
       width: 94%;
       max-width: 1200px;
-      background-color: #000;
+      background-color: #000; /* solid black */
       border-radius: 22px;
       border: 1px solid #3b3b3b;
       display: flex;
@@ -159,21 +159,22 @@
     }
 
     .flags-wrapper {
-      overflow: hidden;
       width: 100%;
+      overflow: hidden;
       position: relative;
     }
 
     .flags-scroll {
       display: flex;
-      gap: 60px;
-      animation: scrollFlags 60s linear infinite;
       width: max-content;
+      animation: scrollFlags 90s linear infinite;
     }
 
-    .flags-scroll .flag {
+    .flag {
       width: 90px;
       height: auto;
+      margin: 0 60px;
+      vertical-align: middle;
     }
 
     @keyframes scrollFlags {
@@ -186,7 +187,7 @@
       .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
       .features-bar { flex-direction: column; gap: 10px; font-size: 14px; }
       .hero-buttons { flex-direction: column; }
-      .flags-scroll .flag { width: 60px; }
+      .flag { width: 60px; margin: 0 15px; }
     }
   </style>
 </head>
@@ -229,7 +230,8 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Duplicated for endless loop -->
+        <!-- Repeat flags multiple times for infinite loop -->
+        <!-- Paste 3–4 times if needed -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
@@ -243,7 +245,8 @@
         <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
         <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
         <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
-        <!-- Repeat -->
+        
+        <!-- Repeat to fill gap and make loop infinite -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
