@@ -19,7 +19,7 @@
       transform: translateX(-50%);
       width: 94%;
       max-width: 1200px;
-      background-color: rgba(0, 0, 0, 0.82);
+      background-color: #000;
       border-radius: 22px;
       border: 1px solid #3b3b3b;
       display: flex;
@@ -160,20 +160,20 @@
 
     .flags-wrapper {
       overflow: hidden;
-      position: relative;
       width: 100%;
+      position: relative;
     }
 
     .flags-scroll {
       display: flex;
+      gap: 60px;
+      animation: scrollFlags 60s linear infinite;
       width: max-content;
-      animation: scrollFlags 50s linear infinite;
     }
 
     .flags-scroll .flag {
       width: 90px;
       height: auto;
-      margin: 0 50px;
     }
 
     @keyframes scrollFlags {
@@ -186,7 +186,7 @@
       .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
       .features-bar { flex-direction: column; gap: 10px; font-size: 14px; }
       .hero-buttons { flex-direction: column; }
-      .flags-scroll .flag { width: 60px; margin: 0 15px; }
+      .flags-scroll .flag { width: 60px; }
     }
   </style>
 </head>
@@ -229,7 +229,7 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Duplicated once for seamless scroll -->
+        <!-- Duplicated for endless loop -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
@@ -243,7 +243,7 @@
         <img src="https://flagcdn.com/in.svg" class="flag" alt="India">
         <img src="https://flagcdn.com/jp.svg" class="flag" alt="Japan">
         <img src="https://flagcdn.com/tr.svg" class="flag" alt="Turkey">
-        <!-- Duplicated -->
+        <!-- Repeat -->
         <img src="https://flagcdn.com/gb.svg" class="flag" alt="UK">
         <img src="https://flagcdn.com/de.svg" class="flag" alt="Germany">
         <img src="https://flagcdn.com/nl.svg" class="flag" alt="Netherlands">
