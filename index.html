@@ -19,7 +19,7 @@
       transform: translateX(-50%);
       width: 94%;
       max-width: 1200px;
-      background-color: #000000;
+      background-color: #000;
       border-radius: 22px;
       border: 1px solid #3b3b3b;
       display: flex;
@@ -74,60 +74,55 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 100px;
+      padding-top: 165px;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100%;
     }
 
     .tagline {
       background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 14px 36px;
+      padding: 4px 14px;
       border-radius: 53px;
       display: inline-block;
-      font-size: 28px;
-      margin-bottom: 16px;
+      font-size: 13px;
+      margin-bottom: 10px;
     }
 
     .hero h1 {
-      font-size: 76px;
+      font-size: 36px;
       font-weight: 500;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
 
     .hero p {
-      font-size: 26px;
-      margin-bottom: 36px;
-      max-width: 780px;
+      font-size: 15px;
+      margin-bottom: 25px;
     }
 
     .hero-buttons {
       display: flex;
       justify-content: center;
-      gap: 30px;
-      margin-bottom: 44px;
+      gap: 20px;
+      margin-bottom: 30px;
     }
 
     .btn-primary {
       background-color: rgba(1, 116, 248, 0.86);
       color: white;
-      padding: 22px 46px;
+      padding: 10px 24px;
       border: none;
       border-radius: 53px;
-      font-size: 22px;
+      font-size: 15px;
       cursor: pointer;
     }
 
     .btn-secondary {
       background-color: transparent;
       color: white;
-      padding: 22px 46px;
+      padding: 10px 24px;
       border: 1px solid rgba(255, 255, 255, 0.38);
       border-radius: 53px;
-      font-size: 22px;
+      font-size: 15px;
       cursor: pointer;
     }
 
@@ -136,32 +131,32 @@
       border: 1px solid rgba(255, 255, 255, 0.20);
       display: flex;
       justify-content: center;
-      gap: 70px;
-      padding: 28px 36px;
+      gap: 60px;
+      padding: 24px 30px;
       margin-top: auto;
       margin-bottom: 20px;
       width: 92%;
       border-radius: 14px;
       color: white;
       font-weight: 400;
-      font-size: 20px;
+      font-size: 17px;
     }
 
     .language-section {
-      margin-top: 22px;
+      margin-top: 25px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
-      font-size: 18px;
-      margin-bottom: 18px;
+      font-size: 17px;
+      margin-bottom: 15px;
     }
 
     .flags-wrapper {
       overflow: hidden;
-      position: relative;
       width: 100%;
+      position: relative;
     }
 
     .flags-scroll {
@@ -171,26 +166,26 @@
 
     .flag {
       width: 90px;
-      margin: 0 40px;
+      height: auto;
+      margin: 0 70px;
     }
 
     @keyframes scrollFlags {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
     }
 
     @media (max-width: 768px) {
-      .hero h1 { font-size: 36px; }
-      .tagline { font-size: 18px; padding: 10px 20px; }
-      .hero p { font-size: 18px; }
-      .btn-primary, .btn-secondary { font-size: 18px; padding: 14px 24px; }
-      .features-bar { flex-direction: column; gap: 12px; font-size: 16px; }
+      .hero h1 { font-size: 30px; }
+      .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
+      .features-bar { flex-direction: column; gap: 10px; font-size: 14px; }
+      .hero-buttons { flex-direction: column; }
+      .flag { width: 60px; margin: 0 15px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Bar -->
   <div class="top-bar">
     <div class="logo-area">
       <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="Logo">
@@ -203,7 +198,6 @@
     </div>
   </div>
 
-  <!-- Hero -->
   <section class="hero">
     <video autoplay muted loop playsinline>
       <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
@@ -225,39 +219,38 @@
     </div>
   </section>
 
-  <!-- Flags -->
   <div class="language-section">
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/br.svg" alt="Brazil" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-
-        <!-- Loop repeat -->
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/br.svg" alt="Brazil" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- duplicated for infinite loop feel -->
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
+        <!-- repeat -->
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
       </div>
     </div>
   </div>
