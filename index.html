@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
+  <link rel="icon" href="https://i.imgur.com/2w3Od3O.jpeg" type="image/jpeg" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -41,7 +42,7 @@
 
     .top-bar .logo-area span {
       font-size: 21px;
-      font-weight: 600;
+      font-weight: 400;
       color: #fff9f9;
     }
 
@@ -50,6 +51,12 @@
       text-decoration: none;
       margin-left: 22px;
       font-size: 16.5px;
+      transition: all 0.2s ease;
+    }
+
+    .top-bar a:hover {
+      color: #ffffff;
+      text-decoration: underline;
     }
 
     .hero {
@@ -74,7 +81,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 155px;
+      padding-top: 148px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -91,6 +98,7 @@
       font-size: 20px;
       margin-bottom: 24px;
       max-width: 240px;
+      transform: translateY(10px);
     }
 
     .hero h1 {
@@ -120,6 +128,12 @@
       border-radius: 53px;
       font-size: 22px;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #3399ff;
+      box-shadow: 0 0 15px #0174f8;
     }
 
     .btn-secondary {
@@ -130,6 +144,12 @@
       border-radius: 53px;
       font-size: 22px;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
     }
 
     .features-bar {
@@ -139,17 +159,22 @@
       justify-content: center;
       gap: 50px;
       padding: 24px 30px;
-      margin-top: 10px;
+      margin-top: 6px;
       border-radius: 14px;
       color: white;
       font-weight: 400;
       font-size: 20px;
       width: fit-content;
       max-width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .features-bar:hover {
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
     .language-section {
-      margin-top: 35px; /* slightly increased to move it lower */
+      margin-top: 45px;
       text-align: center;
     }
 
@@ -174,7 +199,7 @@
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 58px;
+      margin: 0 50px;
       vertical-align: middle;
     }
 
