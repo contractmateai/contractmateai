@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
-  <link rel="icon" type="image/png" href="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843"/>
+  <link rel="icon" href="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843" type="image/png"/>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -28,7 +28,6 @@
       justify-content: space-between;
       padding: 18px 30px;
       z-index: 1000;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
     }
 
     .top-bar .logo-area {
@@ -39,12 +38,11 @@
 
     .top-bar .logo-area img {
       height: 34px;
-      cursor: pointer;
     }
 
     .top-bar .logo-area span {
       font-size: 21px;
-      font-weight: 400;
+      font-weight: normal;
       color: #fff9f9;
       cursor: pointer;
     }
@@ -54,11 +52,6 @@
       text-decoration: none;
       margin-left: 22px;
       font-size: 16.5px;
-      transition: color 0.3s ease;
-    }
-
-    .top-bar a:hover {
-      color: #ffffff;
     }
 
     .hero {
@@ -83,7 +76,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 170px;
+      padding-top: 160px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -92,33 +85,19 @@
     }
 
     .tagline {
-      background-color: rgba(36, 36, 37, 0.82);
+      background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 10px 24px;
+      padding: 7px 18px;
       border-radius: 53px;
-      display: inline-flex;
-      align-items: center;
-      font-size: 20px;
-      margin-bottom: 22px;
-      max-width: 280px;
-      box-shadow: 0 0 8px rgba(0, 221, 255, 0.4);
-    }
-
-    .tagline img {
-      width: 20px;
-      height: 20px;
-      margin-left: 8px;
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.2); }
+      display: inline-block;
+      font-size: 16px;
+      margin-bottom: 28px;
+      max-width: 220px;
     }
 
     .hero h1 {
       font-size: 64px;
-      font-weight: 300;
+      font-weight: 500;
       margin-bottom: 18px;
     }
 
@@ -126,7 +105,6 @@
       font-size: 22px;
       margin-bottom: 38px;
       max-width: 680px;
-      color: #e2e2e2;
     }
 
     .hero-buttons {
@@ -148,7 +126,7 @@
     }
 
     .btn-primary:hover {
-      background-color: rgba(0, 80, 180, 0.9);
+      background-color: rgba(1, 116, 248, 0.6);
     }
 
     .btn-secondary {
@@ -159,11 +137,11 @@
       border-radius: 53px;
       font-size: 22px;
       cursor: pointer;
-      transition: border-color 0.3s ease;
+      transition: background-color 0.3s ease;
     }
 
     .btn-secondary:hover {
-      border-color: white;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     .features-bar {
@@ -173,25 +151,29 @@
       justify-content: center;
       gap: 50px;
       padding: 24px 30px;
-      margin-top: 12px;
+      margin-top: 15px;
       border-radius: 14px;
       color: white;
       font-weight: 400;
       font-size: 20px;
       width: fit-content;
       max-width: 100%;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .features-bar:hover {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .language-section {
-      margin-top: 38px;
+      margin-top: 24px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
       font-size: 18px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .flags-wrapper {
@@ -209,7 +191,7 @@
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 54px;
+      margin: 0 56px;
       vertical-align: middle;
     }
 
@@ -230,9 +212,9 @@
 <body>
 
   <div class="top-bar">
-    <div class="logo-area" onclick="location.href='index.html'">
+    <div class="logo-area">
       <img src="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843" alt="Logo">
-      <span>SignSense</span>
+      <span onclick="location.href='index.html'">SignSense</span>
     </div>
     <div class="nav-links">
       <a href="#how">See How It Works</a>
@@ -246,9 +228,7 @@
       <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
     </video>
     <div class="hero-content">
-      <div class="tagline">AI Review Tool
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Robot_icon_white.svg/512px-Robot_icon_white.svg.png" alt="AI" />
-      </div>
+      <div class="tagline">AI Review Tool</div>
       <h1>Make Sense Of <br>What You’re Signing</h1>
       <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
       <div class="hero-buttons">
@@ -268,33 +248,34 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <img src="https://flagcdn.com/gb.svg" class="flag">
-        <img src="https://flagcdn.com/de.svg" class="flag">
-        <img src="https://flagcdn.com/nl.svg" class="flag">
-        <img src="https://flagcdn.com/it.svg" class="flag">
-        <img src="https://flagcdn.com/fr.svg" class="flag">
-        <img src="https://flagcdn.com/ro.svg" class="flag">
-        <img src="https://flagcdn.com/al.svg" class="flag">
-        <img src="https://flagcdn.com/es.svg" class="flag">
-        <img src="https://flagcdn.com/pt.svg" class="flag">
-        <img src="https://flagcdn.com/cn.svg" class="flag">
-        <img src="https://flagcdn.com/in.svg" class="flag">
-        <img src="https://flagcdn.com/jp.svg" class="flag">
-        <img src="https://flagcdn.com/tr.svg" class="flag">
-        <!-- repeated for seamless scroll -->
-        <img src="https://flagcdn.com/gb.svg" class="flag">
-        <img src="https://flagcdn.com/de.svg" class="flag">
-        <img src="https://flagcdn.com/nl.svg" class="flag">
-        <img src="https://flagcdn.com/it.svg" class="flag">
-        <img src="https://flagcdn.com/fr.svg" class="flag">
-        <img src="https://flagcdn.com/ro.svg" class="flag">
-        <img src="https://flagcdn.com/al.svg" class="flag">
-        <img src="https://flagcdn.com/es.svg" class="flag">
-        <img src="https://flagcdn.com/pt.svg" class="flag">
-        <img src="https://flagcdn.com/cn.svg" class="flag">
-        <img src="https://flagcdn.com/in.svg" class="flag">
-        <img src="https://flagcdn.com/jp.svg" class="flag">
-        <img src="https://flagcdn.com/tr.svg" class="flag">
+        <!-- Duplicate flags to ensure infinite look -->
+        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
+        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
+        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
+        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
+        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
+        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
+        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
+        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
+        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
+        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
+        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
+        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- Loop again -->
+        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
+        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
+        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
+        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
+        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
+        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
+        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
+        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
+        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
+        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
+        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
+        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
+        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
       </div>
     </div>
   </div>
