@@ -35,17 +35,22 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      cursor: pointer;
     }
 
     .top-bar .logo-area img {
-      height: 34px;
+      height: 40px; /* slightly bigger */
+      transition: filter 0.3s ease;
+    }
+
+    .top-bar .logo-area:hover img {
+      filter: brightness(1.3);
     }
 
     .top-bar .logo-area span {
       font-size: 21px;
       font-weight: normal;
       color: #fff9f9;
-      cursor: pointer;
     }
 
     .top-bar a {
@@ -170,20 +175,21 @@
     }
 
     .language-section {
-      margin-top: 20px;
+      margin-top: 40px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
       font-size: 18px;
-      margin-bottom: 2px; /* moved higher */
+      margin-bottom: 2px;
     }
 
     .flags-wrapper {
       overflow: hidden;
       position: relative;
       width: 100%;
+      margin-top: 20px; /* moved flags lower */
     }
 
     .flags-scroll {
@@ -216,9 +222,9 @@
 <body>
 
   <div class="top-bar">
-    <div class="logo-area">
+    <div class="logo-area" onclick="location.href='index.html'">
       <img src="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843" alt="Logo">
-      <span onclick="location.href='index.html'">SignSense</span>
+      <span>SignSense</span>
     </div>
     <div class="nav-links">
       <a href="#how">See How It Works</a>
@@ -285,3 +291,4 @@
 
 </body>
 </html>
+
