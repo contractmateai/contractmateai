@@ -40,13 +40,18 @@
       height: 34px;
     }
 
-    .top-bar .logo-area span {
+    .top-bar .logo-area a {
       font-size: 21px;
       font-weight: 400;
       color: #fff9f9;
+      text-decoration: none;
     }
 
-    .top-bar a {
+    .top-bar .logo-area a:hover {
+      opacity: 0.8;
+    }
+
+    .top-bar a.nav-link {
       color: #d8cccc;
       text-decoration: none;
       margin-left: 22px;
@@ -54,9 +59,8 @@
       transition: all 0.2s ease;
     }
 
-    .top-bar a:hover {
+    .top-bar a.nav-link:hover {
       color: #ffffff;
-      text-decoration: underline;
     }
 
     .hero {
@@ -81,7 +85,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 148px;
+      padding-top: 163px; /* slightly lowered AI Review Tool */
       color: white;
       display: flex;
       flex-direction: column;
@@ -92,13 +96,12 @@
     .tagline {
       background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 10px 24px;
+      padding: 8px 20px; /* smaller padding */
       border-radius: 53px;
       display: inline-block;
-      font-size: 20px;
+      font-size: 18px; /* smaller font */
       margin-bottom: 24px;
-      max-width: 240px;
-      transform: translateY(10px);
+      max-width: 220px;
     }
 
     .hero h1 {
@@ -128,12 +131,12 @@
       border-radius: 53px;
       font-size: 22px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
-      background-color: #3399ff;
-      box-shadow: 0 0 15px #0174f8;
+      background-color: rgba(1, 116, 248, 0.92);
+      box-shadow: none;
     }
 
     .btn-secondary {
@@ -144,12 +147,13 @@
       border-radius: 53px;
       font-size: 22px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
 
     .btn-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: #fff;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
     }
 
     .features-bar {
@@ -170,11 +174,11 @@
     }
 
     .features-bar:hover {
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
     }
 
     .language-section {
-      margin-top: 45px;
+      margin-top: 45px; /* moved higher */
       text-align: center;
     }
 
@@ -199,7 +203,7 @@
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 50px;
+      margin: 0 48px;
       vertical-align: middle;
     }
 
@@ -222,12 +226,12 @@
   <div class="top-bar">
     <div class="logo-area">
       <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="Logo">
-      <span>SignSense</span>
+      <a href="/">SignSense</a>
     </div>
     <div class="nav-links">
-      <a href="#how">See How It Works</a>
-      <a href="#privacy">Privacy Policy</a>
-      <a href="#contact">Contact Us</a>
+      <a class="nav-link" href="#how">See How It Works</a>
+      <a class="nav-link" href="#privacy">Privacy Policy</a>
+      <a class="nav-link" href="#contact">Contact Us</a>
     </div>
   </div>
 
@@ -269,6 +273,7 @@
         <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
         <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
         <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- repeat to loop longer -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
@@ -285,6 +290,9 @@
       </div>
     </div>
   </div>
+
+</body>
+</html>
 
 </body>
 </html>
