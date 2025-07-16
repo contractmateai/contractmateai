@@ -28,12 +28,14 @@
       justify-content: space-between;
       padding: 18px 30px;
       z-index: 1000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .top-bar .logo-area {
       display: flex;
       align-items: center;
       gap: 10px;
+      cursor: pointer;
     }
 
     .top-bar .logo-area img {
@@ -44,7 +46,6 @@
       font-size: 21px;
       font-weight: normal;
       color: #fff9f9;
-      cursor: pointer;
     }
 
     .top-bar a {
@@ -52,6 +53,11 @@
       text-decoration: none;
       margin-left: 22px;
       font-size: 16.5px;
+      transition: color 0.3s ease;
+    }
+
+    .top-bar a:hover {
+      color: #ffffff;
     }
 
     .hero {
@@ -76,7 +82,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 160px;
+      padding-top: 80px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -87,11 +93,12 @@
     .tagline {
       background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 7px 18px;
+      padding: 6px 18px;
       border-radius: 53px;
       display: inline-block;
       font-size: 16px;
-      margin-bottom: 28px;
+      margin-top: 42px;
+      margin-bottom: 24px;
       max-width: 220px;
     }
 
@@ -105,6 +112,7 @@
       font-size: 22px;
       margin-bottom: 38px;
       max-width: 680px;
+      color: #cccccc;
     }
 
     .hero-buttons {
@@ -126,7 +134,7 @@
     }
 
     .btn-primary:hover {
-      background-color: rgba(1, 116, 248, 0.6);
+      background-color: rgba(0, 86, 200, 0.86);
     }
 
     .btn-secondary {
@@ -166,7 +174,7 @@
     }
 
     .language-section {
-      margin-top: 24px;
+      margin-top: 22px;
       text-align: center;
     }
 
@@ -212,9 +220,9 @@
 <body>
 
   <div class="top-bar">
-    <div class="logo-area">
+    <div class="logo-area" onclick="location.href='index.html'">
       <img src="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843" alt="Logo">
-      <span onclick="location.href='index.html'">SignSense</span>
+      <span>SignSense</span>
     </div>
     <div class="nav-links">
       <a href="#how">See How It Works</a>
@@ -248,40 +256,36 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Duplicate flags to ensure infinite look -->
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-        <!-- Loop again -->
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- Duplicate flags for loop -->
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
+        <!-- repeat -->
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
       </div>
     </div>
-  </div>
-
-  <div style="text-align: center; margin: 10px auto; font-size: 12px; color: white;">
-    Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik" style="color: #ccc;">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon" style="color: #ccc;">www.flaticon.com</a>
   </div>
 
 </body>
