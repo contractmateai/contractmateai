@@ -39,7 +39,7 @@
     }
 
     .top-bar .logo-area img {
-      height: 40px; /* slightly bigger */
+      height: 40px;
       transition: filter 0.3s ease;
     }
 
@@ -102,9 +102,14 @@
       border-radius: 53px;
       display: inline-block;
       font-size: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 38px; /* made lower */
       max-width: 220px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .tagline:hover {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.45);
     }
 
     .hero h1 {
@@ -175,7 +180,7 @@
     }
 
     .language-section {
-      margin-top: 40px;
+      margin-top: 10px; /* slightly higher */
       text-align: center;
     }
 
@@ -189,7 +194,7 @@
       overflow: hidden;
       position: relative;
       width: 100%;
-      margin-top: 20px; /* moved flags lower */
+      margin-top: 10px; /* also slightly higher */
     }
 
     .flags-scroll {
@@ -271,7 +276,6 @@
         <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
         <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
         <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-        <!-- repeat -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
@@ -291,4 +295,3 @@
 
 </body>
 </html>
-
