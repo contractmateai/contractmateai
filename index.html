@@ -28,6 +28,7 @@
       justify-content: space-between;
       padding: 18px 30px;
       z-index: 1000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .top-bar .logo-area {
@@ -52,6 +53,11 @@
       text-decoration: none;
       margin-left: 22px;
       font-size: 16.5px;
+      transition: color 0.3s ease;
+    }
+
+    .top-bar a:hover {
+      color: #ffffff;
     }
 
     .hero {
@@ -85,7 +91,7 @@
     }
 
     .tagline {
-      background-color: rgba(36, 36, 37, 0.71);
+      background-color: rgba(36, 36, 37, 0.4);
       color: #fff9f9;
       padding: 7px 18px;
       border-radius: 53px;
@@ -93,11 +99,12 @@
       font-size: 16px;
       margin-bottom: 28px;
       max-width: 220px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .hero h1 {
       font-size: 64px;
-      font-weight: 500;
+      font-weight: 400;
       margin-bottom: 18px;
     }
 
@@ -105,6 +112,7 @@
       font-size: 22px;
       margin-bottom: 38px;
       max-width: 680px;
+      color: #d6d6d6;
     }
 
     .hero-buttons {
@@ -126,7 +134,7 @@
     }
 
     .btn-primary:hover {
-      background-color: rgba(1, 116, 248, 0.6);
+      background-color: #015ed6;
     }
 
     .btn-secondary {
@@ -158,22 +166,18 @@
       font-size: 20px;
       width: fit-content;
       max-width: 100%;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .features-bar:hover {
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .language-section {
-      margin-top: 24px;
+      margin-top: 20px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
       font-size: 18px;
-      margin-bottom: 6px;
+      margin-bottom: 2px; /* moved higher */
     }
 
     .flags-wrapper {
@@ -228,7 +232,7 @@
       <source src="https://rickc137.b-cdn.net/9695ff4c-1a1b-48c5-a644-463f4f190c32%20(2).mp4" type="video/mp4">
     </video>
     <div class="hero-content">
-      <div class="tagline">AI Review Tool</div>
+      <div class="tagline">AI Review Tool 🔆</div>
       <h1>Make Sense Of <br>What You’re Signing</h1>
       <p>SignSense instantly clarifies contracts for law firms, freelancers, students & more.</p>
       <div class="hero-buttons">
@@ -248,7 +252,6 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Duplicate flags to ensure infinite look -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
@@ -262,7 +265,7 @@
         <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
         <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
         <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-        <!-- Loop again -->
+        <!-- repeat -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
