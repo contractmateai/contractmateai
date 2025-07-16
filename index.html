@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SignSense</title>
-  <link rel="icon" href="https://i.imgur.com/2w3Od3O.jpeg" type="image/jpeg" />
+  <link rel="icon" type="image/png" href="https://i.imgur.com/E4dn5ym.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -30,24 +30,24 @@
       z-index: 1000;
     }
 
-    .top-bar .logo-area {
+    .logo-area {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .top-bar .logo-area img {
-      height: 34px;
+    .logo-area img {
+      height: 30px;
     }
 
-    .top-bar .logo-area a {
+    .logo-area a {
       font-size: 21px;
       font-weight: 400;
       color: #fff9f9;
       text-decoration: none;
     }
 
-    .top-bar .logo-area a:hover {
+    .logo-area a:hover {
       opacity: 0.8;
     }
 
@@ -56,7 +56,6 @@
       text-decoration: none;
       margin-left: 22px;
       font-size: 16.5px;
-      transition: all 0.2s ease;
     }
 
     .top-bar a.nav-link:hover {
@@ -85,7 +84,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 163px; /* slightly lowered AI Review Tool */
+      padding-top: 165px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -96,12 +95,11 @@
     .tagline {
       background-color: rgba(36, 36, 37, 0.71);
       color: #fff9f9;
-      padding: 8px 20px; /* smaller padding */
+      padding: 5px 14px;
       border-radius: 53px;
-      display: inline-block;
-      font-size: 18px; /* smaller font */
-      margin-bottom: 24px;
-      max-width: 220px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      max-width: 180px;
     }
 
     .hero h1 {
@@ -135,8 +133,7 @@
     }
 
     .btn-primary:hover {
-      background-color: rgba(1, 116, 248, 0.92);
-      box-shadow: none;
+      background-color: rgba(1, 116, 248, 0.45);
     }
 
     .btn-secondary {
@@ -152,8 +149,6 @@
 
     .btn-secondary:hover {
       background-color: rgba(255, 255, 255, 0.08);
-      border-color: #fff;
-      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
     }
 
     .features-bar {
@@ -163,7 +158,7 @@
       justify-content: center;
       gap: 50px;
       padding: 24px 30px;
-      margin-top: 6px;
+      margin-top: 8px;
       border-radius: 14px;
       color: white;
       font-weight: 400;
@@ -178,14 +173,14 @@
     }
 
     .language-section {
-      margin-top: 45px; /* moved higher */
+      margin-top: 38px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
       font-size: 18px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .flags-wrapper {
@@ -197,13 +192,13 @@
     .flags-scroll {
       display: inline-block;
       white-space: nowrap;
-      animation: scrollFlags 30s linear infinite;
+      animation: scrollFlags 28s linear infinite;
     }
 
     .flag {
       width: 90px;
       height: auto;
-      margin: 0 48px;
+      margin: 0 45px;
       vertical-align: middle;
     }
 
@@ -225,13 +220,13 @@
 
   <div class="top-bar">
     <div class="logo-area">
-      <img src="https://i.imgur.com/2w3Od3O.jpeg" alt="Logo">
-      <a href="/">SignSense</a>
+      <img src="https://i.imgur.com/E4dn5ym.png" alt="Icon">
+      <a href="index.html">SignSense</a>
     </div>
     <div class="nav-links">
-      <a class="nav-link" href="#how">See How It Works</a>
-      <a class="nav-link" href="#privacy">Privacy Policy</a>
-      <a class="nav-link" href="#contact">Contact Us</a>
+      <a href="#how" class="nav-link">See How It Works</a>
+      <a href="#privacy" class="nav-link">Privacy Policy</a>
+      <a href="#contact" class="nav-link">Contact Us</a>
     </div>
   </div>
 
@@ -260,39 +255,38 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
-        <!-- repeat to loop longer -->
-        <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
-        <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
-        <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
-        <img src="https://flagcdn.com/it.svg" alt="Italy" class="flag">
-        <img src="https://flagcdn.com/fr.svg" alt="France" class="flag">
-        <img src="https://flagcdn.com/ro.svg" alt="Romania" class="flag">
-        <img src="https://flagcdn.com/al.svg" alt="Albania" class="flag">
-        <img src="https://flagcdn.com/es.svg" alt="Spain" class="flag">
-        <img src="https://flagcdn.com/pt.svg" alt="Portugal" class="flag">
-        <img src="https://flagcdn.com/cn.svg" alt="China" class="flag">
-        <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
-        <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
-        <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
+        <!-- repeat -->
+        <img src="https://flagcdn.com/gb.svg" class="flag">
+        <img src="https://flagcdn.com/de.svg" class="flag">
+        <img src="https://flagcdn.com/nl.svg" class="flag">
+        <img src="https://flagcdn.com/it.svg" class="flag">
+        <img src="https://flagcdn.com/fr.svg" class="flag">
+        <img src="https://flagcdn.com/ro.svg" class="flag">
+        <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
       </div>
     </div>
   </div>
 
-</body>
-</html>
+  <footer style="text-align:center; color:white; font-size:12px; margin-top:30px;">
+    Icons by <a href="https://www.flaticon.com/authors/freepik" style="color:lightblue;">Freepik</a> from <a href="https://www.flaticon.com/" style="color:lightblue;">Flaticon</a>
+  </footer>
 
 </body>
 </html>
