@@ -35,22 +35,17 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
-    }
-
-    .top-bar .logo-area:hover img {
-      filter: brightness(1.3);
     }
 
     .top-bar .logo-area img {
       height: 34px;
-      transition: filter 0.3s ease;
     }
 
     .top-bar .logo-area span {
       font-size: 21px;
       font-weight: normal;
       color: #fff9f9;
+      cursor: pointer;
     }
 
     .top-bar a {
@@ -87,7 +82,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 180px;
+      padding-top: 160px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -102,7 +97,7 @@
       border-radius: 53px;
       display: inline-block;
       font-size: 16px;
-      margin-bottom: 22px;
+      margin-bottom: 28px;
       max-width: 220px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
@@ -175,15 +170,14 @@
     }
 
     .language-section {
-      margin-top: 36px;
+      margin-top: 20px;
       text-align: center;
     }
 
     .language-section p {
       color: white;
       font-size: 18px;
-      margin-bottom: 10px;
-      margin-top: -60px; /* Moves the text higher but keeps flags untouched */
+      margin-bottom: 2px; /* moved higher */
     }
 
     .flags-wrapper {
@@ -222,9 +216,9 @@
 <body>
 
   <div class="top-bar">
-    <div class="logo-area" onclick="location.href='index.html'">
+    <div class="logo-area">
       <img src="https://ik.imagekit.io/2pgrmiy0k/contract%20(2).png?updatedAt=1752685325843" alt="Logo">
-      <span>SignSense</span>
+      <span onclick="location.href='index.html'">SignSense</span>
     </div>
     <div class="nav-links">
       <a href="#how">See How It Works</a>
@@ -271,6 +265,7 @@
         <img src="https://flagcdn.com/in.svg" alt="India" class="flag">
         <img src="https://flagcdn.com/jp.svg" alt="Japan" class="flag">
         <img src="https://flagcdn.com/tr.svg" alt="Turkey" class="flag">
+        <!-- repeat -->
         <img src="https://flagcdn.com/gb.svg" alt="UK" class="flag">
         <img src="https://flagcdn.com/de.svg" alt="Germany" class="flag">
         <img src="https://flagcdn.com/nl.svg" alt="Netherlands" class="flag">
