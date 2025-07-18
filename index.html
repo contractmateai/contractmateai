@@ -9,7 +9,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at 50% 50%, #002740, #cee6ff);
+      background: radial-gradient(circle at 20% 80%, #002740, #cee6ff);
       overflow-x: hidden;
     }
 
@@ -222,78 +222,12 @@
       100% { transform: translateX(0); }
     }
 
-    /* --- NEW SECTION: YOUR DATA STAYS YOURS --- */
-
-    .data-privacy-section {
-      padding: 100px 30px 120px;
-      background: linear-gradient(90deg, #001b2d, #3b6583);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .privacy-content {
-      display: flex;
-      max-width: 1200px;
-      width: 100%;
-      gap: 60px;
-      align-items: center;
-      color: white;
-      flex-wrap: wrap;
-    }
-
-    .privacy-icon svg {
-      width: 180px;
-      height: 180px;
-    }
-
-    .privacy-right h2 {
-      font-size: 48px;
-      margin-bottom: 40px;
-      font-weight: 400;
-    }
-
-    .privacy-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 30px;
-    }
-
-    .privacy-box {
-      background-color: rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 25px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      color: #d3d3d3;
-      font-size: 17px;
-      min-height: 140px;
-      box-shadow: 0 0 14px rgba(255, 255, 255, 0.05);
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    .privacy-box img {
-      height: 32px;
-      margin-bottom: 16px;
-    }
-
-    .privacy-box:hover {
-      background-color: rgba(255, 255, 255, 0.13);
-      transform: translateY(-4px);
-    }
-
     @media (max-width: 768px) {
       .hero h1 { font-size: 32px; }
       .top-bar { flex-direction: column; gap: 10px; padding: 15px; }
       .features-bar { flex-direction: column; gap: 10px; font-size: 15px; }
       .hero-buttons { flex-direction: column; }
       .flag { width: 60px; margin: 0 15px; }
-
-      .privacy-content { flex-direction: column; text-align: center; }
-      .privacy-right h2 { font-size: 32px; }
-      .privacy-grid { grid-template-columns: 1fr; }
-      .privacy-box { align-items: center; }
     }
   </style>
 </head>
@@ -336,7 +270,6 @@
     <p>Contract languages we support:</p>
     <div class="flags-wrapper">
       <div class="flags-scroll">
-        <!-- Flags... -->
         <img src="https://flagcdn.com/gb.svg" class="flag">
         <img src="https://flagcdn.com/de.svg" class="flag">
         <img src="https://flagcdn.com/nl.svg" class="flag">
@@ -344,7 +277,13 @@
         <img src="https://flagcdn.com/fr.svg" class="flag">
         <img src="https://flagcdn.com/ro.svg" class="flag">
         <img src="https://flagcdn.com/al.svg" class="flag">
-        <!-- REPEATED for scroll loop -->
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
+        <!-- REPEAT -->
         <img src="https://flagcdn.com/gb.svg" class="flag">
         <img src="https://flagcdn.com/de.svg" class="flag">
         <img src="https://flagcdn.com/nl.svg" class="flag">
@@ -352,38 +291,15 @@
         <img src="https://flagcdn.com/fr.svg" class="flag">
         <img src="https://flagcdn.com/ro.svg" class="flag">
         <img src="https://flagcdn.com/al.svg" class="flag">
+        <img src="https://flagcdn.com/es.svg" class="flag">
+        <img src="https://flagcdn.com/pt.svg" class="flag">
+        <img src="https://flagcdn.com/cn.svg" class="flag">
+        <img src="https://flagcdn.com/in.svg" class="flag">
+        <img src="https://flagcdn.com/jp.svg" class="flag">
+        <img src="https://flagcdn.com/tr.svg" class="flag">
       </div>
     </div>
   </div>
 
-  <section class="data-privacy-section">
-    <div class="privacy-content">
-      <div class="privacy-icon">
-        <!-- Shield SVG directly -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 17 14" fill="none">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M14.4624 13.4079C14.3752 13.4079 14.2877 13.3872 14.2076 13.3454L11.3348 11.8464L8.46208 13.3454C8.27754 13.4417 8.05393 13.4256 7.88531 13.304C7.71665 13.1824 7.63217 12.9763 7.66742 12.7723L8.21607 9.59733L5.89197 7.34878C5.7427 7.20436 5.68896 6.98833 5.75339 6.79155C5.81779 6.59474 5.98922 6.45134 6.19552 6.42157L9.40734 5.95834L10.8437 3.0696C10.936 2.88406 11.1264 2.7666 11.3348 2.7666C11.5433 2.7666 11.7337 2.88406 11.826 3.06963L13.2623 5.95836L16.4741 6.42159C16.6804 6.45134 16.8518 6.59476 16.9163 6.79157C16.9807 6.98835 16.927 7.20438 16.7777 7.3488L14.4536 9.59735L15.0022 12.7724C15.0375 12.9763 14.953 13.1824 14.7844 13.304C14.6889 13.3728 14.576 13.4079 14.4624 13.4079Z" fill="#3cc0ff"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M9.73243 12.1254C9.63542 12.1254 9.53804 12.1024 9.44885 12.0559L6.25158 10.3875L3.05431 12.0559C2.84892 12.163 2.60005 12.1452 2.41238 12.0098C2.22467 11.8744 2.13065 11.645 2.16988 11.4181L2.7805 7.88436L0.193861 5.3818C0.0277217 5.22106 -0.0320874 4.98063 0.0396202 4.76162C0.111303 4.54258 0.302093 4.38298 0.531699 4.34985L4.10635 3.83428L5.70498 0.619215C5.80768 0.412713 6.01956 0.281982 6.25161 0.281982C6.48365 0.281982 6.69553 0.412713 6.7982 0.619239L8.39683 3.83431L11.9715 4.34987C12.2011 4.38298 12.3919 4.54261 12.4636 4.76164C12.5352 4.98066 12.4755 5.22109 12.3093 5.38183L9.72268 7.88439L10.3333 11.4181C10.3725 11.6451 10.2785 11.8745 10.0908 12.0098C9.98459 12.0864 9.85886 12.1254 9.73243 12.1254Z" fill="#3cc0ff"/>
-        </svg>
-      </div>
-      <div class="privacy-right">
-        <h2>Your Data Stays Yours</h2>
-        <div class="privacy-grid">
-          <div class="privacy-box">
-            <p>No storage.<br>No tracking.<br>No third parties.</p>
-          </div>
-          <div class="privacy-box">
-            <p>All data is encrypted<br>automatically for your safety.</p>
-          </div>
-          <div class="privacy-box">
-            <p>What you upload is<br>analyzed securely, then deleted instantly.</p>
-          </div>
-          <div class="privacy-box">
-            <p>There are no hidden<br>fees or subscriptions.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
 </body>
-</html>
+</html> 
