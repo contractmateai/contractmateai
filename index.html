@@ -20,9 +20,19 @@
       margin: 0;
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
+      background: var(--bg-dark);
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1050px;
       background: url('https://imgur.com/VI6J4nP.png') no-repeat center top;
       background-size: cover;
-      background-attachment: scroll;
+      z-index: -1;
     }
 
     h1, h2, .cta-btn {
@@ -82,7 +92,7 @@
 
     .hero {
       text-align: center;
-      padding: 100px 20px 40px;
+      padding: 60px 20px 30px;
     }
 
     h1 {
@@ -185,7 +195,7 @@
       display: block;
       width: 100%;
       max-width: 1100px;
-      margin: 80px auto 40px;
+      margin: 60px auto 30px;
       border-radius: 20px;
     }
   </style>
