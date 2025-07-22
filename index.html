@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>SignSense</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #01040b;
@@ -16,27 +16,27 @@
       --badge-lime: #adff00;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background-color: var(--bg-dark);
+      margin: 0;
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
+      background: url('https://imgur.com/BoqGbEf.png') no-repeat center top;
+      background-size: cover;
+      background-attachment: scroll;
+    }
+
+    h1, h2, .cta-btn {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 400;
     }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 60px;
-      max-width: 1500px;
+      padding: 20px 40px;
+      max-width: 1200px;
       margin: 0 auto;
-      position: relative;
-      z-index: 10;
     }
 
     header img {
@@ -45,17 +45,9 @@
 
     nav a {
       color: var(--text-muted);
-      margin-left: 28px;
+      margin: 0 20px;
       text-decoration: none;
       font-size: 15px;
-    }
-
-    .hero {
-      background: url('https://i.imgur.com/BoqGbEf.png') no-repeat center top;
-      background-size: 100% 1500px;
-      padding: 160px 20px 500px;
-      text-align: center;
-      position: relative;
     }
 
     .tagline-absolute {
@@ -65,6 +57,7 @@
       padding: 6px 16px;
       font-size: 13px;
       border-radius: 53px;
+      position: relative;
       margin-bottom: 20px;
     }
 
@@ -75,10 +68,15 @@
       border-radius: 53px;
       margin-right: 8px;
       font-size: 11px;
+      font-weight: bold;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 160px 20px 60px;
     }
 
     h1 {
-      font-family: 'Bricolage Grotesque', sans-serif;
       font-size: 48px;
       margin: 0;
       color: var(--text-light);
@@ -89,35 +87,22 @@
       color: var(--text-muted);
       margin: 15px 0 30px;
       font-size: 17px;
-      font-weight: 400;
     }
 
     .cta-btn {
       background: white;
       color: black;
       border: none;
-      font-family: 'Bricolage Grotesque', sans-serif;
       padding: 14px 28px;
       border-radius: 16px;
       font-size: 16px;
       cursor: pointer;
     }
 
-    .app-layout {
-      display: block;
-      max-width: 1200px;
-      width: 100%;
-      margin: -260px auto 0;
-      position: relative;
-      z-index: 5;
-      border-radius: 20px;
-    }
-
     .section-title {
       text-align: center;
       font-size: 32px;
       color: var(--text-light);
-      margin-top: 80px;
       font-weight: 400;
     }
 
@@ -158,15 +143,11 @@
       margin-bottom: 25px;
     }
 
-    .insight-right h2 {
+    .insight-right h2,
+    .insight-right h2 span {
       font-size: 30px;
-      font-family: 'Bricolage Grotesque', sans-serif;
       color: #fff9f9;
       margin-bottom: 20px;
-      font-weight: 400;
-    }
-
-    .insight-right h2 span {
       font-weight: 400;
     }
 
@@ -179,7 +160,6 @@
 
     .cta-outline {
       display: inline-block;
-      font-family: 'Bricolage Grotesque', sans-serif;
       padding: 12px 22px;
       font-size: 16px;
       color: #bff611;
@@ -190,6 +170,14 @@
 
     .cta-outline span {
       margin-left: 6px;
+    }
+
+    .app-preview {
+      display: block;
+      width: 100%;
+      max-width: 1000px;
+      margin: 60px auto;
+      border-radius: 20px;
     }
   </style>
 </head>
@@ -211,7 +199,7 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<img class="app-layout" src="https://i.imgur.com/OROmQM6.png" alt="App Layout UI" />
+<img class="app-preview" src="https://i.imgur.com/OROmQM6.png" alt="App Preview" />
 
 <section>
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
@@ -221,16 +209,23 @@
 <section class="insight-section">
   <div class="insight-content">
     <div class="insight-left">
-      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
     </div>
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
-      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
+      <p>
+        We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.
+      </p>
       <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ once: true });
+</script>
 
 </body>
 </html>
