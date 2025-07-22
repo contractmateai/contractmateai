@@ -30,7 +30,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 1100px;
+      height: 920px;
       background: url('https://imgur.com/VI6J4nP.png') no-repeat center top;
       background-size: cover;
       z-index: -1;
@@ -48,6 +48,7 @@
       padding: 20px 40px;
       max-width: 1200px;
       margin: 0 auto;
+      font-size: 17px;
     }
 
     header img {
@@ -58,55 +59,65 @@
     .logo-wrap {
       display: flex;
       align-items: center;
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 500;
       color: white;
     }
 
     nav a {
       color: var(--text-muted);
-      margin: 0 20px;
+      margin: 0 22px;
       text-decoration: none;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .tagline-absolute {
       background-color: var(--badge-gray);
       color: var(--text-light);
       display: inline-block;
-      padding: 6px 16px;
-      font-size: 16px;
+      padding: 10px 22px;
+      font-size: 18px;
       border-radius: 53px;
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 26px;
     }
 
     .tagline-absolute span {
       background-color: var(--badge-lime);
       color: black;
-      padding: 2px 8px;
+      padding: 4px 10px;
       border-radius: 53px;
-      margin-right: 8px;
-      font-size: 11px;
+      margin-right: 10px;
+      font-size: 13px;
       font-weight: bold;
     }
 
     .hero {
       text-align: center;
-      padding: 80px 20px 40px;
+      padding: 60px 20px 30px;
     }
 
     h1 {
-      font-size: 72px;
+      font-size: 84px;
       margin: 0;
       color: var(--text-light);
       font-weight: 400;
+      line-height: 1.1;
+    }
+
+    h1 br {
+      display: none;
+    }
+
+    .hero h1 span {
+      display: block;
+      margin-top: 8px;
     }
 
     .subtext {
       color: var(--text-muted);
-      margin: 15px 0 30px;
-      font-size: 24px;
+      margin: 18px 0 30px;
+      font-size: 26px;
     }
 
     .cta-btn {
@@ -195,7 +206,7 @@
     .app-preview {
       display: block;
       width: 100%;
-      max-width: 860px;
+      max-width: 780px;
       margin: 60px auto 30px;
       border-radius: 20px;
     }
@@ -217,7 +228,7 @@
 
 <section class="hero">
   <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool</div>
-  <h1>Make Sense Of<br>What You’re Signing</h1>
+  <h1>Make Sense Of <span>You’re Signing</span></h1>
   <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
   <button class="cta-btn">Review A Contract</button>
 </section>
