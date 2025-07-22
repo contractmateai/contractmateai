@@ -4,31 +4,28 @@
   <meta charset="UTF-8">
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
+
+  <!-- AOS Scroll Library -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
   <style>
     :root {
       --bg-dark: #01040b;
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
-      --highlight-green: #bff611;
+      --green: #bff611;
       --badge-purple: #1f1a34;
       --badge-lime: #adff00;
-      --feature-gradient: linear-gradient(90deg, #0e0c13, #181522, #040304);
-      --feature-border: #242425;
-      --feature-bg: rgba(26, 24, 34, 0.57);
-      --feature-inner-border: #3b3b3b;
     }
 
     body {
       margin: 0;
-      background-color: var(--bg-dark);
+      background: var(--bg-dark);
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
-    }
-
-    h1, h2, .cta-btn {
-      font-family: 'Bricolage Grotesque', sans-serif;
     }
 
     header {
@@ -44,7 +41,7 @@
 
     nav a {
       color: var(--text-muted);
-      margin: 0 20px;
+      margin-left: 24px;
       text-decoration: none;
       font-size: 15px;
     }
@@ -58,6 +55,7 @@
       border-radius: 53px;
       position: relative;
       margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
     }
 
     .tagline-absolute span {
@@ -81,6 +79,7 @@
       font-size: 48px;
       margin: 0;
       color: var(--text-light);
+      font-family: 'Bricolage Grotesque', sans-serif;
     }
 
     .subtext {
@@ -92,18 +91,38 @@
     .cta-btn {
       background: white;
       color: black;
-      border: none;
       font-family: 'Bricolage Grotesque', sans-serif;
       padding: 14px 28px;
       border-radius: 16px;
       font-size: 16px;
       cursor: pointer;
+      border: none;
+    }
+
+    .animated-dashboard {
+      margin-top: -80px;
+      text-align: center;
+    }
+
+    .animated-dashboard img {
+      width: 100%;
+      max-width: 1000px;
+      border-radius: 18px;
+      transform: perspective(1200px) rotateX(10deg);
+      opacity: 0;
+      transition: all 1.2s ease;
+    }
+
+    .animated-dashboard img.aos-animate {
+      transform: perspective(1200px) rotateX(0deg);
+      opacity: 1;
     }
 
     .section-title {
       text-align: center;
       font-size: 32px;
-      color: var(--text-light);
+      margin-top: 120px;
+      font-family: 'Bricolage Grotesque', sans-serif;
     }
 
     .section-sub {
@@ -111,39 +130,71 @@
       color: var(--text-muted);
       margin-top: 12px;
       font-size: 16px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .insight-section {
+      padding: 100px 20px 140px;
+      background-color: #01040b;
+    }
+
+    .insight-content {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      gap: 40px;
-      padding: 80px 20px;
+      flex-wrap: wrap;
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 80px;
     }
 
-    .insight-section img.left {
-      width: 420px;
-      border-radius: 18px;
+    .insight-left img {
+      width: 480px;
+      border-radius: 20px;
     }
 
-    .insight-text {
-      max-width: 480px;
+    .insight-right {
+      max-width: 500px;
+      text-align: left;
     }
 
-    .insight-text img.icon {
+    .insight-icon {
       width: 44px;
-      margin-bottom: 16px;
+      margin-bottom: 25px;
     }
 
-    .watch-btn {
-      background: transparent;
-      border: 1px solid var(--highlight-green);
-      color: var(--highlight-green);
-      padding: 12px 24px;
+    .insight-right h2 {
+      font-size: 30px;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      color: #fff9f9;
+      margin-bottom: 20px;
+    }
+
+    .insight-right h2 span {
+      font-weight: 700;
+    }
+
+    .insight-right p {
+      color: #d8cccc;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .cta-outline {
+      display: inline-block;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      padding: 12px 22px;
+      font-size: 16px;
+      color: #bff611;
+      border: 1px solid #bff611;
       border-radius: 12px;
-      cursor: pointer;
-      margin-top: 20px;
+      text-decoration: none;
+    }
+
+    .cta-outline span {
+      margin-left: 6px;
     }
   </style>
 </head>
@@ -165,24 +216,35 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<section>
+<section class="animated-dashboard" data-aos="fade-up">
+  <img src="https://i.imgur.com/OROmQM6.png" alt="Dashboard UI">
+</section>
+
+<section class="section">
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
 </section>
 
 <section class="insight-section">
-  <img class="left" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
-  <div class="insight-text">
-    <img class="icon" src="https://i.imgur.com/nGJ76qM.png" alt="Insights Icon">
-    <h2 class="section-title">Clear insights for <br>easy, accurate reviews.</h2>
-    <p class="section-sub">We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-    <button class="watch-btn">Review A Contract</button>
+  <div class="insight-content">
+    <div class="insight-left">
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
+    </div>
+    <div class="insight-right">
+      <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
+      <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
+      <p>
+        We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.
+      </p>
+      <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
+    </div>
   </div>
 </section>
 
+<!-- AOS Scroll Library -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
-  AOS.init();
+  AOS.init({ once: true });
 </script>
 
 </body>
