@@ -20,9 +20,15 @@
       margin: 0;
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
-      background: url('https://imgur.com/BoqGbEf.png') no-repeat center top;
+      background: var(--bg-dark);
+    }
+
+    .hero-bg {
+      background: url('https://i.imgur.com/VI6J4nP.png') no-repeat center top;
       background-size: cover;
+      background-repeat: no-repeat;
       background-attachment: scroll;
+      padding-bottom: 120px;
     }
 
     h1, h2, .cta-btn {
@@ -175,7 +181,7 @@
     .app-preview {
       display: block;
       width: 100%;
-      max-width: 1000px;
+      max-width: 800px;
       margin: 60px auto;
       border-radius: 20px;
     }
@@ -183,23 +189,25 @@
 </head>
 <body>
 
-<header>
-  <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
-  <nav>
-    <a href="#">See How It Works</a>
-    <a href="#">Features</a>
-    <a href="#">Contact Us</a>
-  </nav>
-</header>
+<div class="hero-bg">
+  <header>
+    <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
+    <nav>
+      <a href="#">See How It Works</a>
+      <a href="#">Features</a>
+      <a href="#">Contact Us</a>
+    </nav>
+  </header>
 
-<section class="hero">
-  <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool</div>
-  <h1>Make Sense Of<br>What You’re Signing</h1>
-  <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
-  <button class="cta-btn">Review A Contract</button>
-</section>
+  <section class="hero">
+    <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool</div>
+    <h1>Make Sense Of<br>What You’re Signing</h1>
+    <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
+    <button class="cta-btn">Review A Contract</button>
+  </section>
 
-<img class="app-preview" src="https://i.imgur.com/OROmQM6.png" alt="App Preview" />
+  <img class="app-preview" src="https://i.imgur.com/OROmQM6.png" alt="App Preview" />
+</div>
 
 <section>
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
