@@ -20,15 +20,9 @@
       margin: 0;
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
-      background: var(--bg-dark);
-    }
-
-    .hero-bg {
-      background: url('https://i.imgur.com/VI6J4nP.png') no-repeat center top;
+      background: url('https://imgur.com/VI6J4nP.png') no-repeat center top;
       background-size: cover;
-      background-repeat: no-repeat;
       background-attachment: scroll;
-      padding-bottom: 120px;
     }
 
     h1, h2, .cta-btn {
@@ -47,6 +41,15 @@
 
     header img {
       height: 38px;
+      margin-right: 12px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 500;
+      color: white;
     }
 
     nav a {
@@ -79,7 +82,7 @@
 
     .hero {
       text-align: center;
-      padding: 160px 20px 60px;
+      padding: 100px 20px 40px;
     }
 
     h1 {
@@ -181,33 +184,34 @@
     .app-preview {
       display: block;
       width: 100%;
-      max-width: 800px;
-      margin: 60px auto;
+      max-width: 1100px;
+      margin: 80px auto 40px;
       border-radius: 20px;
     }
   </style>
 </head>
 <body>
 
-<div class="hero-bg">
-  <header>
+<header>
+  <div class="logo-wrap">
     <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
-    <nav>
-      <a href="#">See How It Works</a>
-      <a href="#">Features</a>
-      <a href="#">Contact Us</a>
-    </nav>
-  </header>
+    SignSense
+  </div>
+  <nav>
+    <a href="#">See How It Works</a>
+    <a href="#">Features</a>
+    <a href="#">Contact Us</a>
+  </nav>
+</header>
 
-  <section class="hero">
-    <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool</div>
-    <h1>Make Sense Of<br>What You’re Signing</h1>
-    <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
-    <button class="cta-btn">Review A Contract</button>
-  </section>
+<section class="hero">
+  <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool</div>
+  <h1>Make Sense Of<br>What You’re Signing</h1>
+  <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
+  <button class="cta-btn">Review A Contract</button>
+</section>
 
-  <img class="app-preview" src="https://i.imgur.com/OROmQM6.png" alt="App Preview" />
-</div>
+<img class="app-preview" src="https://i.imgur.com/OROmQM6.png" alt="App Preview" />
 
 <section>
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
