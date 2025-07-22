@@ -5,7 +5,7 @@
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #01040b;
@@ -23,8 +23,12 @@
     body {
       margin: 0;
       background-color: var(--bg-dark);
-      font-family: 'Bricolage Grotesque', sans-serif;
+      font-family: 'Inter', sans-serif;
       color: var(--text-light);
+    }
+
+    h1, h2, .cta-btn {
+      font-family: 'Bricolage Grotesque', sans-serif;
     }
 
     header {
@@ -67,7 +71,7 @@
     }
 
     .hero {
-      background: url('https://imgur.com/tttjYXs') no-repeat center;
+      background: url('https://i.imgur.com/tttjYXs.png') no-repeat center top;
       background-size: cover;
       text-align: center;
       padding: 160px 20px 80px;
@@ -96,49 +100,6 @@
       cursor: pointer;
     }
 
-    .insight-img {
-      width: 100%;
-      max-width: 860px;
-      display: block;
-      margin: 60px auto 0;
-      border-radius: 14px;
-    }
-
-    .features-section {
-      margin: 120px 0;
-      padding: 60px 20px;
-      border: 1px solid var(--feature-border);
-      background: var(--feature-gradient);
-      opacity: 0.78;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 24px;
-      margin-top: 40px;
-    }
-
-    .feature-box {
-      background: var(--feature-bg);
-      border: 1px solid var(--feature-inner-border);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .feature-box img {
-      width: 28px;
-      height: 28px;
-    }
-
-    .feature-box span {
-      font-size: 15px;
-      color: var(--text-light);
-    }
-
     .section-title {
       text-align: center;
       font-size: 32px;
@@ -152,9 +113,27 @@
       font-size: 16px;
     }
 
-    .video-section {
-      text-align: center;
-      margin: 100px auto;
+    .insight-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 80px 20px;
+    }
+
+    .insight-section img.left {
+      width: 420px;
+      border-radius: 18px;
+    }
+
+    .insight-text {
+      max-width: 480px;
+    }
+
+    .insight-text img.icon {
+      width: 44px;
+      margin-bottom: 16px;
     }
 
     .watch-btn {
@@ -165,27 +144,6 @@
       border-radius: 12px;
       cursor: pointer;
       margin-top: 20px;
-    }
-
-    .faq, .footer {
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .faq h2, .footer h2 {
-      font-size: 28px;
-      color: var(--text-light);
-    }
-
-    .footer {
-      background: #000;
-      color: #888;
-      font-size: 13px;
-    }
-
-    .footer img {
-      height: 30px;
-      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -207,55 +165,20 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<img class="insight-img" src="https://imgur.com/OROmQM6.png" alt="App UI Preview" data-aos="fade-up" data-aos-duration="1000">
-
 <section>
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
 </section>
 
-<section>
-  <h2 class="section-title">Clear insights for <br>easy, accurate reviews.</h2>
-  <p class="section-sub">We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-  <button class="watch-btn">Review A Contract</button>
-</section>
-
-<section class="features-section">
-  <div class="features-grid">
-    <div class="feature-box"><img src="https://imgur.com/slaXrK1.png"><span>No Signup</span></div>
-    <div class="feature-box"><img src="https://imgur.com/1BsztRm.png"><span>Secure Processing</span></div>
-    <div class="feature-box"><img src="https://imgur.com/L8eyff1.png"><span>PDF Export</span></div>
-    <div class="feature-box"><img src="https://imgur.com/YixCjnn.png"><span>Risk Indicator</span></div>
-    <div class="feature-box"><img src="https://imgur.com/zjTE6Fo.png"><span>Your Data Stays Yours</span></div>
-    <div class="feature-box"><img src="https://imgur.com/8WDeF2o.png"><span>Smart Summary</span></div>
-    <div class="feature-box"><img src="https://imgur.com/O7FcEcS.png"><span>Language Detection</span></div>
-    <div class="feature-box"><img src="https://imgur.com/V7UBV7s.png"><span>Key Clauses</span></div>
-    <div class="feature-box"><img src="https://imgur.com/MYt0DeN.png"><span>Legal Insights</span></div>
-    <div class="feature-box"><img src="https://imgur.com/PQDbEIL.png"><span>Suggestions Engine</span></div>
-    <div class="feature-box"><img src="https://imgur.com/7RfhBIu.png"><span>Clause Warnings</span></div>
-    <div class="feature-box"><img src="https://imgur.com/rRR3Be0.png"><span>AI Review</span></div>
-    <div class="feature-box"><img src="https://imgur.com/FKlEFkX.png"><span>Deadline Pressure</span></div>
-    <div class="feature-box"><img src="https://imgur.com/SaDlzzH.png"><span>Sign Confidence</span></div>
-    <div class="feature-box"><img src="https://imgur.com/P0pUNPz.png"><span>No Jargon</span></div>
-    <div class="feature-box"><img src="https://imgur.com/jCeFsGn.png"><span>Modern Design</span></div>
+<section class="insight-section">
+  <img class="left" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
+  <div class="insight-text">
+    <img class="icon" src="https://i.imgur.com/nGJ76qM.png" alt="Insights Icon">
+    <h2 class="section-title">Clear insights for <br>easy, accurate reviews.</h2>
+    <p class="section-sub">We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
+    <button class="watch-btn">Review A Contract</button>
   </div>
 </section>
-
-<section class="video-section">
-  <h2>Take a deeper look to <br>see how SignSense works.</h2>
-  <p class="section-sub">Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts.</p>
-  <button class="watch-btn">Watch Video</button>
-</section>
-
-<section class="faq">
-  <h2>Frequently Asked Questions</h2>
-  <p class="section-sub">Coming soon...</p>
-</section>
-
-<footer class="footer">
-  <img src="https://imgur.com/TEJczpC.png" alt="Logo">
-  <p>Your data is safe. We do not store or share your uploaded files.</p>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
