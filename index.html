@@ -24,17 +24,18 @@
       background: var(--bg-dark);
     }
 
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1650px;
-      background: url('https://imgur.com/eBWIkvp.png') no-repeat center top;
-      background-size: 115% auto;
-      z-index: -1;
-    }
+   body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1450px; /* keep your original height */
+  background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
+  background-size: 100% 1450px; /* force stretch both width and height */
+  z-index: -1;
+}
+
 
     h1, h2, .cta-btn {
       font-family: 'Bricolage Grotesque', sans-serif;
