@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-dark: #01040b;
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
-      --badge-purple: #1f1a34;
       --badge-lime: #adff00;
       --badge-gray: #2e2b3a;
     }
@@ -35,81 +34,6 @@
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
       z-index: -1;
-    }
-
-    /* PARTICLES */
-    .particles {
-      position: absolute;
-      top: 400px;
-      left: 0;
-      width: 100%;
-      height: 1000px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(192, 108, 255, 0.8);
-      border-radius: 50%;
-      box-shadow: 0 0 8px rgba(192, 108, 255, 0.9);
-      animation: floatUp 6s linear infinite;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-1000px) scale(0.6);
-        opacity: 0;
-      }
-    }
-
-    /* APP IMAGE + LINE + SHADOW */
-    .app-preview-container {
-      position: relative;
-      margin-top: 80px;
-      width: 100%;
-      max-width: 1050px;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 20px;
-      overflow: visible;
-      z-index: 2;
-    }
-
-    .glow-line {
-      position: absolute;
-      top: -2px;
-      left: -100%;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, transparent, #ffea00, transparent);
-      animation: moveLine 3s linear infinite;
-      opacity: 0.8;
-      filter: blur(0.8px);
-    }
-
-    @keyframes moveLine {
-      0% {
-        left: -100%;
-      }
-      100% {
-        left: 100%;
-      }
-    }
-
-    .app-preview {
-      display: block;
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-      position: relative;
-      z-index: 2;
     }
 
     h1, h2, .cta-btn {
@@ -181,10 +105,6 @@
       line-height: 1.1;
     }
 
-    h1 br {
-      display: none;
-    }
-
     .hero h1 span {
       display: block;
       margin-top: 8px;
@@ -204,6 +124,65 @@
       border-radius: 16px;
       font-size: 18px;
       cursor: pointer;
+    }
+
+    .app-preview-wrapper {
+      position: relative;
+      max-width: 1050px;
+      margin: 80px auto 0;
+      border-radius: 20px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.4);
+    }
+
+    .app-preview {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+    }
+
+    .yellow-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .yellow-line::before {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 60px;
+      background: linear-gradient(90deg, transparent, yellow, transparent);
+      animation: line-slide 6s linear infinite;
+    }
+
+    @keyframes line-slide {
+      0% { left: -60px; }
+      100% { left: 100%; }
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #c77dff;
+      border-radius: 50%;
+      opacity: 0.8;
+      box-shadow: 0 0 8px #c77dff;
+      animation: float-up linear infinite;
+    }
+
+    @keyframes float-up {
+      from {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-1800px) translateX(var(--x-offset));
+        opacity: 0;
+      }
     }
 
     .section-title {
@@ -250,8 +229,7 @@
       margin-bottom: 25px;
     }
 
-    .insight-right h2,
-    .insight-right h2 span {
+    .insight-right h2, .insight-right h2 span {
       font-size: 30px;
       color: #fff9f9;
       margin-bottom: 20px;
@@ -282,16 +260,6 @@
 </head>
 <body>
 
-<!-- PARTICLES -->
-<div class="particles">
-  <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-  <div class="particle" style="left: 25%; animation-delay: 1s;"></div>
-  <div class="particle" style="left: 40%; animation-delay: 2s;"></div>
-  <div class="particle" style="left: 55%; animation-delay: 0.8s;"></div>
-  <div class="particle" style="left: 70%; animation-delay: 1.6s;"></div>
-  <div class="particle" style="left: 85%; animation-delay: 2.4s;"></div>
-</div>
-
 <header>
   <div class="logo-wrap">
     <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
@@ -311,10 +279,9 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<!-- APP IMAGE WITH YELLOW LINE & SHADOW -->
-<div class="app-preview-container">
-  <div class="glow-line"></div>
-  <img class="app-preview" src="https://i.imgur.com/knmEQt0.png" alt="App Preview" />
+<div class="app-preview-wrapper">
+  <div class="yellow-line"></div>
+  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
 </div>
 
 <section style="margin-top: 120px;">
@@ -336,11 +303,22 @@
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
+
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const startY = Math.floor(Math.random() * 800) + 700; // 700px to 1500px
+    p.style.top = `${startY}px`;
+    p.style.left = `${Math.random() * 100}vw`;
+    p.style.setProperty('--x-offset', `${(Math.random() * 20 - 10)}px`);
+    p.style.animationDuration = `${8 + Math.random() * 12}s`;
+    document.body.appendChild(p);
+  }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 </body>
 </html>
-
