@@ -13,6 +13,7 @@
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
       --badge-gray: #2e2b3a;
+      --particle-color: rgba(200, 100, 255, 0.3);
     }
 
     body {
@@ -20,6 +21,7 @@
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
       background: var(--bg-dark);
+      position: relative;
       overflow-x: hidden;
     }
 
@@ -32,7 +34,44 @@
       height: 1600px;
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
-      z-index: -1;
+      z-index: -3;
+    }
+
+    .particles-container {
+      position: absolute;
+      top: 300px;
+      left: 0;
+      right: 0;
+      height: 1600px;
+      overflow: hidden;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--particle-color);
+      border-radius: 50%;
+      box-shadow: 0 0 6px #c86aff;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-1600px);
+        opacity: 0;
+      }
+    }
+
+    h1, h2, .cta-btn {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 400;
     }
 
     header {
@@ -77,7 +116,7 @@
     }
 
     .tagline-absolute span {
-      background-color: var(--highlight-green);
+      background-color: #adff00;
       color: black;
       padding: 4px 10px;
       border-radius: 53px;
@@ -94,8 +133,6 @@
     h1 {
       font-size: 84px;
       margin: 0;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 400;
       line-height: 1.1;
     }
 
@@ -120,67 +157,44 @@
       cursor: pointer;
     }
 
-    .app-container {
+    .app-preview-wrapper {
       position: relative;
-      text-align: center;
-      margin-top: 80px;
+      max-width: 1050px;
+      margin: 90px auto 0;
+      z-index: 1;
     }
 
     .app-preview {
-      max-width: 1050px;
+      display: block;
       width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
     }
 
     .yellow-line {
       position: absolute;
-      top: 16px;
-      left: 5%;
-      width: 90%;
-      height: 2px;
-      background: linear-gradient(to right, yellow, transparent);
-      animation: moveLine 8s linear infinite;
-      border-radius: 3px;
-      opacity: 0.7;
-    }
-
-    @keyframes moveLine {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    .particles {
-      position: absolute;
+      top: 0;
       left: 0;
-      right: 0;
-      bottom: 100px;
-      height: 1000px;
-      pointer-events: none;
-      overflow: hidden;
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, yellow, rgba(255, 255, 0, 0));
+      animation: slideLine 3.5s linear infinite;
+      border-radius: 3px;
     }
 
-    .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #b96bff;
-      border-radius: 50%;
-      opacity: 0.6;
-      animation: floatUp linear infinite;
-      box-shadow: 0 0 6px 3px #b96bff;
-    }
-
-    @keyframes floatUp {
-      from { transform: translateY(0); }
-      to { transform: translateY(-1600px); }
+    @keyframes slideLine {
+      0% { transform: translateX(-100%); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
     }
 
     .section-title {
       text-align: center;
       font-size: 32px;
-      font-weight: 400;
       color: var(--text-light);
+      font-weight: 400;
+      margin-top: 150px;
     }
 
     .section-sub {
@@ -188,6 +202,7 @@
       color: var(--text-muted);
       margin-top: 12px;
       font-size: 16px;
+      font-weight: 400;
     }
 
     .insight-section {
@@ -219,9 +234,9 @@
       margin-bottom: 25px;
     }
 
-    .insight-right h2 {
+    .insight-right h2,
+    .insight-right h2 span {
       font-size: 30px;
-      font-weight: 400;
       margin-bottom: 20px;
     }
 
@@ -240,9 +255,15 @@
       border-radius: 12px;
       text-decoration: none;
     }
+
+    .cta-outline span {
+      margin-left: 6px;
+    }
   </style>
 </head>
 <body>
+
+<div class="particles-container" id="particles-container"></div>
 
 <header>
   <div class="logo-wrap">
@@ -263,26 +284,12 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<div class="app-container">
+<div class="app-preview-wrapper">
   <div class="yellow-line"></div>
-  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview">
+  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
 </div>
 
-<div class="particles">
-  <!-- 20+ floating particles with random timing/positions -->
-  <script>
-    for (let i = 0; i < 25; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.bottom = Math.random() * 600 + 'px';
-      p.style.animationDuration = (25 + Math.random() * 20) + 's';
-      document.body.querySelector('.particles').appendChild(p);
-    }
-  </script>
-</div>
-
-<section style="margin-top: 120px;">
+<section>
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
 </section>
@@ -306,6 +313,16 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
+
+  const container = document.getElementById('particles-container');
+  for (let i = 0; i < 40; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = (Math.random() * 1300 + 200) + 'px';
+    particle.style.animationDuration = (18 + Math.random() * 12) + 's';
+    container.appendChild(particle);
+  }
 </script>
 
 </body>
