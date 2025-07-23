@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #01040b;
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
-      --badge-lime: #adff00;
       --badge-gray: #2e2b3a;
     }
 
@@ -34,11 +33,6 @@
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
       z-index: -1;
-    }
-
-    h1, h2, .cta-btn {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 400;
     }
 
     header {
@@ -83,7 +77,7 @@
     }
 
     .tagline-absolute span {
-      background-color: var(--badge-lime);
+      background-color: var(--highlight-green);
       color: black;
       padding: 4px 10px;
       border-radius: 53px;
@@ -100,7 +94,7 @@
     h1 {
       font-size: 84px;
       margin: 0;
-      color: var(--text-light);
+      font-family: 'Bricolage Grotesque', sans-serif;
       font-weight: 400;
       line-height: 1.1;
     }
@@ -126,70 +120,67 @@
       cursor: pointer;
     }
 
-    .app-preview-wrapper {
+    .app-container {
       position: relative;
-      max-width: 1050px;
-      margin: 80px auto 0;
-      border-radius: 20px;
-      box-shadow: 0 0 50px rgba(0,0,0,0.4);
+      text-align: center;
+      margin-top: 80px;
     }
 
     .app-preview {
+      max-width: 1050px;
       width: 100%;
       border-radius: 20px;
-      display: block;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
     }
 
     .yellow-line {
       position: absolute;
-      top: 0;
-      left: 0;
-      height: 4px;
-      width: 100%;
-      overflow: hidden;
+      top: 16px;
+      left: 5%;
+      width: 90%;
+      height: 2px;
+      background: linear-gradient(to right, yellow, transparent);
+      animation: moveLine 8s linear infinite;
+      border-radius: 3px;
+      opacity: 0.7;
     }
 
-    .yellow-line::before {
-      content: "";
+    @keyframes moveLine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .particles {
       position: absolute;
-      height: 100%;
-      width: 60px;
-      background: linear-gradient(90deg, transparent, yellow, transparent);
-      animation: line-slide 6s linear infinite;
-    }
-
-    @keyframes line-slide {
-      0% { left: -60px; }
-      100% { left: 100%; }
+      left: 0;
+      right: 0;
+      bottom: 100px;
+      height: 1000px;
+      pointer-events: none;
+      overflow: hidden;
     }
 
     .particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #c77dff;
+      width: 6px;
+      height: 6px;
+      background: #b96bff;
       border-radius: 50%;
-      opacity: 0.8;
-      box-shadow: 0 0 8px #c77dff;
-      animation: float-up linear infinite;
+      opacity: 0.6;
+      animation: floatUp linear infinite;
+      box-shadow: 0 0 6px 3px #b96bff;
     }
 
-    @keyframes float-up {
-      from {
-        transform: translateY(0) translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-1800px) translateX(var(--x-offset));
-        opacity: 0;
-      }
+    @keyframes floatUp {
+      from { transform: translateY(0); }
+      to { transform: translateY(-1600px); }
     }
 
     .section-title {
       text-align: center;
       font-size: 32px;
-      color: var(--text-light);
       font-weight: 400;
+      color: var(--text-light);
     }
 
     .section-sub {
@@ -197,7 +188,6 @@
       color: var(--text-muted);
       margin-top: 12px;
       font-size: 16px;
-      font-weight: 400;
     }
 
     .insight-section {
@@ -229,18 +219,16 @@
       margin-bottom: 25px;
     }
 
-    .insight-right h2, .insight-right h2 span {
+    .insight-right h2 {
       font-size: 30px;
-      color: #fff9f9;
-      margin-bottom: 20px;
       font-weight: 400;
+      margin-bottom: 20px;
     }
 
     .insight-right p {
       color: #d8cccc;
       font-size: 16px;
       margin-bottom: 30px;
-      font-weight: 400;
     }
 
     .cta-outline {
@@ -251,10 +239,6 @@
       border: 1px solid #bff611;
       border-radius: 12px;
       text-decoration: none;
-    }
-
-    .cta-outline span {
-      margin-left: 6px;
     }
   </style>
 </head>
@@ -279,9 +263,23 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<div class="app-preview-wrapper">
+<div class="app-container">
   <div class="yellow-line"></div>
-  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
+  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview">
+</div>
+
+<div class="particles">
+  <!-- 20+ floating particles with random timing/positions -->
+  <script>
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.bottom = Math.random() * 600 + 'px';
+      p.style.animationDuration = (25 + Math.random() * 20) + 's';
+      document.body.querySelector('.particles').appendChild(p);
+    }
+  </script>
 </div>
 
 <section style="margin-top: 120px;">
@@ -297,28 +295,19 @@
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
-      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
+      <p>
+        We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.
+      </p>
       <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
     </div>
   </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
-
-  for (let i = 0; i < 60; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    const startY = Math.floor(Math.random() * 800) + 700; // 700px to 1500px
-    p.style.top = `${startY}px`;
-    p.style.left = `${Math.random() * 100}vw`;
-    p.style.setProperty('--x-offset', `${(Math.random() * 20 - 10)}px`);
-    p.style.animationDuration = `${8 + Math.random() * 12}s`;
-    document.body.appendChild(p);
-  }
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 </body>
 </html>
+
