@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #01040b;
@@ -15,10 +15,6 @@
       --badge-purple: #1f1a34;
       --badge-lime: #adff00;
       --badge-gray: #2e2b3a;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
@@ -38,35 +34,7 @@
       height: 1600px;
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
-      z-index: -2;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #b480f7;
-      border-radius: 50%;
-      opacity: 0.7;
-      filter: blur(1px);
-      animation: floatUp linear infinite;
-      z-index: -1;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0);
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(-1600px);
-        opacity: 0;
-      }
-    }
-
-    h1, h2, .cta-btn {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 400;
+      z-index: -3;
     }
 
     header {
@@ -77,6 +45,19 @@
       max-width: 1200px;
       margin: 0 auto;
       font-size: 17px;
+      position: relative;
+      z-index: 2;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
     }
 
     header img {
@@ -156,46 +137,6 @@
       cursor: pointer;
     }
 
-    .app-preview-container {
-      position: relative;
-      max-width: 1050px;
-      margin: 80px auto 0;
-      z-index: 1;
-    }
-
-    .app-preview {
-      width: 100%;
-      border-radius: 24px;
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
-      display: block;
-    }
-
-    .yellow-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: linear-gradient(to right, #fff200, #fff200);
-      animation: scrollLine 4s linear infinite;
-      border-radius: 2px;
-    }
-
-    @keyframes scrollLine {
-      0% {
-        transform: scaleX(0);
-        transform-origin: left;
-      }
-      50% {
-        transform: scaleX(1);
-        transform-origin: left;
-      }
-      100% {
-        transform: scaleX(0);
-        transform-origin: right;
-      }
-    }
-
     .section-title {
       text-align: center;
       font-size: 32px;
@@ -268,9 +209,83 @@
     .cta-outline span {
       margin-left: 6px;
     }
+
+    .app-container {
+      position: relative;
+      margin-top: 80px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-preview {
+      width: 100%;
+      max-width: 1050px;
+      border-radius: 20px;
+      box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .yellow-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: #bff611;
+      animation: lineMove 2s infinite ease-in-out alternate;
+      z-index: 2;
+      border-radius: 1px;
+    }
+
+    @keyframes lineMove {
+      0% {
+        left: 0;
+        width: 0%;
+      }
+      100% {
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    .particles-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1600px;
+      overflow: hidden;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -20px;
+      width: 3px;
+      height: 3px;
+      background-color: #a974f7;
+      border-radius: 50%;
+      opacity: 0.8;
+      filter: blur(1px);
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-1600px);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
+
+<div class="particles-container" id="particles"></div>
 
 <header>
   <div class="logo-wrap">
@@ -291,9 +306,9 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<div class="app-preview-container">
-  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview">
+<div class="app-container">
   <div class="yellow-line"></div>
+  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
 </div>
 
 <section style="margin-top: 120px;">
@@ -317,26 +332,18 @@
   </div>
 </section>
 
-<!-- Particle Generator Script -->
 <script>
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.top = 800 + Math.random() * 600 + "px"; // start lower
-    p.style.animationDuration = 10 + Math.random() * 20 + "s";
-    p.style.opacity = 0.4 + Math.random() * 0.6;
-    p.style.filter = "blur(2px)";
-    p.style.zIndex = -1;
-    document.body.appendChild(p);
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 80; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('particle');
+    dot.style.left = `${Math.random() * 100}%`;
+    dot.style.animationDuration = `${10 + Math.random() * 20}s`;
+    dot.style.width = dot.style.height = `${1 + Math.random() * 2.5}px`;
+    dot.style.bottom = `${Math.random() * 600}px`;
+    container.appendChild(dot);
   }
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init({ once: true });
 </script>
 
 </body>
 </html>
-
