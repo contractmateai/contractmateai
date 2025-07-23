@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-dark: #01040b;
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
+      --badge-purple: #1f1a34;
+      --badge-lime: #adff00;
       --badge-gray: #2e2b3a;
-      --particle-color: rgba(200, 100, 255, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -21,7 +26,6 @@
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
       background: var(--bg-dark);
-      position: relative;
       overflow-x: hidden;
     }
 
@@ -34,34 +38,25 @@
       height: 1600px;
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
-      z-index: -3;
-    }
-
-    .particles-container {
-      position: absolute;
-      top: 300px;
-      left: 0;
-      right: 0;
-      height: 1600px;
-      overflow: hidden;
       z-index: -2;
-      pointer-events: none;
     }
 
     .particle {
       position: absolute;
-      width: 6px;
-      height: 6px;
-      background: var(--particle-color);
+      width: 4px;
+      height: 4px;
+      background: #b480f7;
       border-radius: 50%;
-      box-shadow: 0 0 6px #c86aff;
+      opacity: 0.7;
+      filter: blur(1px);
       animation: floatUp linear infinite;
+      z-index: -1;
     }
 
     @keyframes floatUp {
       0% {
         transform: translateY(0);
-        opacity: 0.6;
+        opacity: 0.7;
       }
       100% {
         transform: translateY(-1600px);
@@ -116,7 +111,7 @@
     }
 
     .tagline-absolute span {
-      background-color: #adff00;
+      background-color: var(--badge-lime);
       color: black;
       padding: 4px 10px;
       border-radius: 53px;
@@ -128,11 +123,15 @@
     .hero {
       text-align: center;
       padding: 60px 20px 30px;
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
       font-size: 84px;
       margin: 0;
+      color: var(--text-light);
+      font-weight: 400;
       line-height: 1.1;
     }
 
@@ -157,36 +156,44 @@
       cursor: pointer;
     }
 
-    .app-preview-wrapper {
+    .app-preview-container {
       position: relative;
       max-width: 1050px;
-      margin: 90px auto 0;
+      margin: 80px auto 0;
       z-index: 1;
     }
 
     .app-preview {
-      display: block;
       width: 100%;
-      border-radius: 22px;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+      border-radius: 24px;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+      display: block;
     }
 
     .yellow-line {
       position: absolute;
       top: 0;
       left: 0;
-      height: 3px;
+      height: 2px;
       width: 100%;
-      background: linear-gradient(90deg, yellow, rgba(255, 255, 0, 0));
-      animation: slideLine 3.5s linear infinite;
-      border-radius: 3px;
+      background: linear-gradient(to right, #fff200, #fff200);
+      animation: scrollLine 4s linear infinite;
+      border-radius: 2px;
     }
 
-    @keyframes slideLine {
-      0% { transform: translateX(-100%); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateX(100%); opacity: 0; }
+    @keyframes scrollLine {
+      0% {
+        transform: scaleX(0);
+        transform-origin: left;
+      }
+      50% {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+      100% {
+        transform: scaleX(0);
+        transform-origin: right;
+      }
     }
 
     .section-title {
@@ -194,7 +201,6 @@
       font-size: 32px;
       color: var(--text-light);
       font-weight: 400;
-      margin-top: 150px;
     }
 
     .section-sub {
@@ -237,13 +243,16 @@
     .insight-right h2,
     .insight-right h2 span {
       font-size: 30px;
+      color: #fff9f9;
       margin-bottom: 20px;
+      font-weight: 400;
     }
 
     .insight-right p {
       color: #d8cccc;
       font-size: 16px;
       margin-bottom: 30px;
+      font-weight: 400;
     }
 
     .cta-outline {
@@ -262,8 +271,6 @@
   </style>
 </head>
 <body>
-
-<div class="particles-container" id="particles-container"></div>
 
 <header>
   <div class="logo-wrap">
@@ -284,12 +291,12 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<div class="app-preview-wrapper">
+<div class="app-preview-container">
+  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview">
   <div class="yellow-line"></div>
-  <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
 </div>
 
-<section>
+<section style="margin-top: 120px;">
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
 </section>
@@ -310,20 +317,26 @@
   </div>
 </section>
 
+<!-- Particle Generator Script -->
+<script>
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.top = 800 + Math.random() * 600 + "px"; // start lower
+    p.style.animationDuration = 10 + Math.random() * 20 + "s";
+    p.style.opacity = 0.4 + Math.random() * 0.6;
+    p.style.filter = "blur(2px)";
+    p.style.zIndex = -1;
+    document.body.appendChild(p);
+  }
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
-
-  const container = document.getElementById('particles-container');
-  for (let i = 0; i < 40; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.top = (Math.random() * 1300 + 200) + 'px';
-    particle.style.animationDuration = (18 + Math.random() * 12) + 's';
-    container.appendChild(particle);
-  }
 </script>
 
 </body>
 </html>
+
