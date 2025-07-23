@@ -12,12 +12,19 @@
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
-      --badge-gray: #2e2b3a;
+      --badge-purple: #1f1a34;
       --badge-lime: #adff00;
+      --badge-gray: #2e2b3a;
+      --particle-color: #682fd8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      margin: 0;
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
       background: var(--bg-dark);
@@ -33,7 +40,44 @@
       height: 1600px;
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
+      z-index: -2;
+    }
+
+    .particle {
+      position: absolute;
+      background-color: var(--particle-color);
+      border-radius: 50%;
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 6px var(--particle-color);
+      animation: floatUp linear infinite;
       z-index: -1;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-1600px);
+        opacity: 0;
+      }
+    }
+
+    .particle-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1600px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    h1, h2, .cta-btn {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 400;
     }
 
     header {
@@ -44,9 +88,20 @@
       max-width: 1200px;
       margin: 0 auto;
       font-size: 17px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       position: relative;
       z-index: 2;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+      pointer-events: none;
+      z-index: -1;
     }
 
     header img {
@@ -78,7 +133,6 @@
       border-radius: 53px;
       position: relative;
       margin-bottom: 26px;
-      z-index: 2;
     }
 
     .tagline-absolute span {
@@ -94,18 +148,17 @@
     .hero {
       text-align: center;
       padding: 60px 20px 30px;
-      position: relative;
-      z-index: 2;
     }
 
     h1 {
       font-size: 84px;
       margin: 0;
+      color: var(--text-light);
       font-weight: 400;
       line-height: 1.1;
     }
 
-    h1 span {
+    .hero h1 span {
       display: block;
       margin-top: 8px;
     }
@@ -126,19 +179,24 @@
       cursor: pointer;
     }
 
-    .app-preview-container {
+    .app-container {
       position: relative;
+      width: 100%;
       max-width: 1050px;
       margin: 80px auto 0;
+      perspective: 1000px;
+    }
+
+    .app-wrapper {
+      transition: transform 0.8s ease;
+      transform: rotateX(12deg);
     }
 
     .app-preview {
-      display: block;
       width: 100%;
-      border-radius: 28px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-      transition: transform 0.7s ease;
-      transform: rotate(-3deg);
+      border-radius: 24px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+      display: block;
     }
 
     .yellow-line {
@@ -146,32 +204,23 @@
       top: 0;
       left: 0;
       height: 2px;
-      width: 0%;
       background: #bff611;
-      border-radius: 5px;
-      animation: lineMove 5s linear infinite;
+      animation: slideLine 4s linear infinite;
+      border-radius: 1px;
     }
 
-    @keyframes lineMove {
-      0% {
-        width: 0%;
-        left: 0;
-      }
-      50% {
-        width: 100%;
-        left: 0;
-      }
-      100% {
-        width: 0%;
-        left: 100%;
-      }
+    @keyframes slideLine {
+      0% { width: 0; opacity: 0.2; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { width: 100%; opacity: 0; }
     }
 
     .section-title {
       text-align: center;
       font-size: 32px;
+      color: var(--text-light);
       font-weight: 400;
-      margin-top: 120px;
     }
 
     .section-sub {
@@ -211,14 +260,15 @@
       margin-bottom: 25px;
     }
 
-    .insight-right h2,
-    .insight-right h2 span {
+    .insight-right h2, .insight-right h2 span {
       font-size: 30px;
+      color: #fff9f9;
       margin-bottom: 20px;
       font-weight: 400;
     }
 
     .insight-right p {
+      color: #d8cccc;
       font-size: 16px;
       margin-bottom: 30px;
       font-weight: 400;
@@ -237,35 +287,15 @@
     .cta-outline span {
       margin-left: 6px;
     }
-
-    .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #682fd8;
-      border-radius: 50%;
-      filter: blur(3px);
-      animation: floatUp 12s linear infinite;
-      z-index: 0;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-1000px);
-        opacity: 0;
-      }
-    }
   </style>
 </head>
 <body>
 
+<div class="particle-container" id="particles"></div>
+
 <header>
   <div class="logo-wrap">
-    <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo" />
+    <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
     SignSense
   </div>
   <nav>
@@ -282,12 +312,14 @@
   <button class="cta-btn">Review A Contract</button>
 </section>
 
-<div class="app-preview-container">
+<div class="app-container">
   <div class="yellow-line"></div>
-  <img class="app-preview" id="appImage" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
+  <div class="app-wrapper" id="appWrapper">
+    <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
+  </div>
 </div>
 
-<section>
+<section style="margin-top: 120px;">
   <h2 class="section-title">Understand Your Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
 </section>
@@ -295,46 +327,60 @@
 <section class="insight-section">
   <div class="insight-content">
     <div class="insight-left">
-      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
     </div>
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
-      <h2>Clear insights for <br /><span>easy, accurate reviews.</span></h2>
-      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
+      <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
+      <p>
+        We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.
+      </p>
       <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
     </div>
   </div>
 </section>
 
-<!-- Floating particles -->
-<script>
-  for (let i = 0; i < 35; i++) {
-    const dot = document.createElement("div");
-    dot.classList.add("particle");
-    dot.style.left = Math.random() * 100 + "vw";
-    dot.style.bottom = Math.random() * 800 + "px";
-    dot.style.animationDuration = (10 + Math.random() * 10) + "s";
-    document.body.appendChild(dot);
-  }
-
-  // Tilt on scroll
-  const appImage = document.getElementById("appImage");
-  let tilted = true;
-  window.addEventListener("scroll", () => {
-    const scrollTop = window.scrollY;
-    if (scrollTop > 100 && tilted) {
-      appImage.style.transform = "rotate(0deg)";
-      tilted = false;
-    } else if (scrollTop <= 100 && !tilted) {
-      appImage.style.transform = "rotate(-3deg)";
-      tilted = true;
-    }
-  });
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
+
+  const container = document.getElementById("particles");
+  const num = 35;
+  for (let i = 0; i < num; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const delay = Math.random() * 10;
+    const duration = 20 + Math.random() * 15;
+    const size = 1 + Math.random() * 2.5;
+    const startY = Math.random() * 1200 + 100;
+    const left = Math.random() * window.innerWidth;
+    p.style.left = `${left}px`;
+    p.style.top = `${startY}px`;
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.animationDuration = `${duration}s`;
+    p.style.animationDelay = `${delay}s`;
+    container.appendChild(p);
+  }
+
+  const appImg = document.querySelector('.app-preview');
+  const yellowLine = document.querySelector('.yellow-line');
+  appImg.onload = () => {
+    yellowLine.style.width = appImg.clientWidth + 'px';
+  };
+
+  const wrapper = document.getElementById("appWrapper");
+  let lastScrollTop = 0;
+
+  window.addEventListener("scroll", function () {
+    const st = window.scrollY;
+    if (st > 50) {
+      wrapper.style.transform = "rotateX(0deg)";
+    } else {
+      wrapper.style.transform = "rotateX(12deg)";
+    }
+    lastScrollTop = st;
+  });
 </script>
 
 </body>
