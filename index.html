@@ -12,9 +12,8 @@
       --text-light: #fff9f9;
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
-      --badge-purple: #1f1a34;
-      --badge-lime: #adff00;
       --badge-gray: #2e2b3a;
+      --badge-lime: #adff00;
     }
 
     body {
@@ -22,20 +21,56 @@
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
       background: var(--bg-dark);
+      overflow-x: hidden;
     }
 
-   body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1600px; /* keep your original height */
-  background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
-  background-size: 100% 1600px; /* force stretch both width and height */
-  z-index: -1;
-}
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1600px;
+      background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
+      background-size: 100% 1600px;
+      z-index: -1;
+    }
 
+    /* Particle Effect */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1600px;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #b080ff;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      30% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-200%);
+        opacity: 0;
+      }
+    }
 
     h1, h2, .cta-btn {
       font-family: 'Bricolage Grotesque', sans-serif;
@@ -50,6 +85,8 @@
       max-width: 1200px;
       margin: 0 auto;
       font-size: 17px;
+      position: relative;
+      z-index: 1;
     }
 
     header img {
@@ -81,6 +118,7 @@
       border-radius: 53px;
       position: relative;
       margin-bottom: 26px;
+      z-index: 1;
     }
 
     .tagline-absolute span {
@@ -96,6 +134,8 @@
     .hero {
       text-align: center;
       padding: 60px 20px 30px;
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
@@ -210,10 +250,36 @@
       max-width: 1050px;
       margin: 80px auto 0;
       border-radius: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-preview::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #ffee00, #bff611, #ffee00);
+      background-size: 200% auto;
+      animation: moveGlow 3s linear infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes moveGlow {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
     }
   </style>
 </head>
 <body>
+
+<div class="particles"></div>
 
 <header>
   <div class="logo-wrap">
@@ -260,6 +326,18 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
+
+  // Generate floating particles
+  const container = document.querySelector('.particles');
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = 4 + Math.random() * 6 + 's';
+    p.style.animationDelay = Math.random() * 5 + 's';
+    p.style.width = p.style.height = 2 + Math.random() * 2 + 'px';
+    container.appendChild(p);
+  }
 </script>
 
 </body>
