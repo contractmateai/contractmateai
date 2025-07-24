@@ -203,35 +203,30 @@
     .yellow-line {
       position: absolute;
       top: 0;
-      left: 0;
-      width: 80px;
+      left: -100px;
+      width: 100px;
       height: 2px;
       background: linear-gradient(90deg, rgba(191, 246, 17, 0.1), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0.1));
       box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
       border-radius: 2px;
-      animation: lineSweep 4.5s ease-in-out infinite;
+      animation: moveLine 6s linear infinite;
       pointer-events: none;
       z-index: 2;
     }
 
-    @keyframes lineSweep {
+    @keyframes moveLine {
       0% {
-        left: 0%;
+        left: -100px;
         opacity: 0;
       }
       10% {
         opacity: 1;
       }
-      50% {
-        left: 50%;
-        opacity: 0.9;
-      }
       90% {
-        left: 100%;
         opacity: 1;
       }
       100% {
-        left: 0%;
+        left: 100%;
         opacity: 0;
       }
     }
