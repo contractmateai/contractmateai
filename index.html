@@ -188,6 +188,7 @@
     }
 
     .app-wrapper {
+      position: relative;
       transition: transform 0.8s ease;
       transform: rotateX(12deg);
     }
@@ -202,17 +203,18 @@
     .yellow-line {
       position: absolute;
       top: 0;
-      left: 0;
+      left: 8px;
       height: 2px;
       width: 0;
-      background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.1) 100%);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      animation: glowSweep 3s ease-in-out infinite;
+      background: linear-gradient(90deg, rgba(191, 246, 17, 0.1) 0%, rgba(191, 246, 17, 0.7) 50%, rgba(191, 246, 17, 0.1) 100%);
+      border-radius: 1px;
+      box-shadow: 0 0 8px rgba(191, 246, 17, 0.3);
+      animation: glowLine 4.5s ease-in-out infinite;
       pointer-events: none;
+      z-index: 2;
     }
 
-    @keyframes glowSweep {
+    @keyframes glowLine {
       0% {
         width: 0%;
         opacity: 0;
@@ -221,7 +223,7 @@
         opacity: 1;
       }
       50% {
-        width: 100%;
+        width: calc(100% - 16px);
         opacity: 0.9;
       }
       90% {
@@ -330,8 +332,8 @@
 </section>
 
 <div class="app-container">
-  <div class="yellow-line"></div>
   <div class="app-wrapper" id="appWrapper">
+    <div class="yellow-line" id="yellowLine"></div>
     <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
   </div>
 </div>
@@ -380,9 +382,9 @@
   }
 
   const appImg = document.querySelector('.app-preview');
-  const yellowLine = document.querySelector('.yellow-line');
+  const yellowLine = document.getElementById('yellowLine');
   appImg.onload = () => {
-    yellowLine.style.width = appImg.clientWidth + 'px';
+    yellowLine.style.width = `${appImg.clientWidth - 16}px`;
   };
 
   const wrapper = document.getElementById("appWrapper");
