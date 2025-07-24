@@ -204,16 +204,33 @@
       top: 0;
       left: 0;
       height: 2px;
-      background: #bff611;
-      animation: slideLine 4s linear infinite;
-      border-radius: 1px;
+      width: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.1) 100%);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      animation: glowSweep 3s ease-in-out infinite;
+      pointer-events: none;
     }
 
-    @keyframes slideLine {
-      0% { width: 0; opacity: 0.2; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { width: 100%; opacity: 0; }
+    @keyframes glowSweep {
+      0% {
+        width: 0%;
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      50% {
+        width: 100%;
+        opacity: 0.9;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        width: 0%;
+        opacity: 0;
+      }
     }
 
     .section-title {
@@ -345,11 +362,11 @@
   AOS.init({ once: true });
 
   const container = document.getElementById("particles");
-  const num = 50; // reduced for less clutter
+  const num = 50;
   for (let i = 0; i < num; i++) {
     const p = document.createElement("div");
     p.className = "particle";
-    const duration = 25 + Math.random() * 15; // slow float
+    const duration = 25 + Math.random() * 15;
     const size = 1 + Math.random() * 2.5;
     const startX = Math.random() * window.innerWidth;
     const startY = Math.random() * 1600;
@@ -358,7 +375,7 @@
     p.style.width = `${size}px`;
     p.style.height = `${size}px`;
     p.style.animationDuration = `${duration}s`;
-    p.style.animationDelay = `0s`; // always floating immediately
+    p.style.animationDelay = `0s`;
     container.appendChild(p);
   }
 
@@ -369,19 +386,11 @@
   };
 
   const wrapper = document.getElementById("appWrapper");
-  let lastScrollTop = 0;
-
   window.addEventListener("scroll", function () {
     const st = window.scrollY;
-    if (st > 50) {
-      wrapper.style.transform = "rotateX(0deg)";
-    } else {
-      wrapper.style.transform = "rotateX(12deg)";
-    }
-    lastScrollTop = st;
+    wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
   });
 </script>
-
 
 </body>
 </html>
