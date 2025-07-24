@@ -345,12 +345,11 @@
   AOS.init({ once: true });
 
   const container = document.getElementById("particles");
-  const num = 80;
+  const num = 50; // reduced for less clutter
   for (let i = 0; i < num; i++) {
     const p = document.createElement("div");
     p.className = "particle";
-    const delay = Math.random() * 10;
-    const duration = 20 + Math.random() * 15;
+    const duration = 25 + Math.random() * 15; // slow float
     const size = 1 + Math.random() * 2.5;
     const startX = Math.random() * window.innerWidth;
     const startY = Math.random() * 1600;
@@ -359,7 +358,7 @@
     p.style.width = `${size}px`;
     p.style.height = `${size}px`;
     p.style.animationDuration = `${duration}s`;
-    p.style.animationDelay = `${delay}s`;
+    p.style.animationDelay = `0s`; // always floating immediately
     container.appendChild(p);
   }
 
@@ -382,6 +381,7 @@
     lastScrollTop = st;
   });
 </script>
+
 
 </body>
 </html>
