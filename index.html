@@ -345,16 +345,16 @@
   AOS.init({ once: true });
 
   const container = document.getElementById("particles");
-  const num = 35;
+  const num = 80;
   for (let i = 0; i < num; i++) {
     const p = document.createElement("div");
     p.className = "particle";
     const delay = Math.random() * 10;
     const duration = 20 + Math.random() * 15;
     const size = 1 + Math.random() * 2.5;
-    const startY = Math.random() * 1200 + 100;
-    const left = Math.random() * window.innerWidth;
-    p.style.left = `${left}px`;
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * 1600;
+    p.style.left = `${startX}px`;
     p.style.top = `${startY}px`;
     p.style.width = `${size}px`;
     p.style.height = `${size}px`;
