@@ -55,14 +55,8 @@
     }
 
     @keyframes floatUp {
-      from {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-1600px);
-        opacity: 0;
-      }
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-1600px); opacity: 0; }
     }
 
     .particle-container {
@@ -130,11 +124,16 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 22px;
-      font-size: 18px;
+      padding: 6px 18px;
+      font-size: 14px;
       border-radius: 53px;
       position: relative;
       margin-bottom: 26px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .tagline-absolute:hover {
+      box-shadow: 0 0 10px rgba(173, 255, 0, 0.4);
     }
 
     .tagline-absolute span {
@@ -142,14 +141,13 @@
       color: black;
       padding: 4px 10px;
       border-radius: 53px;
-      margin-right: 10px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
     }
 
     .hero {
       text-align: center;
-      padding: 100px 20px 30px; /* Move up/down by changing top padding */
+      padding: 80px 20px 30px;
     }
 
     h1 {
@@ -174,7 +172,7 @@
     .cta-btn {
       background: #f2f9fe;
       color: black;
-      border: none;
+      border: 1px solid #ccc;
       padding: 16px 30px;
       border-radius: 16px;
       font-size: 18px;
@@ -220,20 +218,10 @@
     }
 
     @keyframes moveLine {
-      0% {
-        left: 0%;
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      85% {
-        opacity: 1;
-      }
-      100% {
-        left: 100%;
-        opacity: 0;
-      }
+      0% { left: 0%; opacity: 0; }
+      10% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
     }
 
     .section-title {
@@ -326,16 +314,10 @@
 </header>
 
 <section class="hero">
-  <div class="tagline-absolute">
-    <span>AI</span>Legal DocReview Tool
-    <img src="https://imgur.com/Vm4t8Ab.png" alt="arrow" style="height: 16px;">
-  </div>
+  <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool <img src="https://imgur.com/Vm4t8Ab.png" alt="arrow" style="height: 14px;" /></div>
   <h1>Make Sense Of <span>You’re Signing</span></h1>
   <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
-  <button class="cta-btn">
-    Review A Contract
-    <img src="https://imgur.com/UMMoCUn.png" alt="icon" style="height: 16px;">
-  </button>
+  <button class="cta-btn">Review A Contract <img src="https://imgur.com/UMMoCUn.png" alt="icon" style="height: 16px;"></button>
 </section>
 
 <div class="app-container">
@@ -358,9 +340,7 @@
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
-      <p>
-        We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.
-      </p>
+      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
       <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
     </div>
   </div>
@@ -397,3 +377,4 @@
 
 </body>
 </html>
+
