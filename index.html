@@ -32,10 +32,6 @@
       overflow-x: hidden;
     }
 
-    .hero-wrapper {
-      margin-top: -40px;
-    }
-
     body::before {
       content: "";
       position: absolute;
@@ -46,6 +42,16 @@
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
       z-index: -2;
+    }
+
+    .particle-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1600px;
+      pointer-events: none;
+      z-index: -1;
     }
 
     .particle {
@@ -62,21 +68,6 @@
     @keyframes floatUp {
       from { transform: translateY(0); opacity: 1; }
       to { transform: translateY(-1600px); opacity: 0; }
-    }
-
-    .particle-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 1600px;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    h1, h2 {
-      font-family: 'Shoika', sans-serif;
-      font-weight: 400;
     }
 
     header {
@@ -123,6 +114,10 @@
       font-size: 16px;
     }
 
+    .hero-wrapper {
+      margin-top: -40px;
+    }
+
     .tagline-absolute {
       background-color: #1f1a34;
       color: #bbb;
@@ -157,6 +152,11 @@
 
     .hero-upper {
       margin-top: 50px;
+    }
+
+    h1, h2 {
+      font-family: 'Shoika', sans-serif;
+      font-weight: 400;
     }
 
     h1 {
@@ -237,11 +237,10 @@
     }
 
     @keyframes moveLine {
-      0%   { top: 0; left: 0; width: 60px; height: 2px; }
-      25%  { top: 0; left: 100%; transform: rotate(90deg); width: 60px; height: 2px; }
-      50%  { top: 100%; left: 100%; transform: rotate(180deg); width: 60px; height: 2px; }
-      75%  { top: 100%; left: 0; transform: rotate(270deg); width: 60px; height: 2px; }
-      100% { top: 0; left: 0; transform: rotate(360deg); width: 60px; height: 2px; }
+      0% { left: 0%; opacity: 0; }
+      10% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
     }
 
     .section-title {
@@ -282,13 +281,19 @@
     .insight-left img {
       width: 480px;
       border-radius: 20px;
+      display: block;
     }
 
     .glow-border {
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 20px;
       pointer-events: none;
       z-index: 2;
+      overflow: hidden;
     }
 
     .glow-trace {
@@ -297,15 +302,16 @@
       height: 2px;
       background: linear-gradient(90deg, transparent, #bff611, transparent);
       box-shadow: 0 0 8px #bff611;
-      animation: borderLoop 6s linear infinite;
+      border-radius: 2px;
+      animation: borderLoop 8s linear infinite;
     }
 
     @keyframes borderLoop {
-      0%   { top: 0; left: 0; width: 60px; height: 2px; }
-      25%  { top: 0; left: 100%; transform: rotate(90deg); width: 60px; height: 2px; }
-      50%  { top: 100%; left: 100%; transform: rotate(180deg); width: 60px; height: 2px; }
-      75%  { top: 100%; left: 0; transform: rotate(270deg); width: 60px; height: 2px; }
-      100% { top: 0; left: 0; transform: rotate(360deg); width: 60px; height: 2px; }
+      0%   { top: 0; left: 0; width: 60px; height: 2px; transform: none; }
+      25%  { top: 0; left: 100%; width: 2px; height: 60px; transform: translateX(-100%) rotate(90deg); }
+      50%  { top: 100%; left: 100%; width: 60px; height: 2px; transform: translate(-100%, -100%) rotate(180deg); }
+      75%  { top: 100%; left: 0; width: 2px; height: 60px; transform: translateY(-100%) rotate(270deg); }
+      100% { top: 0; left: 0; width: 60px; height: 2px; transform: rotate(360deg); }
     }
 
     .insight-right {
@@ -384,7 +390,7 @@
 
   <div class="app-container">
     <div class="app-wrapper" id="appWrapper">
-      <div class="yellow-line"></div>
+      <div class="yellow-line" id="yellowLine"></div>
       <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
     </div>
   </div>
@@ -398,9 +404,7 @@
 <section class="insight-section">
   <div class="insight-content">
     <div class="insight-left">
-      <div class="glow-border">
-        <div class="glow-trace"></div>
-      </div>
+      <div class="glow-border"><div class="glow-trace"></div></div>
       <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
     </div>
     <div class="insight-right">
