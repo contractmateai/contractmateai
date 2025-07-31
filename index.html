@@ -185,7 +185,7 @@
     .cta-btn {
       background: #f2f9fe;
       color: black;
-      border: 1px solid #ccc;
+      border: 2px solid white;
       padding: 16px 30px;
       border-radius: 16px;
       font-size: 18px;
@@ -193,12 +193,12 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.25);
+      box-shadow: 0 0 10px rgba(255,255,255,0.3);
       transition: box-shadow 0.3s ease;
     }
 
     .cta-btn:hover {
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      box-shadow: 0 0 20px rgba(255,255,255,0.6);
     }
 
     .app-container {
@@ -250,29 +250,30 @@
       padding: 6px 14px;
       border-radius: 53px;
       font-size: 15px;
-      margin: 0 auto 20px;
+      margin: 0 auto 24px;
       text-align: center;
     }
 
     .section-title {
       text-align: center;
-      font-size: 40px;
+      font-size: 44px;
       color: var(--text-light);
       font-weight: 400;
       line-height: 1.4;
+      margin-top: 14px;
     }
 
     .section-sub {
       text-align: center;
       color: var(--text-muted);
-      margin-top: 14px;
-      font-size: 20px;
+      margin-top: 12px;
+      font-size: 21px;
       font-weight: 400;
       line-height: 1.4;
     }
 
     .insight-section {
-      padding: 140px 20px 100px;
+      padding: 160px 20px 100px;
     }
 
     .insight-content {
@@ -304,7 +305,16 @@
     .insight-icon {
       width: 60px;
       margin-bottom: 30px;
-      filter: drop-shadow(0 0 8px #00ff88);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 3px #00ff88);
+      }
+      50% {
+        filter: drop-shadow(0 0 8px #00ff88);
+      }
     }
 
     .insight-right h2 {
@@ -326,7 +336,7 @@
       padding: 14px 24px;
       font-size: 18px;
       color: white;
-      border: 1px solid var(--purple-border);
+      border: 2px solid white;
       border-radius: 12px;
       text-decoration: none;
       transition: all 0.3s ease;
@@ -378,7 +388,7 @@
   </div>
 </div>
 
-<section style="margin-top: 120px;">
+<section style="margin-top: 160px;">
   <div class="section-badge">Instant Clarity Engine</div>
   <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
@@ -428,4 +438,3 @@
 
 </body>
 </html>
-
