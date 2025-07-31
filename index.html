@@ -282,73 +282,57 @@
       border-radius: 20px;
     }
 
-    .glow-border {
+  .glow-border {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 1;
+  overflow: hidden;
+  z-index: 2;
 }
 
-.glow-line {
+.glow-trace {
   position: absolute;
-  background: linear-gradient(90deg, rgba(191, 246, 17, 0.1), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0));
-  box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-  border-radius: 2px;
-  pointer-events: none;
-}
-
-.glow-line.top,
-.glow-line.bottom {
+  width: 100px;
   height: 2px;
-  width: 0;
+  background: linear-gradient(90deg, transparent, #bff611, transparent);
+  box-shadow: 0 0 8px #bff611;
+  animation: borderLoop 8s linear infinite;
+  border-radius: 2px;
 }
 
-.glow-line.left,
-.glow-line.right {
-  width: 2px;
-  height: 0;
+@keyframes borderLoop {
+  0% {
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    top: 0;
+    left: 100%;
+    transform: rotate(90deg);
+  }
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: rotate(180deg);
+  }
+  75% {
+    top: 100%;
+    left: 0;
+    transform: rotate(270deg);
+  }
+  100% {
+    top: 0;
+    left: 0;
+    transform: rotate(360deg);
+  }
 }
 
-.glow-line.top {
-  top: 0;
-  left: 0;
-  animation: lineTop 2s linear 0s infinite;
-}
-.glow-line.right {
-  top: 0;
-  right: 0;
-  animation: lineRight 2s linear 0.5s infinite;
-}
-.glow-line.bottom {
-  bottom: 0;
-  right: 0;
-  animation: lineBottom 2s linear 1s infinite;
-}
-.glow-line.left {
-  bottom: 0;
-  left: 0;
-  animation: lineLeft 2s linear 1.5s infinite;
-}
-
-@keyframes lineTop {
-  0% { width: 0; }
-  100% { width: 100%; }
-}
-@keyframes lineRight {
-  0% { height: 0; }
-  100% { height: 100%; }
-}
-@keyframes lineBottom {
-  0% { width: 0; }
-  100% { width: 100%; }
-}
-@keyframes lineLeft {
-  0% { height: 0; }
-  100% { height: 100%; }
-}
 
 
     .insight-right {
@@ -439,15 +423,13 @@
 </section>
 <section class="insight-section">
   <div class="insight-content">
-   <div class="insight-left">
+   <div class="insight-left" style="position: relative;">
   <div class="glow-border">
-    <div class="glow-line top"></div>
-    <div class="glow-line right"></div>
-    <div class="glow-line bottom"></div>
-    <div class="glow-line left"></div>
+    <div class="glow-trace"></div>
   </div>
-  <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
+  <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" style="border-radius: 20px;" />
 </div>
+
 
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
