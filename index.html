@@ -222,7 +222,8 @@
       display: block;
     }
 
-    .yellow-line {
+    .yellow-line,
+    .insight-line {
       position: absolute;
       top: 0;
       left: 0;
@@ -237,11 +238,15 @@
     }
 
     @keyframes moveLine {
-      0% { left: 0%; opacity: 0; }
+      0% { left: 0%; top: 0; opacity: 0; }
       10% { opacity: 1; }
-      80% { opacity: 1; }
-      100% { left: 100%; opacity: 0; }
+      45% { left: 100%; top: 0; opacity: 1; }
+      50% { top: 0; left: 100%; transform: rotate(90deg); }
+      75% { top: 100%; left: 100%; transform: rotate(180deg); }
+      90% { top: 100%; left: 0; transform: rotate(270deg); }
+      100% { top: 0; left: 0; transform: rotate(360deg); opacity: 0; }
     }
+
     .section-title {
       text-align: center;
       font-size: 32px;
@@ -281,63 +286,6 @@
       width: 480px;
       border-radius: 20px;
     }
-
- .glow-border {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  overflow: hidden;
-}
-
-.glow-trace {
-  position: absolute;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #bff611, transparent);
-  box-shadow: 0 0 8px #bff611;
-  border-radius: 2px;
-  animation: borderLoop 8s linear infinite;
-}
-
-@keyframes borderLoop {
-  0% {
-    top: 0;
-    left: 0;
-    transform: translateX(0);
-    width: 60px;
-    height: 2px;
-  }
-  25% {
-    top: 0;
-    left: 100%;
-    transform: translateX(-100%) rotate(90deg);
-    width: 2px;
-    height: 60px;
-  }
-  50% {
-    top: 100%;
-    left: 100%;
-    transform: translate(-100%, -100%) rotate(180deg);
-    width: 60px;
-    height: 2px;
-  }
-  75% {
-    top: 100%;
-    left: 0;
-    transform: translateY(-100%) rotate(270deg);
-    width: 2px;
-    height: 60px;
-  }
-  100% {
-    top: 0;
-    left: 0;
-    transform: rotate(360deg);
-    width: 60px;
-    height: 2px;
-  }
-}
-
 
     .insight-right {
       max-width: 500px;
@@ -425,16 +373,13 @@
   <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
   <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 </section>
+
 <section class="insight-section">
   <div class="insight-content">
-   <div class="insight-left" style="position: relative;">
-  <div class="glow-border">
-    <div class="glow-trace"></div>
-  </div>
-  <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" style="border-radius: 20px;" />
-</div>
-
-
+    <div class="insight-left">
+      <div class="insight-line"></div>
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" style="border-radius: 20px;" />
+    </div>
     <div class="insight-right">
       <img src="https://i.imgur.com/nGJ76qM.png" alt="Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
