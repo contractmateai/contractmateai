@@ -1,3 +1,4 @@
+<!-- [START OF FULL HTML FILE] -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -246,23 +247,6 @@
       100% { left: 100%; opacity: 0; }
     }
 
-    .section-badge {
-      background-color: var(--badge-purple);
-      color: #bbb;
-      padding: 6px 14px;
-      border-radius: 53px;
-      font-size: 15px;
-      display: inline-block;
-      margin: 60px auto 24px;
-      text-align: center;
-      max-width: fit-content;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .section-badge:hover {
-      box-shadow: 0 0 18px var(--badge-glow);
-    }
-
     .section-title {
       text-align: center;
       font-size: 44px;
@@ -279,6 +263,20 @@
       font-size: 21px;
       font-weight: 400;
       line-height: 1.4;
+    }
+
+    .section-badge {
+      background-color: var(--badge-purple);
+      color: #bbb;
+      padding: 6px 14px;
+      border-radius: 53px;
+      font-size: 15px;
+      display: inline-block;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .section-badge:hover {
+      box-shadow: 0 0 18px var(--badge-glow);
     }
 
     .insight-section {
@@ -362,6 +360,7 @@
   </style>
 </head>
 <body>
+
 <div class="particle-container" id="particles"></div>
 
 <header>
@@ -396,11 +395,13 @@
   </div>
 </div>
 
-<section>
+<!-- ✅ BADGE CENTERED -->
+<div style="text-align: center; margin-top: 60px; margin-bottom: 24px;">
   <div class="section-badge">Instant Clarity Engine</div>
-  <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
-  <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
-</section>
+</div>
+
+<h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
+<p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 
 <section class="insight-section">
   <div class="insight-content">
