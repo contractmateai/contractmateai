@@ -19,7 +19,6 @@
       --particle-color: #682fd8;
       --purple-border: #4a2d91;
       --purple-hover: #2a1f4a;
-      --gray-border: #999;
     }
 
     * {
@@ -188,7 +187,7 @@
     .cta-btn {
       background: white;
       color: black;
-      border: 2px solid var(--gray-border);
+      border: 2px solid #999;
       padding: 16px 30px;
       border-radius: 16px;
       font-size: 18px;
@@ -272,13 +271,22 @@
       padding: 6px 14px;
       border-radius: 53px;
       font-size: 15px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       transition: box-shadow 0.3s ease;
-      margin-top: 18px;
     }
 
     .section-badge:hover {
       box-shadow: 0 0 18px var(--badge-glow);
+    }
+
+    .section-badge span {
+      transition: transform 0.3s ease;
+    }
+
+    .section-badge:hover span {
+      transform: translateX(4px);
     }
 
     .insight-section {
@@ -313,17 +321,8 @@
 
     .insight-icon {
       width: 80px;
-      margin-bottom: 34px;
-      animation: glowPulseGreen 3s ease-in-out infinite;
-    }
-
-    @keyframes glowPulseGreen {
-      0%, 100% {
-        filter: drop-shadow(0 0 3px var(--badge-glow));
-      }
-      50% {
-        filter: drop-shadow(0 0 10px var(--badge-glow));
-      }
+      margin-top: 40px;
+      margin-bottom: 30px;
     }
 
     .insight-right h2 {
@@ -341,24 +340,34 @@
     }
 
     .cta-outline {
-  display: inline-block;
-  padding: 14px 24px;
-  font-size: 20px;
-  background-color: #adff00;
-  color: black;
-  border: none;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 24px;
+      font-size: 20px;
+      background-color: #adff00;
+      color: black;
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
 
-.cta-outline:hover {
-  box-shadow: 0 0 16px #adff00;
-  background-color: #adff00;
-  color: black;
-}
-    
+    .cta-outline span {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .cta-outline:hover span {
+      transform: translateX(4px);
+    }
+
+    .cta-outline:hover {
+      box-shadow: 0 0 16px #adff00;
+      background-color: #adff00;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -397,9 +406,8 @@
   </div>
 </div>
 
-<!-- ✅ BADGE CENTERED + LOWER -->
 <div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
-  <div class="section-badge">Instant Clarity Engine</div>
+  <div class="section-badge">Instant Clarity Engine <span>↗</span></div>
 </div>
 
 <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
@@ -411,7 +419,7 @@
       <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
     </div>
     <div class="insight-right">
-      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Insights Icon" class="insight-icon" />
+      <img src="https://img.icons8.com/color/96/checked--v1.png" alt="Insights Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
       <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
       <a href="#" class="cta-outline">Review A Contract <span>↗</span></a>
