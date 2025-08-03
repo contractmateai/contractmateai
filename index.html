@@ -632,6 +632,107 @@ populateRow(topRow, featuresTop);
 populateRow(bottomRow, featuresBottom);
 
 </script>
+  <!-- WATCH VIDEO SECTION -->
+<section class="watch-video-section">
+  <div class="video-content">
+    <div class="video-text">
+      <h2>Take a deeper look to<br>see how SignSense works.</h2>
+      <p>Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts</p>
+      <button class="watch-btn">Watch Video ↗</button>
+    </div>
+    <div class="video-box">
+      <div class="video-label">▶ Watch Video</div>
+      <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder">
+    </div>
+  </div>
+</section>
+
+<style>
+.watch-video-section {
+  padding: 100px 40px;
+  background-color: transparent;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.video-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.video-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.video-text h2 {
+  font-size: 44px;
+  color: #fff9f9;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.video-text p {
+  color: #d8cccc;
+  font-size: 20px;
+  margin-bottom: 36px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.watch-btn {
+  background-color: #adff00;
+  color: black;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 26px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: box-shadow 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.watch-btn:hover {
+  box-shadow: 0 0 14px #adff00;
+}
+
+.video-box {
+  position: relative;
+  flex: 1;
+  min-width: 320px;
+}
+
+.video-box img {
+  width: 100%;
+  border-radius: 34px;
+  border: 2px solid #3b3b3b;
+  display: block;
+}
+
+.video-label {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  color: rgba(191, 246, 17, 0.74);
+  font-size: 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  pointer-events: none;
+}
+</style>
+
 </body>
 </html>
 
