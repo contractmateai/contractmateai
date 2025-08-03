@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <link rel="icon" type="image/png" href="https://i.imgur.com/vND282a.png" sizes="64x64" />
-<link rel="apple-touch-icon" href="https://i.imgur.com/vND282a.png" />
+  <link rel="icon" type="image/png" href="https://i.imgur.com/vND282a.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://i.imgur.com/vND282a.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
@@ -194,7 +194,6 @@
     .cta-btn:hover {
       box-shadow: 0 0 15px rgba(255,255,255,0.7);
     }
-
     .app-container {
       position: relative;
       width: 100%;
@@ -249,7 +248,8 @@
       color: var(--text-light);
       font-weight: 400;
       line-height: 1.4;
-      margin-top: 14px;
+      margin-top: 30px;
+      font-family: 'Inter', sans-serif;
     }
 
     .section-sub {
@@ -347,46 +347,27 @@
       box-shadow: 0 0 16px #adff00;
     }
 
-    /* Scroll Section Styles START */
+    /* === SCROLLING FEATURES SECTION === */
     .scroll-section {
-  position: relative;
-  padding: 30px 0;
-  background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
-  border: 1px solid rgba(36, 36, 37, 0.78);
-  border-radius: 18px;
-  margin: 40px auto 0;
-  overflow: hidden;
-  max-width: 1360px;
-  transform: scale(0.94);
-}
-
+      position: relative;
+      padding: 30px 0;
+      background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
+      border: 1px solid rgba(36, 36, 37, 0.78);
+      border-radius: 18px;
+      margin: 40px auto 0;
+      overflow: hidden;
+      max-width: 1360px;
+    }
 
     .scroll-section h3 {
       text-align: center;
       font-size: 26px;
       line-height: 1.4;
       color: #fff9f9;
-      font-family: 'Bricolage Grotesque', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 400;
       margin-bottom: 50px;
     }
-   
-    .scroll-wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 30px;
-}
-
-    .scroll-full {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-
 
     .scroll-strip {
       display: flex;
@@ -399,12 +380,22 @@
 
     .top-row {
       animation-name: scrollRight;
-      animation-duration: 30s;
+      animation-duration: 50s;
     }
 
     .bottom-row {
       animation-name: scrollLeft;
-      animation-duration: 30s;
+      animation-duration: 50s;
+    }
+
+    @keyframes scrollRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
     .scroll-item {
@@ -433,7 +424,7 @@
     }
 
     .scroll-item span {
-      font-family: 'Bricolage Grotesque', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 20px;
       font-weight: 400;
       color: #fff9f9;
@@ -445,48 +436,19 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 100px;
+      width: 140px;
       z-index: 3;
       pointer-events: none;
     }
 
     .scroll-shadow-left {
       left: 0;
-      background: linear-gradient(to right, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
+      background: linear-gradient(to right, rgba(14,12,19,0.95), rgba(14,12,19,0.5), transparent);
     }
 
     .scroll-shadow-right {
       right: 0;
-      background: linear-gradient(to left, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
-    }
-
-    @keyframes scrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 768px) {
-      .scroll-item {
-        padding: 14px 20px;
-      }
-
-      .scroll-item img {
-        width: 38px;
-        height: 38px;
-      }
-
-      .scroll-item span {
-        font-size: 17px;
-      }
-
-      .scroll-section h3 {
-        font-size: 20px;
-      }
+      background: linear-gradient(to left, rgba(14,12,19,0.95), rgba(14,12,19,0.5), transparent);
     }
   </style>
 </head>
@@ -495,7 +457,7 @@
 
 <header>
   <div class="logo-wrap">
- <img src="https://i.imgur.com/vND282a.png" alt="SignSense Logo">
+    <img src="https://i.imgur.com/vND282a.png" alt="SignSense Logo">
     SignSense
   </div>
   <nav>
@@ -546,22 +508,16 @@
   </div>
 </section>
 
-<!-- SCROLLING FEATURES SECTION -->
-<div class="scroll-full">
-  <div class="scroll-wrapper">
-    <section class="scroll-section">
-    <h3>Everything you need for clarity and security in one seamless experience.</h3>
-    <div class="scroll-strip top-row"></div>
-    <div class="scroll-strip bottom-row"></div>
-    <div class="scroll-shadow-left"></div>
-    <div class="scroll-shadow-right"></div>
-  </section>
-</div>
-</div>
+<!-- === SCROLLING FEATURES SECTION === -->
+<section class="scroll-section">
+  <h3>Everything you need for clarity and security in one seamless experience.</h3>
+  <div class="scroll-strip top-row"></div>
+  <div class="scroll-strip bottom-row"></div>
+  <div class="scroll-shadow-left"></div>
+  <div class="scroll-shadow-right"></div>
+</section>
 
-
-<!-- AOS + Particle + Scroll JS -->
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<!-- Scripts -->
 <script>
   AOS.init({ once: true });
 
@@ -625,4 +581,4 @@
   populateRow(bottomRow);
 </script>
 </body>
-</html> 
+</html>
