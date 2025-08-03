@@ -642,7 +642,7 @@ populateRow(bottomRow, featuresBottom);
     </div>
     <div class="video-box">
       <div class="video-label">▶ Watch Video</div>
-      <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder">
+      <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder" class="video-img" />
     </div>
   </div>
 </section>
@@ -709,8 +709,9 @@ populateRow(bottomRow, featuresBottom);
   min-width: 320px;
 }
 
-.video-box img {
-  width: 100%;
+.video-box img.video-img {
+  width: 420px;
+  margin-top: 36px;
   border-radius: 34px;
   border: 2px solid #3b3b3b;
   display: block;
