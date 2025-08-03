@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Rounded favicon (must be a square logo with transparent or round background) -->
   <link rel="icon" type="image/png" href="https://imgur.com/TEJczpC.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
@@ -190,12 +191,12 @@
       transition: all 0.3s ease;
     }
 
-    .cta-btn:hover {
-      box-shadow: 0 0 15px rgba(255,255,255,0.7);
-      background: white;
-      color: black;
-      transform: translateX(2px);
-      gap: 6px;
+    .cta-btn:hover span {
+      font-size: 19.5px;
+    }
+
+    .cta-btn span {
+      transition: font-size 0.3s ease;
     }
 
     .app-container {
@@ -241,8 +242,8 @@
 
     @keyframes fadeOut {
       0% { opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
+      5% { opacity: 1; }
+      80% { opacity: 1; }
       100% { opacity: 0; }
     }
 
@@ -346,12 +347,12 @@
       font-weight: 500;
     }
 
-    .cta-outline:hover {
-      box-shadow: 0 0 16px #adff00;
-      background-color: #adff00;
-      color: black;
-      transform: translateX(2px);
-      gap: 6px;
+    .cta-outline:hover span {
+      font-size: 21.5px;
+    }
+
+    .cta-outline span {
+      transition: font-size 0.3s ease;
     }
   </style>
 </head>
@@ -379,7 +380,7 @@
       <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
     </div>
     <div class="cta-wrapper">
-      <button class="cta-btn">Review A Contract ↗</button>
+      <button class="cta-btn"><span>Review A Contract ↗</span></button>
     </div>
   </section>
 
@@ -407,7 +408,7 @@
       <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
       <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-      <a href="#" class="cta-outline">Review A Contract ↗</a>
+      <a href="#" class="cta-outline"><span>Review A Contract ↗</span></a>
     </div>
   </div>
 </section>
