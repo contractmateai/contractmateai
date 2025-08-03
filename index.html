@@ -594,38 +594,43 @@
   const topRow = document.querySelector('.top-row');
   const bottomRow = document.querySelector('.bottom-row');
 
-  const features = [
-    { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-    { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-    { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-    { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-    { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-    { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-    { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-    { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
-    { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-    { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-    { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-    { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-    { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-    { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-    { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-    { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
-  ];
+ const featuresTop = [
+  { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
+  { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
+  { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
+  { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
+  { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
+  { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
+  { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
+  { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" }
+];
 
-  function populateRow(row) {
-    for (let i = 0; i < 20; i++) {
-      features.forEach(f => {
-        const el = document.createElement('div');
-        el.className = 'scroll-item';
-        el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-        row.appendChild(el);
-      });
-    }
+const featuresBottom = [
+  { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
+  { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
+  { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
+  { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
+  { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
+  { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
+  { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
+  { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
+];
+
+
+ function populateRow(row, features) {
+  for (let i = 0; i < 20; i++) {
+    features.forEach(f => {
+      const el = document.createElement('div');
+      el.className = 'scroll-item';
+      el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
+      row.appendChild(el);
+    });
   }
+}
 
-  populateRow(topRow);
-  populateRow(bottomRow);
+populateRow(topRow, featuresTop);
+populateRow(bottomRow, featuresBottom);
+
 </script>
 </body>
 </html>
