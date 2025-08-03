@@ -361,104 +361,46 @@
 }
 
 
-    .scroll-section h3 {
-      text-align: center;
-      font-size: 26px;
-      line-height: 1.4;
-      color: #fff9f9;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 400;
-      margin-bottom: 50px;
-    }
-   
-    .scroll-wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 30px;
-}
-
-    .scroll-full {
-  width: 100vw;
+   .scroll-section {
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  padding: 40px 0 30px;
+  background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
+  border: 1px solid rgba(36, 36, 37, 0.78);
+  border-radius: 18px;
+  margin: 40px auto 0;
+  overflow: hidden;
+  max-width: 1360px;
+  transform: scale(0.94);
 }
 
+.scroll-section h3 {
+  text-align: center;
+  font-size: 26px;
+  line-height: 1.4;
+  color: #fff9f9;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  margin-bottom: 60px; /* Lowered */
+}
 
+.scroll-item span {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff9f9;
+  white-space: nowrap;
+}
 
-    .scroll-strip {
-      display: flex;
-      gap: 28px;
-      padding: 14px 0;
-      white-space: nowrap;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+.scroll-shadow-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,0.7), transparent);
+}
 
-    .top-row {
-      animation-name: scrollRight;
-      animation-duration: 30s;
-    }
+.scroll-shadow-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,0.7), transparent);
+}
 
-    .bottom-row {
-      animation-name: scrollLeft;
-      animation-duration: 30s;
-    }
-
-    .scroll-item {
-      background: rgba(26, 24, 34, 0.57);
-      border: 1px solid #3b3b3b;
-      border-radius: 48px;
-      padding: 16px 28px;
-      display: inline-flex;
-      align-items: center;
-      gap: 18px;
-      flex-shrink: 0;
-      transition: transform 0.2s ease;
-    }
-
-    .scroll-item:hover {
-      transform: scale(1.04);
-    }
-
-    .scroll-item img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #101010;
-      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-    }
-
-    .scroll-item span {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 20px;
-      font-weight: 400;
-      color: #fff9f9;
-      white-space: nowrap;
-    }
-
-    .scroll-shadow-left,
-    .scroll-shadow-right {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100px;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    .scroll-shadow-left {
-      left: 0;
-      background: linear-gradient(to right, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
-    }
-
-    .scroll-shadow-right {
-      right: 0;
-      background: linear-gradient(to left, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
-    }
 
     @keyframes scrollRight {
       0% { transform: translateX(-50%); }
