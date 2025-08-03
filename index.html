@@ -5,6 +5,7 @@
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
     :root {
       --bg-dark: #01040b;
@@ -12,250 +13,431 @@
       --text-muted: #d8cccc;
       --highlight-green: #bff611;
       --badge-glow: #adff00;
+      --badge-purple: #1f1a34;
+      --badge-lime: #adff00;
+      --badge-gray: #2e2b3a;
       --particle-color: #682fd8;
+      --purple-border: #4a2d91;
+      --purple-hover: #2a1f4a;
     }
-    body {
+
+    * {
       margin: 0;
-      background: var(--bg-dark);
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: 'Inter', sans-serif;
-    }
-    .hero {
-      position: relative;
-      padding: 160px 40px 80px;
-      background: var(--bg-dark);
-      text-align: center;
-      overflow: hidden;
-    }
-    .hero h1 {
-      font-family: 'Shoika', sans-serif;
-      font-size: 54px;
-      line-height: 1.2;
       color: var(--text-light);
+      background: var(--bg-dark);
+      overflow-x: hidden;
     }
-    .hero p {
-      font-size: 20px;
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1600px;
+      background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
+      background-size: 100% 1600px;
+      z-index: -2;
+    }
+
+    .particle-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1600px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      background-color: var(--particle-color);
+      border-radius: 50%;
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 6px var(--particle-color);
+      animation: floatUp linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-1600px); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      font-size: 22px;
+      position: relative;
+      z-index: 2;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header img {
+      height: 44px;
+      margin-right: 14px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      font-weight: 500;
+      color: white;
+    }
+
+    nav a {
       color: var(--text-muted);
-      margin-top: 20px;
+      margin: 0 26px;
+      text-decoration: none;
+      font-size: 20px;
     }
-    .cta-btn {
+
+    .hero-wrapper {
+      margin-top: -40px;
+    }
+
+    .tagline-absolute {
+      background-color: var(--badge-purple);
+      color: #bbb;
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      font-size: 18px;
-      padding: 12px 24px;
-      margin-top: 30px;
+      padding: 7px 12px;
+      font-size: 15px;
       border-radius: 53px;
-      background: rgba(1, 116, 248, 0.86);
-      color: black;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      border: 1px solid #ddd;
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
-    }
-    .cta-btn:hover {
-      box-shadow: 0 0 18px #fff;
-    }
-    .cta-btn .arrow svg {
-      width: 18px;
-      height: 18px;
-      fill: black;
-      transition: transform 0.3s ease;
-    }
-    .cta-btn:hover .arrow svg {
-      transform: translateX(4px);
-    }
-    .insights {
-      padding: 100px 40px;
-      background: #0e0c13;
-      text-align: center;
-    }
-    .insights h2 {
-      color: #fff9f9;
-      font-size: 36px;
-      margin-bottom: 16px;
-    }
-    .insights p {
-      color: #a8a8a8;
-      font-size: 18px;
-      margin-bottom: 40px;
-    }
-    .scroll-section {
       position: relative;
-      padding: 80px 0;
-      background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
-      border: 1px solid rgba(36, 36, 37, 0.78);
-      border-radius: 28px;
-      margin: 100px auto 0;
-      overflow: hidden;
+      margin-bottom: 26px;
+      transition: box-shadow 0.3s ease;
+      box-shadow: 0 0 8px var(--badge-glow);
     }
-    .scroll-section h3 {
+
+    .tagline-absolute span {
+      background-color: var(--badge-lime);
+      color: black;
+      padding: 6px 12px;
+      border-radius: 53px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .tagline-absolute:hover {
+      box-shadow: 0 0 20px var(--badge-glow);
+    }
+
+    .hero {
       text-align: center;
-      font-size: 26px;
-      line-height: 1.4;
-      color: #fff9f9;
-      font-family: 'Bricolage Grotesque', sans-serif;
+      padding: 80px 20px 30px;
+    }
+
+    .hero-upper {
+      margin-top: 50px;
+    }
+
+    h1, h2 {
+      font-family: 'Shoika', sans-serif;
       font-weight: 400;
-      margin-bottom: 50px;
     }
-    .scroll-strip {
-      display: flex;
-      gap: 28px;
-      padding: 14px 0;
-      white-space: nowrap;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
+
+    h1 {
+      font-size: 68px;
+      margin: 0;
+      color: var(--text-light);
+      font-weight: 400;
+      line-height: 1.1;
     }
-    .top-row { animation-name: scrollRight; animation-duration: 30s; }
-    .bottom-row { animation-name: scrollLeft; animation-duration: 30s; }
-    .scroll-item {
-      background: rgba(26, 24, 34, 0.57);
-      border: 1px solid #3b3b3b;
-      border-radius: 48px;
-      padding: 16px 28px;
+
+    .hero h1 span {
+      display: block;
+      margin-top: 8px;
+    }
+
+    .subtext {
+      color: var(--text-muted);
+      margin: 18px 0 30px;
+      font-size: 20px;
+    }
+
+    .cta-wrapper {
+      margin-top: 75px;
+    }
+
+    .cta-btn {
+      background: white;
+      color: black;
+      border: 2px solid #999;
+      padding: 16px 30px;
+      border-radius: 16px;
+      font-size: 18px;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 18px;
-      flex-shrink: 0;
-      transition: transform 0.2s ease;
+      gap: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
     }
-    .scroll-item:hover { transform: scale(1.04); }
-    .scroll-item img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #101010;
-      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
+
+    .cta-btn:hover {
+      box-shadow: 0 0 15px rgba(255,255,255,0.7);
+      background: white;
+      color: black;
     }
-    .scroll-item span {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 20px;
-      font-weight: 400;
-      color: #fff9f9;
-      white-space: nowrap;
+
+    .app-container {
+      position: relative;
+      width: 100%;
+      max-width: 1050px;
+      margin: 30px auto 0;
+      perspective: 1000px;
     }
-    .scroll-shadow-left,
-    .scroll-shadow-right {
+
+    .app-wrapper {
+      position: relative;
+      transition: transform 0.8s ease;
+      transform: rotateX(12deg);
+    }
+
+    .app-preview {
+      width: 100%;
+      border-radius: 24px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+      display: block;
+    }
+
+    .yellow-line {
       position: absolute;
       top: 0;
-      bottom: 0;
-      width: 100px;
-      z-index: 3;
-      pointer-events: none;
-    }
-    .scroll-shadow-left {
       left: 0;
-      background: linear-gradient(to right, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(191, 246, 17, 0.1), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0));
+      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
+      border-radius: 2px;
+      animation: moveLine 8s linear infinite;
+      pointer-events: none;
+      z-index: 2;
     }
-    .scroll-shadow-right {
-      right: 0;
-      background: linear-gradient(to left, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
+
+    @keyframes moveLine {
+      0% { left: 0%; opacity: 0; }
+      10% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
     }
-    @keyframes scrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
+
+    .section-title {
+      text-align: center;
+      font-size: 44px;
+      color: var(--text-light);
+      font-weight: 400;
+      line-height: 1.4;
+      margin-top: 14px;
     }
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 12px;
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.4;
     }
-    @media (max-width: 768px) {
-      .scroll-item { padding: 14px 20px; }
-      .scroll-item img { width: 38px; height: 38px; }
-      .scroll-item span { font-size: 17px; }
-      .scroll-section h3 { font-size: 20px; }
+
+    .section-badge {
+      background-color: var(--badge-purple);
+      color: #bbb;
+      padding: 6px 14px;
+      border-radius: 53px;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: box-shadow 0.3s ease;
+      box-shadow: 0 0 8px var(--badge-glow);
+    }
+
+    .section-badge:hover {
+      box-shadow: 0 0 20px var(--badge-glow);
+    }
+
+    .insight-section {
+      padding: 60px 20px 60px;
+    }
+
+    .insight-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 80px;
+    }
+
+    .insight-left {
+      position: relative;
+      margin-left: -120px;
+    }
+
+    .insight-left img {
+      width: 520px;
+      border-radius: 20px;
+      display: block;
+    }
+
+    .insight-right {
+      max-width: 540px;
+      text-align: left;
+    }
+
+    .insight-icon {
+      width: 80px;
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
+
+    .insight-right h2 {
+      font-size: 44px;
+      color: #fff9f9;
+      margin-bottom: 26px;
+      font-weight: 400;
+    }
+
+    .insight-right p {
+      color: #d8cccc;
+      font-size: 22px;
+      margin-bottom: 38px;
+      font-weight: 400;
+    }
+
+    .cta-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 24px;
+      font-size: 20px;
+      background-color: #adff00;
+      color: black;
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .cta-outline:hover {
+      box-shadow: 0 0 16px #adff00;
+      background-color: #adff00;
+      color: black;
     }
   </style>
 </head>
 <body>
 
-<!-- Hero Section -->
-<section class="hero">
-  <h1>Make Sense Of<br>What You’re Signing</h1>
-  <p>SignSense instantly simplifies contracts for law firms, freelancers, students & more.</p>
-  <a href="#" class="cta-btn">
-    Review A Contract
-    <span class="arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
-  </a>
-</section>
+<div class="particle-container" id="particles"></div>
 
-<!-- Insights Section -->
-<section class="insights">
-  <h2>Understand Your Contract at a Glance</h2>
-  <p>We highlight key terms, risks, and clauses so you can grasp the essentials without reading every line.</p>
-</section>
-
-<!-- Features Scroll Section -->
-<section class="scroll-section">
-  <h3>Everything you need for clarity and security in one seamless experience.</h3>
-  <div class="scroll-strip top-row"></div>
-  <div class="scroll-strip bottom-row"></div>
-  <div class="scroll-shadow-left"></div>
-  <div class="scroll-shadow-right"></div>
-</section>
-
-<!-- Watch Video Section -->
-<section style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 80px 40px;">
-  <div style="max-width: 500px;">
-    <h2 style="color:#fff9f9; font-size: 36px; line-height: 1.4; margin-bottom: 20px;">
-      Take a deeper look to <br>see how SignSense works.
-    </h2>
-    <p style="color:#d8cccc; font-size: 18px; line-height: 1.6; margin-bottom: 28px;">
-      Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts.
-    </p>
-    <a href="#" class="cta-btn" style="background:#adff00; color:black;">
-      Watch Video
-      <span class="arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
-    </a>
+<header>
+  <div class="logo-wrap">
+    <img src="https://imgur.com/TEJczpC.png" alt="SignSense Logo">
+    SignSense
   </div>
+  <nav>
+    <a href="#">See How It Works</a>
+    <a href="#">Features</a>
+    <a href="#">Contact Us</a>
+  </nav>
+</header>
 
-  <div style="text-align: center;">
-    <div style="color: rgba(191, 246, 17, 0.74); font-size: 16px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-      <svg width="14" height="14" fill="#bff611" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Watch Video
+<div class="hero-wrapper">
+  <section class="hero">
+    <div class="hero-upper">
+      <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool <img src="https://imgur.com/Vm4t8Ab.png" alt="arrow" style="height: 14px;" /></div>
+      <h1>Make Sense Of What<br><span>You’re Signing</span></h1>
+      <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
     </div>
-    <div style="border-radius: 12px; border: 1px solid #3b3b3b; overflow: hidden;">
-      <img src="https://imgur.com/SmAflPH.png" alt="Video Preview" style="max-width: 360px; display: block;">
+    <div class="cta-wrapper">
+      <button class="cta-btn">Review A Contract <img src="https://imgur.com/UMMoCUn.png" alt="icon" style="height: 16px;"></button>
+    </div>
+  </section>
+
+  <div class="app-container">
+    <div class="app-wrapper" id="appWrapper">
+      <div class="yellow-line" id="yellowLine"></div>
+      <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
     </div>
   </div>
+</div>
+
+<div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
+  <div class="section-badge">Instant Clarity Engine <img src="https://imgur.com/Vm4t8Ab.png" style="height: 13px;" /></div>
+</div>
+
+<h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
+<p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
+
+<section class="insight-section">
+  <div class="insight-content">
+    <div class="insight-left">
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+    </div>
+    <div class="insight-right">
+      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
+      <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
+      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
+      <a href="#" class="cta-outline">Review A Contract <img src="https://imgur.com/Vm4t8Ab.png" style="height: 16px;" /></a>
+    </div>
+  </div>
 </section>
 
-<!-- Scroll Strip JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
-const topRow = document.querySelector('.top-row');
-const bottomRow = document.querySelector('.bottom-row');
+  AOS.init({ once: true });
 
-const features = [
-  { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-  { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-  { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-  { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-  { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-  { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-  { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-  { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
-  { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-  { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-  { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-  { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-  { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-  { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-  { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-  { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
-];
-
-function populateRow(row) {
-  for (let i = 0; i < 20; i++) {
-    features.forEach(f => {
-      const el = document.createElement('div');
-      el.className = 'scroll-item';
-      el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-      row.appendChild(el);
-    });
+  const container = document.getElementById("particles");
+  const num = 50;
+  for (let i = 0; i < num; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const duration = 25 + Math.random() * 15;
+    const size = 1 + Math.random() * 2.5;
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * 1600;
+    p.style.left = `${startX}px`;
+    p.style.top = `${startY}px`;
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.animationDuration = `${duration}s`;
+    container.appendChild(p);
   }
-}
-populateRow(topRow);
-populateRow(bottomRow);
-</script>
 
+  const wrapper = document.getElementById("appWrapper");
+  window.addEventListener("scroll", function () {
+    const st = window.scrollY;
+    wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+  });
+</script>
 </body>
 </html>
