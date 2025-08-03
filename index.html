@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="https://imgur.com/TEJczpC.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
@@ -84,21 +85,12 @@
       z-index: 2;
     }
 
-    header::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
-      pointer-events: none;
-      z-index: -1;
-    }
+    /* Removed header shadow here */
 
     header img {
       height: 44px;
       margin-right: 14px;
+      border-radius: 50%;
     }
 
     .logo-wrap {
@@ -374,12 +366,12 @@
 <div class="hero-wrapper">
   <section class="hero">
     <div class="hero-upper">
-      <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool <img src="https://imgur.com/Vm4t8Ab.png" alt="arrow" style="height: 14px;" /></div>
+      <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool ↗</div>
       <h1>Make Sense Of What<br><span>You’re Signing</span></h1>
       <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
     </div>
     <div class="cta-wrapper">
-      <button class="cta-btn">Review A Contract <img src="https://imgur.com/UMMoCUn.png" alt="icon" style="height: 16px;"></button>
+      <button class="cta-btn">Review A Contract ↗</button>
     </div>
   </section>
 
@@ -392,7 +384,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
-  <div class="section-badge">Instant Clarity Engine <img src="https://imgur.com/Vm4t8Ab.png" style="height: 13px;" /></div>
+  <div class="section-badge">Instant Clarity Engine ↗</div>
 </div>
 
 <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
@@ -407,7 +399,7 @@
       <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
       <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-      <a href="#" class="cta-outline">Review A Contract <img src="https://imgur.com/Vm4t8Ab.png" style="height: 16px;" /></a>
+      <a href="#" class="cta-outline">Review A Contract ↗</a>
     </div>
   </div>
 </section>
