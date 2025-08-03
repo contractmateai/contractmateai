@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Rounded favicon -->
   <link rel="icon" type="image/png" href="https://i.imgur.com/Q43BBmG.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
@@ -346,10 +345,131 @@
     .cta-outline:hover {
       box-shadow: 0 0 16px #adff00;
     }
+
+    /* Scroll Section Styles START */
+    .scroll-section {
+      position: relative;
+      padding: 80px 0;
+      background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
+      border: 1px solid rgba(36, 36, 37, 0.78);
+      border-radius: 28px;
+      margin: 100px auto 0;
+      overflow: hidden;
+    }
+
+    .scroll-section h3 {
+      text-align: center;
+      font-size: 26px;
+      line-height: 1.4;
+      color: #fff9f9;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 400;
+      margin-bottom: 50px;
+    }
+
+    .scroll-strip {
+      display: flex;
+      gap: 28px;
+      padding: 14px 0;
+      white-space: nowrap;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .top-row {
+      animation-name: scrollRight;
+      animation-duration: 30s;
+    }
+
+    .bottom-row {
+      animation-name: scrollLeft;
+      animation-duration: 30s;
+    }
+
+    .scroll-item {
+      background: rgba(26, 24, 34, 0.57);
+      border: 1px solid #3b3b3b;
+      border-radius: 48px;
+      padding: 16px 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .scroll-item:hover {
+      transform: scale(1.04);
+    }
+
+    .scroll-item img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #101010;
+      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
+    }
+
+    .scroll-item span {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff9f9;
+      white-space: nowrap;
+    }
+
+    .scroll-shadow-left,
+    .scroll-shadow-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .scroll-shadow-left {
+      left: 0;
+      background: linear-gradient(to right, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
+    }
+
+    .scroll-shadow-right {
+      right: 0;
+      background: linear-gradient(to left, rgba(14,12,19,0.9), rgba(14,12,19,0.5), transparent);
+    }
+
+    @keyframes scrollRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 768px) {
+      .scroll-item {
+        padding: 14px 20px;
+      }
+
+      .scroll-item img {
+        width: 38px;
+        height: 38px;
+      }
+
+      .scroll-item span {
+        font-size: 17px;
+      }
+
+      .scroll-section h3 {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-
 <div class="particle-container" id="particles"></div>
 
 <header>
@@ -405,6 +525,16 @@
   </div>
 </section>
 
+<!-- SCROLLING FEATURES SECTION -->
+<section class="scroll-section">
+  <h3>Everything you need for clarity and security in one seamless experience.</h3>
+  <div class="scroll-strip top-row"></div>
+  <div class="scroll-strip bottom-row"></div>
+  <div class="scroll-shadow-left"></div>
+  <div class="scroll-shadow-right"></div>
+</section>
+
+<!-- AOS + Particle + Scroll JS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
@@ -431,6 +561,42 @@
     const st = window.scrollY;
     wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
   });
+
+  const topRow = document.querySelector('.top-row');
+  const bottomRow = document.querySelector('.bottom-row');
+
+  const features = [
+    { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
+    { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
+    { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
+    { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
+    { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
+    { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
+    { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
+    { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
+    { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
+    { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
+    { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
+    { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
+    { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
+    { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
+    { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
+    { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
+  ];
+
+  function populateRow(row) {
+    for (let i = 0; i < 20; i++) {
+      features.forEach(f => {
+        const el = document.createElement('div');
+        el.className = 'scroll-item';
+        el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
+        row.appendChild(el);
+      });
+    }
+  }
+
+  populateRow(topRow);
+  populateRow(bottomRow);
 </script>
 </body>
 </html>
