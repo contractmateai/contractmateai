@@ -370,6 +370,13 @@
       font-weight: 400;
       margin-bottom: 50px;
     }
+   
+    .scroll-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
 
     .scroll-strip {
       display: flex;
@@ -530,13 +537,16 @@
 </section>
 
 <!-- SCROLLING FEATURES SECTION -->
-<section class="scroll-section">
-  <h3>Everything you need for clarity and security in one seamless experience.</h3>
-  <div class="scroll-strip top-row"></div>
-  <div class="scroll-strip bottom-row"></div>
-  <div class="scroll-shadow-left"></div>
-  <div class="scroll-shadow-right"></div>
-</section>
+<div class="scroll-wrapper">
+  <section class="scroll-section">
+    <h3>Everything you need for clarity and security in one seamless experience.</h3>
+    <div class="scroll-strip top-row"></div>
+    <div class="scroll-strip bottom-row"></div>
+    <div class="scroll-shadow-left"></div>
+    <div class="scroll-shadow-right"></div>
+  </section>
+</div>
+
 
 <!-- AOS + Particle + Scroll JS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
