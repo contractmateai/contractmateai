@@ -503,9 +503,10 @@
     </div>
   </div>
 
-  <div class="review-box">
-    <img id="review-img" src="https://imgur.com/jX2IqjQ.png" alt="Review" />
-  </div>
+ <div class="review-box" id="reviewBox">
+  <img id="review-img" src="https://imgur.com/jX2IqjQ.png" alt="Review" />
+</div>
+
 
   <div class="review-dots">
     <div class="dot active"></div>
@@ -859,6 +860,43 @@ populateRow(bottomRow, featuresBottom);
 }
 
 
+<script>
+  const reviews = [
+    "https://imgur.com/jX2IqjQ.png",
+    "https://imgur.com/cc3Ft3R.png",
+    "https://imgur.com/DHVypdZ.png",
+    "https://imgur.com/5UBdOlV.png",
+    "https://imgur.com/BKMPDPb.png"
+  ];
+
+  let currentReview = 0;
+
+  function updateReview() {
+    const img = document.getElementById("review-img");
+    const dots = document.querySelectorAll(".dot");
+    img.src = reviews[currentReview];
+
+    dots.forEach((d, i) => {
+      d.classList.toggle("active", i === currentReview);
+    });
+  }
+
+  function nextReview() {
+    currentReview = (currentReview + 1) % reviews.length;
+    updateReview();
+  }
+
+  function prevReview() {
+    currentReview = (currentReview - 1 + reviews.length) % reviews.length;
+    updateReview();
+  }
+
+  // Optional: arrow keys support
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") nextReview();
+    if (e.key === "ArrowLeft") prevReview();
+  });
+</script>
 
 </body>
 </html>
