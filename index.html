@@ -491,146 +491,35 @@
         font-size: 20px;
       }
     }
-   .reviews-section {
-  padding: 90px 60px;
-  background: #05060e;
-  font-family: 'Inter', sans-serif;
-}
+  <section class="reviews-section">
+  <div class="reviews-header">
+    <div>
+      <h2>What <span>Our Clients</span> Say</h2>
+      <p class="reviews-subtext">Hear Directly Our Satisfied Users</p>
+    </div>
+    <div class="reviews-arrows">
+      <button onclick="prevReview()">←</button>
+      <button class="right" onclick="nextReview()">→</button>
+    </div>
+  </div>
 
-.reviews-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
+  <div class="review-box">
+    <img id="review-img" src="https://imgur.com/jX2IqjQ.png" alt="Review" />
+  </div>
 
-.reviews-texts h2 {
-  font-size: 38px;
-  color: #fff;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
+  <div class="review-dots">
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
 
-.highlight-green {
-  color: #bff611;
-}
+  <div class="review-footer">
+    <button class="leave-review-btn">Leave A Review ↗</button>
+  </div>
+</section>
 
-.highlight-white {
-  color: #fff9f9;
-}
-
-.reviews-subtext {
-  color: #a8a8a8;
-  font-size: 17px;
-}
-
-.reviews-nav {
-  display: flex;
-  gap: 14px;
-}
-
-.arrow-btn {
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  border: none;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.arrow-btn.left {
-  background: white;
-  color: black;
-}
-
-.arrow-btn.right {
-  background: #bdf52e;
-  color: black;
-}
-
-.reviews-cards {
-  display: flex;
-  gap: 28px;
-  margin-top: 20px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-}
-
-.review-card {
-  background: #fff;
-  border: 3px solid #d8cccc;
-  border-radius: 23px;
-  padding: 30px;
-  width: 320px;
-  flex-shrink: 0;
-}
-
-.apostrophe {
-  color: #939393;
-  font-size: 36px;
-  margin-bottom: 10px;
-  font-style: italic;
-}
-
-.stars {
-  color: #f5c000;
-  margin-bottom: 10px;
-}
-
-.review-text {
-  font-style: italic;
-  color: #939393;
-  font-size: 15px;
-  margin-bottom: 14px;
-}
-
-.review-name {
-  font-weight: bold;
-  font-style: italic;
-  color: black;
-}
-
-.review-role {
-  color: #939393;
-  font-style: italic;
-}
-
-.dot-nav {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.dot {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: #444;
-  border-radius: 50%;
-  margin: 0 5px;
-}
-
-.dot.active {
-  background-color: #b9f03d;
-}
-
-.leave-review-wrap {
-  text-align: center;
-  margin-top: 30px;
-}
-
-.leave-review {
-  background: #adff00;
-  color: black;
-  padding: 14px 32px;
-  border: none;
-  border-radius: 16px;
-  font-size: 17px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-  </style>
 </head>
 <body>
 <div class="particle-container" id="particles"></div>
@@ -874,72 +763,101 @@ populateRow(bottomRow, featuresBottom);
 }
 </style>
 <!-- REVIEWS SECTION -->
-<section class="reviews-section">
-  <div class="reviews-header">
-    <div class="reviews-texts">
-      <h2>What <span class="highlight-green">Our Clients</span> <span class="highlight-white">Say</span></h2>
-      <p class="reviews-subtext">Hear Directly Our Satisfied Users</p>
-    </div>
-    <div class="reviews-nav">
-      <button class="arrow-btn left"><span>←</span></button>
-      <button class="arrow-btn right"><span>→</span></button>
-    </div>
-  </div>
+.reviews-section {
+  padding: 100px 7% 80px;
+  background: #05060e;
+  color: white;
+}
 
-  <div class="reviews-cards" id="review-slider">
-    <div class="review-card">
-      <div class="apostrophe">“</div>
-      <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
-      <p class="review-text">As a practicing attorney, I’ve reviewed countless legal tools, but this tool genuinely surprised me. It makes the whole experience faster and easier.</p>
-      <p class="review-name">Bram C.</p>
-      <p class="review-role">Lawyer</p>
-    </div>
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
 
-    <div class="review-card">
-      <div class="apostrophe">“</div>
-      <div class="stars">⭐️⭐️⭐️⭐️</div>
-      <p class="review-text">Before I signed my new apartment lease, I ran it through SignSense just to be safe. It pointed out a clause that would've raised my rent automatically.</p>
-      <p class="review-name">Selena M.</p>
-      <p class="review-role">Tenant</p>
-    </div>
+.reviews-header h2 {
+  font-size: 42px;
+  font-weight: 400;
+}
 
-    <div class="review-card">
-      <div class="apostrophe">“</div>
-      <div class="stars">⭐️⭐️⭐️⭐️</div>
-      <p class="review-text">Game changer for founders. Running a startup means constant NDAs and contracts. SignSense gave me peace of mind without needing my lawyer.</p>
-      <p class="review-name">Colton R.</p>
-      <p class="review-role">Entrepreneur</p>
-    </div>
+.reviews-header h2 span {
+  color: #bff611;
+}
 
-    <div class="review-card">
-      <div class="apostrophe">“</div>
-      <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
-      <p class="review-text">Honestly surprised! It caught a weird termination clause in my freelance contract. Will use again for sure!</p>
-      <p class="review-name">Jared F.</p>
-      <p class="review-role">Employee</p>
-    </div>
+.reviews-subtext {
+  color: #a8a8a8;
+  font-size: 18px;
+  margin-top: 8px;
+}
 
-    <div class="review-card">
-      <div class="apostrophe">“</div>
-      <div class="stars">⭐️⭐️⭐️⭐️</div>
-      <p class="review-text">Helped me understand my internship contract better than my advisor did. Simple, clean, and straight to the point.</p>
-      <p class="review-name">Maya S.</p>
-      <p class="review-role">Student</p>
-    </div>
-  </div>
+.reviews-arrows {
+  display: flex;
+  gap: 14px;
+}
 
-  <div class="dot-nav">
-    <span class="dot active"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-  </div>
+.reviews-arrows button {
+  background: white;
+  color: black;
+  border-radius: 50%;
+  padding: 12px 16px;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
+}
 
-  <div class="leave-review-wrap">
-    <button class="leave-review">Leave A Review ↗</button>
-  </div>
-</section>
+.reviews-arrows .right {
+  background: #bff611;
+}
+
+.review-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-box img {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 23px;
+  border: 2px solid #d8cccc;
+}
+
+.review-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+}
+
+.dot.active {
+  background: #b9f03d;
+}
+
+.review-footer {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.leave-review-btn {
+  background: #adff00;
+  color: black;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
 
 
 </body>
