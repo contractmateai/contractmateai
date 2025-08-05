@@ -491,6 +491,130 @@
         font-size: 20px;
       }
     }
+    .reviews-section {
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.reviews-title {
+  font-size: 44px;
+  font-family: 'Shoika', sans-serif;
+  font-weight: 400;
+}
+
+.highlight-green { color: #bff611; }
+.highlight-light { color: #fff9f9; }
+
+.reviews-subtitle {
+  color: #a8a8a8;
+  font-size: 20px;
+  margin: 14px 0 50px;
+}
+
+.reviews-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.review-card {
+  background: transparent;
+  border: 3px solid #d8cccc;
+  border-radius: 23px;
+  padding: 30px;
+  width: 330px;
+  text-align: left;
+}
+
+.quote-icon {
+  width: 26px;
+  margin-bottom: 10px;
+}
+
+.stars img {
+  width: 22px;
+  height: 22px;
+}
+
+.review-text {
+  font-style: italic;
+  color: #939393;
+  font-size: 15px;
+  margin: 16px 0 20px;
+}
+
+.review-name {
+  font-style: italic;
+  font-weight: bold;
+  color: black;
+}
+
+.review-role {
+  font-style: italic;
+  color: #939393;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.review-nav {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.arrow {
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.arrow.right {
+  background-color: #bdf52e;
+}
+
+.review-dots {
+  margin-top: 30px;
+}
+
+.review-dots .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+
+.review-dots .dot.active {
+  background-color: #b9f03d;
+}
+
+.leave-review {
+  background-color: #adff00;
+  color: black;
+  padding: 14px 26px;
+  font-size: 17px;
+  border: none;
+  border-radius: 53px;
+  margin-top: 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+.leave-review:hover {
+  box-shadow: 0 0 14px #adff00;
+}
+
   </style>
 </head>
 <body>
@@ -924,6 +1048,72 @@ populateRow(bottomRow, featuresBottom);
 .leave-review-btn:hover {
   box-shadow: 0 0 14px #adff00;
 }
+<!-- REVIEWS SECTION -->
+<section class="reviews-section">
+  <h2 class="reviews-title">What <span class="highlight-green">Our Clients</span> <span class="highlight-light">Say</span></h2>
+  <p class="reviews-subtitle">Hear Directly Our Satisfied Users</p>
+
+  <div class="reviews-row">
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/50/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+      </div>
+      <p class="review-text">As a practicing attorney, I’ve reviewed countless legal tools, but this tool genuinely surprised me. It makes the whole experience faster and easier.</p>
+      <p class="review-name">Bram C.</p>
+      <p class="review-role">Lawyer</p>
+    </div>
+
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/50/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/ffffff/star--v1.png" />
+      </div>
+      <p class="review-text">Before I signed my new apartment lease, I ran it through SignSense just to be safe. It pointed out a clause that would've raised my rent automatically every year. Now I feel way more secure.</p>
+      <p class="review-name">Selena M.</p>
+      <p class="review-role">Tenant</p>
+    </div>
+
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/50/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/000000/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/ffffff/star--v1.png" />
+      </div>
+      <p class="review-text">Game changer for founders. SignSense gave me peace of mind without needing to wait for my lawyer.</p>
+      <p class="review-name">Colton R.</p>
+      <p class="review-role">Entrepreneur</p>
+    </div>
+  </div>
+
+  <div class="review-nav">
+    <button class="arrow left"><img src="https://img.icons8.com/ios-filled/24/000000/chevron-left.png" /></button>
+    <button class="arrow right"><img src="https://img.icons8.com/ios-filled/24/000000/chevron-right.png" /></button>
+  </div>
+
+  <div class="review-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <div class="review-cta">
+    <button class="leave-review">Leave A Review ↗</button>
+  </div>
+</section>
 
 
 </body>
