@@ -871,32 +871,72 @@ populateRow(bottomRow, featuresBottom);
 </style>
 <!-- REVIEWS SECTION -->
 <section class="reviews-section">
-  <h2 class="reviews-title">What <span class="green">Our Clients</span> <span class="white">Say</span></h2>
-  <p class="reviews-subtitle">Hear Directly Our Satisfied Users</p>
-
-  <div class="reviews-container">
-    <div class="reviews-row top">
-      <!-- Add 4 review boxes here -->
+  <div class="reviews-header">
+    <div class="reviews-texts">
+      <h2>What <span class="highlight-green">Our Clients</span> <span class="highlight-white">Say</span></h2>
+      <p class="reviews-subtext">Hear Directly Our Satisfied Users</p>
     </div>
-    <div class="reviews-row bottom">
-      <!-- Add 4 review boxes here -->
-    </div>
-    <div class="review-arrows">
-      <button class="left-arrow">←</button>
-      <button class="right-arrow">→</button>
-    </div>
-    <div class="review-dots">
-      <span class="dot active"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
-    <div class="review-cta">
-      <a href="https://tally.so/r/nP7g0W" target="_blank" class="leave-review-btn">Leave A Review ↗</a>
+    <div class="reviews-nav">
+      <button class="arrow-btn left"><span>←</span></button>
+      <button class="arrow-btn right"><span>→</span></button>
     </div>
   </div>
+
+  <div class="reviews-cards" id="review-slider">
+    <div class="review-card">
+      <div class="apostrophe">“</div>
+      <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+      <p class="review-text">As a practicing attorney, I’ve reviewed countless legal tools, but this tool genuinely surprised me. It makes the whole experience faster and easier.</p>
+      <p class="review-name">Bram C.</p>
+      <p class="review-role">Lawyer</p>
+    </div>
+
+    <div class="review-card">
+      <div class="apostrophe">“</div>
+      <div class="stars">⭐️⭐️⭐️⭐️</div>
+      <p class="review-text">Before I signed my new apartment lease, I ran it through SignSense just to be safe. It pointed out a clause that would've raised my rent automatically.</p>
+      <p class="review-name">Selena M.</p>
+      <p class="review-role">Tenant</p>
+    </div>
+
+    <div class="review-card">
+      <div class="apostrophe">“</div>
+      <div class="stars">⭐️⭐️⭐️⭐️</div>
+      <p class="review-text">Game changer for founders. Running a startup means constant NDAs and contracts. SignSense gave me peace of mind without needing my lawyer.</p>
+      <p class="review-name">Colton R.</p>
+      <p class="review-role">Entrepreneur</p>
+    </div>
+
+    <div class="review-card">
+      <div class="apostrophe">“</div>
+      <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+      <p class="review-text">Honestly surprised! It caught a weird termination clause in my freelance contract. Will use again for sure!</p>
+      <p class="review-name">Jared F.</p>
+      <p class="review-role">Employee</p>
+    </div>
+
+    <div class="review-card">
+      <div class="apostrophe">“</div>
+      <div class="stars">⭐️⭐️⭐️⭐️</div>
+      <p class="review-text">Helped me understand my internship contract better than my advisor did. Simple, clean, and straight to the point.</p>
+      <p class="review-name">Maya S.</p>
+      <p class="review-role">Student</p>
+    </div>
+  </div>
+
+  <div class="dot-nav">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <div class="leave-review-wrap">
+    <button class="leave-review">Leave A Review ↗</button>
+  </div>
 </section>
+
 
 </body>
 </html>
