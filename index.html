@@ -491,6 +491,108 @@
         font-size: 20px;
       }
     }
+    .reviews-section {
+  padding: 100px 40px 140px;
+  background: transparent;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.reviews-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.reviews-header h2 {
+  font-size: 44px;
+  font-family: 'Shoika', sans-serif;
+  font-weight: 400;
+  color: #fff;
+}
+
+.reviews-header h2 .green {
+  color: #bff611;
+}
+
+.reviews-header h2 .white {
+  color: #fff9f9;
+}
+
+.reviews-header p {
+  font-size: 20px;
+  color: #a8a8a8;
+  margin-top: 16px;
+}
+
+.reviews-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.review-carousel {
+  display: flex;
+  gap: 30px;
+  overflow: hidden;
+  width: 900px;
+  transition: transform 0.4s ease;
+}
+
+.review-card {
+  background: linear-gradient(135deg, #161420, #0c0b11);
+  padding: 30px 24px;
+  border-radius: 23px;
+  border: 3px solid #d8cccc;
+  min-width: 280px;
+  max-width: 280px;
+  text-align: left;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.quote-icon {
+  font-size: 46px;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.review-text {
+  font-style: italic;
+  color: #939393;
+  font-size: 17px;
+  margin-bottom: 22px;
+}
+
+.review-name {
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.review-role {
+  font-style: italic;
+  font-size: 14px;
+  color: #939393;
+}
+
+.review-arrow {
+  font-size: 32px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.review-arrow:hover {
+  color: #bff611;
+}
+
  </style>
 
 </head>
@@ -631,6 +733,23 @@ const featuresBottom = [
 
 populateRow(topRow, featuresTop);
 populateRow(bottomRow, featuresBottom);
+  let reviewIndex = 0;
+
+function moveReview(direction) {
+  const carousel = document.querySelector(".review-carousel");
+  const cards = document.querySelectorAll(".review-card");
+  const totalCards = cards.length;
+  const visibleCount = 3;
+
+  reviewIndex += direction;
+
+  if (reviewIndex < 0) reviewIndex = 0;
+  if (reviewIndex > totalCards - visibleCount) reviewIndex = totalCards - visibleCount;
+
+  const shift = -(reviewIndex * 310); // card width + gap
+  carousel.style.transform = `translateX(${shift}px)`;
+}
+
 
 </script>
   <!-- WATCH VIDEO SECTION -->
@@ -735,6 +854,37 @@ populateRow(bottomRow, featuresBottom);
   pointer-events: none;
 }
 </style>
+<!-- REVIEWS SECTION -->
+<section class="reviews-section">
+  <div class="reviews-header">
+    <h2>What <span class="green">Our Clients</span> <span class="white">Say</span></h2>
+    <p>Hear Directly From Our Satisfied Users</p>
+  </div>
+  <div class="reviews-container">
+    <button class="review-arrow left" onclick="moveReview(-1)">←</button>
+    <div class="review-carousel">
+      <div class="review-card">
+        <div class="quote-icon">“</div>
+        <p class="review-text">Absolutely fantastic! This app saved me hours and made reviewing my contract stress-free.</p>
+        <p class="review-name">Sarah M.</p>
+        <p class="review-role">Freelancer</p>
+      </div>
+      <div class="review-card">
+        <div class="quote-icon">“</div>
+        <p class="review-text">Clean design, great features, and surprisingly accurate AI suggestions.</p>
+        <p class="review-name">David R.</p>
+        <p class="review-role">Law Firm Partner</p>
+      </div>
+      <div class="review-card">
+        <div class="quote-icon">“</div>
+        <p class="review-text">A must-have for anyone signing documents. The clarity it brings is unmatched.</p>
+        <p class="review-name">Nina L.</p>
+        <p class="review-role">Student</p>
+      </div>
+    </div>
+    <button class="review-arrow right" onclick="moveReview(1)">→</button>
+  </div>
+</section>
 
 
 </body>
