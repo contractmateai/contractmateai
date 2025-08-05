@@ -1,11 +1,11 @@
-add the code yourself and send me back the full code with no changes to my previous code . also the field inside the review box is whiteee<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>SignSense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <link rel="icon" type="image/png" href="https://i.imgur.com/vND282a.png" sizes="64x64" />
-<link rel="apple-touch-icon" href="https://i.imgur.com/vND282a.png" />
+  <link rel="icon" href="https://i.imgur.com/vND282a.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://i.imgur.com/vND282a.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
@@ -22,193 +22,124 @@ add the code yourself and send me back the full code with no changes to my previ
       --purple-border: #4a2d91;
       --purple-hover: #2a1f4a;
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
       background: var(--bg-dark);
       overflow-x: hidden;
     }
-
     body::before {
       content: "";
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
       height: 1600px;
       background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
       background-size: 100% 1600px;
       z-index: -2;
     }
-
     .particle-container {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100%;
       height: 1600px;
       pointer-events: none;
       z-index: -1;
     }
-
     .particle {
       position: absolute;
       background-color: var(--particle-color);
       border-radius: 50%;
-      width: 3px;
-      height: 3px;
+      width: 3px; height: 3px;
       box-shadow: 0 0 6px var(--particle-color);
       animation: floatUp linear infinite;
       z-index: -1;
     }
-
     @keyframes floatUp {
       from { transform: translateY(0); opacity: 1; }
       to { transform: translateY(-1600px); opacity: 0; }
     }
-
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       padding: 20px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-      font-size: 22px;
-      position: relative;
-      z-index: 2;
+      max-width: 1200px; margin: 0 auto;
+      font-size: 22px; position: relative; z-index: 2;
     }
-
     header img {
-      height: 44px;
-      margin-right: 14px;
-      border-radius: 50%;
+      height: 44px; margin-right: 14px; border-radius: 50%;
     }
-
     .logo-wrap {
-      display: flex;
-      align-items: center;
-      font-size: 24px;
-      font-weight: 500;
-      color: white;
+      display: flex; align-items: center;
+      font-size: 24px; font-weight: 500; color: white;
     }
-
     nav a {
-      color: var(--text-muted);
-      margin: 0 26px;
-      text-decoration: none;
-      font-size: 20px;
+      color: var(--text-muted); margin: 0 26px;
+      text-decoration: none; font-size: 20px;
     }
-
-    .hero-wrapper {
-      margin-top: -40px;
-    }
-
+    .hero-wrapper { margin-top: -40px; }
     .tagline-absolute {
-      background-color: var(--badge-purple);
-      color: #bbb;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 12px;
-      font-size: 15px;
-      border-radius: 53px;
-      position: relative;
-      margin-bottom: 26px;
+      background-color: var(--badge-purple); color: #bbb;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 12px; font-size: 15px;
+      border-radius: 53px; margin-bottom: 26px;
       transition: box-shadow 0.3s ease;
       box-shadow: 0 0 8px var(--badge-glow);
     }
-
     .tagline-absolute span {
-      background-color: var(--badge-lime);
-      color: black;
-      padding: 6px 12px;
-      border-radius: 53px;
-      font-size: 13px;
-      font-weight: bold;
+      background-color: var(--badge-lime); color: black;
+      padding: 6px 12px; border-radius: 53px;
+      font-size: 13px; font-weight: bold;
     }
-
-    .tagline-absolute:hover {
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
+    .tagline-absolute:hover { box-shadow: 0 0 20px var(--badge-glow); }
     .hero {
       text-align: center;
       padding: 80px 20px 30px;
     }
-
-    .hero-upper {
-      margin-top: 50px;
-    }
-
+    .hero-upper { margin-top: 50px; }
     h1, h2 {
       font-family: 'Shoika', sans-serif;
       font-weight: 400;
     }
-
     h1 {
-      font-size: 68px;
-      margin: 0;
-      color: var(--text-light);
-      font-weight: 400;
-      line-height: 1.1;
+      font-size: 68px; margin: 0;
+      color: var(--text-light); line-height: 1.1;
     }
-
     .hero h1 span {
-      display: block;
-      margin-top: 8px;
+      display: block; margin-top: 8px;
     }
-
     .subtext {
       color: var(--text-muted);
       margin: 18px 0 30px;
       font-size: 20px;
     }
-
-    .cta-wrapper {
-      margin-top: 75px;
-    }
-
+    .cta-wrapper { margin-top: 75px; }
     .cta-btn {
-      background: white;
-      color: black;
+      background: white; color: black;
       border: 2px solid #999;
       padding: 16px 30px;
       border-radius: 16px;
       font-size: 18px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+      display: inline-flex; align-items: center; gap: 10px;
       box-shadow: 0 0 10px rgba(255,255,255,0.3);
       transition: box-shadow 0.3s ease;
     }
-
     .cta-btn:hover {
       box-shadow: 0 0 15px rgba(255,255,255,0.7);
     }
 
     .app-container {
       position: relative;
-      width: 100%;
-      max-width: 1050px;
+      width: 100%; max-width: 1050px;
       margin: 30px auto 0;
       perspective: 1000px;
     }
-
     .app-wrapper {
       position: relative;
       transition: transform 0.8s ease;
       transform: rotateX(12deg);
     }
-
     .app-preview {
       width: 100%;
       border-radius: 24px;
@@ -218,8 +149,7 @@ add the code yourself and send me back the full code with no changes to my previ
 
     .yellow-line {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 120px;
       height: 2px;
       background: linear-gradient(90deg, rgba(191, 246, 17, 0.1), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0));
@@ -230,340 +160,270 @@ add the code yourself and send me back the full code with no changes to my previ
       opacity: 0;
       animation: moveLine 8s linear infinite, fadeOut 8s linear infinite;
     }
-
     @keyframes moveLine {
       0% { left: 0%; }
       100% { left: 100%; }
     }
-
     @keyframes fadeOut {
       0% { opacity: 0; }
       5% { opacity: 1; }
       70% { opacity: 1; }
       100% { opacity: 0; }
     }
-
-    .section-title {
-      text-align: center;
-      font-size: 44px;
-      color: var(--text-light);
-      font-weight: 400;
-      line-height: 1.4;
-      margin-top: 14px;
-    }
-
-    .section-sub {
-      text-align: center;
-      color: var(--text-muted);
-      margin-top: 12px;
-      font-size: 21px;
-      font-weight: 400;
-      line-height: 1.4;
-    }
-
-    .section-badge {
-      background-color: var(--badge-purple);
-      color: #bbb;
-      padding: 6px 14px;
-      border-radius: 53px;
-      font-size: 15px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: box-shadow 0.3s ease;
-      box-shadow: 0 0 8px var(--badge-glow);
-    }
-
-    .section-badge:hover {
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .insight-section {
-      padding: 60px 20px 60px;
-    }
-
-    .insight-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      max-width: 1300px;
-      margin: 0 auto;
-      gap: 80px;
-    }
-
-    .insight-left {
-      position: relative;
-      margin-left: -120px;
-    }
-
-    .insight-left img {
-      width: 520px;
-      border-radius: 20px;
-      display: block;
-    }
-
-    .insight-right {
-      max-width: 540px;
-      text-align: left;
-    }
-
-    .insight-icon {
-      width: 80px;
-      margin-top: 40px;
-      margin-bottom: 30px;
-    }
-
-    .insight-right h2 {
-      font-size: 44px;
-      color: #fff9f9;
-      margin-bottom: 26px;
-      font-weight: 400;
-    }
-
-    .insight-right p {
-      color: #d8cccc;
-      font-size: 22px;
-      margin-bottom: 38px;
-      font-weight: 400;
-    }
-
-    .cta-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 24px;
-      font-size: 20px;
-      background-color: #adff00;
-      color: black;
-      border: none;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: box-shadow 0.3s ease;
-      font-weight: 500;
-    }
-
-    .cta-outline:hover {
-      box-shadow: 0 0 16px #adff00;
-    }
-
-    /* Scroll Section Styles START */
-    .scroll-section {
-  position: relative;
-  padding: 30px 0;
-  background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
-  border: 1px solid rgba(36, 36, 37, 0.78);
-  border-radius: 18px;
-  margin: 40px auto 0;
-  overflow: hidden;
-  max-width: 1360px;
-  transform: scale(0.94);
-}
-
-
-    .scroll-section h3 {
-      text-align: center;
-      font-size: 25px;
-      line-height: 1.4;
-      color: #fff9f9;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      margin-top: 40px;
-      margin-bottom: 50px;
-  
-    }
-   
-    .scroll-wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 30px;
-}
-
-    .scroll-full {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-
-
-    .scroll-strip {
-      display: flex;
-      gap: 28px;
-      padding: 14px 0;
-      white-space: nowrap;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    .top-row {
-      animation-name: scrollRight;
-      animation-duration: 30s;
-    }
-
-    .bottom-row {
-      animation-name: scrollLeft;
-      animation-duration: 30s;
-    }
-
-    .scroll-item {
-      background: rgba(26, 24, 34, 0.57);
-      border: 1px solid #3b3b3b;
-      border-radius: 48px;
-      padding: 16px 28px;
-      display: inline-flex;
-      align-items: center;
-      gap: 18px;
-      flex-shrink: 0;
-      transition: transform 0.2s ease;
-    }
-
-    .scroll-item:hover {
-      transform: scale(1.04);
-    }
-
-    .scroll-item img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #101010;
-      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-    }
-
-    .scroll-item span {
-      font-family: 'Inter', sans-serif;
-      font-size: 17px;
-      font-weight: 400;
-      color: #fff9f9;
-      white-space: nowrap;
-    }
-
-    .scroll-shadow-left,
-    .scroll-shadow-right {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100px;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-  .scroll-shadow-left {
-  left: 0;
-  background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,0.6), transparent);
-}
-
-.scroll-shadow-right {
-  right: 0;
-  background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,0.6), transparent);
-}
-
-
-    @keyframes scrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 768px) {
-      .scroll-item {
-        padding: 14px 20px;
-      }
-
-      .scroll-item img {
-        width: 38px;
-        height: 38px;
-      }
-
-      .scroll-item span {
-        font-size: 17px;
-      }
-
-      .scroll-section h3 {
-        font-size: 20px;
-      }
-    }
   </style>
 </head>
+
 <body>
-<div class="particle-container" id="particles"></div>
+  <div class="particle-container" id="particles"></div>
 
-<header>
-  <div class="logo-wrap">
- <img src="https://i.imgur.com/vND282a.png" alt="SignSense Logo">
-    SignSense
-  </div>
-  <nav>
-    <a href="#">See How It Works</a>
-    <a href="#">Features</a>
-    <a href="#">Contact Us</a>
-  </nav>
-</header>
-
-<div class="hero-wrapper">
-  <section class="hero">
-    <div class="hero-upper">
-      <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool ↗</div>
-      <h1>Make Sense Of What<br><span>You’re Signing</span></h1>
-      <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
+  <header>
+    <div class="logo-wrap">
+      <img src="https://i.imgur.com/vND282a.png" alt="SignSense Logo">
+      SignSense
     </div>
-    <div class="cta-wrapper">
-      <button class="cta-btn">Review A Contract ↗</button>
+    <nav>
+      <a href="#">See How It Works</a>
+      <a href="#">Features</a>
+      <a href="#">Contact Us</a>
+    </nav>
+  </header>
+
+  <div class="hero-wrapper">
+    <section class="hero">
+      <div class="hero-upper">
+        <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool ↗</div>
+        <h1>Make Sense Of What<br><span>You’re Signing</span></h1>
+        <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
+      </div>
+      <div class="cta-wrapper">
+        <button class="cta-btn">Review A Contract ↗</button>
+      </div>
+    </section>
+
+    <div class="app-container">
+      <div class="app-wrapper" id="appWrapper">
+        <div class="yellow-line" id="yellowLine"></div>
+        <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
+    <div class="section-badge">Instant Clarity Engine ↗</div>
+  </div>
+
+  <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
+  <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
+
+  <!-- INSIGHT SECTION AND FEATURES CONTINUES... -->
+
+  <!-- WATCH VIDEO SECTION -->
+  <section class="watch-video-section">
+    <div class="video-content">
+      <div class="video-text">
+        <h2>Take a deeper look to<br>see how SignSense works.</h2>
+        <p>Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts</p>
+        <button class="watch-btn">Watch Video ↗</button>
+      </div>
+      <div class="video-box">
+        <div class="video-label">▶ Watch Video</div>
+        <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder" class="video-img" />
+      </div>
     </div>
   </section>
+<!-- REVIEWS SECTION -->
+<section class="reviews-section">
+  <h2 class="reviews-title">What <span class="highlight-green">Our Clients</span> <span class="highlight-light">Say</span></h2>
+  <p class="reviews-subtitle">Hear Directly Our Satisfied Users</p>
 
-  <div class="app-container">
-    <div class="app-wrapper" id="appWrapper">
-      <div class="yellow-line" id="yellowLine"></div>
-      <img class="app-preview" src="https://imgur.com/w1RulhF.png" alt="App Preview" />
+  <div class="reviews-row">
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/30/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+      </div>
+      <p class="review-text">As a practicing attorney, I’ve reviewed countless legal tools, but this tool genuinely surprised me. It makes the whole experience faster and easier.</p>
+      <p class="review-name">Bram C.</p>
+      <p class="review-role">Lawyer</p>
+    </div>
+
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/30/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/ios/24/ffffff/star--v1.png" />
+      </div>
+      <p class="review-text">Before I signed my new apartment lease, I ran it through SignSense just to be safe. It pointed out a clause that would've raised my rent automatically every year. Now I feel way more secure.</p>
+      <p class="review-name">Selena M.</p>
+      <p class="review-role">Tenant</p>
+    </div>
+
+    <div class="review-card">
+      <img src="https://img.icons8.com/ios-filled/30/939393/quote-left.png" class="quote-icon" />
+      <div class="stars">
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/color/24/star--v1.png" />
+        <img src="https://img.icons8.com/ios/24/ffffff/star--v1.png" />
+      </div>
+      <p class="review-text">Game changer for founders. SignSense gave me peace of mind without needing to wait for my lawyer.</p>
+      <p class="review-name">Colton R.</p>
+      <p class="review-role">Entrepreneur</p>
     </div>
   </div>
-</div>
 
-<div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
-  <div class="section-badge">Instant Clarity Engine ↗</div>
-</div>
+  <div class="review-nav">
+    <button class="arrow left"><img src="https://img.icons8.com/ios-filled/24/000000/chevron-left.png" /></button>
+    <button class="arrow right"><img src="https://img.icons8.com/ios-filled/24/000000/chevron-right.png" /></button>
+  </div>
 
-<h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
-<p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
+  <div class="review-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
 
-<section class="insight-section">
-  <div class="insight-content">
-    <div class="insight-left">
-      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
-    </div>
-    <div class="insight-right">
-      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
-      <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
-      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-      <a href="#" class="cta-outline">Review A Contract ↗</a>
-    </div>
+  <div class="review-cta">
+    <button class="leave-review">Leave A Review ↗</button>
   </div>
 </section>
 
-<!-- SCROLLING FEATURES SECTION -->
-<div class="scroll-full">
-  <div class="scroll-wrapper">
-    <section class="scroll-section">
-    <h3>Everything you need for clarity and security in one seamless experience.</h3>
-    <div class="scroll-strip top-row"></div>
-    <div class="scroll-strip bottom-row"></div>
-    <div class="scroll-shadow-left"></div>
-    <div class="scroll-shadow-right"></div>
-  </section>
-</div>
-</div>
+<style>
+.reviews-section {
+  padding: 100px 20px;
+  text-align: center;
+}
 
+.reviews-title {
+  font-size: 44px;
+  font-family: 'Shoika', sans-serif;
+  font-weight: 400;
+}
 
-<!-- AOS + Particle + Scroll JS -->
+.highlight-green { color: #bff611; }
+.highlight-light { color: #fff9f9; }
+
+.reviews-subtitle {
+  color: #a8a8a8;
+  font-size: 20px;
+  margin: 14px 0 50px;
+}
+
+.reviews-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.review-card {
+  background: white;
+  border: 3px solid #d8cccc;
+  border-radius: 23px;
+  padding: 30px;
+  width: 330px;
+  text-align: left;
+}
+
+.quote-icon {
+  width: 26px;
+  margin-bottom: 10px;
+}
+
+.stars img {
+  width: 22px;
+  height: 22px;
+}
+
+.review-text {
+  font-style: italic;
+  color: #939393;
+  font-size: 15px;
+  margin: 16px 0 20px;
+}
+
+.review-name {
+  font-style: italic;
+  font-weight: bold;
+  color: black;
+}
+
+.review-role {
+  font-style: italic;
+  color: #939393;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.review-nav {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.arrow {
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.arrow.right {
+  background-color: #bdf52e;
+}
+
+.review-dots {
+  margin-top: 30px;
+}
+
+.review-dots .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+
+.review-dots .dot.active {
+  background-color: #b9f03d;
+}
+
+.leave-review {
+  background-color: #adff00;
+  color: black;
+  padding: 14px 26px;
+  font-size: 17px;
+  border: none;
+  border-radius: 53px;
+  margin-top: 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+.leave-review:hover {
+  box-shadow: 0 0 14px #adff00;
+}
+</style>
+<!-- PARTICLE + SCROLL JS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
@@ -590,151 +450,7 @@ add the code yourself and send me back the full code with no changes to my previ
     const st = window.scrollY;
     wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
   });
-
-  const topRow = document.querySelector('.top-row');
-  const bottomRow = document.querySelector('.bottom-row');
-
- const featuresTop = [
-  { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-  { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-  { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-  { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-  { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-  { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-  { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-  { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" }
-];
-
-const featuresBottom = [
-  { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-  { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-  { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-  { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-  { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-  { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-  { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-  { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
-];
-
-
- function populateRow(row, features) {
-  for (let i = 0; i < 20; i++) {
-    features.forEach(f => {
-      const el = document.createElement('div');
-      el.className = 'scroll-item';
-      el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-      row.appendChild(el);
-    });
-  }
-}
-
-populateRow(topRow, featuresTop);
-populateRow(bottomRow, featuresBottom);
-
 </script>
-  <!-- WATCH VIDEO SECTION -->
-<section class="watch-video-section">
-  <div class="video-content">
-    <div class="video-text">
-      <h2>Take a deeper look to<br>see how SignSense works.</h2>
-      <p>Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts</p>
-      <button class="watch-btn">Watch Video ↗</button>
-    </div>
-    <div class="video-box">
-      <div class="video-label">▶ Watch Video</div>
-      <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder" class="video-img" />
-    </div>
-  </div>
-</section>
-
-<style>
-.watch-video-section {
-  padding: 100px 40px;
-  background-color: transparent;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.video-content {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 120px;
-  flex-wrap: wrap;
-  padding-left: 170px;
-}
-
-.video-text {
-  flex: 1;
-  min-width: 300px;
-}
-
-.video-text h2 {
-  font-size: 44px;
-  color: #fff9f9;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  line-height: 1.4;
-  margin-bottom: 20px;
-}
-
-.video-text p {
-  color: #d8cccc;
-  font-size: 20px;
-  margin-bottom: 36px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  line-height: 1.6;
-}
-
-.watch-btn {
-  background-color: #adff00;
-  color: black;
-  font-size: 18px;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 26px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: box-shadow 0.3s ease;
-  font-family: 'Inter', sans-serif;
-}
-
-.watch-btn:hover {
-  box-shadow: 0 0 14px #adff00;
-}
-
-.video-box {
-  position: relative;
-  flex: 1;
-  min-width: 320px;
-}
-
-.video-box img.video-img {
-  width: 420px;
-  margin-top: 36px;
-  border-radius: 34px;
-  border: 2px solid #3b3b3b;
-  display: block;
-}
-
-.video-label {
-  position: absolute;
-  top: 4px;     /* Lowered from -16px */
-  left: 20px;   /* Slightly increased for better alignment */
-  background: transparent;
-  color: rgba(191, 246, 17, 0.74);
-  font-size: 18px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 2;
-  pointer-events: none;
-}
-</style>
 
 </body>
 </html>
-
