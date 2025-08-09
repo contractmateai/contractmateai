@@ -491,106 +491,87 @@
         font-size: 20px;
       }
     }
-    .reviews-section {
-  padding: 100px 40px 140px;
-  background: transparent;
-  max-width: 1400px;
-  margin: 0 auto;
+   /* === REVIEWS SECTION === */
+.reviews-section {
+  padding: 100px 7% 80px;
+  background: #05060e;
+  color: white;
 }
-
 .reviews-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.reviews-header h2 {
-  font-size: 44px;
-  font-family: 'Shoika', sans-serif;
-  font-weight: 400;
-  color: #fff;
-}
-
-.reviews-header h2 .green {
-  color: #bff611;
-}
-
-.reviews-header h2 .white {
-  color: #fff9f9;
-}
-
-.reviews-header p {
-  font-size: 20px;
-  color: #a8a8a8;
-  margin-top: 16px;
-}
-
-.reviews-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: nowrap;
-  overflow: hidden;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
 }
-
-.review-carousel {
-  display: flex;
-  gap: 30px;
-  overflow: hidden;
-  width: 900px;
-  transition: transform 0.4s ease;
+.reviews-header h2 {
+  font-size: 42px;
+  font-weight: 400;
 }
-
-.review-card {
-  background: linear-gradient(135deg, #161420, #0c0b11);
-  padding: 30px 24px;
-  border-radius: 23px;
-  border: 3px solid #d8cccc;
-  min-width: 280px;
-  max-width: 280px;
-  text-align: left;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.quote-icon {
-  font-size: 46px;
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 0.8;
-  margin-bottom: 12px;
-}
-
-.review-text {
-  font-style: italic;
-  color: #939393;
-  font-size: 17px;
-  margin-bottom: 22px;
-}
-
-.review-name {
-  font-style: italic;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.review-role {
-  font-style: italic;
-  font-size: 14px;
-  color: #939393;
-}
-
-.review-arrow {
-  font-size: 32px;
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.review-arrow:hover {
+.reviews-header h2 span {
   color: #bff611;
+}
+.reviews-subtext {
+  color: #a8a8a8;
+  font-size: 18px;
+  margin-top: 8px;
+}
+.reviews-arrows {
+  display: flex;
+  gap: 14px;
+}
+.reviews-arrows button {
+  background: white;
+  color: black;
+  border-radius: 50%;
+  padding: 12px 16px;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
+}
+.reviews-arrows .right {
+  background: #bff611;
+}
+.review-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.review-box img {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 23px;
+  border: 2px solid #d8cccc;
+}
+.review-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.dot.active {
+  background: #b9f03d;
+}
+.review-footer {
+  text-align: center;
+  margin-top: 40px;
+}
+.leave-review-btn {
+  background: #adff00;
+  color: black;
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
 }
 
  </style>
@@ -854,37 +835,77 @@ function moveReview(direction) {
   pointer-events: none;
 }
 </style>
-<!-- REVIEWS SECTION -->
-<section class="reviews-section">
+  <section class="reviews-section" id="reviews">
   <div class="reviews-header">
-    <h2>What <span class="green">Our Clients</span> <span class="white">Say</span></h2>
-    <p>Hear Directly From Our Satisfied Users</p>
-  </div>
-  <div class="reviews-container">
-    <button class="review-arrow left" onclick="moveReview(-1)">←</button>
-    <div class="review-carousel">
-      <div class="review-card">
-        <div class="quote-icon">“</div>
-        <p class="review-text">Absolutely fantastic! This app saved me hours and made reviewing my contract stress-free.</p>
-        <p class="review-name">Sarah M.</p>
-        <p class="review-role">Freelancer</p>
-      </div>
-      <div class="review-card">
-        <div class="quote-icon">“</div>
-        <p class="review-text">Clean design, great features, and surprisingly accurate AI suggestions.</p>
-        <p class="review-name">David R.</p>
-        <p class="review-role">Law Firm Partner</p>
-      </div>
-      <div class="review-card">
-        <div class="quote-icon">“</div>
-        <p class="review-text">A must-have for anyone signing documents. The clarity it brings is unmatched.</p>
-        <p class="review-name">Nina L.</p>
-        <p class="review-role">Student</p>
-      </div>
+    <div>
+      <h2>What <span>Our Clients</span> Say</h2>
+      <div class="reviews-subtext">Hear Directly From Our Satisfied Users</div>
     </div>
-    <button class="review-arrow right" onclick="moveReview(1)">→</button>
+    <div class="reviews-arrows">
+      <button onclick="prevReview()">←</button>
+      <button class="right" onclick="nextReview()">→</button>
+    </div>
+  </div>
+
+  <div class="review-box">
+    <img id="review-img" src="https://imgur.com/jX2IqjQ.png" alt="Review" />
+  </div>
+
+  <div class="review-dots">
+    <div class="dot active" onclick="goToReview(0)"></div>
+    <div class="dot" onclick="goToReview(1)"></div>
+    <div class="dot" onclick="goToReview(2)"></div>
+    <div class="dot" onclick="goToReview(3)"></div>
+    <div class="dot" onclick="goToReview(4)"></div>
+  </div>
+
+  <div class="review-footer">
+    <button class="leave-review-btn">Leave A Review ↗</button>
   </div>
 </section>
+
+<!-- REVIEWS SECTION -->
+<script>
+  const reviews = [
+    "https://imgur.com/jX2IqjQ.png",
+    "https://imgur.com/k42nv4C.png",
+    "https://imgur.com/6M6XO2l.png",
+    "https://imgur.com/YMDEKZm.png",
+    "https://imgur.com/I9iQu88.png"
+  ];
+
+  let currentReview = 0;
+
+  function updateReview() {
+    const img = document.getElementById("review-img");
+    const dots = document.querySelectorAll(".dot");
+    img.src = reviews[currentReview];
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentReview);
+    });
+  }
+
+  function nextReview() {
+    currentReview = (currentReview + 1) % reviews.length;
+    updateReview();
+  }
+
+  function prevReview() {
+    currentReview = (currentReview - 1 + reviews.length) % reviews.length;
+    updateReview();
+  }
+
+  function goToReview(index) {
+    currentReview = index;
+    updateReview();
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") nextReview();
+    if (e.key === "ArrowLeft") prevReview();
+  });
+</script>
+
 
 
 </body>
