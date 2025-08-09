@@ -493,10 +493,11 @@
     }
    /* === REVIEWS SECTION === */
 .reviews-section {
-  padding: 100px 7% 80px;
+  padding: 80px 7%;
   background: #05060e;
   color: white;
 }
+
 .reviews-header {
   display: flex;
   justify-content: space-between;
@@ -504,65 +505,81 @@
   margin-bottom: 40px;
   flex-wrap: wrap;
 }
+
 .reviews-header h2 {
   font-size: 42px;
   font-weight: 400;
 }
+
 .reviews-header h2 span {
   color: #bff611;
 }
+
 .reviews-subtext {
   color: #a8a8a8;
   font-size: 18px;
   margin-top: 8px;
 }
+
 .reviews-arrows {
   display: flex;
   gap: 14px;
 }
+
 .reviews-arrows button {
   background: white;
   color: black;
   border-radius: 50%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   font-size: 22px;
   border: none;
   cursor: pointer;
 }
+
 .reviews-arrows .right {
   background: #bff611;
 }
-.review-box {
+
+.reviews-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  gap: 20px;
+  overflow: hidden;
 }
-.review-box img {
+
+.review-card {
+  flex: 0 0 calc(33.333% - 14px);
+  box-sizing: border-box;
+}
+
+.review-card img {
   width: 100%;
-  max-width: 900px;
   border-radius: 23px;
   border: 2px solid #d8cccc;
 }
+
 .review-dots {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 30px;
 }
+
 .dot {
   width: 10px;
   height: 10px;
   background: #666;
   border-radius: 50%;
-  cursor: pointer;
 }
+
 .dot.active {
   background: #b9f03d;
 }
+
 .review-footer {
   text-align: center;
   margin-top: 40px;
 }
+
 .leave-review-btn {
   background: #adff00;
   color: black;
@@ -571,7 +588,6 @@
   border-radius: 12px;
   border: none;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
 }
 
  </style>
@@ -835,75 +851,77 @@ function moveReview(direction) {
   pointer-events: none;
 }
 </style>
-  <section class="reviews-section" id="reviews">
+<!-- Reviews Section -->
+<section class="reviews-section">
   <div class="reviews-header">
     <div>
       <h2>What <span>Our Clients</span> Say</h2>
-      <div class="reviews-subtext">Hear Directly From Our Satisfied Users</div>
+      <p class="reviews-subtext">Hear Directly From Our Satisfied Users</p>
     </div>
     <div class="reviews-arrows">
-      <button onclick="prevReview()">←</button>
-      <button class="right" onclick="nextReview()">→</button>
+      <button id="prevBtn">&#8592;</button>
+      <button id="nextBtn" class="right">&#8594;</button>
     </div>
   </div>
 
-  <div class="review-box">
-    <img id="review-img" src="https://imgur.com/jX2IqjQ.png" alt="Review" />
-  </div>
+  <div class="reviews-container" id="reviewsContainer"></div>
 
-  <div class="review-dots">
-    <div class="dot active" onclick="goToReview(0)"></div>
-    <div class="dot" onclick="goToReview(1)"></div>
-    <div class="dot" onclick="goToReview(2)"></div>
-    <div class="dot" onclick="goToReview(3)"></div>
-    <div class="dot" onclick="goToReview(4)"></div>
-  </div>
+  <div class="review-dots" id="reviewDots"></div>
 
   <div class="review-footer">
     <button class="leave-review-btn">Leave A Review ↗</button>
   </div>
 </section>
 
+
 <!-- REVIEWS SECTION -->
 <script>
-  const reviews = [
-    "https://imgur.com/jX2IqjQ.png",
-    "https://imgur.com/k42nv4C.png",
-    "https://imgur.com/6M6XO2l.png",
-    "https://imgur.com/YMDEKZm.png",
-    "https://imgur.com/I9iQu88.png"
-  ];
+const reviews = [
+  "https://imgur.com/jX2IqjQ.png",
+  "https://imgur.com/k42nv4C.png",
+  "https://imgur.com/6M6XO2l.png",
+  "https://imgur.com/YMDEKZm.png",
+  "https://imgur.com/I9iQu88.png"
+];
 
-  let currentReview = 0;
+let currentIndex = 0;
+const container = document.getElementById("reviewsContainer");
+const dotsContainer = document.getElementById("reviewDots");
 
-  function updateReview() {
-    const img = document.getElementById("review-img");
-    const dots = document.querySelectorAll(".dot");
-    img.src = reviews[currentReview];
-    dots.forEach((dot, i) => {
-      dot.classList.toggle("active", i === currentReview);
-    });
+function renderReviews() {
+  container.innerHTML = "";
+  for (let i = currentIndex; i < currentIndex + 3; i++) {
+    const reviewIndex = i % reviews.length;
+    const card = document.createElement("div");
+    card.className = "review-card";
+    card.innerHTML = `<img src="${reviews[reviewIndex]}" alt="Review">`;
+    container.appendChild(card);
   }
+  renderDots();
+}
 
-  function nextReview() {
-    currentReview = (currentReview + 1) % reviews.length;
-    updateReview();
+function renderDots() {
+  dotsContainer.innerHTML = "";
+  const totalSets = Math.ceil(reviews.length / 3);
+  for (let i = 0; i < totalSets; i++) {
+    const dot = document.createElement("div");
+    dot.className = "dot" + (i === Math.floor(currentIndex / 3) ? " active" : "");
+    dotsContainer.appendChild(dot);
   }
+}
 
-  function prevReview() {
-    currentReview = (currentReview - 1 + reviews.length) % reviews.length;
-    updateReview();
-  }
+document.getElementById("nextBtn").addEventListener("click", () => {
+  currentIndex = (currentIndex + 3) % reviews.length;
+  renderReviews();
+});
 
-  function goToReview(index) {
-    currentReview = index;
-    updateReview();
-  }
+document.getElementById("prevBtn").addEventListener("click", () => {
+  currentIndex = (currentIndex - 3 + reviews.length) % reviews.length;
+  renderReviews();
+});
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") nextReview();
-    if (e.key === "ArrowLeft") prevReview();
-  });
+renderReviews();
+
 </script>
 
 
