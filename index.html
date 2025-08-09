@@ -492,19 +492,10 @@
       }
     }
    /* === REVIEWS SECTION === */
-/* === REVIEWS (3-up image carousel) === */
-.reviews-section{
-  padding:80px 40px 120px;
-  background:transparent;
-  max-width:1400px;
-  margin:0 auto;
-}
-.reviews-header{
-  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-}
-.reviews-title h2{
-  font-size:44px;font-family:'Shoika',sans-serif;font-weight:400;color:#fff9f9;
-}
+/* === REVIEWS: CSS === */
+.reviews-section{padding:80px 40px 120px;background:transparent;max-width:1400px;margin:0 auto}
+.reviews-header{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.reviews-title h2{font-size:44px;font-family:'Shoika',sans-serif;font-weight:400;color:#fff9f9}
 .reviews-title h2 .green{color:#bff611}
 .reviews-sub{font-size:20px;color:#a8a8a8;margin-top:10px}
 
@@ -512,28 +503,23 @@
 .review-nav .nav{
   width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;
   display:grid;place-items:center;font-size:22px;
-  box-shadow:0 0 0 2px rgba(255,255,255,.04) inset;
+  box-shadow:0 0 0 2px rgba(255,255,255,.04) inset
 }
 .review-nav .nav.left{background:#fff;color:#000}
 .review-nav .nav.right{background:#bff611;color:#0a0a0a}
 
-.reviews-viewport{overflow:hidden}
-.reviews-track{
-  display:flex;gap:24px;transition:transform .35s ease;
-}
+.reviews-viewport{overflow:hidden;margin-top:28px} /* lower from subtext */
+.reviews-track{display:flex;gap:24px;transition:transform .35s ease}
 .review-card{
   flex:0 0 calc((100% - 48px)/3); /* 3 across with 24px gaps */
-  border:2px solid #d8cccc;border-radius:23px;padding:10px;background:linear-gradient(135deg,#161420,#0c0b11);
+  border:2px solid #d8cccc;border-radius:23px;padding:10px;
+  background:#000; /* black field around image */
 }
-.review-card img{
-  width:100%;display:block;border-radius:17px; /* inner radius so border shows */
-}
+.review-card img{width:100%;display:block;border-radius:17px}
 
 /* dots */
 .review-dots{display:flex;justify-content:center;gap:10px;margin:28px 0 16px}
-.review-dot{
-  width:8px;height:8px;border-radius:50%;background:#666;opacity:.8
-}
+.review-dot{width:8px;height:8px;border-radius:50%;background:#666;opacity:.8;cursor:pointer}
 .review-dot.active{background:#b9f03d;opacity:1}
 
 /* button */
@@ -545,12 +531,9 @@
 .leave-review:hover{box-shadow:0 0 14px #adff00}
 
 /* responsive */
-@media (max-width:1100px){
-  .review-card{flex-basis:calc((100% - 24px)/2);} /* 2 across */
-}
-@media (max-width:640px){
-  .review-card{flex-basis:100%;} /* 1 across */
-}
+@media (max-width:1100px){.review-card{flex-basis:calc((100% - 24px)/2)}}
+@media (max-width:640px){.review-card{flex-basis:100%}}
+
 
  </style>
 
@@ -863,7 +846,6 @@ populateRow(bottomRow, featuresBottom);
 }
 </style>
 <!-- Reviews Section -->
-<!-- REVIEWS SECTION -->
 <section class="reviews-section">
   <div class="reviews-header">
     <div class="reviews-title">
@@ -895,55 +877,81 @@ populateRow(bottomRow, featuresBottom);
 
 
 
+
 <!-- REVIEWS SECTION -->
+<!-- === REVIEWS: JS === -->
 <script>
-const reviews = [
-  "https://imgur.com/jX2IqjQ.png",
-  "https://imgur.com/k42nv4C.png",
-  "https://imgur.com/6M6XO2l.png",
-  "https://imgur.com/YMDEKZm.png",
-  "https://imgur.com/I9iQu88.png"
-];
+(function(){
+  const track = document.getElementById('reviewsTrack');
+  const prev  = document.getElementById('revPrev');
+  const next  = document.getElementById('revNext');
+  const dotsWrap = document.getElementById('reviewDots');
+  const cards = () => Array.from(track.querySelectorAll('.review-card'));
 
-let currentIndex = 0;
-const container = document.getElementById("reviewsContainer");
-const dotsContainer = document.getElementById("reviewDots");
+  let index = 0;     // leftmost visible card index
+  let perPage = 3;   // visible at once (auto on resize)
 
-function renderReviews() {
-  container.innerHTML = "";
-  for (let i = currentIndex; i < currentIndex + 3; i++) {
-    const reviewIndex = i % reviews.length;
-    const card = document.createElement("div");
-    card.className = "review-card";
-    card.innerHTML = `<img src="${reviews[reviewIndex]}" alt="Review">`;
-    container.appendChild(card);
+  function measure(){
+    const w = window.innerWidth;
+    if (w <= 640)      perPage = 1;
+    else if (w <=1100) perPage = 2;
+    else               perPage = 3;
+    index = Math.min(index, Math.max(0, cards().length - perPage));
+    renderDots();
+    go(index, false);
   }
-  renderDots();
-}
 
-function renderDots() {
-  dotsContainer.innerHTML = "";
-  const totalSets = Math.ceil(reviews.length / 3);
-  for (let i = 0; i < totalSets; i++) {
-    const dot = document.createElement("div");
-    dot.className = "dot" + (i === Math.floor(currentIndex / 3) ? " active" : "");
-    dotsContainer.appendChild(dot);
+  function cardFullWidth(){
+    const c = cards()[0];
+    if (!c) return 0;
+    const style = getComputedStyle(c);
+    const w = c.getBoundingClientRect().width;
+    const mr = parseFloat(style.marginRight||0);
+    const ml = parseFloat(style.marginLeft||0);
+    const gap = 24; // matches CSS gap
+    return w + ml + mr + gap;
   }
-}
 
-document.getElementById("nextBtn").addEventListener("click", () => {
-  currentIndex = (currentIndex + 3) % reviews.length;
-  renderReviews();
-});
+  function go(i, animate=true){
+    const maxIndex = Math.max(0, cards().length - perPage); // 5-3=2 on desktop
+    index = Math.max(0, Math.min(i, maxIndex));
+    const shift = -(index * cardFullWidth());
+    if (!animate) track.style.transition = 'none';
+    track.style.transform = `translateX(${shift}px)`;
+    if (!animate) requestAnimationFrame(()=>track.style.transition='transform .35s ease');
+    updateDots();
+  }
 
-document.getElementById("prevBtn").addEventListener("click", () => {
-  currentIndex = (currentIndex - 3 + reviews.length) % reviews.length;
-  renderReviews();
-});
+  function renderDots(){
+    dotsWrap.innerHTML = '';
+    const total = cards().length; // 5 dots
+    for(let i=0;i<total;i++){
+      const d = document.createElement('div');
+      d.className = 'review-dot';
+      d.addEventListener('click', ()=>{
+        const target = Math.min(i, total - perPage); // make clicked one visible
+        go(target);
+      });
+      dotsWrap.appendChild(d);
+    }
+    updateDots();
+  }
 
-renderReviews();
+  function updateDots(){
+    const total = cards().length;
+    [...dotsWrap.children].forEach((d,i)=>{
+      d.classList.toggle('active', i>=index && i<index+perPage);
+    });
+  }
 
+  prev.addEventListener('click', ()=>go(index-1));
+  next.addEventListener('click', ()=>go(index+1));
+  window.addEventListener('resize', measure, {passive:true});
+
+  measure();
+})();
 </script>
+
 
 
 
