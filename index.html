@@ -9,6 +9,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
+    /* === FLOATING TOP BAR === */
+.topbar-wrap{
+  position:fixed;
+  top:18px;                 /* not touching the very top */
+  left:0; right:0;
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+  pointer-events:none;      /* so only the bar is clickable */
+  transition:transform .28s ease, opacity .25s ease;
+}
+.topbar-wrap.hide{
+  transform:translateY(-140%);
+  opacity:0;
+}
+
+.topbar{
+  pointer-events:auto;
+  background:#aafe2a;       /* requested color */
+  border-radius:16px;       /* requested radius */
+  min-height:72px;
+  padding:14px 22px;
+  width:min(1220px, calc(100% - 36px)); /* breathing room on sides */
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
+
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{height:38px;width:auto;border-radius:8px}
+.topbar-brand{font-family:'Shoika',sans-serif;font-size:28px;color:#111}
+
+.topbar-nav a{
+  text-decoration:none;
+  font-size:20px;
+  color:#2b2b2b;
+  margin-left:34px;
+}
+.topbar-nav a:hover{opacity:.8}
+
+/* push content down so bar doesn’t overlap hero */
+.hero-wrapper{ margin-top: 120px; }   /* REPLACES your -40px rule */
+
     :root {
       --bg-dark: #01040b;
       --text-light: #fff9f9;
@@ -107,9 +149,8 @@
       font-size: 20px;
     }
 
-    .hero-wrapper {
-      margin-top: -40px;
-    }
+   .hero-wrapper { margin-top: 120px; }
+
 
     .tagline-absolute {
       background-color: var(--badge-purple);
@@ -623,19 +664,24 @@
 
 </head>
 <body>
+  <!-- FLOATING TOP BAR -->
+<div class="topbar-wrap" id="topbarWrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <img class="topbar-logo" src="https://imgur.com/shj7pz8.png" alt="SignSense logo">
+      <span class="topbar-brand">SignSense</span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="#how-it-works">See How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#contact">Contact Us</a>
+    </nav>
+  </div>
+</div>
+
 <div class="particle-container" id="particles"></div>
 
-<header>
-  <div class="logo-wrap">
- <img src="https://i.imgur.com/vND282a.png" alt="SignSense Logo">
-    SignSense
-  </div>
-  <nav>
-    <a href="#">See How It Works</a>
-    <a href="#">Features</a>
-    <a href="#">Contact Us</a>
-  </nav>
-</header>
+
 
 <div class="hero-wrapper">
   <section class="hero">
@@ -959,6 +1005,28 @@ populateRow(bottomRow, featuresBottom);
   </div>
 </section>
 
+<script>
+  (function(){
+    const bar = document.getElementById('topbarWrap');
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    function onScroll(){
+      const y = window.scrollY;
+      if (y > lastY && y > 80) {
+        bar.classList.add('hide');   // scrolling down
+      } else {
+        bar.classList.remove('hide'); // scrolling up
+      }
+      lastY = y <= 0 ? 0 : y;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
+    }, {passive:true});
+  })();
+</script>
 
 
 
