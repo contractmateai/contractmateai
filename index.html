@@ -164,8 +164,8 @@
       border-radius: 53px;
       position: relative;
       margin-bottom: 26px;
-      transition: box-shadow 0.3s ease;
-      box-shadow: 0 0 8px var(--badge-glow);
+      transition: none;
+      box-shadow: 0 0 20px var(--badge-glow);
     }
 
     .tagline-absolute span {
@@ -177,9 +177,7 @@
       font-weight: bold;
     }
 
-    .tagline-absolute:hover {
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
+  
 
     .hero {
       text-align: center;
@@ -762,12 +760,47 @@
     container.appendChild(p);
   }
 
+ <script>
   const wrapper = document.getElementById("appWrapper");
-  window.addEventListener("scroll", function () {
-    const st = window.scrollY;
-    wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-  });
 
+  // Tweak these three numbers to taste:
+  const ROT_MAX = 12;     // starting tilt (deg)
+  const TILT_BACK_Y = 120; // tilt back when you’re within ~120px of the top
+  const FLAT_AT_Y  = 800;  // needs ~800px of scroll to fully flatten (≈ “almost two scrolls”)
+
+  let ticking = false;
+
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+
+  function applyTilt(){
+    const y = window.scrollY;
+
+    // If you’re almost at the top, keep it tilted
+    if (y <= TILT_BACK_Y){
+      wrapper.style.transform = `rotateX(${ROT_MAX}deg)`;
+      ticking = false;
+      return;
+    }
+
+    // Otherwise, smoothly map from ROT_MAX → 0 between TILT_BACK_Y and FLAT_AT_Y
+    const t = clamp01((y - TILT_BACK_Y) / (FLAT_AT_Y - TILT_BACK_Y));
+    const rot = ROT_MAX * (1 - t);
+    wrapper.style.transform = `rotateX(${rot}deg)`;
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(applyTilt);
+    }
+  }, { passive: true });
+
+  // Initial state on load
+  applyTilt();
+</script>
+  <script>
   const topRow = document.querySelector('.top-row');
   const bottomRow = document.querySelector('.bottom-row');
 
