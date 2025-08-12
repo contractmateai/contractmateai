@@ -533,46 +533,156 @@
     }
    /* === REVIEWS SECTION === */
 /* === REVIEWS: CSS === */
-.reviews-section{padding:80px 40px 120px;background:transparent;max-width:1400px;margin:0 auto}
-.reviews-header{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
-.reviews-title h2{font-size:44px;font-family:'Shoika',sans-serif;font-weight:400;color:#fff9f9}
-.reviews-title h2 .green{color:#bff611}
-.reviews-sub{font-size:20px;color:#a8a8a8;margin-top:10px}
-
-.review-nav{display:flex;gap:14px}
-.review-nav .nav{
-  width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;
-  display:grid;place-items:center;font-size:22px;
-  box-shadow:0 0 0 2px rgba(255,255,255,.04) inset
+/* === REVIEWS: CSS === */
+.reviews-section {
+  padding: 80px 40px 120px;
+  background: transparent;
+  max-width: 1400px;
+  margin: 0 auto;
 }
-.review-nav .nav.left{background:#fff;color:#000}
-.review-nav .nav.right{background:#bff611;color:#0a0a0a}
 
-.reviews-viewport{overflow:hidden;margin-top:28px} /* lower from subtext */
-.reviews-track{display:flex;gap:24px;transition:transform .35s ease}
-.review-card{
-  flex:0 0 calc((100% - 48px)/3); /* 3 across with 24px gaps */
-  border:1px solid #b4b4b4;border-radius:23px;padding:10px;
-  background:#000; /* black field around image */
+.reviews-header {
+  display: flex;
+  flex-direction: column; /* center stack */
+  align-items: center;
+  text-align: center;
+  gap: 10px;
 }
-.review-card img{width:100%;display:block;border-radius:17px}
+
+.reviews-title h2 {
+  font-size: 44px;
+  font-family: 'Shoika', sans-serif;
+  font-weight: 400;
+  color: #fff9f9;
+}
+
+.reviews-title h2 .green {
+  color: #bff611;
+}
+
+.reviews-sub {
+  font-size: 20px;
+  color: #a8a8a8;
+  margin-top: 4px;
+}
+
+.review-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  padding: 0 10px;
+  pointer-events: none;
+}
+
+.review-nav .nav {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .04) inset;
+  pointer-events: auto;
+}
+
+.review-nav .nav.left {
+  background: #fff;
+  color: #000;
+}
+
+.review-nav .nav.right {
+  background: #bff611;
+  color: #0a0a0a;
+}
+
+.reviews-viewport {
+  overflow: hidden;
+  margin-top: 28px;
+  position: relative;
+}
+
+.reviews-track {
+  display: flex;
+  gap: 24px;
+  transition: transform .35s ease;
+}
+
+.review-card {
+  flex: 0 0 calc((100% - 48px) / 3);
+  border: 1px solid #b4b4b4;
+  border-radius: 23px;
+  padding: 10px;
+  background: #000;
+}
+
+.review-card img {
+  width: 100%;
+  display: block;
+  border-radius: 17px;
+}
 
 /* dots */
-.review-dots{display:flex;justify-content:center;gap:10px;margin:28px 0 16px}
-.review-dot{width:8px;height:8px;border-radius:50%;background:#666;opacity:.8;cursor:pointer}
-.review-dot.active{background:#b9f03d;opacity:1}
+.review-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 28px 0 30px; /* more bottom space */
+}
+
+.review-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #666;
+  opacity: .8;
+  cursor: pointer;
+}
+
+.review-dot.active {
+  background: #b9f03d;
+  opacity: 1;
+}
 
 /* button */
-.leave-review-wrap{display:flex;justify-content:center}
-.leave-review{
-  background:#adff00;color:#000;font-size:18px;border:none;border-radius:12px;
-  padding:14px 26px;cursor:pointer;font-weight:500;transition:box-shadow .3s ease
+.leave-review-wrap {
+  display: flex;
+  justify-content: center;
 }
-.leave-review:hover{box-shadow:0 0 14px #adff00}
+
+.leave-review {
+  background: #adff00;
+  color: #000;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 26px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: box-shadow .3s ease;
+}
+
+.leave-review:hover {
+  box-shadow: 0 0 14px #adff00;
+}
 
 /* responsive */
-@media (max-width:1100px){.review-card{flex-basis:calc((100% - 24px)/2)}}
-@media (max-width:640px){.review-card{flex-basis:100%}}
+@media (max-width:1100px) {
+  .review-card {
+    flex-basis: calc((100% - 24px) / 2);
+  }
+}
+
+@media (max-width:640px) {
+  .review-card {
+    flex-basis: 100%;
+  }
+}
 
 /* === FAQ STYLES === */
 .faq-section{max-width:1100px;margin:0 auto;padding:40px 24px;font-family:'Inter',sans-serif}
