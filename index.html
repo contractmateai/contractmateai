@@ -760,14 +760,12 @@
     container.appendChild(p);
   }
 
-const wrapper = document.getElementById("appWrapper");
-window.addEventListener("scroll", function () {
-  const st = window.scrollY;
-  wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-});
+  const wrapper = document.getElementById("appWrapper");
+  window.addEventListener("scroll", function () {
+    const st = window.scrollY;
+    wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+  });
 
-
-  <script>
   const topRow = document.querySelector('.top-row');
   const bottomRow = document.querySelector('.bottom-row');
 
