@@ -532,7 +532,7 @@
       }
     }
    /* === REVIEWS SECTION === */
-/* Reviews Container */
+/* === REVIEWS: CSS === */
 .reviews-section {
   padding: 80px 40px 120px;
   background: transparent;
@@ -541,7 +541,16 @@
 }
 
 .reviews-header {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.reviews-title {
+  flex: 1;
+  text-align: center; /* center text */
 }
 
 .reviews-title h2 {
@@ -561,45 +570,42 @@
   margin-top: 10px;
 }
 
-/* Arrows */
-.reviews-viewport {
-  position: relative;
-  overflow: hidden;
-  margin-top: 40px;
+.review-nav {
+  display: flex;
+  gap: 14px;
 }
 
-.nav.left,
-.nav.right {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-  width: 58px;
-  height: 58px;
+.review-nav .nav {
+  width: 52px;
+  height: 52px;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: grid;
   place-items: center;
-  font-size: 28px;
+  font-size: 22px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .04) inset;
 }
 
-.nav.left {
-  left: -80px;
+.review-nav .nav.left {
   background: #fff;
   color: #000;
 }
 
-.nav.right {
-  right: -80px;
+.review-nav .nav.right {
   background: #bff611;
-  color: #000;
+  color: #0a0a0a;
+}
+
+.reviews-viewport {
+  overflow: hidden;
+  margin-top: 28px; /* lower from subtext */
 }
 
 .reviews-track {
   display: flex;
   gap: 24px;
-  transition: transform 0.35s ease;
+  transition: transform .35s ease;
 }
 
 .review-card {
@@ -616,12 +622,12 @@
   border-radius: 17px;
 }
 
-/* Dots */
+/* dots */
 .review-dots {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin: 28px 0 26px;
+  margin: 28px 0 26px; /* more space before Leave Review button */
 }
 
 .review-dot {
@@ -638,7 +644,7 @@
   opacity: 1;
 }
 
-/* Leave Review Button */
+/* button */
 .leave-review-wrap {
   display: flex;
   justify-content: center;
@@ -660,18 +666,19 @@
   box-shadow: 0 0 14px #adff00;
 }
 
-/* Responsive */
-@media (max-width:1100px) {
+/* responsive */
+@media (max-width: 1100px) {
   .review-card {
     flex-basis: calc((100% - 24px) / 2);
   }
 }
 
-@media (max-width:640px) {
+@media (max-width: 640px) {
   .review-card {
     flex-basis: 100%;
   }
 }
+
 
 
 /* === FAQ STYLES === */
@@ -1088,14 +1095,13 @@ populateRow(bottomRow, featuresBottom);
       <h2>What <span class="green">Our Clients</span> Say</h2>
       <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
     </div>
+    <div class="review-nav">
+      <button class="nav left" type="button" id="revPrev">←</button>
+      <button class="nav right" type="button" id="revNext">→</button>
+    </div>
   </div>
 
   <div class="reviews-viewport">
-    <!-- left arrow -->
-    <button class="nav left" type="button" id="revPrev">
-      <span>←</span>
-    </button>
-
     <div class="reviews-track" id="reviewsTrack">
       <div class="review-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1"></div>
       <div class="review-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2"></div>
@@ -1103,11 +1109,6 @@ populateRow(bottomRow, featuresBottom);
       <div class="review-card"><img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4"></div>
       <div class="review-card"><img src="https://i.imgur.com/I9iQu88.png" alt="Review 5"></div>
     </div>
-
-    <!-- right arrow -->
-    <button class="nav right" type="button" id="revNext">
-      <span>→</span>
-    </button>
   </div>
 
   <div class="review-dots" id="reviewDots"></div>
