@@ -576,33 +576,34 @@
 }
 
 .review-nav .nav {
-  width: 58px;
-  height: 58px;
+  width: 72px; /* bigger */
+  height: 72px; /* bigger */
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0a0a0a; /* background circle */
+  background: #0a0a0a; /* dark circle */
   transition: box-shadow 0.3s ease;
 }
 
 .review-nav .nav img {
-  width: 26px;
+  width: 34px; /* bigger arrow */
   height: auto;
-  pointer-events: none; /* ensures clicks register on the button, not image */
+  pointer-events: none;
 }
 
 /* Left arrow hover glow */
 .review-nav .nav.left:hover {
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.85);
 }
 
 /* Right arrow hover glow */
 .review-nav .nav.right:hover {
-  box-shadow: 0 0 12px #9de327;
+  box-shadow: 0 0 14px #9de327;
 }
+
 
 
 .reviews-viewport {
@@ -1103,14 +1104,15 @@ populateRow(bottomRow, featuresBottom);
       <h2>What <span class="green">Our Clients</span> Say</h2>
       <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
     </div>
-  <div class="review-nav">
-  <button class="nav left" type="button" id="revPrev" aria-label="Previous">
-    <img src="https://imgur.com/xZGlFZJ.png" alt="Previous Arrow">
+<div class="review-nav">
+  <button class="nav left" type="button" id="revPrev">
+    <img src="https://i.imgur.com/xZGlFZJ.png" alt="Previous">
   </button>
-  <button class="nav right" type="button" id="revNext" aria-label="Next">
-    <img src="https://imgur.com/ENjLWga.png" alt="Next Arrow">
+  <button class="nav right" type="button" id="revNext">
+    <img src="https://i.imgur.com/ENjLWga.png" alt="Next">
   </button>
 </div>
+
 
 
   <div class="reviews-viewport">
