@@ -533,152 +533,96 @@
     }
    /* === REVIEWS SECTION === */
 /* === REVIEWS: CSS === */
-.reviews-section {
-  padding: 80px 40px 120px;
-  background: transparent;
-  max-width: 1400px;
-  margin: 0 auto;
+/* === REVIEWS: CSS === */
+.reviews-section{
+  padding:80px 40px 120px;
+  background:transparent;
+  max-width:1400px;
+  margin:0 auto;
 }
 
-.reviews-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+/* header: center title/sub, arrows on the right */
+.reviews-header{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr; /* spacer | center | arrows */
+  align-items:center;
+  gap:24px;
 }
 
-.reviews-title {
-  flex: 1;
-  text-align: center;
+.reviews-title{
+  grid-column:2;        /* exact middle */
+  text-align:center;
 }
 
-.reviews-title h2 {
-  font-size: 44px;
-  font-family: 'Shoika', sans-serif;
-  font-weight: 400;
-  color: #fff9f9;
+.reviews-title h2{
+  font-size:44px;
+  font-family:'Shoika',sans-serif;
+  font-weight:400;
+  color:#fff9f9;
 }
 
-.reviews-title h2 .green {
-  color: #bff611;
+.reviews-title h2 .green{ color:#bff611; }
+
+.reviews-sub{
+  font-size:20px;
+  color:#a8a8a8;
+  margin-top:10px;
 }
 
-.reviews-sub {
-  font-size: 20px;
-  color: #a8a8a8;
-  margin-top: 10px;
+/* arrows (top-right) */
+.review-nav{
+  grid-column:3;
+  justify-self:end;
+  display:flex;
+  gap:14px;
 }
-
-.review-nav {
-  display: flex;
-  gap: 14px;
+.review-nav .nav{
+  width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;font-size:22px;
+  box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
+  transition:box-shadow .2s ease, transform .05s ease;
 }
+.review-nav .nav.left{ background:#fff;color:#000; }
+.review-nav .nav.right{ background:#bff611;color:#0a0a0a; }
+.review-nav .nav:hover{ box-shadow:0 0 14px rgba(191,246,17,.6); }
 
-.review-nav .nav {
-  width: 52px;
-  height: 52px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, .04) inset;
+/* carousel */
+.reviews-viewport{ overflow:hidden; margin-top:28px; }
+.reviews-track{ display:flex; gap:24px; transition:transform .35s ease; }
+.review-card{
+  flex:0 0 calc((100% - 48px)/3);
+  border:1px solid #b4b4b4;border-radius:23px;padding:10px;background:#000;
 }
-
-.review-nav .nav.left {
-  background: #fff;
-  color: #000;
-}
-
-.review-nav .nav.right {
-  background: #bff611;
-  color: #0a0a0a;
-}
-
-.reviews-viewport {
-  overflow: hidden;
-  margin-top: 28px; /* lower from subtext */
-}
-
-.reviews-track {
-  display: flex;
-  gap: 24px;
-  transition: transform .35s ease;
-}
-
-.review-card {
-  flex: 0 0 calc((100% - 48px) / 3);
-  border: 1px solid #b4b4b4;
-  border-radius: 23px;
-  padding: 10px;
-  background: #000;
-}
-
-.review-card img {
-  width: 100%;
-  display: block;
-  border-radius: 17px;
-}
-
+.review-card img{ width:100%;display:block;border-radius:17px; }
 
 /* dots */
-.review-dots {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 28px 0 26px; /* more space before Leave Review button */
+.review-dots{
+  display:flex;justify-content:center;gap:10px;
+  margin:28px 0 26px; /* space above button */
 }
-
-.review-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #666;
-  opacity: .8;
-  cursor: pointer;
-}
-
-.review-dot.active {
-  background: #b9f03d;
-  opacity: 1;
-}
+.review-dot{ width:8px;height:8px;border-radius:50%;background:#666;opacity:.8;cursor:pointer; }
+.review-dot.active{ background:#b9f03d;opacity:1; }
 
 /* button */
-.leave-review-wrap {
-  display: flex;
-  justify-content: center;
+.leave-review-wrap{ display:flex;justify-content:center; }
+.leave-review{
+  background:#adff00;color:#000;font-size:18px;border:none;border-radius:12px;
+  padding:14px 26px;cursor:pointer;font-weight:500;transition:box-shadow .3s ease;
 }
-
-.leave-review {
-  background: #adff00;
-  color: #000;
-  font-size: 18px;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 26px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: box-shadow .3s ease;
-}
-
-.leave-review:hover {
-  box-shadow: 0 0 14px #adff00;
-}
+.leave-review:hover{ box-shadow:0 0 14px #adff00; }
 
 /* responsive */
-@media (max-width: 1100px) {
-  .review-card {
-    flex-basis: calc((100% - 24px) / 2);
-  }
+@media (max-width:1100px){
+  .review-card{ flex-basis:calc((100% - 24px)/2); }
+}
+@media (max-width:700px){
+  .reviews-header{ grid-template-columns:1fr; }
+  .review-nav{ grid-column:auto; justify-self:center; }
+}
+@media (max-width:640px){
+  .review-card{ flex-basis:100%; }
 }
 
-@media (max-width: 640px) {
-  .review-card {
-    flex-basis: 100%;
-  }
-}
 
 
 
@@ -1090,19 +1034,20 @@ populateRow(bottomRow, featuresBottom);
 }
 </style>
 <!-- Reviews Section -->
+<!-- Reviews Section -->
 <section class="reviews-section">
   <div class="reviews-header">
     <div class="reviews-title">
       <h2>What <span class="green">Our Clients</span> Say</h2>
       <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
     </div>
- <div class="review-nav">
-      <button class="nav left" type="button" id="revPrev"><</button>
-      <button class="nav right" type="button" id="revNext">></button>
+
+    <!-- arrows (top-right, together) -->
+    <div class="review-nav">
+      <button class="nav left"  type="button" id="revPrev">←</button>
+      <button class="nav right" type="button" id="revNext">→</button>
     </div>
   </div>
-
-
 
   <div class="reviews-viewport">
     <div class="reviews-track" id="reviewsTrack">
@@ -1120,6 +1065,7 @@ populateRow(bottomRow, featuresBottom);
     <button class="leave-review" type="button">Leave A Review ↗</button>
   </div>
 </section>
+
 
 
 <script>
