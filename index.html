@@ -1579,6 +1579,43 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
 .footer-col .footer-title,
 .footer-col h4,
 .footer-col .footer-links{ margin-left:0 !important; padding-left:0 !important; }
+  /* === FINAL FOOTER LEFT RAIL === */
+:root{
+  --footer-rail: 32px;   /* push BOTH logo + text to the right (tweak) */
+  --logo-gap: 12px;      /* space between logo and "SignSense" */
+}
+
+.footer-left{
+  display: flex !important;               /* put logo + content on one row */
+  align-items: flex-start !important;
+  padding-left: var(--footer-rail) !important; /* moves the whole block right */
+  gap: 0 !important;
+}
+
+.footer-logo{
+  width: 26px; height: 26px; border-radius: 0;
+  object-fit: contain;
+  margin: 0 !important;
+  transform: translateY(-2px);            /* tiny lift so baseline looks right */
+}
+
+/* the content block (SignSense + 2 lines + button) */
+.footer-left-inner{
+  margin-left: var(--logo-gap) !important; /* keep the normal gap AFTER logo */
+  padding: 0 !important;
+}
+
+/* keep the left rail perfectly straight */
+.footer-brand, .footer-tagline, .footer-cta{
+  margin-left: 0 !important;              /* brand, lines, button share SAME X */
+  align-self: flex-start !important;
+}
+
+/* keep the rest aligned and nuke any boxes */
+.site-footer, .footer-col, .footer-left{
+  background: none !important; border: none !important; box-shadow: none !important;
+}
+
 
 
 </style>
