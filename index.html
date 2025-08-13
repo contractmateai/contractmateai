@@ -1495,6 +1495,53 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
   box-shadow:none !important;
   background:none !important;
 }
+  /* === FOOTER LEFT RAIL: logo, brand, text, button share SAME X === */
+.footer-left{
+  display:grid !important;                 /* stack vertically so left edges match */
+  grid-template-columns: 1fr !important;
+  align-items:start !important;
+  gap: 8px !important;
+}
+
+.footer-logo{
+  width:26px; height:26px;                 /* your size */
+  border-radius:0;
+  object-fit:contain;
+  margin:0 !important;                     /* no side offset */
+  transform: translateY(-2px);             /* slight lift so it looks right */
+}
+
+.footer-left-inner{
+  margin:0 !important;
+  padding:0 !important;                    /* text starts at same X as logo */
+}
+
+.footer-brand,
+.footer-tagline,
+.footer-cta{
+  margin-left:0 !important;                /* lock to the same left rail */
+}
+
+/* keep the right three columns aligned and pushed right (from earlier) */
+.site-footer{
+  padding-left:40px !important;            /* left block a bit left */
+  grid-template-columns:
+    minmax(460px,1fr)
+    minmax(220px,max-content)
+    minmax(220px,max-content)
+    minmax(220px,max-content) !important;
+  column-gap:88px !important;              /* push right columns right */
+  justify-items:start !important;
+}
+
+.footer-col{ align-items:flex-start !important; text-align:left !important; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{ margin-left:0 !important; padding-left:0 !important; }
+
+/* still no boxes anywhere */
+.site-footer, .footer-col, .footer-left{ background:none!important; border:none!important; box-shadow:none!important; }
+
 
 </style>
 
