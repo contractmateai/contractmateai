@@ -635,102 +635,75 @@
 
 /* === FAQ STYLES === */
 /* === FAQ STYLES (updated) === */
-.faq-section {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 60px 24px;
-  font-family: 'Inter', sans-serif;
-  text-align: center; /* center title */
+/* === FAQ (wider, bigger, only-open-colored) === */
+.faq-section{
+  max-width:1200px;              /* wider container */
+  margin:0 auto;
+  padding:80px 24px;
+  font-family:'Inter',sans-serif;
+  text-align:center;             /* center title */
+}
+.faq-title{
+  font-size:64px;                /* bigger title */
+  line-height:1.1;
+  color:#fff9f9;
+  margin-bottom:34px;
+  font-weight:400;
 }
 
-.faq-title {
-  font-size: 56px;
-  line-height: 1.1;
-  color: #fff9f9;
-  margin-bottom: 40px;
-  font-weight: 400;
+.faq-list{
+  max-width:1100px;              /* wider list so blocks start more left & end more right */
+  margin:0 auto;
+  display:flex; flex-direction:column; gap:20px;
+  text-align:left;               /* left-align the Q/A text inside */
 }
 
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  text-align: left; /* questions/answers align left */
-  margin: 0 auto;
+/* each item is a unified block */
+.faq-item{
+  border-radius:24px;
+  overflow:hidden;
 }
 
-.faq-item {
-  border-radius: 18px;
-  overflow: hidden;
-  background: #191624;
-  transition: background 0.2s ease;
+/* INACTIVE question look = near black */
+.faq-q{
+  width:100%;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:30px 34px;             /* bigger paddings */
+  border:none; cursor:pointer;
+  background:#0b0a12;            /* near-black */
+  color:#fff9f9;
+  font-size:26px;                /* bigger question */
+  font-weight:500;
+  border-radius:24px;
+  transition:background .2s ease;
+}
+.faq-q:hover{ background:#12101a; }
+
+/* ACTIVE question + answer share same colored panel = 1 clean unit */
+.faq-item.open .faq-q{ background:#2a2335; }         /* purple-tinted */
+.faq-a{
+  background:#2a2335;                                 /* same color as open header */
+  color:#cfcbd6;
+  font-size:22px;                                     /* bigger answer */
+  line-height:1.7;
+  padding:0 34px;
+  max-height:0; opacity:0; overflow:hidden;
+  transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+  border-radius:0 0 24px 24px;
+}
+.faq-item.open .faq-a{
+  padding:18px 34px 24px; max-height:480px; opacity:1;
 }
 
-.faq-item.open .faq-q {
-  background: #191624;
+.chev{ transition:transform .25s ease; color:#fff9f9; flex:0 0 auto }
+.faq-item.open .chev{ transform:rotate(180deg) }
+
+@media (max-width:700px){
+  .faq-title{ font-size:44px }
+  .faq-q{ font-size:22px; padding:22px }
+  .faq-item.open .faq-a{ font-size:18px; padding:14px 22px 18px }
 }
 
-.faq-q {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 26px 30px;
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  color: #fff9f9;
-  font-size: 24px;
-  font-weight: 500;
-  border-radius: 18px;
-  transition: background 0.2s ease;
-}
-
-.faq-q:hover {
-  background: #221d33;
-}
-
-.chev {
-  transition: transform 0.25s ease;
-  color: #fff9f9;
-  flex: 0 0 auto;
-}
-
-.faq-item.open .chev {
-  transform: rotate(180deg);
-}
-
-.faq-a {
-  background: #191624;
-  color: #c3c3c3;
-  font-size: 20px;
-  line-height: 1.6;
-  padding: 0 30px;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.2s ease;
-}
-
-.faq-item.open .faq-a {
-  padding: 16px 30px 22px;
-  max-height: 500px; /* plenty of space for larger answers */
-  opacity: 1;
-}
-
-@media (max-width: 640px) {
-  .faq-title {
-    font-size: 40px;
-  }
-  .faq-q {
-    font-size: 20px;
-    padding: 20px;
-  }
-  .faq-item.open .faq-a {
-    padding: 14px 20px 18px;
-  }
-}
 
     /* === FOOTER === */
 .site-footer-wrap{
@@ -1268,7 +1241,7 @@ populateRow(bottomRow, featuresBottom);
     <div class="faq-item">
       <button class="faq-q" type="button">
         <span>What languages do you support?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="22" height="22">
+        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
           <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
@@ -1277,10 +1250,10 @@ populateRow(bottomRow, featuresBottom);
       </div>
     </div>
 
-    <div class="faq-item open"> <!-- OPENED BY DEFAULT -->
+    <div class="faq-item open"> <!-- OPEN BY DEFAULT -->
       <button class="faq-q" type="button">
         <span>Is SignSense legally binding or a replacement for a lawyer?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="22" height="22">
+        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
           <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
@@ -1292,7 +1265,7 @@ populateRow(bottomRow, featuresBottom);
     <div class="faq-item">
       <button class="faq-q" type="button">
         <span>What types of contracts can I upload?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="22" height="22">
+        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
           <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
@@ -1304,7 +1277,7 @@ populateRow(bottomRow, featuresBottom);
     <div class="faq-item">
       <button class="faq-q" type="button">
         <span>Is my data secure when I upload a contract?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="22" height="22">
+        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
           <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
@@ -1315,6 +1288,7 @@ populateRow(bottomRow, featuresBottom);
 
   </div>
 </section>
+
 
 <script>
 document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
