@@ -1542,16 +1542,14 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
     margin-left: 0;
   }
 }
-  /* Shift ONLY the logo + SignSense text group */
-.footer-left {
+
+  /* Move only tagline + button left, keep SignSense in place */
+.footer-tagline,
+.footer-cta {
   position: relative;
+  left: -10px; /* adjust value until it aligns visually */
 }
 
-.footer-logo,
-.footer-left-inner {
-  position: relative;
-  left: 50px; /* increase to push right, decrease to pull left */
-}
 
 </style>
 
