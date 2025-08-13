@@ -1374,149 +1374,228 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
   </div>
 </div>
 
-<style>
-:root {
-  --footer-rail: 52px;  /* move logo + brand right */
-  --logo-gap: 12px;     /* space between logo and SignSense */
+ <style>
+/* container + smooth end */
+.site-footer-wrap{
+  max-width:1400px;
+  margin:80px auto 0;
+  padding:0 24px 56px;                    /* a bit less space at very bottom */
+  font-family:'Inter',sans-serif;
 }
 
-/* === FOOTER CONTAINER === */
-.site-footer-wrap {
-  max-width: 1400px;
-  margin: 80px auto 0;
-  padding: 0 24px 56px;
-  font-family: 'Inter', sans-serif;
-}
-
-.site-footer {
-  display: grid;
+/* GRID: nudge the whole footer to the right a bit */
+.site-footer{
+  background:transparent;                 /* absolutely no box */
+  border:none; box-shadow:none;
+  padding:0;
+  display:grid;
   grid-template-columns: 1.6fr 1fr 1fr 1fr;
-  column-gap: 56px;
-  align-items: start;
-  background: none;
-  border: none;
-  box-shadow: none;
+  column-gap:56px;
+  align-items:start;
+  padding-left:96px;                      /* push right as requested */
 }
 
-/* === LEFT SECTION === */
+/* LEFT BLOCK */
+
+/* smaller, higher, square logo */
+
+.footer-left-inner{ display:flex; flex-direction:column; }
+
+.footer-brand{
+  color:#e1e1e1; font-size:22px; font-weight:400; line-height:1.1;
+}
+.footer-tagline{
+  color:#c5c5c5; margin-top:8px; font-size:18px; line-height:1.5;
+}
+/* button aligned to same left edge as logo/tagline */
+.footer-cta{
+  align-self:flex-start;
+  margin-top:22px;
+  padding:9px 18px;
+  background:#adff00; color:#000; text-decoration:none;
+  font-size:16px; font-weight:400; border-radius:10px;
+  box-shadow:0 0 12px rgba(173,255,0,.55);
+  transition:box-shadow .25s ease;
+}
+.footer-cta:hover{ box-shadow:0 0 20px rgba(173,255,0,.85); }
+
+/* RIGHT COLUMNS — titles and links perfectly aligned */
+.footer-col{
+  display:flex; flex-direction:column; gap:10px;
+  background:none !important; border:none !important; box-shadow:none !important;
+}
+.footer-title{
+  color:#fff; font-size:22px; font-weight:400; line-height:1;
+  margin:0; padding:0;                  /* no extra indent */
+}
+.footer-links{ display:flex; flex-direction:column; gap:8px; }
+.footer-links a{
+  color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; line-height:1.4;
+}
+.footer-links a:hover{ opacity:.9; }
+
+/* HAIRLINE DIVIDER + BOTTOM ROW */
+.footer-bottom{ margin-top:24px; }
+.footer-divider{
+  width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;
+}
+.footer-bottom-links{
+  display:flex; align-items:center; gap:28px;
+  color:#c5c5c5; font-size:16px; font-weight:400;
+}
+.footer-copy{ margin-left:auto; }
+
+/* NUKE ANY STRAY BOXES/BORDERS COMING FROM EARLIER CSS */
+.site-footer, .footer-col, .footer-left, .footer-left-inner,
+.footer-title, .footer-links{
+  border:none !important; box-shadow:none !important; background:none !important;
+}
+
+/* responsive */
+@media (max-width:1000px){
+  .site-footer{ grid-template-columns:1fr; padding-left:0; }
+  .footer-copy{ margin-left:0; }
+}
+  /* === FOOTER ALIGNMENT FIX (paste at end) === */
+
+/* Make the grid place each column from the left edge */
+.site-footer{ justify-items:start; }
+
+/* Titles and lists share the exact same left start */
+.footer-col{ align-items:flex-start; text-align:left; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{
+  text-align:left !important;
+  margin-left:0 !important;
+  padding-left:0 !important;
+  width:100%;
+}
+
+/* Links block style */
+.footer-links{ gap:8px !important; }
+.footer-links a{
+  display:block;          /* no inline centering quirks */
+  margin:0 !important;
+  padding:0 !important;
+  line-height:1.4;
+}
+
+/* Nuke any leftover borders/boxes that might be causing highlights */
+.site-footer,
+.footer-col,
+.footer-left{
+  border:none !important;
+  box-shadow:none !important;
+  background:none !important;
+}
+  /* === FOOTER LEFT RAIL: logo, brand, text, button share SAME X === */
+
+
+
+.footer-left-inner{
+  margin:0 !important;
+  padding:0 !important;                    /* text starts at same X as logo */
+}
+
+.footer-brand,
+.footer-tagline,
+.footer-cta{
+  margin-left:0 !important;                /* lock to the same left rail */
+}
+
+/* keep the right three columns aligned and pushed right (from earlier) */
+.site-footer{
+  padding-left:40px !important;            /* left block a bit left */
+  grid-template-columns:
+    minmax(460px,1fr)
+    minmax(220px,max-content)
+    minmax(220px,max-content)
+    minmax(220px,max-content) !important;
+  column-gap:88px !important;              /* push right columns right */
+  justify-items:start !important;
+}
+
+.footer-col{ align-items:flex-start !important; text-align:left !important; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{ margin-left:0 !important; padding-left:0 !important; }
+
+/* still no boxes anywhere */
+.site-footer, .footer-col, .footer-left{ background:none!important; border:none!important; box-shadow:none!important; }
+
+
+
+/* === FOOTER LEFT RAIL EXACTLY LIKE SCREENSHOT === */
+
+
+
+
+/* everything (brand, two lines, button) on the same right rail */
+.footer-left-inner{
+  grid-column: 2 !important;
+  display: flex; flex-direction: column;
+  margin: 0 !important; padding: 0 !important;
+}
+.footer-brand,
+.footer-tagline,
+.footer-cta{
+  margin-left: 0 !important;        /* lock to same X */
+  align-self: flex-start !important;
+}
+
+/* keep right columns aligned to their own left rail */
+.footer-col{ align-items: flex-start !important; text-align: left !important; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{ margin-left:0 !important; padding-left:0 !important; }
+  /* === FINAL FOOTER LEFT RAIL === */
+:root{
+  --footer-rail: 32px;   /* push BOTH logo + text to the right (tweak) */
+  --logo-gap: 12px;      /* space between logo and "SignSense" */
+}
+
+
+
+/* the content block (SignSense + 2 lines + button) */
+.footer-left-inner{
+  margin-left: var(--logo-gap) !important; /* keep the normal gap AFTER logo */
+  padding: 0 !important;
+}
+
+/* keep the left rail perfectly straight */
+.footer-brand, .footer-tagline, .footer-cta{
+  margin-left: 0 !important;              /* brand, lines, button share SAME X */
+  align-self: flex-start !important;
+}
+
+/* keep the rest aligned and nuke any boxes */
+.site-footer, .footer-col, .footer-left{
+  background: none !important; border: none !important; box-shadow: none !important;
+}
+
+   :root {
+  --footer-rail: 60px; /* adjust this number to move both logo + SignSense right */
+  --logo-gap: 12px;    /* space between logo and SignSense text */
+}
+
 .footer-left {
-  display: flex;
-  align-items: flex-start;
-  padding-left: var(--footer-rail);
-  gap: var(--logo-gap);
+  display: flex !important;
+  align-items: flex-start !important;
+  padding-left: var(--footer-rail) !important; /* pushes ONLY the left block */
+  gap: var(--logo-gap) !important;
 }
 
 .footer-logo {
   width: 26px;
   height: 26px;
-  border-radius: 0;
   object-fit: contain;
   transform: translateY(-2px);
 }
 
-.footer-left-inner {
-  display: flex;
-  flex-direction: column;
-}
 
-.footer-brand {
-  color: #e1e1e1;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1.1;
-}
 
-.footer-tagline {
-  color: #c5c5c5;
-  margin-top: 8px;
-  font-size: 18px;
-  line-height: 1.5;
-}
 
-.footer-cta {
-  margin-top: 22px;
-  padding: 9px 18px;
-  background: #adff00;
-  color: #000;
-  font-size: 16px;
-  font-weight: 400;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(173, 255, 0, 0.55);
-  text-decoration: none;
-  transition: box-shadow 0.25s ease;
-}
-
-.footer-cta:hover {
-  box-shadow: 0 0 20px rgba(173, 255, 0, 0.85);
-}
-
-/* === RIGHT COLUMNS === */
-.footer-col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-title {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footer-links a {
-  color: #c5c5c5;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.footer-links a:hover {
-  opacity: 0.9;
-}
-
-/* === BOTTOM SECTION === */
-.footer-bottom {
-  margin-top: 24px;
-}
-
-.footer-divider {
-  width: 100%;
-  height: 1px;
-  background: #c5c5c5;
-  opacity: 0.28;
-  margin-bottom: 12px;
-}
-
-.footer-bottom-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  color: #c5c5c5;
-  font-size: 16px;
-  font-weight: 400;
-}
-
-.footer-copy {
-  margin-left: auto;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 1000px) {
-  .site-footer {
-    grid-template-columns: 1fr;
-  }
-  .footer-copy {
-    margin-left: 0;
-  }
-}
 </style>
 
 
