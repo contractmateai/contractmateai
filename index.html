@@ -1318,17 +1318,19 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
 </script>
 
 <!-- === FOOTER === -->
+<!-- === FOOTER === -->
 <div class="site-footer-wrap">
   <footer class="site-footer">
     <!-- Left: brand + text -->
     <div class="footer-left">
-      <img class="footer-logo" src="https://imgur.com/exndnjZ.png" alt="SignSense icon" />
+      <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense icon" />
       <div>
         <div class="footer-brand">SignSense</div>
         <div class="footer-tagline">
-          Your all-in-one tool to make sense of what you’re signing. No confusion, no legal jargon.
+          No confusion, no legal jargon.<br>
+          For informational use only. Not legal advice.
         </div>
-        <div class="footer-disclaimer">Not legal advice. For informational use only.</div>
+        <a href="#" class="footer-cta">Review A Contract ↗</a>
       </div>
     </div>
 
@@ -1337,7 +1339,7 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
       <h4>Quick Menu</h4>
       <nav class="footer-links">
         <a href="#how-it-works">How it Works</a>
-        <a href="#features">Features</a>
+        <a href="#review">Leave Review</a>
       </nav>
     </div>
 
@@ -1346,24 +1348,140 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
       <h4>Information</h4>
       <nav class="footer-links">
         <a href="#contact">Contact</a>
-        <a href="#privacy">Privacy Policy</a>
+        <a href="#features">Features</a>
       </nav>
     </div>
 
     <!-- Social -->
-    <div class="footer-social">
-      <a href="#" aria-label="Instagram">
-        <img src="https://imgur.com/oPSf0HC.png" alt="">
-      </a>
-      <a href="#" aria-label="X (Twitter)">
-        <img src="https://imgur.com/KY6w4OJ.png" alt="">
-      </a>
-      <a href="#" aria-label="YouTube">
-        <img src="https://imgur.com/xKVdmOs.png" alt="">
-      </a>
+    <div class="footer-col">
+      <h4>Socials</h4>
+      <nav class="footer-links">
+        <a href="#">Instagram</a>
+        <a href="#">YouTube</a>
+        <a href="#">X</a>
+      </nav>
     </div>
   </footer>
+
+  <div class="footer-bottom">
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-links">
+      <span>Privacy Policy</span>
+      <span>Terms & Conditions</span>
+      <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+    </div>
+  </div>
 </div>
+
+<style>
+.site-footer-wrap {
+  max-width: 1400px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+  font-family: 'Inter', sans-serif;
+}
+.site-footer {
+  background: transparent;
+  padding: 44px 0;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.footer-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.footer-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  display: block;
+}
+.footer-brand {
+  color: #e1e1e1;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+}
+.footer-tagline {
+  color: #c5c5c5;
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 560px;
+}
+.footer-cta {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 18px;
+  background-color: #adff00;
+  color: black;
+  font-size: 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 0 12px rgba(173, 255, 0, 0.6);
+  transition: box-shadow 0.25s ease;
+}
+.footer-cta:hover {
+  box-shadow: 0 0 20px rgba(173, 255, 0, 0.9);
+}
+.footer-col h4 {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-links a {
+  color: #c5c5c5;
+  text-decoration: none;
+  font-size: 18px;
+}
+.footer-links a:hover { opacity: 0.85; }
+
+.footer-bottom {
+  margin-top: 32px;
+}
+.footer-divider {
+  height: 1px; /* thinner line */
+  background-color: #c5c5c5;
+  opacity: 0.5;
+  margin-bottom: 16px;
+}
+.footer-bottom-links {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #c5c5c5;
+  font-size: 16px;
+}
+.footer-copy {
+  margin-left: auto;
+}
+@media (max-width: 900px) {
+  .site-footer {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .footer-bottom-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer-copy {
+    margin-left: 0;
+  }
+}
+</style>
+
 
 
 
