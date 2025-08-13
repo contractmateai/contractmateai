@@ -1585,25 +1585,28 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
   --logo-gap: 12px;      /* space between logo and "SignSense" */
 }
 
-.footer-left{
-  display: flex !important;               /* put logo + content on one row */
-  align-items: flex-start !important;
-  padding-left: var(--footer-rail) !important; /* moves the whole block right */
-  gap: 0 !important;
+.footer-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px; /* space between logo and SignSense */
+  padding-left: 52px; /* adjust this to move the whole block right */
 }
 
-.footer-logo{
-  width: 26px; height: 26px; border-radius: 0;
-  object-fit: contain;
+.footer-logo {
   margin: 0 !important;
-  transform: translateY(-2px);            /* tiny lift so baseline looks right */
+  transform: translateY(-2px); /* slight lift so it aligns visually */
 }
 
-/* the content block (SignSense + 2 lines + button) */
-.footer-left-inner{
-  margin-left: var(--logo-gap) !important; /* keep the normal gap AFTER logo */
-  padding: 0 !important;
+.footer-left-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+
+.footer-left-inner * {
+  margin-left: 0 !important; /* keep all text and button on same rail */
+}
+
 
 /* keep the left rail perfectly straight */
 .footer-brand, .footer-tagline, .footer-cta{
