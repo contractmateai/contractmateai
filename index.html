@@ -659,50 +659,65 @@
 }
 
 /* each item is a unified block */
-.faq-item{
-  border-radius:24px;
-  overflow:hidden;
+/* === FAQ FIX: one-piece open block, color #191624 === */
+.faq-item {
+  border-radius: 24px;
+  overflow: hidden;
+  background: transparent; /* let states handle bg */
 }
 
-/* INACTIVE question look = near black */
-.faq-q{
-  width:100%;
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
-  padding:30px 34px;             /* bigger paddings */
-  border:none; cursor:pointer;
-  background:#0b0a12;            /* near-black */
-  color:#fff9f9;
-  font-size:26px;                /* bigger question */
-  font-weight:500;
-  border-radius:24px;
-  transition:background .2s ease;
-}
-.faq-q:hover{ background:#12101a; }
-
-/* ACTIVE question + answer share same colored panel = 1 clean unit */
-.faq-item.open .faq-q{ background:#2a2335; }         /* purple-tinted */
-.faq-a{
-  background:#2a2335;                                 /* same color as open header */
-  color:#cfcbd6;
-  font-size:22px;                                     /* bigger answer */
-  line-height:1.7;
-  padding:0 34px;
-  max-height:0; opacity:0; overflow:hidden;
-  transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
-  border-radius:0 0 24px 24px;
-}
-.faq-item.open .faq-a{
-  padding:18px 34px 24px; max-height:480px; opacity:1;
+/* Default (closed) question look */
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 30px 34px;
+  border: none;
+  cursor: pointer;
+  background: #0b0a12; /* closed state color */
+  color: #fff9f9;
+  font-size: 26px;
+  font-weight: 500;
+  border-radius: 24px;
+  transition: background .2s ease;
 }
 
-.chev{ transition:transform .25s ease; color:#fff9f9; flex:0 0 auto }
-.faq-item.open .chev{ transform:rotate(180deg) }
-
-@media (max-width:700px){
-  .faq-title{ font-size:44px }
-  .faq-q{ font-size:22px; padding:22px }
-  .faq-item.open .faq-a{ font-size:18px; padding:14px 22px 18px }
+.faq-q:hover {
+  background: #12101a;
 }
+
+/* Opened state: question + answer appear as one block */
+.faq-item.open {
+  background: #191624;            /* one unified bg */
+  border-radius: 24px;
+}
+
+.faq-item.open .faq-q {
+  background: transparent;        /* inherits from parent */
+  border-radius: 24px 24px 0 0;    /* rounded only on top */
+}
+
+.faq-a {
+  background: transparent;         /* same as parent */
+  color: #cfcbd6;
+  font-size: 22px;
+  line-height: 1.7;
+  padding: 0 34px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.2s ease;
+}
+
+.faq-item.open .faq-a {
+  padding: 18px 34px 24px;
+  max-height: 480px;
+  opacity: 1;
+  border-radius: 0 0 24px 24px; /* bottom rounding */
+}
+
 
 
     /* === FOOTER === */
