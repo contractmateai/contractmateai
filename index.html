@@ -1462,6 +1462,40 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
   .site-footer{ grid-template-columns:1fr; padding-left:0; }
   .footer-copy{ margin-left:0; }
 }
+  /* === FOOTER ALIGNMENT FIX (paste at end) === */
+
+/* Make the grid place each column from the left edge */
+.site-footer{ justify-items:start; }
+
+/* Titles and lists share the exact same left start */
+.footer-col{ align-items:flex-start; text-align:left; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{
+  text-align:left !important;
+  margin-left:0 !important;
+  padding-left:0 !important;
+  width:100%;
+}
+
+/* Links block style */
+.footer-links{ gap:8px !important; }
+.footer-links a{
+  display:block;          /* no inline centering quirks */
+  margin:0 !important;
+  padding:0 !important;
+  line-height:1.4;
+}
+
+/* Nuke any leftover borders/boxes that might be causing highlights */
+.site-footer,
+.footer-col,
+.footer-left{
+  border:none !important;
+  box-shadow:none !important;
+  background:none !important;
+}
+
 </style>
 
 
