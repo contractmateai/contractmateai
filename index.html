@@ -534,6 +534,8 @@
    /* === REVIEWS SECTION === */
 /* === REVIEWS: CSS === */
 /* === REVIEWS: CSS === */
+
+/* === REVIEWS: CSS (drop-in replacement) === */
 .reviews-section{
   padding:80px 40px 120px;
   background:transparent;
@@ -560,9 +562,7 @@
   font-weight:400;
   color:#fff9f9;
 }
-
 .reviews-title h2 .green{ color:#bff611; }
-
 .reviews-sub{
   font-size:20px;
   color:#a8a8a8;
@@ -578,13 +578,20 @@
 }
 .review-nav .nav{
   width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;
-  display:grid;place-items:center;font-size:22px;
+  display:grid;place-items:center;
   box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
   transition:box-shadow .2s ease, transform .05s ease;
 }
-.review-nav .nav.left{ background:#fff;color:#000; }
-.review-nav .nav.right{ background:#bff611;color:#0a0a0a; }
+.review-nav .nav.left{ background:#ffffff; }
+.review-nav .nav.right{ background:#bff611; }
 .review-nav .nav:hover{ box-shadow:0 0 14px rgba(191,246,17,.6); }
+.review-nav .nav:active{ transform:scale(.98); }
+.review-nav .nav img{
+  width:22px;height:22px;display:block;pointer-events:none; /* click goes to button */
+  transition: transform .18s ease;
+}
+.review-nav .nav.left:hover img{ transform: translateX(-1px); }
+.review-nav .nav.right:hover img{ transform: translateX(1px); }
 
 /* carousel */
 .reviews-viewport{ overflow:hidden; margin-top:28px; }
@@ -1044,8 +1051,12 @@ populateRow(bottomRow, featuresBottom);
 
     <!-- arrows (top-right, together) -->
     <div class="review-nav">
-      <button class="nav left"  type="button" id="revPrev"><</button>
-      <button class="nav right" type="button" id="revNext">></button>
+      <button class="nav left"  type="button" id="revPrev" aria-label="Previous reviews">
+        <img src="https://imgur.com/nhYxlHX.png" alt="">
+      </button>
+      <button class="nav right" type="button" id="revNext" aria-label="Next reviews">
+        <img src="https://imgur.com/sRwuJpT.png" alt="">
+      </button>
     </div>
   </div>
 
@@ -1065,6 +1076,7 @@ populateRow(bottomRow, featuresBottom);
     <button class="leave-review" type="button">Leave A Review ↗</button>
   </div>
 </section>
+
 
 
 
@@ -1096,12 +1108,13 @@ populateRow(bottomRow, featuresBottom);
 <!-- REVIEWS SECTION -->
 <!-- === REVIEWS: JS === -->
 <script>
+/* === REVIEWS: JS (drop-in replacement) === */
 (function(){
-  const track = document.getElementById('reviewsTrack');
-  const prev  = document.getElementById('revPrev');
-  const next  = document.getElementById('revNext');
-  const dotsWrap = document.getElementById('reviewDots');
-  const cards = () => Array.from(track.querySelectorAll('.review-card'));
+  const track   = document.getElementById('reviewsTrack');
+  const prev    = document.getElementById('revPrev');
+  const next    = document.getElementById('revNext');
+  const dotsWrap= document.getElementById('reviewDots');
+  const cards   = () => Array.from(track.querySelectorAll('.review-card'));
 
   let index = 0;     // leftmost visible card index
   let perPage = 3;   // visible at once (auto on resize)
@@ -1111,6 +1124,8 @@ populateRow(bottomRow, featuresBottom);
     if (w <= 640)      perPage = 1;
     else if (w <=1100) perPage = 2;
     else               perPage = 3;
+
+    // clamp index so we never show gaps on the right
     index = Math.min(index, Math.max(0, cards().length - perPage));
     renderDots();
     go(index, false);
@@ -1128,7 +1143,7 @@ populateRow(bottomRow, featuresBottom);
   }
 
   function go(i, animate=true){
-    const maxIndex = Math.max(0, cards().length - perPage); // 5-3=2 on desktop
+    const maxIndex = Math.max(0, cards().length - perPage); // e.g., 5-3=2 on desktop
     index = Math.max(0, Math.min(i, maxIndex));
     const shift = -(index * cardFullWidth());
     if (!animate) track.style.transition = 'none';
@@ -1139,12 +1154,12 @@ populateRow(bottomRow, featuresBottom);
 
   function renderDots(){
     dotsWrap.innerHTML = '';
-    const total = cards().length; // 5 dots
+    const total = cards().length; // 1 dot per card; active window = visible 3
     for(let i=0;i<total;i++){
       const d = document.createElement('div');
       d.className = 'review-dot';
       d.addEventListener('click', ()=>{
-        const target = Math.min(i, total - perPage); // make clicked one visible
+        const target = Math.min(i, total - perPage); // jump so clicked one becomes visible
         go(target);
       });
       dotsWrap.appendChild(d);
@@ -1166,6 +1181,7 @@ populateRow(bottomRow, featuresBottom);
   measure();
 })();
 </script>
+
 <!-- FAQ SECTION -->
 <section class="faq-section">
   <h2 class="faq-title">Frequently Asked Questions</h2>
