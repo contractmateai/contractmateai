@@ -1543,10 +1543,45 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
 .site-footer, .footer-col, .footer-left{ background:none!important; border:none!important; box-shadow:none!important; }
 
 
+
+/* === FOOTER LEFT RAIL EXACTLY LIKE SCREENSHOT === */
+.footer-left{
+  display: grid !important;
+  grid-template-columns: 28px 1fr !important;  /* logo | content */
+  column-gap: 12px !important;
+  align-items: start !important;
+}
+
+.footer-logo{
+  grid-column: 1 !important;
+  width: 26px; height: 26px;
+  border-radius: 0;                 /* not rounded */
+  object-fit: contain;
+  margin: 0 !important;
+  transform: translateY(-2px);      /* lift slightly to align with text */
+}
+
+/* everything (brand, two lines, button) on the same right rail */
+.footer-left-inner{
+  grid-column: 2 !important;
+  display: flex; flex-direction: column;
+  margin: 0 !important; padding: 0 !important;
+}
+.footer-brand,
+.footer-tagline,
+.footer-cta{
+  margin-left: 0 !important;        /* lock to same X */
+  align-self: flex-start !important;
+}
+
+/* keep right columns aligned to their own left rail */
+.footer-col{ align-items: flex-start !important; text-align: left !important; }
+.footer-col .footer-title,
+.footer-col h4,
+.footer-col .footer-links{ margin-left:0 !important; padding-left:0 !important; }
+
+
 </style>
-
-
-
 
 
 
