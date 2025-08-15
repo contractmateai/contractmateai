@@ -1,251 +1,560 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Analysis – AI ContractMate</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" type="image/png">
+  <meta charset="utf-8" />
+  <title>SignSense — Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #0b0b0f;
-      color: #f5f5f5;
+    :root{
+      --bg:#0e0e11;
+      --panel:#1a1b20;
+      --muted:#a6a8ad;
+      --text:#e9e9ee;
+      --accent:#bff611;
+      --green:#22c55e;
+      --teal:#2dd4bf;
+      --blue:#3b82f6;
+      --orange:#f59e0b;
+      --danger:#ef4444;
+      --ring:#2a2c33;
+      --card:#17181d;
+      --border:#2a2d34;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:18px;
     }
-    header, footer {
-      background-color: #000;
-      padding: 24px 32px;
-      border-bottom: 1px solid #444;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--text);font:400 15px/1.6 Inter,system-ui,Segoe UI,Roboto,Arial;
     }
-    header img {
-      height: 52px;
-      margin-right: 14px;
+    .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    /* Sidebar */
+    .sidebar{
+      background:#111216;border-right:1px solid var(--border);padding:18px 16px;position:sticky;top:0;height:100vh;
+      display:flex;flex-direction:column;gap:16px
     }
-    header h1 {
-      font-size: 26px;
-      color: #fff;
-      margin: 0;
+    .brand{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:#12131a;border:1px solid #1f2230}
+    .brand .dot{width:10px;height:10px;border-radius:50%;background:#63ff7b;box-shadow:0 0 8px #63ff7b80}
+    .brand span{font-weight:700}
+    .nav{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+    .nav a{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:#d9d9df;text-decoration:none;border:1px solid transparent
     }
-    .menu-button {
-      background: none;
-      border: 2px solid #888;
-      color: #f5f5f5;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
+    .nav a:hover{background:#161820;border-color:#232633}
+    .nav a.active{background:#181a22;border-color:#2a2e3b}
+    .push{flex:1}
+    .sidebar .mini{
+      margin-top:auto;font-size:12px;color:#8b8e96;border-top:1px dashed #2b2e36;padding-top:12px
     }
-    .menu-content {
-      display: none;
-      position: absolute;
-      top: 60px;
-      right: 32px;
-      background-color: #1a1a20;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px;
+    .social{display:flex;gap:8px;margin:8px 0}
+    .social a{width:34px;height:34px;border-radius:10px;background:#14151a;display:grid;place-items:center;border:1px solid #242834;color:#fff;text-decoration:none}
+    /* Main */
+    .main{
+      padding:18px 18px 110px; /* room for sticky download */
+      display:grid;grid-template-rows:auto 1fr;gap:16px
     }
-    .menu:hover .menu-content {
-      display: block;
+    .topbar{
+      position:sticky;top:0;z-index:5;background:linear-gradient(#0e0e11,#0e0e11dd 60%,transparent);
+      padding:6px 0 10px;border-bottom:1px solid #1f2230;backdrop-filter:saturate(120%) blur(0px);
+      display:flex;align-items:center;justify-content:space-between
     }
-    .menu-content a {
-      color: #fff;
-      display: block;
-      padding: 10px;
-      text-decoration: none;
+    .topbar .title{font-weight:600}
+    .lang{
+      display:flex;align-items:center;gap:10px
     }
-    .container {
-      padding: 40px 20px;
-      max-width: 960px;
-      margin: auto;
+    .lang select{
+      background:#14161c;color:#e9e9ee;border:1px solid #2a2d34;border-radius:10px;padding:8px 12px
     }
-    .summary {
-      font-size: 20px;
-      background-color: #1c1c26;
-      padding: 24px;
-      border-radius: 14px;
-      margin-bottom: 32px;
-      white-space: pre-wrap;
+
+    /* Grid */
+    .grid{
+      display:grid;grid-template-columns:1fr 420px;gap:16px
     }
-    .circles {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-      gap: 20px;
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px
     }
-    .circle {
-      background-color: #1a1a20;
-      border-radius: 50%;
-      width: 140px;
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 0 16px rgba(32,104,193,0.4);
-      flex-direction: column;
+    .card h3{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+    .muted{color:var(--muted)}
+    .list{display:flex;flex-direction:column;gap:12px}
+    .list .item{padding:12px;border-radius:12px;background:#14161a;border:1px solid #242834}
+    .cols-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .row{display:grid;grid-template-columns:1fr;gap:16px}
+    .meter{
+      background:#121318;border:1px solid #262933;border-radius:999px;height:14px;position:relative;overflow:hidden
     }
-    .section-block {
-      background-color: #1c1c26;
-      margin-bottom: 28px;
-      border-radius: 12px;
-      padding: 20px 28px;
+    .fill{
+      height:100%;width:0%;border-radius:999px;transition:width 1.2s ease
     }
-    .section-block h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      color: #00bfff;
+    .pill{display:inline-flex;gap:8px;align-items:center;background:#12141a;border:1px solid #242834;border-radius:999px;padding:6px 10px;font-size:12px}
+    .stack{display:flex;flex-direction:column;gap:10px}
+
+    /* Circle meters */
+    .circle{
+      width:170px;height:170px;position:relative;display:grid;place-items:center;margin:auto
     }
-    #emailInput {
-      width: 260px;
-      padding: 10px;
-      margin-right: 12px;
-      border: 1px solid #444;
-      border-radius: 6px;
-      background-color: #121212;
-      color: #fff;
+    .circle svg{transform:rotate(-90deg)}
+    .circle .val{position:absolute;font-weight:700;font-size:28px}
+    .legend{display:flex;align-items:center;gap:10px;margin-top:8px}
+    .legend .dot{width:10px;height:10px;border-radius:50%}
+
+    /* Right column spacing */
+    .right .card{height:max-content}
+
+    /* Scroll lists */
+    .scroll-y{max-height:260px;overflow:auto;padding-right:4px}
+    .scroll-y::-webkit-scrollbar{width:8px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#2a2d34;border-radius:8px}
+
+    /* Sticky Download */
+    .download-wrap{
+      position:fixed;left:260px;right:0;bottom:14px;display:flex;justify-content:center;z-index:9
     }
-    #downloadBtn {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #2068c1;
-      border: none;
-      color: #fff;
-      border-radius: 8px;
-      cursor: pointer;
+    .download{
+      background:#111318;border:1px solid #2a2d34;border-radius:999px;box-shadow:var(--shadow);
+      padding:12px 18px;display:inline-flex;gap:10px;align-items:center;cursor:pointer
     }
-    .footer-icons {
-      margin-top: 30px;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
+    .download:hover{border-color:#3a3e4a}
+    .download .arrow{display:inline-block;transition:transform .2s ease}
+    .download:hover .arrow{transform:translateY(2px)}
+
+    /* Modal */
+    .modal-back{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:20}
+    .modal{width:min(560px,92vw);background:#14161c;border:1px solid #2a2d34;border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    .modal h4{margin:0 0 10px}
+    .modal .row{display:flex;gap:10px}
+    .modal input{
+      flex:1;background:#101218;border:1px solid #262a36;border-radius:12px;padding:12px;color:#fff
     }
-    .footer-icons img {
-      height: 36px;
-      border-radius: 8px;
+    .btn{
+      background:#adff00;color:#000;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer
     }
-    .leave-review {
-      display: block;
-      text-align: center;
-      margin-top: 50px;
-      font-size: 18px;
-      color: #2068c1;
-      text-decoration: none;
+    .btn.secondary{background:#191b22;color:#d8dae2;border:1px solid #2a2d34}
+
+    /* Responsive */
+    @media (max-width:1000px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:static;height:auto}
+      .download-wrap{left:0}
+      .grid{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
-  <header>
-    <a class="logo" href="index.html" style="display: flex; align-items: center; text-decoration: none;">
-      <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" alt="Logo">
-      <h1>AI ContractMate</h1>
-    </a>
-    <div class="menu">
-      <button class="menu-button">☰</button>
-      <div class="menu-content">
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand"><div class="dot"></div><span>SignSense</span></div>
+      <nav class="nav">
+        <a class="active" href="#">Overview</a>
         <a href="index.html">Home</a>
-        <a href="contact.html">Contact</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </nav>
+      <div class="push"></div>
+
+      <a class="pill" href="#" id="leaveReview">Leave A Review ↗</a>
+      <div class="mini">Not legal advice.<br/>For informational use only.</div>
+
+      <div class="social">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="YouTube">YT</a>
+        <a href="#" aria-label="X/Twitter">X</a>
       </div>
-    </div>
-  </header>
+      <div class="mini">© SignSense 2025</div>
+    </aside>
 
-  <div class="container">
-    <div class="summary" id="summaryText"></div>
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="title">Overview</div>
+        <div class="lang">
+          <span class="muted">Report Language</span>
+          <select id="langSelect">
+            <option value="auto">Original</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
 
-    <div class="circles">
-      <div class="circle">Risk<br><span id="riskScore">–</span></div>
-      <div class="circle">Clarity<br><span id="clarityScore">–</span></div>
-      <div class="circle">Compliance<br><span id="complianceScore">–</span></div>
-    </div>
+      <div class="grid">
+        <!-- LEFT COLUMN -->
+        <div class="left">
+          <section class="card" id="summaryCard">
+            <h3>🧠 Summary</h3>
+            <div class="list" id="summaryText"></div>
+          </section>
 
-    <div class="section-block">
-      <h3>Key Clauses</h3>
-      <ul id="keyClausesList"></ul>
-    </div>
+          <div class="cols-2">
+            <section class="card">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+                <h3>🛡️ Confidence to sign freely</h3><span id="confVal" class="muted">0%</span>
+              </div>
+              <div class="meter"><div id="confFill" class="fill" style="background:var(--orange)"></div></div>
+            </section>
 
-    <div class="section-block">
-      <h3>Potential Issues</h3>
-      <ul id="potentialIssuesList"></ul>
-    </div>
+            <section class="card">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+                <h3>➕ Favorability Index</h3><span id="favVal" class="muted">0%</span>
+              </div>
+              <div class="meter"><div id="favFill" class="fill" style="background:var(--green)"></div></div>
+            </section>
+          </div>
 
-    <div class="section-block">
-      <h3>Smart Suggestions</h3>
-      <ul id="smartSuggestionsList"></ul>
-    </div>
+          <section class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+              <h3>⏳ Deadline pressure</h3><span id="deadVal" class="muted">0%</span>
+            </div>
+            <div class="meter"><div id="deadFill" class="fill" style="background:var(--blue)"></div></div>
+          </section>
 
-    <div style="margin-top: 40px; text-align: center;">
-      <input type="email" id="emailInput" placeholder="Enter your email" />
-      <button id="downloadBtn">Download PDF Report</button>
-    </div>
+          <section class="card">
+            <h3>⚠️ Potential Issues</h3>
+            <div class="scroll-y list" id="issuesList"></div>
+          </section>
 
-    <a class="leave-review" href="https://forms.gle/yourreviewform" target="_blank">Leave a Review</a>
+          <section class="card">
+            <h3>🤖 Smart Suggestions</h3>
+            <div class="scroll-y list" id="suggestionsList"></div>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right">
+          <section class="card">
+            <h3>🚧 Risk Level</h3>
+            <div class="circle" id="riskCircle">
+              <svg width="170" height="170">
+                <circle cx="85" cy="85" r="70" stroke="var(--ring)" stroke-width="14" fill="none"/>
+                <circle id="riskArc" cx="85" cy="85" r="70" stroke="var(--danger)" stroke-width="14" fill="none"
+                  stroke-linecap="round" stroke-dasharray="439" stroke-dashoffset="439"/>
+              </svg>
+              <div class="val" id="riskVal">0%</div>
+            </div>
+            <div class="legend"><div class="dot" style="background:#67e478"></div><span class="muted" id="riskBadge">Generally Safe</span></div>
+            <p class="muted" id="riskNote" style="margin-top:6px"></p>
+          </section>
+
+          <section class="card">
+            <h3>📑 Main Clauses</h3>
+            <div class="list" id="clausesList"></div>
+          </section>
+
+          <section class="card">
+            <h3>✅ Clause Clarity</h3>
+            <div class="circle">
+              <svg width="170" height="170">
+                <circle cx="85" cy="85" r="70" stroke="var(--ring)" stroke-width="14" fill="none"/>
+                <circle id="clarArc" cx="85" cy="85" r="70" stroke="var(--teal)" stroke-width="14" fill="none"
+                  stroke-linecap="round" stroke-dasharray="439" stroke-dashoffset="439"/>
+              </svg>
+              <div class="val" id="clarVal">0%</div>
+            </div>
+            <div class="legend"><div class="dot" style="background:#67e478"></div><span class="muted">Generally Safe</span></div>
+            <p class="muted" id="clarNote" style="margin-top:6px"></p>
+          </section>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <footer>
-    <div class="footer-icons">
-      <a href="#"><img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" alt="Instagram"></a>
-      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
-      <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="X"></a>
+  <!-- Sticky Download -->
+  <div class="download-wrap">
+    <button class="download" id="downloadBtn">Download Report <span class="arrow">⬇</span></button>
+  </div>
+
+  <!-- Email Modal -->
+  <div class="modal-back" id="emailModal">
+    <div class="modal">
+      <h4>Get your PDF report</h4>
+      <p class="muted" style="margin-top:-4px">Enter your email to receive/download the report.</p>
+      <div class="row" style="margin:12px 0 14px">
+        <input id="emailInput" type="email" placeholder="you@example.com" />
+        <button class="btn" id="confirmEmail">Continue</button>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn secondary" id="cancelEmail">Cancel</button>
+      </div>
     </div>
-    <p style="color:gray; text-align:center;">©️ 2025 AI ContractMate</p>
-  </footer>
+  </div>
 
-  <script>
-    document.getElementById("summaryText").innerText = localStorage.getItem("summary") || "No summary available.";
-    document.getElementById("riskScore").innerText = localStorage.getItem("risk") || "–";
-    document.getElementById("clarityScore").innerText = localStorage.getItem("clarity") || "–";
-    document.getElementById("complianceScore").innerText = localStorage.getItem("compliance") || "–";
+<script>
+(() => {
+  // ----- Read data: prefer analysisData; else fallback to legacy keys; else demo -----
+  const demo = {
+    languageOriginal: "en",
+    summary: [
+      "This contract is generally favorable to the signatory with low to moderate risk.",
+      "Key obligations are clearly defined; payment schedule and termination rights are standard.",
+      "Two items need attention: late-payment penalties and IP ownership on derivative works."
+    ],
+    risk: { value: 25, note: "Risks concentrate around late fees and indemnity scope." },
+    clarity: { value: 80, note: "Clauses are mostly explicit; a few definitions could be tightened." },
+    clauses: [
+      "Payment Terms — Net 30 with 2% late fee per month.",
+      "Scope of Work — Deliverables listed in Schedule A.",
+      "Termination — Convenience with 30-day notice; for-cause immediate.",
+      "IP & Licensing — Client owns final assets; creator retains tooling."
+    ],
+    issues: [
+      "Late fee compounding could escalate quickly on long delays.",
+      "Indemnity is one-sided; consider mutual or capped liability.",
+      "Confidentiality term has no sunset—evaluate necessity."
+    ],
+    suggestions: [
+      "Cap the late-payment fee or add a grace period.",
+      "Make indemnity mutual or limit to direct damages.",
+      "Add definition for 'Derivative Works' to prevent ambiguity."
+    ],
+    meters:{ confidence:75, favorability:80, deadline:18 },
+    translations:{ en:{} }
+  };
 
-    function populateList(id, items) {
-      const ul = document.getElementById(id);
-      ul.innerHTML = "";
-      if (!items || !items.length) {
-        ul.innerHTML = "<li>None</li>";
-        return;
+  let data = null;
+
+  try{
+    const raw = localStorage.getItem('analysisData');
+    if (raw) {
+      data = JSON.parse(raw);
+    } else {
+      // legacy keys support
+      const legacySummary = localStorage.getItem("summary");
+      const legacyRisk = localStorage.getItem("risk");
+      if (legacySummary || legacyRisk) {
+        data = {
+          languageOriginal: "en",
+          summary: legacySummary ? splitSummary(legacySummary) : demo.summary,
+          risk: { value: Number(localStorage.getItem("risk")||25), note: "" },
+          clarity: { value: Number(localStorage.getItem("clarity")||80), note: "" },
+          clauses: JSON.parse(localStorage.getItem("keyClauses")||"[]"),
+          issues: JSON.parse(localStorage.getItem("potentialIssues")||"[]"),
+          suggestions: JSON.parse(localStorage.getItem("smartSuggestions")||"[]"),
+          meters:{ confidence:75, favorability:80, deadline:18 },
+          translations:{ en:{} }
+        };
       }
-      items.forEach(item => {
-        const li = document.createElement("li");
-        li.innerText = item;
-        ul.appendChild(li);
-      });
     }
+  }catch(e){ /* ignore and use demo */ }
+  if(!data) data = demo;
 
-    try {
-      populateList("keyClausesList", JSON.parse(localStorage.getItem("keyClauses")));
-      populateList("potentialIssuesList", JSON.parse(localStorage.getItem("potentialIssues")));
-      populateList("smartSuggestionsList", JSON.parse(localStorage.getItem("smartSuggestions")));
-    } catch (e) {
-      console.error("Failed to parse list data", e);
-    }
+  // ----- Helpers -----
+  const $ = s => document.querySelector(s);
+  const create = (tag, cls, text) => { const el=document.createElement(tag); if(cls) el.className=cls; if(text!=null) el.textContent=text; return el; };
+  const circLen = 2*Math.PI*70; // ~439
 
-    document.getElementById("downloadBtn").addEventListener("click", () => {
-      const email = document.getElementById("emailInput").value;
-      if (!email || !email.includes("@")) {
-        alert("Please enter a valid email.");
-        return;
-      }
+  function splitSummary(txt){
+    // robust split: newlines or sentence ends
+    const parts = String(txt).split(/\n{2,}|\.\s+(?=[A-Z(]|$)/g).map(s=>s.trim()).filter(Boolean);
+    return parts.length ? parts.map(p => p.endsWith('.')? p : p + '.') : [txt];
+  }
 
-      const content = `
-Contract Summary:\n${localStorage.getItem("summary")}\n\n
-Risk: ${localStorage.getItem("risk")}
-Clarity: ${localStorage.getItem("clarity")}
-Compliance: ${localStorage.getItem("compliance")}\n\n
-Key Clauses:\n${(JSON.parse(localStorage.getItem("keyClauses")) || []).join("\n")}\n\n
-Potential Issues:\n${(JSON.parse(localStorage.getItem("potentialIssues")) || []).join("\n")}\n\n
-Smart Suggestions:\n${(JSON.parse(localStorage.getItem("smartSuggestions")) || []).join("\n")}
-      `;
-
-      const blob = new Blob([content], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "ContractMate_Report.txt";
-      link.click();
+  // ----- Populate -----
+  function setSummary(lines){
+    const box = $("#summaryText"); box.innerHTML = "";
+    (Array.isArray(lines)? lines : splitSummary(String(lines))).forEach(t => {
+      box.appendChild(create("div","item",t));
     });
-  </script>
+  }
+
+  function setList(id, arr){
+    const box = $(id); box.innerHTML="";
+    (arr && arr.length ? arr : ["None"]).forEach(t => box.appendChild(create("div","item",t)));
+  }
+
+  function animateArc(el, value){
+    const target = circLen * (1 - (value||0)/100);
+    el.style.transition = "stroke-dashoffset 1.2s ease";
+    requestAnimationFrame(()=>{ el.style.strokeDashoffset = target; });
+  }
+
+  function setMeters({confidence,favorability,deadline}){
+    $("#confVal").textContent = (confidence??0) + "%";
+    $("#favVal").textContent = (favorability??0) + "%";
+    $("#deadVal").textContent = (deadline??0) + "%";
+    requestAnimationFrame(()=>{
+      $("#confFill").style.width = (confidence??0) + "%";
+      $("#favFill").style.width = (favorability??0) + "%";
+      $("#deadFill").style.width = (deadline??0) + "%";
+    });
+  }
+
+  function badgeForRisk(v){
+    if (v <= 30) return "Generally Safe";
+    if (v <= 60) return "Review Carefully";
+    return "High Risk";
+  }
+
+  function apply(d){
+    setSummary(d.summary);
+    setList("#clausesList", d.clauses);
+    setList("#issuesList", d.issues);
+    setList("#suggestionsList", d.suggestions);
+
+    $("#riskVal").textContent = (d.risk?.value ?? 0) + "%";
+    $("#riskNote").textContent = d.risk?.note || "";
+    animateArc($("#riskArc"), d.risk?.value ?? 0);
+
+    $("#clarVal").textContent = (d.clarity?.value ?? 0) + "%";
+    $("#clarNote").textContent = d.clarity?.note || "";
+    animateArc($("#clarArc"), d.clarity?.value ?? 0);
+
+    setMeters(d.meters || {confidence:0,favorability:0,deadline:0});
+    $("#riskBadge").textContent = badgeForRisk(d.risk?.value ?? 0);
+  }
+
+  // Initial render
+  apply(data);
+
+  // ----- Language toggle (Original vs EN) -----
+  const langSelect = $("#langSelect");
+  langSelect.addEventListener("change", ()=>{
+    const val = langSelect.value;
+    if(val === "auto"){ apply(data); return; }
+    const t = data.translations && data.translations[val];
+    if(t){
+      apply({
+        ...data,
+        summary: t.summary || data.summary,
+        clauses: t.clauses || data.clauses,
+        issues: t.issues || data.issues,
+        suggestions: t.suggestions || data.suggestions,
+      });
+    }else{
+      apply(data);
+    }
+  });
+
+  // ----- Download flow (email gate + pretty PDF) -----
+  const modal = $("#emailModal");
+  const openModal = ()=> modal.style.display = "grid";
+  const closeModal = ()=> modal.style.display = "none";
+
+  $("#downloadBtn").addEventListener("click", openModal);
+  $("#cancelEmail").addEventListener("click", closeModal);
+
+  $("#confirmEmail").addEventListener("click", async ()=>{
+    const email = $("#emailInput").value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      alert("Please enter a valid email.");
+      return;
+    }
+    localStorage.setItem("reportEmail", email);
+    await generatePDF(email, data);
+    closeModal();
+  });
+
+  async function generatePDF(email, d){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:"pt", format:"a4" });
+
+    const pageW = doc.internal.pageSize.getWidth();
+    // Header band
+    doc.setFillColor(20,22,28);
+    doc.rect(0,0,pageW,80,'F');
+    doc.setFont("helvetica","bold");
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(18);
+    doc.text("SignSense — Contract Analysis Report", 48, 48);
+
+    // Accent line
+    doc.setDrawColor(191,246,17); // #bff611
+    doc.setLineWidth(2);
+    doc.line(48, 70, pageW-48, 70);
+
+    // Body
+    let y = 100;
+    const lh = 18, margin = 48, width = pageW - margin*2;
+
+    // Meta
+    doc.setFontSize(10);
+    doc.setTextColor(210,210,214);
+    const date = new Date().toLocaleString();
+    doc.text(`Delivered to: ${email}   •   Generated: ${date}`, margin, y); y += lh*1.6;
+
+    // Sections
+    y = sectionTitle(doc, "Summary", margin, y);
+    doc.setTextColor(233,233,238);
+    y = bulletBlock(doc, d.summary, margin, y, width, lh);
+
+    y = sectionTitle(doc, `Risk Level: ${d.risk?.value ?? 0}%`, margin, y+8);
+    doc.setTextColor(210,210,214);
+    y = textBlock(doc, d.risk?.note || "", margin, y, width, lh);
+
+    y = sectionTitle(doc, `Clause Clarity: ${d.clarity?.value ?? 0}%`, margin, y+8);
+    doc.setTextColor(210,210,214);
+    y = textBlock(doc, d.clarity?.note || "", margin, y, width, lh);
+
+    y = sectionTitle(doc, "Main Clauses", margin, y+8);
+    doc.setTextColor(233,233,238);
+    y = listBlock(doc, d.clauses, margin, y, width, lh);
+
+    y = sectionTitle(doc, "Potential Issues", margin, y+8);
+    doc.setTextColor(233,233,238);
+    y = bulletBlock(doc, d.issues, margin, y, width, lh);
+
+    y = sectionTitle(doc, "Smart Suggestions", margin, y+8);
+    doc.setTextColor(233,233,238);
+    y = bulletBlock(doc, d.suggestions, margin, y, width, lh);
+
+    doc.save("SignSense_Report.pdf");
+  }
+
+  function sectionTitle(doc, title, x, y){
+    doc.setFont("helvetica","bold");
+    doc.setTextColor(191,246,17); // accent
+    doc.setFontSize(12);
+    doc.text(title, x, y);
+    return y + 12;
+  }
+  function textBlock(doc, text, x, y, width, lh){
+    if(!text) return y;
+    doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, width);
+    lines.forEach(line=>{ if(y > 780){ y = newPage(doc); } doc.text(line, x, y); y+=lh;});
+    return y;
+  }
+  function bulletBlock(doc, arr, x, y, width, lh){
+    const list = Array.isArray(arr) ? arr : splitSummary(String(arr||""));
+    doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    list.forEach(t=>{
+      const lines = doc.splitTextToSize(t, width - 14);
+      if(y > 780){ y = newPage(doc); }
+      doc.text("•", x, y);
+      lines.forEach((line,i)=>{ if(i===0){ doc.text(line, x+14, y); } else { y+=lh; doc.text(line, x+14, y);} });
+      y += lh;
+    });
+    return y;
+  }
+  function listBlock(doc, arr, x, y, width, lh){
+    const list = Array.isArray(arr) ? arr : [];
+    doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    list.forEach((t,i)=>{
+      const prefix = `${i+1}. `;
+      const lines = doc.splitTextToSize(t, width - doc.getTextWidth(prefix));
+      if(y > 780){ y = newPage(doc); }
+      doc.text(prefix, x, y);
+      lines.forEach((line,j)=>{ if(j===0){ doc.text(line, x+doc.getTextWidth(prefix), y); } else { y+=lh; doc.text(line, x+doc.getTextWidth(prefix), y);} });
+      y += lh;
+    });
+    return y;
+  }
+  function newPage(doc){
+    doc.addPage();
+    // header line on new page
+    const pageW = doc.internal.pageSize.getWidth();
+    doc.setDrawColor(191,246,17);
+    doc.setLineWidth(1.2);
+    doc.line(48, 40, pageW-48, 40);
+    return 64;
+  }
+
+  // Hook up "Leave a Review" (customize)
+  document.getElementById("leaveReview").addEventListener("click", (e)=>{
+    e.preventDefault();
+    alert("Hook this to your reviews form URL.");
+  });
+})();
+</script>
 </body>
 </html>
