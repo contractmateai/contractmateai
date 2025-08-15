@@ -1567,6 +1567,67 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
 
 
 
+<!-- === FAKE RESULTS WIRING (paste before </body>) === -->
+<input id="contractFile" type="file"
+       accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
+
+<script>
+(() => {
+  const triggers = document.querySelectorAll('.cta-btn, .cta-outline, .footer-cta');
+  const input = document.getElementById('contractFile');
+
+  // open file picker from any "Review A Contract" button/link
+  triggers.forEach(t => t.addEventListener('click', e => { e.preventDefault(); input.click(); }));
+
+  input.addEventListener('change', () => {
+    if (!input.files || !input.files.length) return;
+
+    // === FAKE ANALYSIS DATA (used by the new analysis.html) ===
+    const mock = {
+      languageOriginal: "en",
+      summary: [
+        "This contract is generally favorable with low overall risk.",
+        "Payment schedule and termination rights are standard.",
+        "Watch late-fee compounding and define 'material breach'."
+      ],
+      risk:    { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+      clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+      clauses: [
+        "Payment Terms — Net 30 with 2% per month late fee.",
+        "Scope of Work — Deliverables listed in Schedule A.",
+        "Termination — 30-day convenience; immediate for cause.",
+        "IP & Licensing — Client owns final assets; creator keeps tools."
+      ],
+      issues: [
+        "Late fee compounding escalates costs on long delays.",
+        "Indemnity is one-sided; consider mutual or capped liability."
+      ],
+      suggestions: [
+        "Add a 5–7 day grace period before late fees.",
+        "Define 'material breach' + 10-day cure period.",
+        "List milestones and acceptance criteria."
+      ],
+      meters: { confidence: 75, favorability: 80, deadline: 18 },
+      translations: { en: {} }
+    };
+
+    // Save for the new analysis UI
+    localStorage.setItem('analysisData', JSON.stringify(mock));
+
+    // Also save legacy keys (so your old analysis.html still works if needed)
+    localStorage.setItem('summary', mock.summary.join('\n\n'));
+    localStorage.setItem('risk', String(mock.risk.value));
+    localStorage.setItem('clarity', String(mock.clarity.value));
+    localStorage.setItem('compliance', "90");
+    localStorage.setItem('keyClauses', JSON.stringify(mock.clauses));
+    localStorage.setItem('potentialIssues', JSON.stringify(mock.issues));
+    localStorage.setItem('smartSuggestions', JSON.stringify(mock.suggestions));
+
+    // Go to results page
+    window.location.href = 'analysis.html';
+  });
+})();
+</script>
 
 </body>
 </html>
