@@ -929,6 +929,14 @@ function makeTicker(row, { pxPerSecond = 60, direction = "left" } = {}) {
   requestAnimationFrame(tick);
 }
 </script>
+<script>
+window.addEventListener("load", () => {
+  const topRow = document.querySelector(".top-row");
+  const bottomRow = document.querySelector(".bottom-row");
+  makeTicker(topRow,    { pxPerSecond: 36, direction: "right" });
+  makeTicker(bottomRow, { pxPerSecond: 36, direction: "left"  });
+});
+</script>
 
 
 
