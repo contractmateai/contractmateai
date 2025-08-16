@@ -430,107 +430,86 @@
 
 
 
-    .scroll-strip {
-      display: flex;
-      gap: 28px;
-      padding: 14px 0;
-      white-space: nowrap;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
+.scroll-strip {
+  display: flex;
+  gap: 28px;
+  padding: 14px 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  will-change: transform;
+}
 
-    .top-row {
-      animation-name: scrollRight;
-      animation-duration: 30s;
-    }
+.top-row {
+  animation: scrollRight 30s linear infinite;
+}
 
-    .bottom-row {
-      animation-name: scrollLeft;
-      animation-duration: 30s;
-    }
+.bottom-row {
+  animation: scrollLeft 30s linear infinite;
+}
 
-    .scroll-item {
-      background: rgba(26, 24, 34, 0.57);
-      border: 1px solid #3b3b3b;
-      border-radius: 48px;
-      padding: 16px 28px;
-      display: inline-flex;
-      align-items: center;
-      gap: 18px;
-      flex-shrink: 0;
-      transition: transform 0.2s ease;
-    }
+.scroll-item {
+  background: rgba(26, 24, 34, 0.57);
+  border: 1px solid #3b3b3b;
+  border-radius: 48px;
+  padding: 16px 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.scroll-item:hover { transform: scale(1.04); }
 
-    .scroll-item:hover {
-      transform: scale(1.04);
-    }
+.scroll-item img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #101010;
+  box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
+}
+.scroll-item span {
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: #fff9f9;
+  white-space: nowrap;
+}
 
-    .scroll-item img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #101010;
-      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-    }
-
-    .scroll-item span {
-      font-family: 'Inter', sans-serif;
-      font-size: 17px;
-      font-weight: 400;
-      color: #fff9f9;
-      white-space: nowrap;
-    }
-
-    .scroll-shadow-left,
-    .scroll-shadow-right {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100px;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-  .scroll-shadow-left {
+.scroll-shadow-left,
+.scroll-shadow-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  z-index: 3;
+  pointer-events: none;
+}
+.scroll-shadow-left {
   left: 0;
   background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,0.6), transparent);
 }
-
 .scroll-shadow-right {
   right: 0;
   background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,0.6), transparent);
 }
 
+@keyframes scrollRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+@keyframes scrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
-    @keyframes scrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
+@media (max-width: 768px) {
+  .scroll-item { padding: 14px 20px; }
+  .scroll-item img { width: 38px; height: 38px; }
+  .scroll-item span { font-size: 17px; }
+  .scroll-section h3 { font-size: 20px; }
+}
 
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 768px) {
-      .scroll-item {
-        padding: 14px 20px;
-      }
-
-      .scroll-item img {
-        width: 38px;
-        height: 38px;
-      }
-
-      .scroll-item span {
-        font-size: 17px;
-      }
-
-      .scroll-section h3 {
-        font-size: 20px;
-      }
-    }
    /* === REVIEWS SECTION === */
 /* === REVIEWS: CSS === */
 /* === REVIEWS: CSS === */
@@ -917,16 +896,21 @@ const featuresBottom = [
 ];
 
 
- function populateRow(row, features) {
-  for (let i = 0; i < 20; i++) {
-    features.forEach(f => {
+function populateRow(row, features){
+  const makeSet = () => {
+    const frag = document.createDocumentFragment();
+    features.forEach(f=>{
       const el = document.createElement('div');
       el.className = 'scroll-item';
       el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-      row.appendChild(el);
+      frag.appendChild(el);
     });
-  }
+    return frag;
+  };
+  row.appendChild(makeSet()); // first half
+  row.appendChild(makeSet()); // second half (so width ≈ 2x)
 }
+
 
 populateRow(topRow, featuresTop);
 populateRow(bottomRow, featuresBottom);
