@@ -430,6 +430,7 @@
 
 
 
+/* === FEATURES STRIP (no keyframes; JS handles endless scroll) === */
 .scroll-strip {
   display: flex;
   gap: 28px;
@@ -439,13 +440,9 @@
   will-change: transform;
 }
 
-.top-row {
-  animation: scrollRight 30s linear infinite;
-}
-
-.bottom-row {
-  animation: scrollLeft 30s linear infinite;
-}
+/* keep the class names (top-row / bottom-row) for hooks; no CSS animation */
+.top-row {}
+.bottom-row {}
 
 .scroll-item {
   background: rgba(26, 24, 34, 0.57);
@@ -494,21 +491,13 @@
   background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,0.6), transparent);
 }
 
-@keyframes scrollRight {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-@keyframes scrollLeft {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 @media (max-width: 768px) {
   .scroll-item { padding: 14px 20px; }
   .scroll-item img { width: 38px; height: 38px; }
   .scroll-item span { font-size: 17px; }
   .scroll-section h3 { font-size: 20px; }
 }
+
 
    /* === REVIEWS SECTION === */
 /* === REVIEWS: CSS === */
@@ -843,6 +832,7 @@
 
 
 <!-- AOS + Particle + Scroll JS -->
+<!-- AOS + Particle + Scroll JS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({ once: true });
@@ -873,115 +863,77 @@
   const topRow = document.querySelector('.top-row');
   const bottomRow = document.querySelector('.bottom-row');
 
- const featuresTop = [
-  { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-  { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-  { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-  { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-  { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-  { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-  { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-  { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" }
-];
+  const featuresTop = [ /* ...your arrays... */ ];
+  const featuresBottom = [ /* ...your arrays... */ ];
 
-const featuresBottom = [
-  { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-  { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-  { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-  { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-  { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-  { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-  { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-  { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
-];
-
-
-function populateRow(row, features){
-  const makeSet = () => {
-    const frag = document.createDocumentFragment();
-    features.forEach(f=>{
-      const el = document.createElement('div');
-      el.className = 'scroll-item';
-      el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-      frag.appendChild(el);
-    });
-    return frag;
-  };
-  row.appendChild(makeSet()); // first half
-  row.appendChild(makeSet()); // second half (so width ≈ 2x)
-}
-
-
-populateRow(topRow, featuresTop);
-populateRow(bottomRow, featuresBottom);
- // === Reviews JS (3-up image carousel) ===
-(function(){
-  const track = document.getElementById('reviewsTrack');
-  const prev  = document.getElementById('revPrev');
-  const next  = document.getElementById('revNext');
-  const dotsWrap = document.getElementById('reviewDots');
-  const cards = () => Array.from(track.querySelectorAll('.review-card'));
-
-  let index = 0;          // page index
-  let perPage = 3;        // items visible
-  let pageCount = 0;      // how many pages
-
-  function measure(){
-    // decide how many per page based on CSS breakpoints
-    const w = window.innerWidth;
-    if (w <= 640)      perPage = 1;
-    else if (w <=1100) perPage = 2;
-    else               perPage = 3;
-    pageCount = Math.max(1, Math.ceil(cards().length / perPage));
-    if (index > pageCount - 1) index = pageCount - 1;
-    renderDots();
-    go(index, false);
+  function populateRow(row, features){
+    const makeSet = () => {
+      const frag = document.createDocumentFragment();
+      features.forEach(f=>{
+        const el = document.createElement('div');
+        el.className = 'scroll-item';
+        el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
+        frag.appendChild(el);
+      });
+      return frag;
+    };
+    row.appendChild(makeSet()); // first half
+    row.appendChild(makeSet()); // second half (so width ≈ 2x)
   }
 
-  function cardFullWidth(){
-    const c = cards()[0];
-    if (!c) return 0;
-    const style = getComputedStyle(c);
-    const w = c.getBoundingClientRect().width;
-    const mr = parseFloat(style.marginRight||0);
-    const ml = parseFloat(style.marginLeft||0);
-    return w + ml + mr + 24; // gap ~24px (matches CSS)
-  }
+  populateRow(topRow, featuresTop);
+  populateRow(bottomRow, featuresBottom);
 
-  function go(i, animate=true){
-    index = Math.max(0, Math.min(i, pageCount-1));
-    const shift = -(index * cardFullWidth() * perPage);
-    if (!animate) track.style.transition = 'none';
-    track.style.transform = `translateX(${shift}px)`;
-    if (!animate) requestAnimationFrame(()=>track.style.transition='transform .35s ease');
-    updateDots();
-  }
+  /* === NEW: never-reset ticker (modulo wrap) === */
+  function makeTicker(row, { pxPerSecond = 36, direction = 'left' } = {}){
+    if (!row) return;
 
-  function renderDots(){
-    dotsWrap.innerHTML = '';
-    for(let i=0;i<pageCount;i++){
-      const d = document.createElement('div');
-      d.className = 'review-dot' + (i===index?' active':'');
-      d.addEventListener('click', ()=>go(i));
-      dotsWrap.appendChild(d);
+    const base = (direction === 'left' ? -pxPerSecond : pxPerSecond);
+    let x = 0;
+    let w = 0;
+    let last = performance.now();
+    let raf;
+
+    function measure(){
+      w = row.scrollWidth / 2; // two copies → one set is half
     }
+
+    function tick(now){
+      const dt = (now - last) / 1000;
+      last = now;
+
+      x += base * dt;
+
+      // wrap without a visible jump
+      if (x <= -w) x += w;
+      if (x > 0)   x -= w;
+
+      row.style.transform = `translateX(${x}px)`;
+      raf = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', measure, { passive:true });
+
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function start(){
+      if (media.matches){ row.style.transform = 'none'; return; }
+      measure();
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    }
+    function stop(){ if (raf) cancelAnimationFrame(raf); }
+    media.addEventListener?.('change', ()=>{ stop(); start(); });
+
+    start();
   }
-  function updateDots(){
-    [...dotsWrap.children].forEach((d,i)=>{
-      d.classList.toggle('active', i===index);
-    });
-  }
 
-  prev.addEventListener('click', ()=>go(index-1));
-  next.addEventListener('click', ()=>go(index+1));
-  window.addEventListener('resize', measure, {passive:true});
-
-  measure();
-})();
-
-
-
+  // start after images/layout are ready so widths are correct
+  window.addEventListener('load', () => {
+    makeTicker(document.querySelector('.top-row'),    { pxPerSecond: 36, direction: 'right' });
+    makeTicker(document.querySelector('.bottom-row'), { pxPerSecond: 36, direction: 'left'  });
+  });
 </script>
+
   <!-- WATCH VIDEO SECTION -->
 <section class="watch-video-section">
   <div class="video-content">
