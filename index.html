@@ -895,53 +895,79 @@ function populateRow(row, features){
 populateRow(topRow, featuresTop);
 populateRow(bottomRow, featuresBottom);
 
-/* === Endless ticker (no visible reset) === */
-function makeTicker(row, { pxPerSecond=36, direction="left" } = {}){
+<script>
+/* === Endless ticker (anti-tick version) === */
+function makeTicker(row, { pxPerSecond = 36, direction = 'left' } = {}){
   if (!row) return;
 
-  const speed = (direction === "left" ? -pxPerSecond : pxPerSecond);
-  let x = 0, w = 0, raf = 0, last = performance.now();
+  // speed in px/s; left = positive offset increase for simpler math
+  const sign = (direction === 'left') ? 1 : -1;
 
-  function measure(){
-    // two copies -> one set is exactly half width; if 0, retry shortly
+  let w = 0;             // width of ONE set (row has 2 copies)
+  let t0 = 0;            // start time (s)
+  let raf = 0;
+
+  // compute offset using modulo (never jumps)
+  function setOffset(now){
+    const t = now / 1000 - t0;                    // seconds since start
+    const raw = sign * pxPerSecond * t;           // unbounded distance
+    const offset = ((raw % w) + w) % w;           // map to [0, w)
+    // move left by 'offset' (or right if direction === 'right')
+    row.style.transform = `translate3d(${-offset}px,0,0)`;
+    raf = requestAnimationFrame(setOffset);
+  }
+
+  // robust measure (after images + fonts), and on size changes
+  function measureAndStart(){
+    // two copies -> one set is exactly half the scroll width
     w = row.scrollWidth / 2;
+
+    // If fonts/images not ready yet, w might be 0; retry
     if (!w){
-      setTimeout(measure, 60);
+      setTimeout(measureAndStart, 60);
+      return;
+    }
+
+    // restart the timeline at current visual position to avoid any snap
+    cancelAnimationFrame(raf);
+    t0 = performance.now() / 1000;
+    raf = requestAnimationFrame(setOffset);
+  }
+
+  // Re-measure whenever the row size changes (safer than resize only)
+  const ro = new ResizeObserver(() => {
+    const oldW = w;
+    const newW = row.scrollWidth / 2;
+    if (!newW || Math.abs(newW - oldW) < 0.5) return; // ignore tiny subpixel noise
+    w = newW; // smoothly continues because we use absolute time (t) + modulo
+  });
+  ro.observe(row);
+
+  // Respect reduced motion
+  const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function start(){
+    if (media.matches){ row.style.transform = 'none'; return; }
+
+    // wait for fonts, then measure
+    if (document.fonts && document.fonts.ready){
+      document.fonts.ready.then(measureAndStart);
+    } else {
+      measureAndStart();
     }
   }
-
-  function tick(now){
-    const dt = (now - last) / 1000;
-    last = now;
-
-    x += speed * dt;
-
-    // wrap into [-w, 0) without jump
-    if (x <= -w) x += w;
-    if (x > 0)   x -= w;
-
-    row.style.transform = `translateX(${x}px)`;
-    raf = requestAnimationFrame(tick);
+  function stop(){
+    cancelAnimationFrame(raf);
+    ro.disconnect();
   }
+  media.addEventListener?.('change', () => { stop(); start(); });
 
-  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-  function start(){
-    if (media.matches){ row.style.transform = "none"; return; }
-    measure();
-    last = performance.now();
-    raf = requestAnimationFrame(tick);
-  }
-  function stop(){ if (raf) cancelAnimationFrame(raf); }
-
-  window.addEventListener("resize", measure, { passive:true });
-  media.addEventListener?.("change", ()=>{ stop(); start(); });
   start();
 }
 
-/* start once everything is laid out */
-window.addEventListener("load", () => {
-  makeTicker(topRow,    { pxPerSecond: 36, direction: "right" });
-  makeTicker(bottomRow, { pxPerSecond: 36, direction: "left"  });
+// Start once layout is complete (images sized, fonts likely loaded)
+window.addEventListener('load', () => {
+  makeTicker(document.querySelector('.top-row'),    { pxPerSecond: 36, direction: 'right' });
+  makeTicker(document.querySelector('.bottom-row'), { pxPerSecond: 36, direction: 'left'  });
 });
 </script>
 
