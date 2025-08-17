@@ -1,1581 +1,1945 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
-<link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <style>
-    /* === FLOATING TOP BAR === */
-.topbar-wrap{
-  position:fixed;
-  top:18px;                 /* not touching the very top */
-  left:0; right:0;
-  z-index:1000;
-  display:flex;
-  justify-content:center;
-  pointer-events:none;      /* so only the bar is clickable */
-  transition:transform .28s ease, opacity .25s ease;
-}
-.topbar-wrap.hide{
-  transform:translateY(-140%);
-  opacity:0;
-}
-
-.topbar{
-  pointer-events:auto;
-  background:#090922;          /* CHANGE */
-  border:1px solid #b4b4b4;    /* ADD */
-  border-radius:16px;       /* requested radius */
-  min-height:72px;
- padding:12px 18px; 
- width:min(1120px, calc(100% - 60px));  /* breathing room on sides */
-  display:flex; align-items:center; justify-content:space-between;
-  box-shadow:0 8px 30px rgba(0,0,0,.25);
-}
-
-.topbar-left{display:flex;align-items:center;gap:10px}
-.topbar-logo{height:38px;width:auto;border-radius:8px}
-.topbar-brand{font-family:'Shoika',sans-serif;font-size:28px;color:#fff}
-
-.topbar-nav a{
-  text-decoration:none;
-  font-size:20px;
-  color:#fff;
-  margin-left:24px;
-}
-.topbar-nav a:hover{opacity:.8}
-
-/* push content down so bar doesn’t overlap hero */
-.hero-wrapper{ margin-top: 120px; }   /* REPLACES your -40px rule */
-
-    :root {
-      --bg-dark: #01040b;
-      --text-light: #fff9f9;
-      --text-muted: #d8cccc;
-      --highlight-green: #bff611;
-      --badge-glow: #adff00;
-      --badge-purple: #1f1a34;
-      --badge-lime: #adff00;
-      --badge-gray: #2e2b3a;
-      --particle-color: #682fd8;
-      --purple-border: #4a2d91;
-      --purple-hover: #2a1f4a;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      color: var(--text-light);
-      background: var(--bg-dark);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1600px;
-      background: url('https://imgur.com/eBWIkvp.png') no-repeat center bottom;
-      background-size: 100% 1600px;
-      z-index: -2;
-    }
-
-    .particle-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 1600px;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .particle {
-      position: absolute;
-      background-color: var(--particle-color);
-      border-radius: 50%;
-      width: 3px;
-      height: 3px;
-      box-shadow: 0 0 6px var(--particle-color);
-      animation: floatUp linear infinite;
-      z-index: -1;
-    }
-
-    @keyframes floatUp {
-      from { transform: translateY(0); opacity: 1; }
-      to { transform: translateY(-1600px); opacity: 0; }
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-      font-size: 22px;
-      position: relative;
-      z-index: 2;
-    }
-
-    header img {
-      height: 44px;
-      margin-right: 14px;
-      border-radius: 50%;
-    }
-
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      font-size: 24px;
-      font-weight: 500;
-      color: white;
-    }
-
-    nav a {
-      color: var(--text-muted);
-      margin: 0 26px;
-      text-decoration: none;
-      font-size: 20px;
-    }
-
-   .hero-wrapper { margin-top: 80px; }
-
-
-    .tagline-absolute {
-     background-color:#090922;
-      color: #bbb;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 12px;
-      font-size: 15px;
-      border-radius: 53px;
-      position: relative;
-      margin-bottom: 26px;
-      transition: none;
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .tagline-absolute span {
-      background-color: var(--badge-lime);
-      color: black;
-      padding: 6px 12px;
-      border-radius: 53px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-  
-
-    .hero {
-      text-align: center;
-      padding: 80px 20px 30px;
-    }
-
-    .hero-upper {
-      margin-top: 50px;
-    }
-
-    h1, h2 {
-      font-family: 'Shoika', sans-serif;
-      font-weight: 400;
-    }
-
-    h1 {
-      font-size: 68px;
-      margin: 0;
-      color: var(--text-light);
-      font-weight: 400;
-      line-height: 1.1;
-    }
-
-    .hero h1 span {
-      display: block;
-      margin-top: 8px;
-    }
-
-    .subtext {
-      color: var(--text-muted);
-      margin: 18px 0 30px;
-      font-size: 20px;
-    }
-
-    .cta-wrapper {
-      margin-top: 75px;
-    }
-
-    .cta-btn {
-      background: white;
-      color: black;
-      border: 2px solid #999;
-      padding: 16px 30px;
-      border-radius: 16px;
-      font-size: 18px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.3);
-      transition: box-shadow 0.3s ease;
-    }
-
-    .cta-btn:hover {
-      box-shadow: 0 0 15px rgba(255,255,255,0.7);
-    }
-
-    .app-container {
-      position: relative;
-      width: 100%;
-      max-width: 1050px;
-      margin: 30px auto 0;
-      perspective: 1000px;
-    }
-
-    .app-wrapper {
-      position: relative;
-      transition: transform 0.8s ease;
-      transform: rotateX(12deg);
-    }
-
-    .app-preview {
-      width: 100%;
-      border-radius: 24px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
-      display: block;
-    }
-
-    .yellow-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 120px;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(191, 246, 17, 0.1), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0));
-      box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-      border-radius: 2px;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      animation: moveLine 8s linear infinite, fadeOut 8s linear infinite;
-    }
-
-    @keyframes moveLine {
-      0% { left: 0%; }
-      100% { left: 100%; }
-    }
-
-    @keyframes fadeOut {
-      0% { opacity: 0; }
-      5% { opacity: 1; }
-      70% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 44px;
-      color: var(--text-light);
-      font-weight: 400;
-      line-height: 1.4;
-      margin-top: 14px;
-    }
-
-    .section-sub {
-      text-align: center;
-      color: var(--text-muted);
-      margin-top: 12px;
-      font-size: 21px;
-      font-weight: 400;
-      line-height: 1.4;
-    }
-
-    .section-badge {
-      background-color: #090922;
-      color: #bbb;
-      padding: 6px 14px;
-      border-radius: 53px;
-      font-size: 15px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: none;
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .section-badge:hover {
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .insight-section {
-      padding: 60px 20px 60px;
-    }
-
-    .insight-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      max-width: 1300px;
-      margin: 0 auto;
-      gap: 80px;
-    }
-
-    .insight-left {
-      position: relative;
-      margin-left: -120px;
-    }
-
-    .insight-left img {
-      width: 520px;
-      border-radius: 20px;
-      display: block;
-    }
-
-    .insight-right {
-      max-width: 540px;
-      text-align: left;
-    }
-
-    .insight-icon {
-      width: 80px;
-      margin-top: 40px;
-      margin-bottom: 30px;
-    }
-
-    .insight-right h2 {
-      font-size: 44px;
-      color: #fff9f9;
-      margin-bottom: 26px;
-      font-weight: 400;
-    }
-
-    .insight-right p {
-      color: #d8cccc;
-      font-size: 22px;
-      margin-bottom: 38px;
-      font-weight: 400;
-    }
-
-    .cta-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 24px;
-      font-size: 20px;
-      background-color: #adff00;
-      color: black;
-      border: none;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: box-shadow 0.3s ease;
-      font-weight: 500;
-    }
-
-    .cta-outline:hover {
-      box-shadow: 0 0 16px #adff00;
-    }
-
-    /* Scroll Section Styles START */
-    .scroll-section {
-  position: relative;
-  padding: 30px 0;
-  background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
-  border: 1px solid rgba(36, 36, 37, 0.78);
-  border-radius: 18px;
-  margin: 40px auto 0;
-  overflow: hidden;
-  max-width: 1360px;
-  transform: scale(0.94);
-}
-
-
-    .scroll-section h3 {
-      text-align: center;
-      font-size: 25px;
-      line-height: 1.4;
-      color: #fff9f9;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      margin-top: 40px;
-      margin-bottom: 50px;
-  
-    }
-   
-    .scroll-wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 30px;
-}
-
-    .scroll-full {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-
-
-/* === FEATURES STRIP (no keyframes; JS handles endless scroll) === */
-/* === FEATURES STRIP (endless; JS drives movement) === */
-.scroll-strip{
-  display:flex;
-  gap:28px;
-  padding:14px 0;
-  white-space:nowrap;
-  flex-shrink:0;
-  will-change:transform;
-}
-
-/* keep hooks, no CSS animations */
-.top-row{}
-.bottom-row{}
-
-.scroll-item{
-  background:rgba(26,24,34,.57);
-  border:1px solid #3b3b3b;
-  border-radius:48px;
-  padding:16px 28px;
-  display:inline-flex;
-  align-items:center;
-  gap:18px;
-  flex-shrink:0;
-  transition:transform .2s ease;
-}
-.scroll-item:hover{ transform:scale(1.04); }
-
-.scroll-item img{
-  width:48px;height:48px;border-radius:50%;
-  object-fit:cover;background:#101010;
-  box-shadow:0 0 8px rgba(191,246,17,.4);
-}
-.scroll-item span{
-  font-family:'Inter',sans-serif;font-size:17px;font-weight:400;
-  color:#fff9f9;white-space:nowrap;
-}
-
-.scroll-shadow-left,.scroll-shadow-right{
-  position:absolute;top:0;bottom:0;width:100px;z-index:3;pointer-events:none;
-}
-.scroll-shadow-left{
-  left:0;background:linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
-}
-.scroll-shadow-right{
-  right:0;background:linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
-}
-
-@media (max-width:768px){
-  .scroll-item{ padding:14px 20px; }
-  .scroll-item img{ width:38px; height:38px; }
-  .scroll-item span{ font-size:17px; }
-  .scroll-section h3{ font-size:20px; }
-}
-
-
-
-   /* === REVIEWS SECTION === */
-/* === REVIEWS: CSS === */
-/* === REVIEWS: CSS === */
-
-/* === REVIEWS: CSS (drop-in replacement) === */
-.reviews-section{
-  padding:80px 40px 120px;
-  background:transparent;
-  max-width:1400px;
-  margin:0 auto;
-}
-
-/* header: center title/sub, arrows on the right */
-.reviews-header{
-  display:grid;
-  grid-template-columns: 1fr auto 1fr; /* spacer | center | arrows */
-  align-items:center;
-  gap:24px;
-}
-
-.reviews-title{
-  grid-column:2;        /* exact middle */
-  text-align:center;
-}
-
-.reviews-title h2{
-  font-size:44px;
-  font-family:'Shoika',sans-serif;
-  font-weight:400;
-  color:#fff9f9;
-}
-.reviews-title h2 .green{ color:#bff611; }
-.reviews-sub{
-  font-size:20px;
-  color:#a8a8a8;
-  margin-top:10px;
-}
-
-/* arrows (top-right) */
-.review-nav{
-  grid-column:3;
-  justify-self:end;
-  display:flex;
-  gap:14px;
-}
-.review-nav .nav{
-  width:52px;height:52px;border:none;border-radius:50%;cursor:pointer;
-  display:grid;place-items:center;
-  box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
-  transition:box-shadow .2s ease, transform .05s ease;
-}
-.review-nav .nav.left{ background:#ffffff; }
-.review-nav .nav.right{ background:#bff611; }
-.review-nav .nav:hover{ box-shadow:0 0 14px rgba(191,246,17,.6); }
-.review-nav .nav:active{ transform:scale(.98); }
-.review-nav .nav img{
-  width:22px;height:22px;display:block;pointer-events:none; /* click goes to button */
-  transition: transform .18s ease;
-}
-.review-nav .nav.left:hover img{ transform: translateX(-1px); }
-.review-nav .nav.right:hover img{ transform: translateX(1px); }
-
-/* carousel */
-.reviews-viewport{ overflow:hidden; margin-top:28px; }
-.reviews-track{ display:flex; gap:24px; transition:transform .35s ease; }
-.review-card{
-  flex:0 0 calc((100% - 48px)/3);
-  border:1px solid #b4b4b4;border-radius:23px;padding:10px;background:#000;
-}
-.review-card img{ width:100%;display:block;border-radius:17px; }
-
-/* dots */
-.review-dots{
-  display:flex;justify-content:center;gap:10px;
-  margin:28px 0 26px; /* space above button */
-}
-.review-dot{ width:8px;height:8px;border-radius:50%;background:#666;opacity:.8;cursor:pointer; }
-.review-dot.active{ background:#b9f03d;opacity:1; }
-
-/* button */
-.leave-review-wrap{ display:flex;justify-content:center; }
-.leave-review{
-  background:#adff00;color:#000;font-size:18px;border:none;border-radius:12px;
-  padding:14px 26px;cursor:pointer;font-weight:500;transition:box-shadow .3s ease;
-}
-.leave-review:hover{ box-shadow:0 0 14px #adff00; }
-
-/* responsive */
-@media (max-width:1100px){
-  .review-card{ flex-basis:calc((100% - 24px)/2); }
-}
-@media (max-width:700px){
-  .reviews-header{ grid-template-columns:1fr; }
-  .review-nav{ grid-column:auto; justify-self:center; }
-}
-@media (max-width:640px){
-  .review-card{ flex-basis:100%; }
-}
-
-
-
-
-/* === FAQ STYLES === */
-/* === FAQ STYLES (updated) === */
-/* === FAQ (wider, bigger, only-open-colored) === */
-.faq-section{
-  max-width:1200px;              /* wider container */
-  margin:0 auto;
-  padding:80px 24px;
-  font-family:'Inter',sans-serif;
-  text-align:center;             /* center title */
-}
-.faq-title{
-  font-size:64px;                /* bigger title */
-  line-height:1.1;
-  color:#fff9f9;
-  margin-bottom:34px;
-  font-weight:400;
-}
-
-.faq-list{
-  max-width:1100px;              /* wider list so blocks start more left & end more right */
-  margin:0 auto;
-  display:flex; flex-direction:column; gap:20px;
-  text-align:left;               /* left-align the Q/A text inside */
-}
-
-/* each item is a unified block */
-/* === FAQ FIX: one-piece open block, color #191624 === */
-.faq-item {
-  border-radius: 24px;
-  overflow: hidden;
-  background: transparent; /* let states handle bg */
-}
-
-/* Default (closed) question look */
-.faq-q {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 30px 34px;
-  border: none;
-  cursor: pointer;
-  background: #0b0a12; /* closed state color */
-  color: #fff9f9;
-  font-size: 26px;
-  font-weight: 500;
-  border-radius: 24px;
-  transition: background .2s ease;
-}
-
-.faq-q:hover {
-  background: #12101a;
-}
-
-/* Opened state: question + answer appear as one block */
-.faq-item.open {
-  background: #191624;            /* one unified bg */
-  border-radius: 24px;
-}
-
-.faq-item.open .faq-q {
-  background: transparent;        /* inherits from parent */
-  border-radius: 24px 24px 0 0;    /* rounded only on top */
-}
-
-.faq-a {
-  background: transparent;         /* same as parent */
-  color: #cfcbd6;
-  font-size: 22px;
-  line-height: 1.7;
-  padding: 0 34px;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.2s ease;
-}
-
-.faq-item.open .faq-a {
-  padding: 18px 34px 24px;
-  max-height: 480px;
-  opacity: 1;
-  border-radius: 0 0 24px 24px; /* bottom rounding */
-}
-
-
-
-    /* === FOOTER === */
-.site-footer-wrap{
-  max-width:1400px;
-  margin:80px auto 0;            /* space above footer */
-  padding:0 24px;
-  font-family:'Inter',sans-serif;
-}
-.site-footer{
-  background:#171717;            /* footer panel bg */
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:18px;
-  padding:44px 48px;
-  display:grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
-  gap:48px;
-}
-.footer-left{
-  display:flex;align-items:flex-start;gap:18px;
-}
-.footer-logo{
-  width:56px;height:56px;border-radius:100px;flex:0 0 auto;
-  object-fit:cover;display:block;
-}
-.footer-brand{
-  color:#fff9f9;font-size:34px;font-weight:600;line-height:1;
-}
-.footer-tagline{
-  color:#fff9f9;opacity:.9;margin-top:10px;font-size:18px;line-height:1.6;
-  max-width:560px;
-}
-.footer-disclaimer{
-  color:#fff9f9;margin-top:28px;font-size:18px;
-}
-
-.footer-col h4{
-  color:#fff9f9;font-size:28px;font-weight:600;margin-bottom:18px;
-}
-.footer-links{
-  display:flex;flex-direction:column;gap:16px;
-}
-.footer-links a{
-  color:#8b8b88;text-decoration:none;font-size:20px;
-}
-.footer-links a:hover{opacity:.9}
-
-.footer-social{
-  grid-column:2 / span 2;
-  display:flex;align-items:center;gap:18px;margin-top:8px;
-}
-.footer-social a{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:56px;height:56px;border-radius:16px;background:#0f0f0f;
-  box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 6px 18px rgba(0,0,0,.35);
-  transition:transform .15s ease, box-shadow .2s ease;
-}
-.footer-social a:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 10px 24px rgba(0,0,0,.45)}
-.footer-social img{width:28px;height:28px;display:block}
-
-@media (max-width:900px){
-  .site-footer{grid-template-columns:1fr;gap:28px}
-  .footer-social{grid-column:auto;margin-top:0}
-}
-
-
- </style>
-
-</head>
-<body>
-  <!-- FLOATING TOP BAR -->
-<div class="topbar-wrap" id="topbarWrap">
-  <div class="topbar">
-    <div class="topbar-left">
-    <img class="topbar-logo" src="https://imgur.com/NgUKedh.png" alt="SignSense logo">
-
-      <span class="topbar-brand">SignSense</span>
-    </div>
-    <nav class="topbar-nav">
-      <a href="#how-it-works">See How It Works</a>
-      <a href="#features">Features</a>
-      <a href="#contact">Contact Us</a>
-    </nav>
-  </div>
-</div>
-
-<div class="particle-container" id="particles"></div>
-
-
-
-<div class="hero-wrapper">
-  <section class="hero">
-    <div class="hero-upper">
-      <div class="tagline-absolute"><span>AI</span>Legal DocReview Tool ↗</div>
-      <h1>Make Sense Of What<br><span>You’re Signing</span></h1>
-      <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students & more</p>
-    </div>
-    <div class="cta-wrapper">
-      <button class="cta-btn">Review A Contract ↗</button>
-    </div>
-  </section>
-
-  <div class="app-container">
-    <div class="app-wrapper" id="appWrapper">
-      <div class="yellow-line" id="yellowLine"></div>
-     <img class="app-preview" src="https://imgur.com/0IkKbof.png" alt="App Preview" />
-    </div>
-  </div>
-</div>
-
-<div style="text-align: center; margin-top: 80px; margin-bottom: 24px;">
-  <div class="section-badge">Instant Clarity Engine ↗</div>
-</div>
-
-<h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
-<p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
-
-<section class="insight-section">
-  <div class="insight-content">
-    <div class="insight-left">
-      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
-    </div>
-    <div class="insight-right">
-      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
-      <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
-      <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
-      <a href="#" class="cta-outline">Review A Contract ↗</a>
-    </div>
-  </div>
-</section>
-
-<!-- SCROLLING FEATURES SECTION -->
-<div class="scroll-full">
-  <div class="scroll-wrapper">
-    <section class="scroll-section">
-    <h3>Everything you need for clarity and security in one seamless experience.</h3>
-    <div class="scroll-strip top-row"></div>
-    <div class="scroll-strip bottom-row"></div>
-    <div class="scroll-shadow-left"></div>
-    <div class="scroll-shadow-right"></div>
-  </section>
-</div>
-</div>
-
-
-<!-- AOS + Particle + Scroll JS -->
-<!-- AOS + Particle + Scroll JS -->
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-AOS.init({ once:true });
-
-/* particles */
-const container = document.getElementById("particles");
-if (container){
-  const num = 50;
-  for (let i=0;i<num;i++){
-    const p = document.createElement("div");
-    p.className = "particle";
-    const duration = 25 + Math.random()*15;
-    const size = 1 + Math.random()*2.5;
-    p.style.left = `${Math.random()*window.innerWidth}px`;
-    p.style.top  = `${Math.random()*1600}px`;
-    p.style.width = `${size}px`;
-    p.style.height= `${size}px`;
-    p.style.animationDuration = `${duration}s`;
-    container.appendChild(p);
-  }
-}
-
-/* app tilt */
-const wrapper = document.getElementById("appWrapper");
-if (wrapper){
-  window.addEventListener("scroll", () => {
-    const st = window.scrollY;
-    wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-  }, {passive:true});
-}
-
-/* features rows */
-const topRow = document.querySelector(".top-row");
-const bottomRow = document.querySelector(".bottom-row");
-
-const featuresTop = [
-  { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-  { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-  { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-  { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-  { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-  { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-  { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-  { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" }
-];
-const featuresBottom = [
-  { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-  { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-  { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-  { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-  { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-  { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-  { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-  { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" }
-];
-
-function populateRow(row, features){
-  if (!row) return;
-  const makeSet = () => {
-    const frag = document.createDocumentFragment();
-    features.forEach(f=>{
-      const el = document.createElement("div");
-      el.className = "scroll-item";
-      el.innerHTML = `<img src="${f.icon}" alt="" loading="lazy"><span>${f.label}</span>`;
-      frag.appendChild(el);
-    });
-    return frag;
-  };
-  row.appendChild(makeSet()); // copy 1
-  row.appendChild(makeSet()); // copy 2 (for seamless loop)
-}
-populateRow(topRow, featuresTop);
-populateRow(bottomRow, featuresBottom);
-
-/* === Endless ticker (no visible reset) === */
-function makeTicker(row, { pxPerSecond=36, direction="left" } = {}){
-  if (!row) return;
-
-  const speed = (direction === "left" ? -pxPerSecond : pxPerSecond);
-  let x = 0, w = 0, raf = 0, last = performance.now();
-
-  function measure(){
-    // two copies -> one set is exactly half width; if 0, retry shortly
-    w = row.scrollWidth / 2;
-    if (!w){
-      setTimeout(measure, 60);
-    }
-  }
-
-  function tick(now){
-    const dt = (now - last) / 1000;
-    last = now;
-
-    x += speed * dt;
-
-    // wrap into [-w, 0) without jump
-    if (x <= -w) x += w;
-    if (x > 0)   x -= w;
-
-    row.style.transform = `translateX(${x}px)`;
-    raf = requestAnimationFrame(tick);
-  }
-
-  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-  function start(){
-    if (media.matches){ row.style.transform = "none"; return; }
-    measure();
-    last = performance.now();
-    raf = requestAnimationFrame(tick);
-  }
-  function stop(){ if (raf) cancelAnimationFrame(raf); }
-
-  window.addEventListener("resize", measure, { passive:true });
-  media.addEventListener?.("change", ()=>{ stop(); start(); });
-  start();
-}
-
-/* start once everything is laid out */
-window.addEventListener("load", () => {
-  makeTicker(topRow,    { pxPerSecond: 36, direction: "right" });
-  makeTicker(bottomRow, { pxPerSecond: 36, direction: "left"  });
-});
-</script>
-
-
-  <!-- WATCH VIDEO SECTION -->
-<section class="watch-video-section">
-  <div class="video-content">
-    <div class="video-text">
-      <h2>Take a deeper look to<br>see how SignSense<br> really works.</h2>
-      <p>Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts</p>
-      <button class="watch-btn">Watch Video ↗</button>
-    </div>
-    <div class="video-box">
-      <div class="video-label">▶ Watch Video</div>
-      <img src="https://imgur.com/8aThMK5.png" alt="Video Placeholder" class="video-img" />
-    </div>
-  </div>
-</section>
-
-<style>
-.watch-video-section {
-  padding: 100px 40px;
-  background-color: transparent;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.video-content {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 120px;
-  flex-wrap: wrap;
-  padding-left: 35px;
-}
-
-.video-text {
-  flex: 1;
-  min-width: 300px;
-}
-
-.video-text h2 {
-  font-size: 44px;
-  color: #fff9f9;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  line-height: 1.4;
-  margin-bottom: 20px;
-}
-
-.video-text p {
-  color: #d8cccc;
-  font-size: 20px;
-  margin-bottom: 36px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  line-height: 1.6;
-}
-
-.watch-btn {
-  background-color: #adff00;
-  color: black;
-  font-size: 18px;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 26px;
-  cursor: pointer;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  box-shadow: 0 0 18px #adff00; /* always glowing */
-  transition: box-shadow 0.25s ease;
-}
-
-.watch-btn:hover {
-  box-shadow: 0 0 32px #adff00; /* stronger glow on hover */
-}
-
-
-.video-box {
-  position: relative;
-  flex: 1;
-  min-width: 320px;
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 40px;
-}
-
-.video-box img.video-img {
-  width: 420px;
-  margin-top: 36px;
-  border-radius: 34px;
-  border: 2px solid #3b3b3b;
-  display: block;
- 
-}
-
-.video-label {
-  position: absolute;
-  top: 4px;     /* Lowered from -16px */
-  left: 150px;   /* Slightly increased for better alignment */
-  background: transparent;
-  color: rgba(191, 246, 17, 0.74);
-  font-size: 18px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 2;
-  pointer-events: none;
-}
-</style>
-<!-- Reviews Section -->
-<!-- Reviews Section -->
-<section class="reviews-section">
-  <div class="reviews-header">
-    <div class="reviews-title">
-      <h2>What <span class="green">Our Clients</span> Say</h2>
-      <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
-    </div>
-
-    <!-- arrows (top-right, together) -->
-    <div class="review-nav">
-      <button class="nav left"  type="button" id="revPrev" aria-label="Previous reviews">
-        <img src="https://imgur.com/nhYxlHX.png" alt="">
-      </button>
-      <button class="nav right" type="button" id="revNext" aria-label="Next reviews">
-        <img src="https://imgur.com/sRwuJpT.png" alt="">
-      </button>
-    </div>
-  </div>
-
-  <div class="reviews-viewport">
-    <div class="reviews-track" id="reviewsTrack">
-      <div class="review-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1"></div>
-      <div class="review-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2"></div>
-      <div class="review-card"><img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3"></div>
-      <div class="review-card"><img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4"></div>
-      <div class="review-card"><img src="https://i.imgur.com/I9iQu88.png" alt="Review 5"></div>
-    </div>
-  </div>
-
-  <div class="review-dots" id="reviewDots"></div>
-
-  <div class="leave-review-wrap">
-    <button class="leave-review" type="button">Leave A Review ↗</button>
-  </div>
-</section>
-
-
-
-
-<script>
-  (function(){
-    const bar = document.getElementById('topbarWrap');
-    let lastY = window.scrollY;
-    let ticking = false;
-
-    function onScroll(){
-      const y = window.scrollY;
-      if (y > lastY && y > 80) {
-        bar.classList.add('hide');   // scrolling down
-      } else {
-        bar.classList.remove('hide'); // scrolling up
+  <head>
+    <meta charset="UTF-8" />
+    <title>SignSense</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://imgur.com/VFu8eyq.png"
+      sizes="64x64"
+    />
+    <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* === FLOATING TOP BAR === */
+      .topbar-wrap {
+        position: fixed;
+        top: 18px; /* not touching the very top */
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        pointer-events: none; /* so only the bar is clickable */
+        transition: transform 0.28s ease, opacity 0.25s ease;
       }
-      lastY = y <= 0 ? 0 : y;
-      ticking = false;
-    }
+      .topbar-wrap.hide {
+        transform: translateY(-140%);
+        opacity: 0;
+      }
 
-    window.addEventListener('scroll', () => {
-      if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
-    }, {passive:true});
-  })();
-</script>
+      .topbar {
+        pointer-events: auto;
+        background: #090922; /* CHANGE */
+        border: 1px solid #b4b4b4; /* ADD */
+        border-radius: 16px; /* requested radius */
+        min-height: 72px;
+        padding: 12px 18px;
+        width: min(1120px, calc(100% - 60px)); /* breathing room on sides */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      }
 
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .topbar-logo {
+        height: 38px;
+        width: auto;
+        border-radius: 8px;
+      }
+      .topbar-brand {
+        font-family: "Shoika", sans-serif;
+        font-size: 28px;
+        color: #fff;
+      }
 
+      .topbar-nav a {
+        text-decoration: none;
+        font-size: 20px;
+        color: #fff;
+        margin-left: 24px;
+      }
+      .topbar-nav a:hover {
+        opacity: 0.8;
+      }
 
-<!-- REVIEWS SECTION -->
-<!-- === REVIEWS: JS === -->
-<script>
-/* === REVIEWS: JS (drop-in replacement) === */
-(function(){
-  const track   = document.getElementById('reviewsTrack');
-  const prev    = document.getElementById('revPrev');
-  const next    = document.getElementById('revNext');
-  const dotsWrap= document.getElementById('reviewDots');
-  const cards   = () => Array.from(track.querySelectorAll('.review-card'));
+      /* push content down so bar doesn’t overlap hero */
+      .hero-wrapper {
+        margin-top: 120px;
+      } /* REPLACES your -40px rule */
 
-  let index = 0;     // leftmost visible card index
-  let perPage = 3;   // visible at once (auto on resize)
+      :root {
+        --bg-dark: #01040b;
+        --text-light: #fff9f9;
+        --text-muted: #d8cccc;
+        --highlight-green: #bff611;
+        --badge-glow: #adff00;
+        --badge-purple: #1f1a34;
+        --badge-lime: #adff00;
+        --badge-gray: #2e2b3a;
+        --particle-color: #682fd8;
+        --purple-border: #4a2d91;
+        --purple-hover: #2a1f4a;
+      }
 
-  function measure(){
-    const w = window.innerWidth;
-    if (w <= 640)      perPage = 1;
-    else if (w <=1100) perPage = 2;
-    else               perPage = 3;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    // clamp index so we never show gaps on the right
-    index = Math.min(index, Math.max(0, cards().length - perPage));
-    renderDots();
-    go(index, false);
-  }
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--text-light);
+        background: var(--bg-dark);
+        overflow-x: hidden;
+      }
 
-  function cardFullWidth(){
-    const c = cards()[0];
-    if (!c) return 0;
-    const style = getComputedStyle(c);
-    const w = c.getBoundingClientRect().width;
-    const mr = parseFloat(style.marginRight||0);
-    const ml = parseFloat(style.marginLeft||0);
-    const gap = 24; // matches CSS gap
-    return w + ml + mr + gap;
-  }
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1600px;
+        background: url("https://imgur.com/eBWIkvp.png") no-repeat center bottom;
+        background-size: 100% 1600px;
+        z-index: -2;
+      }
 
-  function go(i, animate=true){
-    const maxIndex = Math.max(0, cards().length - perPage); // e.g., 5-3=2 on desktop
-    index = Math.max(0, Math.min(i, maxIndex));
-    const shift = -(index * cardFullWidth());
-    if (!animate) track.style.transition = 'none';
-    track.style.transform = `translateX(${shift}px)`;
-    if (!animate) requestAnimationFrame(()=>track.style.transition='transform .35s ease');
-    updateDots();
-  }
+      .particle-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1600px;
+        pointer-events: none;
+        z-index: -1;
+      }
 
-  function renderDots(){
-    dotsWrap.innerHTML = '';
-    const total = cards().length; // 1 dot per card; active window = visible 3
-    for(let i=0;i<total;i++){
-      const d = document.createElement('div');
-      d.className = 'review-dot';
-      d.addEventListener('click', ()=>{
-        const target = Math.min(i, total - perPage); // jump so clicked one becomes visible
-        go(target);
-      });
-      dotsWrap.appendChild(d);
-    }
-    updateDots();
-  }
+      .particle {
+        position: absolute;
+        background-color: var(--particle-color);
+        border-radius: 50%;
+        width: 3px;
+        height: 3px;
+        box-shadow: 0 0 6px var(--particle-color);
+        animation: floatUp linear infinite;
+        z-index: -1;
+      }
 
-  function updateDots(){
-    const total = cards().length;
-    [...dotsWrap.children].forEach((d,i)=>{
-      d.classList.toggle('active', i>=index && i<index+perPage);
-    });
-  }
+      @keyframes floatUp {
+        from {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(-1600px);
+          opacity: 0;
+        }
+      }
 
-  prev.addEventListener('click', ()=>go(index-1));
-  next.addEventListener('click', ()=>go(index+1));
-  window.addEventListener('resize', measure, {passive:true});
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        font-size: 22px;
+        position: relative;
+        z-index: 2;
+      }
 
-  measure();
-})();
-</script>
+      header img {
+        height: 44px;
+        margin-right: 14px;
+        border-radius: 50%;
+      }
 
-<!-- FAQ SECTION -->
-<section class="faq-section">
-  <h2 class="faq-title">Frequently Asked Questions</h2>
-  <div class="faq-list">
+      .logo-wrap {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+        font-weight: 500;
+        color: white;
+      }
 
-    <div class="faq-item">
-      <button class="faq-q" type="button">
-        <span>What languages do you support?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="faq-a">
-        We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!
-      </div>
-    </div>
+      nav a {
+        color: var(--text-muted);
+        margin: 0 26px;
+        text-decoration: none;
+        font-size: 20px;
+      }
 
-    <div class="faq-item open"> <!-- OPEN BY DEFAULT -->
-      <button class="faq-q" type="button">
-        <span>Is SignSense legally binding or a replacement for a lawyer?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="faq-a">
-        No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.
-      </div>
-    </div>
+      .hero-wrapper {
+        margin-top: 80px;
+      }
 
-    <div class="faq-item">
-      <button class="faq-q" type="button">
-        <span>What types of contracts can I upload?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="faq-a">
-        Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
-      </div>
-    </div>
+      .tagline-absolute {
+        background-color: #090922;
+        color: #bbb;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px;
+        font-size: 15px;
+        border-radius: 53px;
+        position: relative;
+        margin-bottom: 26px;
+        transition: none;
+        box-shadow: 0 0 20px var(--badge-glow);
+      }
 
-    <div class="faq-item">
-      <button class="faq-q" type="button">
-        <span>Is my data secure when I upload a contract?</span>
-        <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-          <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="faq-a">
-        Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
-      </div>
-    </div>
+      .tagline-absolute span {
+        background-color: var(--badge-lime);
+        color: black;
+        padding: 6px 12px;
+        border-radius: 53px;
+        font-size: 13px;
+        font-weight: bold;
+      }
 
-  </div>
-</section>
+      .hero {
+        text-align: center;
+        padding: 80px 20px 30px;
+      }
 
+      .hero-upper {
+        margin-top: 50px;
+      }
 
-<script>
-document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const item = btn.parentElement;
-    if(!item.classList.contains('open')){
-      document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
-    }
-    item.classList.toggle('open');
-  });
-});
-</script>
+      h1,
+      h2 {
+        font-family: "Shoika", sans-serif;
+        font-weight: 400;
+      }
 
-<!-- === FOOTER === -->
-<!-- === FOOTER === -->
-<!-- === FOOTER (updated) === -->
-<!-- === FOOTER (FINAL CLEAN) === -->
-<!-- === FOOTER (clean, aligned) === -->
-<div class="site-footer-wrap">
-  <footer class="site-footer">
-    <!-- Left: logo + brand + text + button -->
-    <div class="footer-left">
-      <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
-      <div class="footer-left-inner">
-        <div class="footer-brand">SignSense</div>
-        <div class="footer-tagline">
-          <div>No confusion, no legal jargon.</div>
-          <div>For informational use only. Not legal advice.</div>
+      h1 {
+        font-size: 68px;
+        margin: 0;
+        color: var(--text-light);
+        font-weight: 400;
+        line-height: 1.1;
+      }
+
+      .hero h1 span {
+        display: block;
+        margin-top: 8px;
+      }
+
+      .subtext {
+        color: var(--text-muted);
+        margin: 18px 0 30px;
+        font-size: 20px;
+      }
+
+      .cta-wrapper {
+        margin-top: 75px;
+      }
+
+      .cta-btn {
+        background: white;
+        color: black;
+        border: 2px solid #999;
+        padding: 16px 30px;
+        border-radius: 16px;
+        font-size: 18px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .cta-btn:hover {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+      }
+
+      .app-container {
+        position: relative;
+        width: 100%;
+        max-width: 1050px;
+        margin: 30px auto 0;
+        perspective: 1000px;
+      }
+
+      .app-wrapper {
+        position: relative;
+        transition: transform 0.8s ease;
+        transform: rotateX(12deg);
+      }
+
+      .app-preview {
+        width: 100%;
+        border-radius: 24px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+        display: block;
+      }
+
+      /*@keyframes fadeOut {
+        0% {
+          opacity: 0;
+        }
+        5% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      */
+      .section-title {
+        text-align: center;
+        font-size: 44px;
+        color: var(--text-light);
+        font-weight: 400;
+        line-height: 1.4;
+        margin-top: 14px;
+      }
+
+      .section-sub {
+        text-align: center;
+        color: var(--text-muted);
+        margin-top: 12px;
+        font-size: 21px;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+
+      .section-badge {
+        background-color: #090922;
+        color: #bbb;
+        padding: 6px 14px;
+        border-radius: 53px;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: none;
+        box-shadow: 0 0 20px var(--badge-glow);
+      }
+
+      .section-badge:hover {
+        box-shadow: 0 0 20px var(--badge-glow);
+      }
+
+      .insight-section {
+        padding: 60px 20px 60px;
+      }
+
+      .insight-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        max-width: 1300px;
+        margin: 0 auto;
+        gap: 80px;
+      }
+
+      .insight-left {
+        position: relative;
+        margin-left: -120px;
+      }
+      .moving-line-wrapper {
+        min-width: 200px;
+        min-height: 200px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1 !important;
+        background-color: black;
+        /* background-color: gray; */
+        /* background: transparent; */
+        border-radius: 10px;
+        padding: 2px;
+        /* aspect-ratio: 1/1; */
+      }
+
+      .moving-line-wrapper .moving-line-content {
+        min-width: inherit;
+        min-height: inherit;
+        padding: 10px;
+        z-index: 2 !important;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-origin: center;
+        background: inherit;
+        border-radius: inherit;
+        overflow: inherit;
+        /* aspect-ratio: inherit; */
+        /* background-color: green; */
+      }
+
+      @keyframes move-around {
+        0% {
+          top: -20px;
+          left: -20px;
+        }
+        25% {
+          top: -20px;
+          left: calc(100% - 20px);
+        }
+        50% {
+          top: calc(100% - 20px);
+          left: calc(100% - 20px);
+        }
+        75% {
+          top: calc(100% - 20px);
+          left: -20px;
+        }
+        100% {
+          top: -20px;
+          left: -20px;
+        }
+      }
+
+      .yellow-line {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: rgba(191, 246, 17, 0.8);
+        box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8);
+        border-radius: 50%;
+        animation: move-around 8s linear infinite;
+        z-index: 0 !important;
+      }
+
+      .insight-left img {
+        width: 520px;
+        border-radius: 20px;
+        display: block;
+      }
+
+      .insight-right {
+        max-width: 540px;
+        text-align: left;
+      }
+
+      .insight-icon {
+        width: 80px;
+        margin-top: 40px;
+        margin-bottom: 30px;
+      }
+
+      .insight-right h2 {
+        font-size: 44px;
+        color: #fff9f9;
+        margin-bottom: 26px;
+        font-weight: 400;
+      }
+
+      .insight-right p {
+        color: #d8cccc;
+        font-size: 22px;
+        margin-bottom: 38px;
+        font-weight: 400;
+      }
+
+      .cta-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 24px;
+        font-size: 20px;
+        background-color: #adff00;
+        color: black;
+        border: none;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: box-shadow 0.3s ease;
+        font-weight: 500;
+      }
+
+      .cta-outline:hover {
+        box-shadow: 0 0 16px #adff00;
+      }
+
+      /* Scroll Section Styles START */
+      .scroll-section {
+        position: relative;
+        padding: 30px 0;
+        background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
+        border: 1px solid rgba(36, 36, 37, 0.78);
+        border-radius: 18px;
+        margin: 40px auto 0;
+        overflow: hidden;
+        max-width: 1360px;
+        transform: scale(0.94);
+      }
+
+      .scroll-section h3 {
+        text-align: center;
+        font-size: 25px;
+        line-height: 1.4;
+        color: #fff9f9;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        margin-top: 40px;
+        margin-bottom: 50px;
+      }
+
+      .scroll-wrapper {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 30px;
+      }
+
+      .scroll-full {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+      }
+
+      /* === FEATURES STRIP (no keyframes; JS handles endless scroll) === */
+      /* === FEATURES STRIP (endless; JS drives movement) === */
+      .scroll-strip {
+        display: flex;
+        gap: 28px;
+        padding: 14px 0;
+        white-space: nowrap;
+        flex-shrink: 0;
+        will-change: transform;
+      }
+
+      /* keep hooks, no CSS animations */
+      .top-row {
+      }
+      .bottom-row {
+      }
+
+      .scroll-item {
+        background: rgba(26, 24, 34, 0.57);
+        border: 1px solid #3b3b3b;
+        border-radius: 48px;
+        padding: 16px 28px;
+        display: inline-flex;
+        align-items: center;
+        gap: 18px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+      .scroll-item:hover {
+        transform: scale(1.04);
+      }
+
+      .scroll-item img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #101010;
+        box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
+      }
+      .scroll-item span {
+        font-family: "Inter", sans-serif;
+        font-size: 17px;
+        font-weight: 400;
+        color: #fff9f9;
+        white-space: nowrap;
+      }
+
+      .scroll-shadow-left,
+      .scroll-shadow-right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        z-index: 3;
+        pointer-events: none;
+      }
+      .scroll-shadow-left {
+        left: 0;
+        background: linear-gradient(
+          to right,
+          rgba(14, 12, 19, 1),
+          rgba(14, 12, 19, 0.6),
+          transparent
+        );
+      }
+      .scroll-shadow-right {
+        right: 0;
+        background: linear-gradient(
+          to left,
+          rgba(14, 12, 19, 1),
+          rgba(14, 12, 19, 0.6),
+          transparent
+        );
+      }
+
+      @media (max-width: 768px) {
+        .scroll-item {
+          padding: 14px 20px;
+        }
+        .scroll-item img {
+          width: 38px;
+          height: 38px;
+        }
+        .scroll-item span {
+          font-size: 17px;
+        }
+        .scroll-section h3 {
+          font-size: 20px;
+        }
+      }
+
+      /* === REVIEWS SECTION === */
+      /* === REVIEWS: CSS === */
+      /* === REVIEWS: CSS === */
+
+      /* === REVIEWS: CSS (drop-in replacement) === */
+      .reviews-section {
+        padding: 80px 40px 120px;
+        background: transparent;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* header: center title/sub, arrows on the right */
+      .reviews-header {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr; /* spacer | center | arrows */
+        align-items: center;
+        gap: 24px;
+      }
+
+      .reviews-title {
+        grid-column: 2; /* exact middle */
+        text-align: center;
+      }
+
+      .reviews-title h2 {
+        font-size: 44px;
+        font-family: "Shoika", sans-serif;
+        font-weight: 400;
+        color: #fff9f9;
+      }
+      .reviews-title h2 .green {
+        color: #bff611;
+      }
+      .reviews-sub {
+        font-size: 20px;
+        color: #a8a8a8;
+        margin-top: 10px;
+      }
+
+      /* arrows (top-right) */
+      .review-nav {
+        grid-column: 3;
+        justify-self: end;
+        display: flex;
+        gap: 14px;
+      }
+      .review-nav .nav {
+        width: 52px;
+        height: 52px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06) inset;
+        transition: box-shadow 0.2s ease, transform 0.05s ease;
+      }
+      .review-nav .nav.left {
+        background: #ffffff;
+      }
+      .review-nav .nav.right {
+        background: #bff611;
+      }
+      .review-nav .nav:hover {
+        box-shadow: 0 0 14px rgba(191, 246, 17, 0.6);
+      }
+      .review-nav .nav:active {
+        transform: scale(0.98);
+      }
+      .review-nav .nav img {
+        width: 22px;
+        height: 22px;
+        display: block;
+        pointer-events: none; /* click goes to button */
+        transition: transform 0.18s ease;
+      }
+      .review-nav .nav.left:hover img {
+        transform: translateX(-1px);
+      }
+      .review-nav .nav.right:hover img {
+        transform: translateX(1px);
+      }
+
+      /* carousel */
+      .reviews-viewport {
+        overflow: hidden;
+        margin-top: 28px;
+      }
+      .reviews-track {
+        display: flex;
+        gap: 24px;
+        transition: transform 0.35s ease;
+      }
+      .review-card {
+        flex: 0 0 calc((100% - 48px) / 3);
+        border: 1px solid #b4b4b4;
+        border-radius: 23px;
+        padding: 10px;
+        background: #000;
+      }
+      .review-card img {
+        width: 100%;
+        display: block;
+        border-radius: 17px;
+      }
+
+      /* dots */
+      .review-dots {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 28px 0 26px; /* space above button */
+      }
+      .review-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #666;
+        opacity: 0.8;
+        cursor: pointer;
+      }
+      .review-dot.active {
+        background: #b9f03d;
+        opacity: 1;
+      }
+
+      /* button */
+      .leave-review-wrap {
+        display: flex;
+        justify-content: center;
+      }
+      .leave-review {
+        background: #adff00;
+        color: #000;
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 26px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: box-shadow 0.3s ease;
+      }
+      .leave-review:hover {
+        box-shadow: 0 0 14px #adff00;
+      }
+
+      /* responsive */
+      @media (max-width: 1100px) {
+        .review-card {
+          flex-basis: calc((100% - 24px) / 2);
+        }
+      }
+      @media (max-width: 700px) {
+        .reviews-header {
+          grid-template-columns: 1fr;
+        }
+        .review-nav {
+          grid-column: auto;
+          justify-self: center;
+        }
+      }
+      @media (max-width: 640px) {
+        .review-card {
+          flex-basis: 100%;
+        }
+      }
+
+      /* === FAQ STYLES === */
+      /* === FAQ STYLES (updated) === */
+      /* === FAQ (wider, bigger, only-open-colored) === */
+      .faq-section {
+        max-width: 1200px; /* wider container */
+        margin: 0 auto;
+        padding: 80px 24px;
+        font-family: "Inter", sans-serif;
+        text-align: center; /* center title */
+      }
+      .faq-title {
+        font-size: 64px; /* bigger title */
+        line-height: 1.1;
+        color: #fff9f9;
+        margin-bottom: 34px;
+        font-weight: 400;
+      }
+
+      .faq-list {
+        max-width: 1100px; /* wider list so blocks start more left & end more right */
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: left; /* left-align the Q/A text inside */
+      }
+
+      /* each item is a unified block */
+      /* === FAQ FIX: one-piece open block, color #191624 === */
+      .faq-item {
+        border-radius: 24px;
+        overflow: hidden;
+        background: transparent; /* let states handle bg */
+      }
+
+      /* Default (closed) question look */
+      .faq-q {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 30px 34px;
+        border: none;
+        cursor: pointer;
+        background: #0b0a12; /* closed state color */
+        color: #fff9f9;
+        font-size: 26px;
+        font-weight: 500;
+        border-radius: 24px;
+        transition: background 0.2s ease;
+      }
+
+      .faq-q:hover {
+        background: #12101a;
+      }
+
+      /* Opened state: question + answer appear as one block */
+      .faq-item.open {
+        background: #191624; /* one unified bg */
+        border-radius: 24px;
+      }
+
+      .faq-item.open .faq-q {
+        background: transparent; /* inherits from parent */
+        border-radius: 24px 24px 0 0; /* rounded only on top */
+      }
+
+      .faq-a {
+        background: transparent; /* same as parent */
+        color: #cfcbd6;
+        font-size: 22px;
+        line-height: 1.7;
+        padding: 0 34px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.2s ease;
+      }
+
+      .faq-item.open .faq-a {
+        padding: 18px 34px 24px;
+        max-height: 480px;
+        opacity: 1;
+        border-radius: 0 0 24px 24px; /* bottom rounding */
+      }
+
+      /* === FOOTER === */
+      .site-footer-wrap {
+        max-width: 1400px;
+        margin: 80px auto 0; /* space above footer */
+        padding: 0 24px;
+        font-family: "Inter", sans-serif;
+      }
+      .site-footer {
+        background: #171717; /* footer panel bg */
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        padding: 44px 48px;
+        display: grid;
+        grid-template-columns: 1.3fr 1fr 1fr;
+        gap: 48px;
+      }
+      .footer-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+      }
+      .footer-logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 100px;
+        flex: 0 0 auto;
+        object-fit: cover;
+        display: block;
+      }
+      .footer-brand {
+        color: #fff9f9;
+        font-size: 34px;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .footer-tagline {
+        color: #fff9f9;
+        opacity: 0.9;
+        margin-top: 10px;
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 560px;
+      }
+      .footer-disclaimer {
+        color: #fff9f9;
+        margin-top: 28px;
+        font-size: 18px;
+      }
+
+      .footer-col h4 {
+        color: #fff9f9;
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 18px;
+      }
+      .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .footer-links a {
+        color: #8b8b88;
+        text-decoration: none;
+        font-size: 20px;
+      }
+      .footer-links a:hover {
+        opacity: 0.9;
+      }
+
+      .footer-social {
+        grid-column: 2 / span 2;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-top: 8px;
+      }
+      .footer-social a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: #0f0f0f;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05),
+          0 6px 18px rgba(0, 0, 0, 0.35);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+      }
+      .footer-social a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 10px 24px rgba(0, 0, 0, 0.45);
+      }
+      .footer-social img {
+        width: 28px;
+        height: 28px;
+        display: block;
+      }
+
+      @media (max-width: 900px) {
+        .site-footer {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        .footer-social {
+          grid-column: auto;
+          margin-top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- FLOATING TOP BAR -->
+    <div class="topbar-wrap" id="topbarWrap">
+      <div class="topbar">
+        <div class="topbar-left">
+          <img
+            class="topbar-logo"
+            src="https://imgur.com/NgUKedh.png"
+            alt="SignSense logo"
+          />
+
+          <span class="topbar-brand">SignSense</span>
         </div>
-        <a href="#review" class="footer-cta">Review A Contract ↗</a>
+        <nav class="topbar-nav">
+          <a href="#how-it-works">See How It Works</a>
+          <a href="#features">Features</a>
+          <a href="#contact">Contact Us</a>
+        </nav>
       </div>
     </div>
 
-    <!-- Right: 3 straight columns (titles aligned with items) -->
-    <div class="footer-col">
-      <div class="footer-title">Quick Menu</div>
-      <nav class="footer-links">
-        <a href="#how-it-works">How it Works</a>
-        <a href="#review">Leave Review</a>
-      </nav>
+    <div class="particle-container" id="particles"></div>
+
+    <div class="hero-wrapper">
+      <section class="hero">
+        <div class="hero-upper">
+          <div class="tagline-absolute">
+            <span>AI</span>Legal DocReview Tool ↗
+          </div>
+          <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
+          <p class="subtext">
+            SignSense instantly simplifies contracts for law firms, freelancers,
+            students & more
+          </p>
+        </div>
+        <div class="cta-wrapper">
+          <button class="cta-btn">Review A Contract ↗</button>
+        </div>
+      </section>
+
+      <div class="app-container">
+        <div class="app-wrapper" id="appWrapper">
+          <!-- <div class="yellow-line" id="yellowLine"></div> -->
+          <img
+            class="app-preview"
+            src="https://imgur.com/0IkKbof.png"
+            alt="App Preview"
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="footer-col">
-      <div class="footer-title">Information</div>
-      <nav class="footer-links">
-        <a href="#contact">Contact</a>
-        <a href="#features">Features</a>
-      </nav>
+    <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
+      <div class="section-badge">Instant Clarity Engine ↗</div>
     </div>
 
-    <div class="footer-col">
-      <div class="footer-title">Socials</div>
-      <nav class="footer-links">
-        <a href="#">Instagram</a>
-        <a href="#">YouTube</a>
-        <a href="#">X</a>
-      </nav>
+    <h2 class="section-title">Understand Your<br />Contract at a Glance</h2>
+    <p class="section-sub">
+      We highlight key terms, risks, and clauses so you can<br />grasp the
+      essentials without reading every line
+    </p>
+
+    <section class="insight-section">
+      <div class="insight-content">
+        <div class="insight-left moving-line-wrapper">
+          <span class="yellow-line" id="yellowLine"></span>
+          <div class="moving-line-content">
+            <!-- Here is the content-->
+            <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+          </div>
+        </div>
+
+        <div class="insight-right">
+          <img
+            src="https://img.icons8.com/color/96/combo-chart--v1.png"
+            alt="Analytics Icon"
+            class="insight-icon"
+          />
+          <h2>Clear insights for <br /><span>easy, accurate reviews.</span></h2>
+          <p>
+            We break down complex contract language into clear, actionable
+            takeaways so you can review with confidence, not confusion.
+          </p>
+          <a href="#" class="cta-outline">Review A Contract ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCROLLING FEATURES SECTION -->
+    <div class="scroll-full">
+      <div class="scroll-wrapper">
+        <section class="scroll-section">
+          <h3>
+            Everything you need for clarity and security in one seamless
+            experience.
+          </h3>
+          <div class="scroll-strip top-row"></div>
+          <div class="scroll-strip bottom-row"></div>
+          <div class="scroll-shadow-left"></div>
+          <div class="scroll-shadow-right"></div>
+        </section>
+      </div>
     </div>
-  </footer>
 
-  <div class="footer-bottom">
-    <div class="footer-divider"></div>
-    <div class="footer-bottom-links">
-      <span>Privacy Policy</span>
-      <span>Terms &amp; Conditions</span>
-      <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+    <!-- AOS + Particle + Scroll JS -->
+    <!-- AOS + Particle + Scroll JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init({ once: true });
+
+      /* particles */
+      const container = document.getElementById("particles");
+      if (container) {
+        const num = 50;
+        for (let i = 0; i < num; i++) {
+          const p = document.createElement("div");
+          p.className = "particle";
+          const duration = 25 + Math.random() * 15;
+          const size = 1 + Math.random() * 2.5;
+          p.style.left = `${Math.random() * window.innerWidth}px`;
+          p.style.top = `${Math.random() * 1600}px`;
+          p.style.width = `${size}px`;
+          p.style.height = `${size}px`;
+          p.style.animationDuration = `${duration}s`;
+          container.appendChild(p);
+        }
+      }
+
+      /* app tilt */
+      const wrapper = document.getElementById("appWrapper");
+      if (wrapper) {
+        window.addEventListener(
+          "scroll",
+          () => {
+            const st = window.scrollY;
+            wrapper.style.transform =
+              st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+          },
+          { passive: true }
+        );
+      }
+
+      /* features rows */
+      const topRow = document.querySelector(".top-row");
+      const bottomRow = document.querySelector(".bottom-row");
+
+      const featuresTop = [
+        { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
+        { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
+        { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
+        { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
+        {
+          label: "Your Data Stays Yours",
+          icon: "https://imgur.com/SaW85D2.png",
+        },
+        { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
+        { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
+        { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
+      ];
+      const featuresBottom = [
+        { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
+        { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
+        { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
+        { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
+        { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
+        { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
+        { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
+        { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" },
+      ];
+
+      function populateRow(row, features) {
+        if (!row) return;
+        const makeSet = () => {
+          const frag = document.createDocumentFragment();
+          features.forEach((f) => {
+            const el = document.createElement("div");
+            el.className = "scroll-item";
+            el.innerHTML = `<img src="${f.icon}" alt="" loading="lazy"><span>${f.label}</span>`;
+            frag.appendChild(el);
+          });
+          return frag;
+        };
+        row.appendChild(makeSet()); // copy 1
+        row.appendChild(makeSet()); // copy 2 (for seamless loop)
+      }
+      populateRow(topRow, featuresTop);
+      populateRow(bottomRow, featuresBottom);
+
+      /* === Endless ticker (no visible reset) === */
+      function makeTicker(row, { pxPerSecond = 36, direction = "left" } = {}) {
+        if (!row) return;
+
+        const speed = direction === "left" ? -pxPerSecond : pxPerSecond;
+        let x = 0,
+          w = 0,
+          raf = 0,
+          last = performance.now();
+
+        function measure() {
+          // two copies -> one set is exactly half width; if 0, retry shortly
+          w = row.scrollWidth / 2;
+          if (!w) {
+            setTimeout(measure, 60);
+          }
+        }
+
+        function tick(now) {
+          const dt = (now - last) / 1000;
+          last = now;
+
+          x += speed * dt;
+
+          // wrap into [-w, 0) without jump
+          if (x <= -w) x += w;
+          if (x > 0) x -= w;
+
+          row.style.transform = `translateX(${x}px)`;
+          raf = requestAnimationFrame(tick);
+        }
+
+        const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+        function start() {
+          if (media.matches) {
+            row.style.transform = "none";
+            return;
+          }
+          measure();
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+        function stop() {
+          if (raf) cancelAnimationFrame(raf);
+        }
+
+        window.addEventListener("resize", measure, { passive: true });
+        media.addEventListener?.("change", () => {
+          stop();
+          start();
+        });
+        start();
+      }
+
+      /* start once everything is laid out */
+      window.addEventListener("load", () => {
+        makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
+        makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
+      });
+    </script>
+
+    <!-- WATCH VIDEO SECTION -->
+    <section class="watch-video-section">
+      <div class="video-content">
+        <div class="video-text">
+          <h2>
+            Take a deeper look to<br />see how SignSense<br />
+            really works.
+          </h2>
+          <p>
+            Curious how SignSense works? Watch our video for a clear,
+            step-by-step look at how we simplify your contracts
+          </p>
+          <button class="watch-btn">Watch Video ↗</button>
+        </div>
+        <div class="video-box">
+          <div class="video-label">▶ Watch Video</div>
+          <img
+            src="https://imgur.com/8aThMK5.png"
+            alt="Video Placeholder"
+            class="video-img"
+          />
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .watch-video-section {
+        padding: 100px 40px;
+        background-color: transparent;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .video-content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 120px;
+        flex-wrap: wrap;
+        padding-left: 35px;
+      }
+
+      .video-text {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .video-text h2 {
+        font-size: 44px;
+        color: #fff9f9;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        line-height: 1.4;
+        margin-bottom: 20px;
+      }
+
+      .video-text p {
+        color: #d8cccc;
+        font-size: 20px;
+        margin-bottom: 36px;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .watch-btn {
+        background-color: #adff00;
+        color: black;
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 26px;
+        cursor: pointer;
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        box-shadow: 0 0 18px #adff00; /* always glowing */
+        transition: box-shadow 0.25s ease;
+      }
+
+      .watch-btn:hover {
+        box-shadow: 0 0 32px #adff00; /* stronger glow on hover */
+      }
+
+      .video-box {
+        position: relative;
+        flex: 1;
+        min-width: 320px;
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 40px;
+      }
+
+      .video-box img.video-img {
+        width: 420px;
+        margin-top: 36px;
+        border-radius: 34px;
+        border: 2px solid #3b3b3b;
+        display: block;
+      }
+
+      .video-label {
+        position: absolute;
+        top: 4px; /* Lowered from -16px */
+        left: 150px; /* Slightly increased for better alignment */
+        background: transparent;
+        color: rgba(191, 246, 17, 0.74);
+        font-size: 18px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 2;
+        pointer-events: none;
+      }
+    </style>
+    <!-- Reviews Section -->
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+      <div class="reviews-header">
+        <div class="reviews-title">
+          <h2>What <span class="green">Our Clients</span> Say</h2>
+          <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
+        </div>
+
+        <!-- arrows (top-right, together) -->
+        <div class="review-nav">
+          <button
+            class="nav left"
+            type="button"
+            id="revPrev"
+            aria-label="Previous reviews"
+          >
+            <img src="https://imgur.com/nhYxlHX.png" alt="" />
+          </button>
+          <button
+            class="nav right"
+            type="button"
+            id="revNext"
+            aria-label="Next reviews"
+          >
+            <img src="https://imgur.com/sRwuJpT.png" alt="" />
+          </button>
+        </div>
+      </div>
+
+      <div class="reviews-viewport">
+        <div class="reviews-track" id="reviewsTrack">
+          <div class="review-card">
+            <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" />
+          </div>
+          <div class="review-card">
+            <img src="https://i.imgur.com/k42nv4C.png" alt="Review 2" />
+          </div>
+          <div class="review-card">
+            <img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3" />
+          </div>
+          <div class="review-card">
+            <img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4" />
+          </div>
+          <div class="review-card">
+            <img src="https://i.imgur.com/I9iQu88.png" alt="Review 5" />
+          </div>
+        </div>
+      </div>
+
+      <div class="review-dots" id="reviewDots"></div>
+
+      <div class="leave-review-wrap">
+        <button class="leave-review" type="button">Leave A Review ↗</button>
+      </div>
+    </section>
+
+    <script>
+      (function () {
+        const bar = document.getElementById("topbarWrap");
+        let lastY = window.scrollY;
+        let ticking = false;
+
+        function onScroll() {
+          const y = window.scrollY;
+          if (y > lastY && y > 80) {
+            bar.classList.add("hide"); // scrolling down
+          } else {
+            bar.classList.remove("hide"); // scrolling up
+          }
+          lastY = y <= 0 ? 0 : y;
+          ticking = false;
+        }
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              requestAnimationFrame(onScroll);
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+      })();
+    </script>
+
+    <!-- REVIEWS SECTION -->
+    <!-- === REVIEWS: JS === -->
+    <script>
+      /* === REVIEWS: JS (drop-in replacement) === */
+      (function () {
+        const track = document.getElementById("reviewsTrack");
+        const prev = document.getElementById("revPrev");
+        const next = document.getElementById("revNext");
+        const dotsWrap = document.getElementById("reviewDots");
+        const cards = () => Array.from(track.querySelectorAll(".review-card"));
+
+        let index = 0; // leftmost visible card index
+        let perPage = 3; // visible at once (auto on resize)
+
+        function measure() {
+          const w = window.innerWidth;
+          if (w <= 640) perPage = 1;
+          else if (w <= 1100) perPage = 2;
+          else perPage = 3;
+
+          // clamp index so we never show gaps on the right
+          index = Math.min(index, Math.max(0, cards().length - perPage));
+          renderDots();
+          go(index, false);
+        }
+
+        function cardFullWidth() {
+          const c = cards()[0];
+          if (!c) return 0;
+          const style = getComputedStyle(c);
+          const w = c.getBoundingClientRect().width;
+          const mr = parseFloat(style.marginRight || 0);
+          const ml = parseFloat(style.marginLeft || 0);
+          const gap = 24; // matches CSS gap
+          return w + ml + mr + gap;
+        }
+
+        function go(i, animate = true) {
+          const maxIndex = Math.max(0, cards().length - perPage); // e.g., 5-3=2 on desktop
+          index = Math.max(0, Math.min(i, maxIndex));
+          const shift = -(index * cardFullWidth());
+          if (!animate) track.style.transition = "none";
+          track.style.transform = `translateX(${shift}px)`;
+          if (!animate)
+            requestAnimationFrame(
+              () => (track.style.transition = "transform .35s ease")
+            );
+          updateDots();
+        }
+
+        function renderDots() {
+          dotsWrap.innerHTML = "";
+          const total = cards().length; // 1 dot per card; active window = visible 3
+          for (let i = 0; i < total; i++) {
+            const d = document.createElement("div");
+            d.className = "review-dot";
+            d.addEventListener("click", () => {
+              const target = Math.min(i, total - perPage); // jump so clicked one becomes visible
+              go(target);
+            });
+            dotsWrap.appendChild(d);
+          }
+          updateDots();
+        }
+
+        function updateDots() {
+          const total = cards().length;
+          [...dotsWrap.children].forEach((d, i) => {
+            d.classList.toggle("active", i >= index && i < index + perPage);
+          });
+        }
+
+        prev.addEventListener("click", () => go(index - 1));
+        next.addEventListener("click", () => go(index + 1));
+        window.addEventListener("resize", measure, { passive: true });
+
+        measure();
+      })();
+    </script>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What languages do you support?</span>
+            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <div class="faq-a">
+            We support English, Spanish, German, French, Italian, Portuguese,
+            Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More
+            coming soon!
+          </div>
+        </div>
+
+        <div class="faq-item open">
+          <!-- OPEN BY DEFAULT -->
+          <button class="faq-q" type="button">
+            <span
+              >Is SignSense legally binding or a replacement for a lawyer?</span
+            >
+            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <div class="faq-a">
+            No. SignSense explains your contract using AI, but it isn’t legally
+            binding and doesn’t replace professional legal advice.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What types of contracts can I upload?</span>
+            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <div class="faq-a">
+            Most standard agreements—leases, NDAs, freelance/service contracts,
+            employment offers, and more.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Is my data secure when I upload a contract?</span>
+            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <div class="faq-a">
+            Yes. Uploads are processed securely; we don’t sell your data or
+            share your files with third parties.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      document.querySelectorAll(".faq-item .faq-q").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const item = btn.parentElement;
+          if (!item.classList.contains("open")) {
+            document
+              .querySelectorAll(".faq-item.open")
+              .forEach((i) => i.classList.remove("open"));
+          }
+          item.classList.toggle("open");
+        });
+      });
+    </script>
+
+    <!-- === FOOTER === -->
+    <!-- === FOOTER === -->
+    <!-- === FOOTER (updated) === -->
+    <!-- === FOOTER (FINAL CLEAN) === -->
+    <!-- === FOOTER (clean, aligned) === -->
+    <div class="site-footer-wrap">
+      <footer class="site-footer">
+        <!-- Left: logo + brand + text + button -->
+        <div class="footer-left">
+          <img
+            class="footer-logo"
+            src="https://imgur.com/BcUqgKZ.png"
+            alt="SignSense logo"
+          />
+          <div class="footer-left-inner">
+            <div class="footer-brand">SignSense</div>
+            <div class="footer-tagline">
+              <div>No confusion, no legal jargon.</div>
+              <div>For informational use only. Not legal advice.</div>
+            </div>
+            <a href="#review" class="footer-cta">Review A Contract ↗</a>
+          </div>
+        </div>
+
+        <!-- Right: 3 straight columns (titles aligned with items) -->
+        <div class="footer-col">
+          <div class="footer-title">Quick Menu</div>
+          <nav class="footer-links">
+            <a href="#how-it-works">How it Works</a>
+            <a href="#review">Leave Review</a>
+          </nav>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Information</div>
+          <nav class="footer-links">
+            <a href="#contact">Contact</a>
+            <a href="#features">Features</a>
+          </nav>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Socials</div>
+          <nav class="footer-links">
+            <a href="#">Instagram</a>
+            <a href="#">YouTube</a>
+            <a href="#">X</a>
+          </nav>
+        </div>
+      </footer>
+
+      <div class="footer-bottom">
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-links">
+          <span>Privacy Policy</span>
+          <span>Terms &amp; Conditions</span>
+          <span class="footer-copy"
+            >© 2025 SignSense. All rights reserved.</span
+          >
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<style>
-/* container + smooth end */
-.site-footer-wrap {
-  max-width: 1400px;
-  margin: 80px auto 0;
-  padding: 0 24px 56px;
-  font-family: 'Inter', sans-serif;
-}
+    <style>
+      /* container + smooth end */
+      .site-footer-wrap {
+        max-width: 1400px;
+        margin: 80px auto 0;
+        padding: 0 24px 56px;
+        font-family: "Inter", sans-serif;
+      }
 
-/* GRID layout */
-.site-footer {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
-  column-gap: 88px;
-  align-items: start;
-  justify-items: start;
-  padding-left: 40px !important; /* keeps footer balanced */
-}
+      /* GRID layout */
+      .site-footer {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns:
+          minmax(460px, 1fr) minmax(220px, max-content) minmax(
+            220px,
+            max-content
+          )
+          minmax(220px, max-content);
+        column-gap: 88px;
+        align-items: start;
+        justify-items: start;
+        padding-left: 40px !important; /* keeps footer balanced */
+      }
 
-/* LEFT BLOCK — logo + text + button share the same left rail */
-:root {
-  --footer-rail: 40px; /* smaller number = move left, bigger = move right */
-  --logo-gap: 12px;    /* space between logo and "SignSense" */
-}
+      /* LEFT BLOCK — logo + text + button share the same left rail */
+      :root {
+        --footer-rail: 40px; /* smaller number = move left, bigger = move right */
+        --logo-gap: 12px; /* space between logo and "SignSense" */
+      }
 
-.footer-left {
-  display: flex !important;
-  align-items: flex-start !important;
-  padding-left: var(--footer-rail) !important; /* pushes ONLY the left block */
-  gap: var(--logo-gap) !important;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
+      .footer-left {
+        display: flex !important;
+        align-items: flex-start !important;
+        padding-left: var(
+          --footer-rail
+        ) !important; /* pushes ONLY the left block */
+        gap: var(--logo-gap) !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
 
-.footer-logo {
-  width: 26px;
-  height: 26px;
-  border-radius: 0 !important; /* ensure square corners */
-  object-fit: contain;
-  margin: 0 !important;
-  transform: translateY(-2px); /* lift slightly for better alignment */
-}
+      .footer-logo {
+        width: 26px;
+        height: 26px;
+        border-radius: 0 !important; /* ensure square corners */
+        object-fit: contain;
+        margin: 0 !important;
+        transform: translateY(-2px); /* lift slightly for better alignment */
+      }
 
-.footer-left-inner {
-  display: flex;
-  flex-direction: column;
-  margin: 0 !important;
-  padding: 0 !important;
-}
+      .footer-left-inner {
+        display: flex;
+        flex-direction: column;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
 
-.footer-brand {
-  color: #e1e1e1;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1.1;
-  margin-left: 0 !important;
-}
+      .footer-brand {
+        color: #e1e1e1;
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 1.1;
+        margin-left: 0 !important;
+      }
 
-.footer-tagline {
-  color: #c5c5c5;
-  margin-top: 8px;
-  font-size: 18px;
-  line-height: 1.5;
-  margin-left: 0 !important;
-}
+      .footer-tagline {
+        color: #c5c5c5;
+        margin-top: 8px;
+        font-size: 18px;
+        line-height: 1.5;
+        margin-left: 0 !important;
+      }
 
-.footer-cta {
-  align-self: flex-start;
-  margin-top: 22px;
-  padding: 9px 18px;
-  background: #adff00;
-  color: #000;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 400;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(173, 255, 0, .55);
-  transition: box-shadow .25s ease;
-  margin-left: 0 !important;
-}
+      .footer-cta {
+        align-self: flex-start;
+        margin-top: 22px;
+        padding: 9px 18px;
+        background: #adff00;
+        color: #000;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 400;
+        border-radius: 10px;
+        box-shadow: 0 0 12px rgba(173, 255, 0, 0.55);
+        transition: box-shadow 0.25s ease;
+        margin-left: 0 !important;
+      }
 
-.footer-cta:hover {
-  box-shadow: 0 0 20px rgba(173, 255, 0, .85);
-}
+      .footer-cta:hover {
+        box-shadow: 0 0 20px rgba(173, 255, 0, 0.85);
+      }
 
-/* RIGHT COLUMNS */
-.footer-col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start !important;
-  text-align: left !important;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
+      /* RIGHT COLUMNS */
+      .footer-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start !important;
+        text-align: left !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
 
-.footer-title {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-}
+      .footer-title {
+        color: #fff;
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 1;
+        margin: 0;
+        padding: 0;
+      }
 
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px !important;
-}
+      .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px !important;
+      }
 
-.footer-links a {
-  color: #c5c5c5;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.4;
-  display: block;
-  margin: 0 !important;
-  padding: 0 !important;
-}
+      .footer-links a {
+        color: #c5c5c5;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.4;
+        display: block;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
 
-.footer-links a:hover {
-  opacity: .9;
-}
+      .footer-links a:hover {
+        opacity: 0.9;
+      }
 
-/* BOTTOM SECTION */
-.footer-bottom {
-  margin-top: 24px;
-}
+      /* BOTTOM SECTION */
+      .footer-bottom {
+        margin-top: 24px;
+      }
 
-.footer-divider {
-  width: 100%;
-  height: 1px;
-  background: #c5c5c5;
-  opacity: .28;
-  margin-bottom: 12px;
-}
+      .footer-divider {
+        width: 100%;
+        height: 1px;
+        background: #c5c5c5;
+        opacity: 0.28;
+        margin-bottom: 12px;
+      }
 
-.footer-bottom-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  color: #c5c5c5;
-  font-size: 16px;
-  font-weight: 400;
-}
+      .footer-bottom-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        color: #c5c5c5;
+        font-size: 16px;
+        font-weight: 400;
+      }
 
-.footer-copy {
-  margin-left: auto;
-}
+      .footer-copy {
+        margin-left: auto;
+      }
 
-/* Responsive */
-@media (max-width: 1000px) {
-  .site-footer {
-    grid-template-columns: 1fr;
-    padding-left: 0;
-  }
-  .footer-copy {
-    margin-left: 0;
-  }
-}
-/* Make logo bigger */
-.footer-logo {
-  width: 32px;  /* increase size */
-  height: 32px;
-}
+      /* Responsive */
+      @media (max-width: 1000px) {
+        .site-footer {
+          grid-template-columns: 1fr;
+          padding-left: 0;
+        }
+        .footer-copy {
+          margin-left: 0;
+        }
+      }
+      /* Make logo bigger */
+      .footer-logo {
+        width: 32px; /* increase size */
+        height: 32px;
+      }
 
-/* Make 'SignSense' bigger */
-.footer-brand {
-  font-size: 26px;  /* was 22px */
-}
+      /* Make 'SignSense' bigger */
+      .footer-brand {
+        font-size: 26px; /* was 22px */
+      }
 
-  /* Move only tagline + button left, keep SignSense in place */
-.footer-tagline,
-.footer-cta {
-  position: relative;
-  left: -35px; /* adjust value until it aligns visually */
-}
+      /* Move only tagline + button left, keep SignSense in place */
+      .footer-tagline,
+      .footer-cta {
+        position: relative;
+        left: -35px; /* adjust value until it aligns visually */
+      }
+    </style>
 
+    <!-- === FAKE RESULTS WIRING (paste before </body>) === -->
+    <input
+      id="contractFile"
+      type="file"
+      accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+      style="display: none"
+    />
 
-</style>
+    <script>
+      (() => {
+        const triggers = document.querySelectorAll(
+          ".cta-btn, .cta-outline, .footer-cta"
+        );
+        const input = document.getElementById("contractFile");
 
+        // open file picker from any "Review A Contract" button/link
+        triggers.forEach((t) =>
+          t.addEventListener("click", (e) => {
+            e.preventDefault();
+            input.click();
+          })
+        );
 
+        input.addEventListener("change", () => {
+          if (!input.files || !input.files.length) return;
 
+          // === FAKE ANALYSIS DATA (used by the new analysis.html) ===
+          const mock = {
+            languageOriginal: "en",
+            summary: [
+              "This contract is generally favorable with low overall risk.",
+              "Payment schedule and termination rights are standard.",
+              "Watch late-fee compounding and define 'material breach'.",
+            ],
+            risk: {
+              value: 25,
+              note: "Risks mainly around late fees and indemnity scope.",
+            },
+            clarity: {
+              value: 80,
+              note: "Most clauses are explicit; a few terms undefined.",
+            },
+            clauses: [
+              "Payment Terms — Net 30 with 2% per month late fee.",
+              "Scope of Work — Deliverables listed in Schedule A.",
+              "Termination — 30-day convenience; immediate for cause.",
+              "IP & Licensing — Client owns final assets; creator keeps tools.",
+            ],
+            issues: [
+              "Late fee compounding escalates costs on long delays.",
+              "Indemnity is one-sided; consider mutual or capped liability.",
+            ],
+            suggestions: [
+              "Add a 5–7 day grace period before late fees.",
+              "Define 'material breach' + 10-day cure period.",
+              "List milestones and acceptance criteria.",
+            ],
+            meters: { confidence: 75, favorability: 80, deadline: 18 },
+            translations: { en: {} },
+          };
 
+          // Save for the new analysis UI
+          localStorage.setItem("analysisData", JSON.stringify(mock));
 
-<!-- === FAKE RESULTS WIRING (paste before </body>) === -->
-<input id="contractFile" type="file"
-       accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
+          // Also save legacy keys (so your old analysis.html still works if needed)
+          localStorage.setItem("summary", mock.summary.join("\n\n"));
+          localStorage.setItem("risk", String(mock.risk.value));
+          localStorage.setItem("clarity", String(mock.clarity.value));
+          localStorage.setItem("compliance", "90");
+          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+          localStorage.setItem(
+            "smartSuggestions",
+            JSON.stringify(mock.suggestions)
+          );
 
-<script>
-(() => {
-  const triggers = document.querySelectorAll('.cta-btn, .cta-outline, .footer-cta');
-  const input = document.getElementById('contractFile');
-
-  // open file picker from any "Review A Contract" button/link
-  triggers.forEach(t => t.addEventListener('click', e => { e.preventDefault(); input.click(); }));
-
-  input.addEventListener('change', () => {
-    if (!input.files || !input.files.length) return;
-
-    // === FAKE ANALYSIS DATA (used by the new analysis.html) ===
-    const mock = {
-      languageOriginal: "en",
-      summary: [
-        "This contract is generally favorable with low overall risk.",
-        "Payment schedule and termination rights are standard.",
-        "Watch late-fee compounding and define 'material breach'."
-      ],
-      risk:    { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-      clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-      clauses: [
-        "Payment Terms — Net 30 with 2% per month late fee.",
-        "Scope of Work — Deliverables listed in Schedule A.",
-        "Termination — 30-day convenience; immediate for cause.",
-        "IP & Licensing — Client owns final assets; creator keeps tools."
-      ],
-      issues: [
-        "Late fee compounding escalates costs on long delays.",
-        "Indemnity is one-sided; consider mutual or capped liability."
-      ],
-      suggestions: [
-        "Add a 5–7 day grace period before late fees.",
-        "Define 'material breach' + 10-day cure period.",
-        "List milestones and acceptance criteria."
-      ],
-      meters: { confidence: 75, favorability: 80, deadline: 18 },
-      translations: { en: {} }
-    };
-
-    // Save for the new analysis UI
-    localStorage.setItem('analysisData', JSON.stringify(mock));
-
-    // Also save legacy keys (so your old analysis.html still works if needed)
-    localStorage.setItem('summary', mock.summary.join('\n\n'));
-    localStorage.setItem('risk', String(mock.risk.value));
-    localStorage.setItem('clarity', String(mock.clarity.value));
-    localStorage.setItem('compliance', "90");
-    localStorage.setItem('keyClauses', JSON.stringify(mock.clauses));
-    localStorage.setItem('potentialIssues', JSON.stringify(mock.issues));
-    localStorage.setItem('smartSuggestions', JSON.stringify(mock.suggestions));
-
-    // Go to results page
-    window.location.href = 'analysis.html';
-  });
-})();
-</script>
-
-</body>
+          // Go to results page
+          window.location.href = "analysis.html";
+        });
+      })();
+    </script>
+  </body>
 </html>
