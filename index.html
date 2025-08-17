@@ -351,31 +351,42 @@
   overflow: hidden;
 }
 
-.moving-line-wrapper img {
+.moving-line-content {
+  position: relative;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.moving-line-content .app-preview {
   display: block;
   width: 520px;
-  border-radius: 20px;
+  border-radius: inherit;
 }
 
-.moving-line-wrapper::before {
-  content: "";
+/* The glowing dot */
+.insight-line {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  padding: 2px;
-  background: linear-gradient(90deg, transparent, #adff00, transparent);
-  background-size: 200% 200%;
-  animation: move-line 6s linear infinite;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(173, 255, 0, 0.95);
+  box-shadow:
+    0 0 10px rgba(173, 255, 0, 0.9),
+    0 0 20px rgba(173, 255, 0, 0.8),
+    0 0 34px rgba(173, 255, 0, 0.7);
+  z-index: 3;
   pointer-events: none;
+  animation: move-around 7s linear infinite;
 }
 
-@keyframes move-line {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes move-around {
+  0%   { top: -13px;              left: -13px; }
+  25%  { top: -13px;              left: calc(100% - 13px); }
+  50%  { top: calc(100% - 13px);  left: calc(100% - 13px); }
+  75%  { top: calc(100% - 13px);  left: -13px; }
+  100% { top: -13px;              left: -13px; }
 }
+
 
 .insight-right {
   max-width: 540px;
@@ -829,29 +840,31 @@
 <section class="insight-section">
   <div class="insight-content">
     <div class="insight-left">
-      <div class="moving-line-wrapper">
-        <img
-          src="https://i.imgur.com/a6QxhzQ.png"
-          alt="Insights UI"
-        />
-      </div>
-    </div>
-    <div class="insight-right">
-      <img
-        class="insight-icon"
-        src="https://imgur.com/DZ1C9hL.png"
-        alt="Insights Icon"
-      />
-      <h2>Understand Your Contract at a Glance</h2>
-      <p>
-        Get instant clarity with AI-powered insights. Know exactly what you're signing 
-        before making a commitment.
-      </p>
-      <a href="#" class="cta-outline">
-        Review A Contract ↗
-      </a>
-    </div>
+ <div class="moving-line-wrapper">
+  <!-- 🔥 The glowing line dot -->
+  <span class="insight-line"></span>
+
+  <div class="moving-line-content">
+    <img
+      class="app-preview"
+      width="520"
+      src="https://i.imgur.com/a6QxhzQ.png"
+      alt="Insights UI"
+    />
   </div>
+</div>
+
+<div class="insight-right">
+  <img
+    class="insight-icon"
+    src="https://imgur.com/DZ1C9hL.png"
+    alt="Insights Icon"
+  />
+  <h2>Understand Your Contract at a Glance</h2>
+  <p>Get instant clarity with AI-powered insights. Know exactly what you're signing before making a commitment.</p>
+  <a href="analysis.html" class="cta-button">Review A Contract ↗</a>
+</div>
+
 </section>
 
 
