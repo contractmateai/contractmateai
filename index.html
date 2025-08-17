@@ -367,12 +367,13 @@
 .insight-glow::before{
   content: "";
   position: absolute;
+  top: 0;                  /* IMPORTANT: anchor the ball */
+  left: 0;                 /* IMPORTANT: anchor the ball */
   width: 150%;             /* larger than the card so only edges show */
   height: 150%;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;              /* behind the image */
-  /* match your neon yellow/green; you can tweak the stops */
   background: radial-gradient(closest-side,
               rgba(191,246,17,0.8) 0%,
               rgba(191,246,17,0.55) 35%,
@@ -386,11 +387,11 @@
 
 /* move along the four edges (no diagonal between points) */
 @keyframes glow-orbit{
-  0%   { transform: translate(-25%, -25%); } /* top-left, off card */
-  25%  { transform: translate( 65%, -25%); } /* top-right edge run  */
-  50%  { transform: translate( 65%,  65%); } /* right -> bottom     */
-  75%  { transform: translate(-25%,  65%); } /* bottom -> left      }
-  100% { transform: translate(-25%, -25%); } /* back to start       */
+  0%   { transform: translate(-25%, -25%); }  /* top-left, off card */
+  25%  { transform: translate( 65%, -25%); }  /* run along top edge  */
+  50%  { transform: translate( 65%,  65%); }  /* right -> bottom     */
+  75%  { transform: translate(-25%,  65%); }  /* bottom -> left      */
+  100% { transform: translate(-25%, -25%); }  /* back to start       */
 }
 
 
