@@ -344,44 +344,52 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS thin glowing ball illusion === */
-.insight-glow {
+/* Moving border wrapper */
+.moving-line-wrapper {
   position: relative;
   display: inline-block;
-  border-radius: 20px;
-  overflow: visible;
+  border-radius: 16px; /* match your Insights img rounding */
+  padding: 2px; /* thin space for the line */
+  overflow: hidden;
+}
+
+/* The glowing dot that travels */
+.yellow-line {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #adff00; /* neon green like your app preview */
+  border-radius: 50%;
+  box-shadow: 0 0 10px #adff00;
+  animation: move-around 6s linear infinite;
   z-index: 1;
 }
 
+/* Inner content */
+.moving-line-content {
+  position: relative;
+  z-index: 2;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* Make the Insights photo styled */
 .insights-img {
   display: block;
   width: 100%;
   height: auto;
   border-radius: inherit;
-  position: relative;
-  z-index: 2; /* photo stays on top */
 }
 
-.insight-glow::before {
-  content: "";
-  position: absolute;
-  width: 14px;          /* smaller size = thinner line look */
-  height: 14px;
-  background: #adff00;  /* neon green */
-  border-radius: 50%;
-  box-shadow: 0 0 12px #adff00; /* glow */
-  z-index: 1;
-  animation: move-square 6s linear infinite;
+/* Path for the glowing ball */
+@keyframes move-around {
+  0%   { top: -6px; left: -6px; }
+  25%  { top: -6px; left: calc(100% - 6px); }
+  50%  { top: calc(100% - 6px); left: calc(100% - 6px); }
+  75%  { top: calc(100% - 6px); left: -6px; }
+  100% { top: -6px; left: -6px; }
 }
 
-/* square path around photo edges */
-@keyframes move-square {
-  0%   { top: -7px; left: -7px; }          /* top-left */
-  25%  { top: -7px; left: 100%; }          /* top-right */
-  50%  { top: 100%;  left: 100%; }         /* bottom-right */
-  75%  { top: 100%;  left: -7px; }         /* bottom-left */
-  100% { top: -7px; left: -7px; }          /* back to start */
-}
 
     
     .insight-right {
@@ -834,13 +842,17 @@
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left insight-glow">
-  <img
-    class="insights-img"
-    src="https://i.imgur.com/a6QxhzQ.png"
-    alt="Insights UI"
-  />
+<div class="insight-left moving-line-wrapper">
+  <span class="yellow-line"></span>
+  <div class="moving-line-content">
+    <img
+      class="insights-img"
+      src="https://i.imgur.com/a6QxhzQ.png"
+      alt="Insights UI"
+    />
+  </div>
 </div>
+
 
 
 
