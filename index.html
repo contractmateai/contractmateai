@@ -344,54 +344,44 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: orbiting glow behind image (square path) === */
-.insight-glow{
+/* === INSIGHTS: clean moving border line === */
+.insight-glow {
   position: relative;
   display: inline-block;
-  border-radius: 20px;     /* match your card/image corners */
-  overflow: hidden;        /* so the glow only peeks at the edges */
+  border-radius: 20px;
+  overflow: hidden; /* clip the glow inside edges */
 }
 
-/* keep your size rules; this class just ensures it stacks right */
-.insight-glow .insights-img{
+.insight-glow .insights-img {
   display: block;
-  width: 520px;            /* you already use this width */
-  max-width: 100%;
-  height: auto;
+  width: 520px;
   border-radius: inherit;
   position: relative;
-  z-index: 1;              /* image above the glow */
+  z-index: 1; /* keep image above line */
 }
 
-/* the big blurred “ball” that orbits BEHIND the image */
-.insight-glow::before{
+/* The orbiting "ball" behind image */
+.insight-glow::before {
   content: "";
   position: absolute;
-  width: 150%;             /* larger than the card so only edges show */
-  height: 150%;
+  width: 280px;   /* diameter: tune until line looks right */
+  height: 280px;
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;              /* behind the image */
-  /* match your neon yellow/green; you can tweak the stops */
-  background: radial-gradient(closest-side,
-              rgba(191,246,17,0.8) 0%,
-              rgba(191,246,17,0.55) 35%,
-              rgba(191,246,17,0.0) 70%);
-  filter: blur(18px);
-
-  /* Start off-card top-left; animate in a square path */
-  transform: translate(-25%, -25%);
-  animation: glow-orbit 8s linear infinite;
+  background: #adff00;
+  box-shadow: 0 0 18px #adff00;
+  z-index: 0;
+  animation: orbit-border 8s linear infinite;
 }
 
-/* move along the four edges (no diagonal between points) */
-@keyframes glow-orbit{
-  0%   { transform: translate(-25%, -25%); } /* top-left, off card */
-  25%  { transform: translate( 65%, -25%); } /* top-right edge run  */
-  50%  { transform: translate( 65%,  65%); } /* right -> bottom     */
-  75%  { transform: translate(-25%,  65%); } /* bottom -> left      }
-  100% { transform: translate(-25%, -25%); } /* back to start       */
+/* Smooth square path around edges */
+@keyframes orbit-border {
+  0%   { top: -140px; left: 50%; transform: translateX(-50%); }   /* center on top */
+  25%  { top: 50%; left: calc(100% - 140px); transform: translateY(-50%);} /* right */
+  50%  { top: calc(100% - 140px); left: 50%; transform: translateX(-50%);} /* bottom */
+  75%  { top: 50%; left: -140px; transform: translateY(-50%);}    /* left */
+  100% { top: -140px; left: 50%; transform: translateX(-50%);}    /* back top */
 }
+
 
 
 
