@@ -360,30 +360,70 @@
 }
 
 /* TUNING KNOBS */
+/* === INSIGHTS: edge-tracking ball (creates a thin moving line) === */
 :root{
-  --ball: 340px;          /* ball diameter (bigger = thicker “line”) */
-  --peek: 200px;           /* how much of the ball sticks out */
+  --ball: 340px;  /* size of the hidden ball */
+  --peek: 10px;   /* how much shows past the edge (line thickness) */
+  --line: #adff00;
 }
 
-.orbit-ball{
-  position: absolute;
-  width: var(--ball);
-  height: var(--ball);
-  background: #adff00;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #adff00;
-  z-index: 1;
-  animation: orbit-square 8s linear infinite;
+.insight-glow{
+  position: relative;
+  display: inline-block;
+  border-radius: 20px;   /* match image corners */
+  overflow: hidden;      /* clip, so only a thin slice is visible */
 }
 
-/* square path that keeps only a small peek visible */
-@keyframes orbit-square{
-  0%   { top: calc(-1 * var(--peek));                    left: calc(-1 * var(--peek)); }
-  25%  { top: calc(-1 * var(--peek));                    left: calc(100% - (var(--ball) - var(--peek))); }
-  50%  { top: calc(100% - (var(--ball) - var(--peek)));  left: calc(100% - (var(--ball) - var(--peek))); }
-  75%  { top: calc(100% - (var(--ball) - var(--peek)));  left: calc(-1 * var(--peek)); }
-  100% { top: calc(-1 * var(--peek));                    left: calc(-1 * var(--peek)); }
+.insight-glow .insights-img{
+  display:block;
+  width:520px;           /* your image width */
+  max-width:100%;
+  height:auto;
+  border-radius:inherit;
+  position:relative;
+  z-index:1;             /* image above the ball */
 }
+
+/* The ball that moves behind the image */
+.insight-glow::before{
+  content:"";
+  position:absolute;
+  width:var(--ball);
+  height:var(--ball);
+  background: var(--line);
+  border-radius:50%;
+  z-index:0;             /* behind the photo */
+  /* No blur — we want a clean line look */
+  animation: edge-loop 7s linear infinite;
+}
+
+/* Move along edges with a constant 'peek' so it reads as a line */
+@keyframes edge-loop{
+  /* TOP edge: only --peek shows inside */
+  0%{
+    top: calc(-1 * (var(--ball) - var(--peek)));
+    left: calc(-1 * (var(--ball) / 2));
+  }
+  25%{
+    top: calc(-1 * (var(--ball) - var(--peek)));
+    left: calc(100% - (var(--ball) / 2));
+  }
+  /* RIGHT edge */
+  50%{
+    top: calc(100% - (var(--ball) - var(--peek)));
+    left: calc(100% - (var(--ball) / 2));
+  }
+  /* BOTTOM + LEFT edges back to start */
+  75%{
+    top: calc(100% - (var(--ball) - var(--peek)));
+    left: calc(-1 * (var(--ball) / 2));
+  }
+  100%{
+    top: calc(-1 * (var(--ball) - var(--peek)));
+    left: calc(-1 * (var(--ball) / 2));
+  }
+}
+
 
 
 
