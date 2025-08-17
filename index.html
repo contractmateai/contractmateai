@@ -344,46 +344,77 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: clean moving border line === */
-.insight-glow {
+/* === INSIGHTS: thin neon line that orbits the image edges === */
+.insight-orbit{
   position: relative;
   display: inline-block;
-  border-radius: 20px;
-  overflow: hidden; /* clip the glow inside edges */
+  border-radius: 20px;     /* match your image */
+  overflow: hidden;        /* clips to read as a line */
 }
 
-.insight-glow .insights-img {
-  display: block;
-  width: 520px;
-  border-radius: inherit;
-  position: relative;
-  z-index: 1; /* keep image above line */
+/* keep your image size */
+.insight-orbit .insights-img{
+  display:block;
+  width:520px;
+  height:auto;
+  border-radius:inherit;
+  position:relative;
+  z-index:1;
 }
 
-/* The orbiting "ball" behind image */
-.insight-glow::before {
-  content: "";
-  position: absolute;
-  width: 280px;   /* diameter: tune until line looks right */
-  height: 280px;
-  border-radius: 50%;
-  background: #adff00;
-  box-shadow: 0 0 18px #adff00;
-  z-index: 0;
-  animation: orbit-border 8s linear infinite;
+/* tuning knobs */
+.insight-orbit{
+  --ball: 280px;         /* diameter; bigger = flatter arc */
+  --peek: 12px;          /* how much shows past the edge = line thickness */
+  --color: #adff00;
+  --speed: 7s;
+  --R: calc(var(--ball) / 2);
 }
 
-/* Smooth square path around edges */
-@keyframes orbit-border {
-  0%   { top: -140px; left: 50%; transform: translateX(-50%); }   /* center on top */
-  25%  { top: 50%; left: calc(100% - 140px); transform: translateY(-50%);} /* right */
-  50%  { top: calc(100% - 140px); left: 50%; transform: translateX(-50%);} /* bottom */
-  75%  { top: 50%; left: -140px; transform: translateY(-50%);}    /* left */
-  100% { top: -140px; left: 50%; transform: translateX(-50%);}    /* back top */
+/* the “ball” that creates the moving line */
+.insight-orbit::before{
+  content:"";
+  position:absolute;
+  width:var(--ball);
+  height:var(--ball);
+  border-radius:50%;
+  background: var(--color);
+  box-shadow:0 0 12px var(--color);
+  z-index:0;  /* behind photo */
+  animation: edge-orbit var(--speed) linear infinite;
 }
 
+/* center the ball on each edge, with a constant --peek intruding */
+@keyframes edge-orbit{
+  /* TOP (centered) */
+  0%,
+  100% { 
+    top: calc(-1 * var(--R) + var(--peek));
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
+  /* RIGHT (centered) */
+  25% { 
+    top: 50%;
+    left: calc(100% - var(--R) - var(--peek));
+    transform: translateY(-50%);
+  }
 
+  /* BOTTOM (centered) */
+  50% { 
+    top: calc(100% - var(--R) - var(--peek));
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* LEFT (centered) */
+  75% { 
+    top: 50%;
+    left: calc(-1 * var(--R) + var(--peek));
+    transform: translateY(-50%);
+  }
+}
 
     .insight-right {
       max-width: 540px;
@@ -835,7 +866,7 @@
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left insight-glow">
+<div class="insight-left insight-orbit">
   <img
     class="insights-img"
     src="https://i.imgur.com/a6QxhzQ.png"
