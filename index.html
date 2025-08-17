@@ -344,54 +344,40 @@ what u r saying for me to replace i cannot find, look at the code fucking right 
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: orbiting glow behind image (square path) === */
-.insight-glow{
+/* === INSIGHTS: orbiting ball behind image === */
+.insight-line {
   position: relative;
   display: inline-block;
-  border-radius: 20px;     /* match your card/image corners */
-  overflow: hidden;        /* so the glow only peeks at the edges */
 }
 
-/* keep your size rules; this class just ensures it stacks right */
-.insight-glow .insights-img{
-  display: block;
-  width: 520px;            /* you already use this width */
-  max-width: 100%;
-  height: auto;
-  border-radius: inherit;
+.insight-line .insights-img {
+  width: 520px;
+  border-radius: 20px;
   position: relative;
-  z-index: 1;              /* image above the glow */
+  z-index: 2; /* image above ball */
 }
 
-/* the big blurred “ball” that orbits BEHIND the image */
-.insight-glow::before{
-  content: "";
+/* the green ball */
+.orbit-ball {
   position: absolute;
-  width: 150%;             /* larger than the card so only edges show */
-  height: 150%;
+  width: 14px;     /* not too big, not too small */
+  height: 14px;
+  background: #adff00;
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;              /* behind the image */
-  /* match your neon yellow/green; you can tweak the stops */
-  background: radial-gradient(closest-side,
-              rgba(191,246,17,0.8) 0%,
-              rgba(191,246,17,0.55) 35%,
-              rgba(191,246,17,0.0) 70%);
-  filter: blur(18px);
-
-  /* Start off-card top-left; animate in a square path */
-  transform: translate(-25%, -25%);
-  animation: glow-orbit 8s linear infinite;
+  box-shadow: 0 0 8px #adff00;
+  z-index: 1; /* stays behind the photo */
+  animation: orbit-square 8s linear infinite;
 }
 
-/* move along the four edges (no diagonal between points) */
-@keyframes glow-orbit{
-  0%   { transform: translate(-25%, -25%); } /* top-left, off card */
-  25%  { transform: translate( 65%, -25%); } /* top-right edge run  */
-  50%  { transform: translate( 65%,  65%); } /* right -> bottom     */
-  75%  { transform: translate(-25%,  65%); } /* bottom -> left      }
-  100% { transform: translate(-25%, -25%); } /* back to start       */
+/* square path around the image */
+@keyframes orbit-square {
+  0%   { top: -7px; left: -7px; } /* top-left */
+  25%  { top: -7px; left: calc(100% - 7px); } /* top-right */
+  50%  { top: calc(100% - 7px); left: calc(100% - 7px); } /* bottom-right */
+  75%  { top: calc(100% - 7px); left: -7px; } /* bottom-left */
+  100% { top: -7px; left: -7px; } /* back */
 }
+
 
 
 
@@ -845,20 +831,15 @@ what u r saying for me to replace i cannot find, look at the code fucking right 
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left insight-glow">
+<div class="insight-left insight-line">
+  <span class="orbit-ball"></span>
   <img
     class="insights-img"
     src="https://i.imgur.com/a6QxhzQ.png"
     alt="Insights UI"
   />
-  <!-- Add these new lines below the image -->
-  <div class="border-line-animation">
-    <div class="line-top"></div>
-    <div class="line-right"></div>
-    <div class="line-bottom"></div>
-    <div class="line-left"></div>
-  </div>
 </div>
+
 
 
     <div class="insight-right">
