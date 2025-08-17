@@ -362,35 +362,48 @@
   z-index:1;
 }
 
+/* === INSIGHTS MOVING LINE === */
 .moving-line-wrapper {
   position: relative;
-  overflow: hidden;
-  z-index: 1 !important;
-  background-color: black;
-  border-radius: 20px;
-  padding: 2px;
   display: inline-block;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.moving-line-wrapper .moving-line-content {
-  padding: 10px;
-  z-index: 2 !important;
+.moving-line-content {
   position: relative;
-  width: 100%;
-  height: 100%;
-  transform-origin: center;
-  background: inherit;
+  z-index: 2;
   border-radius: inherit;
-  overflow: inherit;
 }
 
-@keyframes move-around {
-  0%   { top: -20px; left: -20px; }
-  25%  { top: -20px; left: calc(100% - 20px); }
-  50%  { top: calc(100% - 20px); left: calc(100% - 20px); }
-  75%  { top: calc(100% - 20px); left: -20px; }
-  100% { top: -20px; left: -20px; }
+.insights-img {
+  display: block;
+  width: 520px;
+  max-width: 100%;
+  border-radius: inherit;
 }
+
+/* The glowing ball/line */
+.insight-line {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: rgba(191, 246, 17, 0.9);
+  box-shadow: 0 0 25px 15px rgba(191, 246, 17, 0.7);
+  border-radius: 50%;
+  animation: move-around 8s linear infinite;
+  z-index: 1;
+}
+
+/* Animate around the edges */
+@keyframes move-around {
+  0%   { top: -15px; left: -15px; }
+  25%  { top: -15px; left: calc(100% - 15px); }
+  50%  { top: calc(100% - 15px); left: calc(100% - 15px); }
+  75%  { top: calc(100% - 15px); left: -15px; }
+  100% { top: -15px; left: -15px; }
+}
+
 
 .insight-line {
   position: absolute;
@@ -855,17 +868,20 @@
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="moving-line-wrapper">
-  <span class="insight-line"></span>
-  <div class="moving-line-content">
-    <img
-      class="app-preview"
-      width="520"
-      src="https://i.imgur.com/a6QxhzQ.png"
-      alt="Insights UI"
-    />
+    <div class="moving-line-wrapper">
+      <span class="insight-line"></span>
+      <div class="moving-line-content">
+        <img
+          class="insights-img"
+          width="520"
+          src="https://i.imgur.com/a6QxhzQ.png"
+          alt="Insights UI"
+        />
+      </div>
+    </div>
   </div>
-</div>
+</section>
+
 
 
 
