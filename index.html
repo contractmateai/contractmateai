@@ -364,12 +364,13 @@
 
 /* tuning knobs */
 .insight-orbit{
-  --ball: 280px;         /* diameter; bigger = flatter arc */
-  --peek: 12px;          /* how much shows past the edge = line thickness */
+  --ball: 160px;       /* smaller ball so edges get hit */
+  --peek: 30px;        /* much more of the ball shows inside = thick neon line */
   --color: #adff00;
   --speed: 7s;
   --R: calc(var(--ball) / 2);
 }
+
 
 /* the “ball” that creates the moving line */
 .insight-orbit::before{
