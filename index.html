@@ -343,48 +343,57 @@
       display: block;
     }
 
-    /* === INSIGHTS: moving border line === */
+/* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
 .moving-line-wrapper{
   position: relative;
-  overflow: hidden;             /* keep the dot on the edge */
-  border-radius: 20px;          /* match your image radius */
-}
-
-.moving-line-content{
-  position: relative;
-  border-radius: inherit;
-  overflow: hidden;
-  z-index: 1;
+  display: inline-block;
+  border-radius: 20px;                 /* match your image radius */
+  overflow: hidden;                    /* keeps the effect clipped */
 }
 
 .insights-img{
-  display: block;
-  width: 100%;
-  height: auto;
+  display:block;
+  width:100%;
+  height:auto;
   border-radius: inherit;
-  /* note: your existing `.insight-left img` sets width:520px; that's fine */
 }
 
-/* the glowing “line” (dot) that travels the border */
-.insights-line{
-  position: absolute;
-  width: 14px;                  /* dot size = line thickness look */
-  height: 14px;
-  background: #bff611;          /* same color family as your app preview line */
-  border-radius: 50%;
-  box-shadow: 0 0 12px #bff611, 0 0 24px rgba(191,246,17,.6);
-  z-index: 2;
-  animation: insights-move 8s linear infinite; /* adjust duration for speed */
+/* rotating conic gradient, masked so only the border shows */
+.moving-line-wrapper::before{
+  content:"";
+  position:absolute;
+  inset:0;                             /* cover the wrapper */
+  padding:2px;                         /* line thickness */
+  border-radius: inherit;
+
+  /* a short yellow arc + transparent everywhere else */
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0turn,
+      transparent .86turn,
+      rgba(191,246,17,0) .86turn,
+      rgba(191,246,17,1) .90turn,
+      rgba(191,246,17,.6) .92turn,
+      transparent .96turn,
+      transparent 1turn
+    );
+
+  /* cut the center out so only the border ring remains */
+  -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  filter: drop-shadow(0 0 8px rgba(191,246,17,.6));
+  animation: spin-border 4s linear infinite;  /* speed */
 }
 
-/* equal time on all four edges */
-@keyframes insights-move{
-  0%   { top: 0;                   left: 0; }
-  25%  { top: 0;                   left: calc(100% - 14px); }
-  50%  { top: calc(100% - 14px);   left: calc(100% - 14px); }
-  75%  { top: calc(100% - 14px);   left: 0; }
-  100% { top: 0;                   left: 0; }
+@keyframes spin-border{
+  to { transform: rotate(360deg); }
 }
+
 
 
     .insight-right {
@@ -837,16 +846,14 @@
 
 <section class="insight-section">
   <div class="insight-content">
-   <div class="insight-left moving-line-wrapper">
-  <span class="insights-line" aria-hidden="true"></span>
-  <div class="moving-line-content">
-    <img
-      class="insights-img"
-      src="https://i.imgur.com/a6QxhzQ.png"
-      alt="Insights UI"
-    />
-  </div>
+<div class="insight-left moving-line-wrapper">
+  <img
+    class="insights-img"
+    src="https://i.imgur.com/a6QxhzQ.png"
+    alt="Insights UI"
+  />
 </div>
+
 
     <div class="insight-right">
       <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
