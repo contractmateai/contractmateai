@@ -344,12 +344,12 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS glowing square path ball === */
+/* === INSIGHTS thin glowing ball illusion === */
 .insight-glow {
   position: relative;
   display: inline-block;
-  border-radius: 20px;   /* match your image radius */
-  overflow: visible;     /* let ball peek out */
+  border-radius: 20px;
+  overflow: visible;
   z-index: 1;
 }
 
@@ -359,31 +359,30 @@
   height: auto;
   border-radius: inherit;
   position: relative;
-  z-index: 1;
+  z-index: 2; /* photo stays on top */
 }
 
-/* green ball behind */
 .insight-glow::before {
   content: "";
   position: absolute;
-  width: 180%;
-  height: 180%;
-  background: #adff00;         /* solid green */
+  width: 14px;          /* smaller size = thinner line look */
+  height: 14px;
+  background: #adff00;  /* neon green */
   border-radius: 50%;
-  top: -40%;
-  left: -40%;
-  z-index: 0;
-  animation: move-square 8s linear infinite;
+  box-shadow: 0 0 12px #adff00; /* glow */
+  z-index: 1;
+  animation: move-square 6s linear infinite;
 }
 
-/* ball moves in a square path */
+/* square path around photo edges */
 @keyframes move-square {
-  0%   { top: -40%; left: -40%; }
-  25%  { top: -40%; left: 60%; }
-  50%  { top: 60%;  left: 60%; }
-  75%  { top: 60%;  left: -40%; }
-  100% { top: -40%; left: -40%; }
+  0%   { top: -7px; left: -7px; }          /* top-left */
+  25%  { top: -7px; left: 100%; }          /* top-right */
+  50%  { top: 100%;  left: 100%; }         /* bottom-right */
+  75%  { top: 100%;  left: -7px; }         /* bottom-left */
+  100% { top: -7px; left: -7px; }          /* back to start */
 }
+
     
     .insight-right {
       max-width: 540px;
@@ -842,6 +841,7 @@
     alt="Insights UI"
   />
 </div>
+
 
 
 
