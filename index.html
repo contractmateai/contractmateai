@@ -344,54 +344,53 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-.moving-line-wrapper{
+/* === INSIGHTS: orbiting glow behind image (square path) === */
+.insight-glow{
   position: relative;
   display: inline-block;
-  border-radius: 20px;                 /* match your image radius */
-  overflow: hidden;                    /* keeps the effect clipped */
+  border-radius: 20px;     /* match your card/image corners */
+  overflow: hidden;        /* so the glow only peeks at the edges */
 }
 
-.insights-img{
-  display:block;
-  width:100%;
-  height:auto;
+/* keep your size rules; this class just ensures it stacks right */
+.insight-glow .insights-img{
+  display: block;
+  width: 520px;            /* you already use this width */
+  max-width: 100%;
+  height: auto;
   border-radius: inherit;
+  position: relative;
+  z-index: 1;              /* image above the glow */
 }
 
-/* rotating conic gradient, masked so only the border shows */
-.moving-line-wrapper::before{
-  content:"";
-  position:absolute;
-  inset:0;                             /* cover the wrapper */
-  padding:2px;                         /* line thickness */
-  border-radius: inherit;
+/* the big blurred “ball” that orbits BEHIND the image */
+.insight-glow::before{
+  content: "";
+  position: absolute;
+  width: 150%;             /* larger than the card so only edges show */
+  height: 150%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;              /* behind the image */
+  /* match your neon yellow/green; you can tweak the stops */
+  background: radial-gradient(closest-side,
+              rgba(191,246,17,0.8) 0%,
+              rgba(191,246,17,0.55) 35%,
+              rgba(191,246,17,0.0) 70%);
+  filter: blur(18px);
 
-  /* a short yellow arc + transparent everywhere else */
-  background:
-    conic-gradient(
-      from 0deg,
-      transparent 0turn,
-      transparent .86turn,
-      rgba(191,246,17,0) .86turn,
-      rgba(191,246,17,1) .90turn,
-      rgba(191,246,17,.6) .92turn,
-      transparent .96turn,
-      transparent 1turn
-    );
-
-  /* cut the center out so only the border ring remains */
-  -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-
-  filter: drop-shadow(0 0 8px rgba(191,246,17,.6));
-  animation: spin-border 4s linear infinite;  /* speed */
+  /* Start off-card top-left; animate in a square path */
+  transform: translate(-25%, -25%);
+  animation: glow-orbit 8s linear infinite;
 }
 
-@keyframes spin-border{
-  to { transform: rotate(360deg); }
+/* move along the four edges (no diagonal between points) */
+@keyframes glow-orbit{
+  0%   { transform: translate(-25%, -25%); } /* top-left, off card */
+  25%  { transform: translate( 65%, -25%); } /* top-right edge run  */
+  50%  { transform: translate( 65%,  65%); } /* right -> bottom     */
+  75%  { transform: translate(-25%,  65%); } /* bottom -> left      }
+  100% { transform: translate(-25%, -25%); } /* back to start       */
 }
 
 
@@ -846,13 +845,14 @@
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left moving-line-wrapper">
+<div class="insight-left insight-glow">
   <img
     class="insights-img"
     src="https://i.imgur.com/a6QxhzQ.png"
     alt="Insights UI"
   />
 </div>
+
 
 
     <div class="insight-right">
