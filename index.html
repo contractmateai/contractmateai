@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+u destroyed my whole layout. this is my current code and i want that on the insights part to have a smooth line that goes around the edges of the insights pic properly. i need a ball not too big not too small to stay behind the insights photo. just look at kristis fucking code i sent u. it needs to look like a line  <!DOCTYPE html>  
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -344,49 +344,56 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: moving line around edges (centered on each side) === */
-/* === INSIGHTS: animated glowing border === */
-.insight-frame {
+/* === INSIGHTS: orbiting glow behind image (square path) === */
+.insight-glow{
   position: relative;
   display: inline-block;
-  border-radius: 20px;
-  overflow: hidden;
+  border-radius: 20px;     /* match your card/image corners */
+  overflow: hidden;        /* so the glow only peeks at the edges */
 }
 
-.insight-frame .insights-img {
+/* keep your size rules; this class just ensures it stacks right */
+.insight-glow .insights-img{
   display: block;
-  width: 520px;
+  width: 520px;            /* you already use this width */
+  max-width: 100%;
+  height: auto;
   border-radius: inherit;
   position: relative;
-  z-index: 1;
+  z-index: 1;              /* image above the glow */
 }
 
-/* Glowing border overlay */
-.insight-frame::after {
+/* the big blurred “ball” that orbits BEHIND the image */
+.insight-glow::before{
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: inherit;
-  padding: 2px;  /* thickness of the line */
-  background: linear-gradient(90deg, transparent, #adff00, transparent);
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  animation: border-run 6s linear infinite;
-  z-index: 2;
+  width: 150%;             /* larger than the card so only edges show */
+  height: 150%;
+  border-radius: 50%;
   pointer-events: none;
+  z-index: 0;              /* behind the image */
+  /* match your neon yellow/green; you can tweak the stops */
+  background: radial-gradient(closest-side,
+              rgba(191,246,17,0.8) 0%,
+              rgba(191,246,17,0.55) 35%,
+              rgba(191,246,17,0.0) 70%);
+  filter: blur(18px);
+
+  /* Start off-card top-left; animate in a square path */
+  transform: translate(-25%, -25%);
+  animation: glow-orbit 8s linear infinite;
 }
 
-/* Animate the gradient around all 4 edges */
-@keyframes border-run {
-  0%   { background-position: 0% 0%; background-size: 300% 300%; }
-  25%  { background-position: 100% 0%; }
-  50%  { background-position: 100% 100%; }
-  75%  { background-position: 0% 100%; }
-  100% { background-position: 0% 0%; }
+/* move along the four edges (no diagonal between points) */
+@keyframes glow-orbit{
+  0%   { transform: translate(-25%, -25%); } /* top-left, off card */
+  25%  { transform: translate( 65%, -25%); } /* top-right edge run  */
+  50%  { transform: translate( 65%,  65%); } /* right -> bottom     */
+  75%  { transform: translate(-25%,  65%); } /* bottom -> left      }
+  100% { transform: translate(-25%, -25%); } /* back to start       */
 }
+
+
 
     .insight-right {
       max-width: 540px;
@@ -837,12 +844,14 @@
 <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 
 <section class="insight-section">
-<div class="insight-left insight-frame">
-  <img class="insights-img" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+  <div class="insight-content">
+<div class="insight-left insight-glow">
+  <img
+    class="insights-img"
+    src="https://i.imgur.com/a6QxhzQ.png"
+    alt="Insights UI"
+  />
 </div>
-
-
-
 
 
 
@@ -1552,83 +1561,7 @@ document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
   left: -35px; /* adjust value until it aligns visually */
 }
 
-/* === SMOOTH BORDER LINE ANIMATION === */
-.border-line-animation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  pointer-events: none;
-}
 
-.border-line-animation div {
-  position: absolute;
-  background: linear-gradient(90deg, rgba(191, 246, 17, 0), rgba(191, 246, 17, 0.8), rgba(191, 246, 17, 0));
-  box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-}
-
-.line-top {
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  animation: moveRight 4s linear infinite;
-}
-
-.line-right {
-  top: -100%;
-  right: 0;
-  width: 2px;
-  height: 100%;
-  animation: moveDown 4s linear infinite 1s;
-}
-
-.line-bottom {
-  bottom: 0;
-  right: -100%;
-  width: 100%;
-  height: 2px;
-  animation: moveLeft 4s linear infinite 2s;
-}
-
-.line-left {
-  bottom: -100%;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  animation: moveUp 4s linear infinite 3s;
-}
-
-@keyframes moveRight {
-  0% { left: -100%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { left: 100%; opacity: 0; }
-}
-
-@keyframes moveDown {
-  0% { top: -100%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-
-@keyframes moveLeft {
-  0% { right: -100%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { right: 100%; opacity: 0; }
-}
-
-@keyframes moveUp {
-  0% { bottom: -100%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { bottom: 100%; opacity: 0; }
-}
 </style>
 
 
