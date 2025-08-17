@@ -283,171 +283,147 @@
       100% { opacity: 0; }
     }
 
-    .section-title {
-      text-align: center;
-      font-size: 44px;
-      color: var(--text-light);
-      font-weight: 400;
-      line-height: 1.4;
-      margin-top: 14px;
-    }
+  /* === INSIGHTS SECTION CLEAN CSS === */
 
-    .section-sub {
-      text-align: center;
-      color: var(--text-muted);
-      margin-top: 12px;
-      font-size: 21px;
-      font-weight: 400;
-      line-height: 1.4;
-    }
-
-    .section-badge {
-      background-color: #090922;
-      color: #bbb;
-      padding: 6px 14px;
-      border-radius: 53px;
-      font-size: 15px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: none;
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .section-badge:hover {
-      box-shadow: 0 0 20px var(--badge-glow);
-    }
-
-    .insight-section {
-      padding: 60px 20px 60px;
-    }
-
-    .insight-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      max-width: 1300px;
-      margin: 0 auto;
-      gap: 80px;
-    }
-
-    .insight-left {
-      position: relative;
-      margin-left: -120px;
-    }
-
-    .insight-left img {
-      width: 520px;
-      border-radius: 20px;
-      display: block;
-    }
-
-/* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: thin neon line that orbits the image edges === */
-.insight-orbit{
-  position: relative;
-  display: inline-block;
-  border-radius: 20px;     /* match your image */
-  overflow: hidden;        /* clips to read as a line */
+.section-title {
+  text-align: center;
+  font-size: 44px;
+  color: var(--text-light);
+  font-weight: 400;
+  line-height: 1.4;
+  margin-top: 14px;
 }
 
-/* keep your image size */
-.insight-orbit .insights-img{
-  display:block;
-  width:520px;
-  height:auto;
-  border-radius:inherit;
-  position:relative;
-  z-index:1;
+.section-sub {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 12px;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
-.moving-line-wrapper {
+.section-badge {
+  background-color: #090922;
+  color: #bbb;
+  padding: 6px 14px;
+  border-radius: 53px;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 20px var(--badge-glow);
+}
+
+.section-badge:hover {
+  box-shadow: 0 0 20px var(--badge-glow);
+}
+
+.insight-section {
+  padding: 60px 20px;
+}
+
+.insight-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1300px;
+  margin: 0 auto;
+  gap: 80px;
+}
+
+.insight-left {
   position: relative;
-  overflow: hidden;
-  z-index: 1 !important;
-  background-color: black;
+}
+
+.insight-left img {
+  width: 520px;
   border-radius: 20px;
-  padding: 2px;
-  display: inline-block;
+  display: block;
 }
 
-.moving-line-wrapper .moving-line-content {
-  padding: 10px;
-  z-index: 2 !important;
+/* === INSIGHTS ORBIT LINE === */
+.insight-orbit {
   position: relative;
-  width: 100%;
-  height: 100%;
-  transform-origin: center;
-  background: inherit;
-  border-radius: inherit;
-  overflow: inherit;
+  display: inline-block;
+  border-radius: 20px;      /* match the image */
+  overflow: hidden;
 }
 
-@keyframes move-around {
-  0%   { top: -20px; left: -20px; }
-  25%  { top: -20px; left: calc(100% - 20px); }
-  50%  { top: calc(100% - 20px); left: calc(100% - 20px); }
-  75%  { top: calc(100% - 20px); left: -20px; }
-  100% { top: -20px; left: -20px; }
+.insight-orbit .insights-img {
+  display: block;
+  width: 520px;
+  height: auto;
+  border-radius: inherit;
+  position: relative;
+  z-index: 1;
 }
 
 .insight-line {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  background: rgba(191, 246, 17, 0.8);
-  box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8);
+  width: 26px;
+  height: 26px;
+  background: rgba(191, 246, 17, 0.9);
+  box-shadow: 0 0 35px 20px rgba(191, 246, 17, 0.6);
   border-radius: 50%;
   animation: move-around 8s linear infinite;
   z-index: 0;
 }
 
+/* Animation path around all edges */
+@keyframes move-around {
+  0%   { top: -13px; left: -13px; }
+  25%  { top: -13px; left: calc(100% - 13px); }
+  50%  { top: calc(100% - 13px); left: calc(100% - 13px); }
+  75%  { top: calc(100% - 13px); left: -13px; }
+  100% { top: -13px; left: -13px; }
+}
 
+.insight-right {
+  max-width: 540px;
+  text-align: left;
+}
 
-    .insight-right {
-      max-width: 540px;
-      text-align: left;
-    }
+.insight-icon {
+  width: 80px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
 
-    .insight-icon {
-      width: 80px;
-      margin-top: 40px;
-      margin-bottom: 30px;
-    }
+.insight-right h2 {
+  font-size: 44px;
+  color: #fff9f9;
+  margin-bottom: 26px;
+  font-weight: 400;
+}
 
-    .insight-right h2 {
-      font-size: 44px;
-      color: #fff9f9;
-      margin-bottom: 26px;
-      font-weight: 400;
-    }
+.insight-right p {
+  color: #d8cccc;
+  font-size: 22px;
+  margin-bottom: 38px;
+  font-weight: 400;
+}
 
-    .insight-right p {
-      color: #d8cccc;
-      font-size: 22px;
-      margin-bottom: 38px;
-      font-weight: 400;
-    }
+.cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  font-size: 20px;
+  background-color: #adff00;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: box-shadow 0.3s ease;
+  font-weight: 500;
+}
 
-    .cta-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 24px;
-      font-size: 20px;
-      background-color: #adff00;
-      color: black;
-      border: none;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: box-shadow 0.3s ease;
-      font-weight: 500;
-    }
+.cta-outline:hover {
+  box-shadow: 0 0 16px #adff00;
+}
 
-    .cta-outline:hover {
-      box-shadow: 0 0 16px #adff00;
-    }
 
     /* Scroll Section Styles START */
     .scroll-section {
@@ -853,31 +829,24 @@
 <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
 <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 
-<section class="insight-section">
-  <div class="insight-content">
-<div class="moving-line-wrapper">
-  <span class="insight-line"></span>
-  <div class="moving-line-content">
-    <img
-      class="app-preview"
-      width="520"
-      src="https://i.imgur.com/a6QxhzQ.png"
-      alt="Insights UI"
-    />
+<section class="insight-section" id="insights">
+  <div class="insight-content insight-2col">
+  <div class="insight-left">
+  <div class="insight-orbit">
+    <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" class="insights-img" />
+    <span class="insight-line"></span>
   </div>
 </div>
 
-
-
-
     <div class="insight-right">
-      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="Analytics Icon" class="insight-icon" />
+      <img src="https://img.icons8.com/color/96/combo-chart--v1.png" alt="" class="insight-icon" />
       <h2>Clear insights for <br><span>easy, accurate reviews.</span></h2>
       <p>We break down complex contract language into clear, actionable takeaways so you can review with confidence, not confusion.</p>
       <a href="#" class="cta-outline">Review A Contract ↗</a>
     </div>
   </div>
 </section>
+
 
 <!-- SCROLLING FEATURES SECTION -->
 <div class="scroll-full">
