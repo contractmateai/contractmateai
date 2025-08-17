@@ -345,67 +345,48 @@
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
 /* === INSIGHTS: moving line around edges (centered on each side) === */
-.insight-frame{
+/* === INSIGHTS: animated glowing border === */
+.insight-frame {
   position: relative;
   display: inline-block;
-  border-radius: 20px;    /* match image corners */
-  overflow: hidden;       /* this makes it read as a line */
-  /* tuning */
-  --peek: 14px;           /* line thickness (bigger = thicker line) */
-  --ball: 380px;          /* ball diameter (bigger = flatter arc) */
-  --speed: 7s;            /* loop duration */
-  --color: #adff00;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.insight-frame .insights-img{
-  display:block;
-  width:520px;
-  max-width:100%;
-  height:auto;
-  border-radius:inherit;
-  position:relative;
-  z-index:1;              /* image above the ball */
+.insight-frame .insights-img {
+  display: block;
+  width: 520px;
+  border-radius: inherit;
+  position: relative;
+  z-index: 1;
 }
 
-/* the hidden ball that creates the line */
-.insight-frame::before{
-  content:"";
-  position:absolute;
-  width:var(--ball);
-  height:var(--ball);
-  background:var(--color);
-  border-radius:50%;
-  box-shadow:0 0 10px var(--color);
-  z-index:0;              /* behind the photo */
-  animation: edge-run var(--speed) linear infinite;
+/* Glowing border overlay */
+.insight-frame::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  padding: 2px;  /* thickness of the line */
+  background: linear-gradient(90deg, transparent, #adff00, transparent);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: border-run 6s linear infinite;
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* travel TOP → RIGHT → BOTTOM → LEFT with constant peek */
-@keyframes edge-run{
-  /* TOP (centered horizontally) */
-  0%,
-  100%{
-    top: calc(-1 * var(--peek));
-    left: calc(50% - (var(--ball) / 2));
-  }
-  /* RIGHT (centered vertically) */
-  25%{
-    top: calc(50% - (var(--ball) / 2));
-    left: calc(100% - var(--peek));
-  }
-  /* BOTTOM (centered horizontally) */
-  50%{
-    top: calc(100% - var(--peek));
-    left: calc(50% - (var(--ball) / 2));
-  }
-  /* LEFT (centered vertically) */
-  75%{
-    top: calc(50% - (var(--ball) / 2));
-    left: calc(-1 * var(--peek));
-  }
+/* Animate the gradient around all 4 edges */
+@keyframes border-run {
+  0%   { background-position: 0% 0%; background-size: 300% 300%; }
+  25%  { background-position: 100% 0%; }
+  50%  { background-position: 100% 100%; }
+  75%  { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
 }
-
-
 
     .insight-right {
       max-width: 540px;
