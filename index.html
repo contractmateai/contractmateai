@@ -345,35 +345,19 @@
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
 /* Moving border wrapper */
+/* === INSIGHTS moving ball illusion === */
 .moving-line-wrapper {
   position: relative;
   display: inline-block;
-  border-radius: 16px; /* match your Insights img rounding */
-  padding: 2px; /* thin space for the line */
-  overflow: hidden;
+  border-radius: 20px;
+  overflow: visible;
 }
 
-/* The glowing dot that travels */
-.yellow-line {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #adff00; /* neon green like your app preview */
-  border-radius: 50%;
-  box-shadow: 0 0 10px #adff00;
-  animation: move-around 6s linear infinite;
-  z-index: 1;
-}
-
-/* Inner content */
 .moving-line-content {
   position: relative;
-  z-index: 2;
-  border-radius: inherit;
-  overflow: hidden;
+  z-index: 2; /* keep photo above ball */
 }
 
-/* Make the Insights photo styled */
 .insights-img {
   display: block;
   width: 100%;
@@ -381,13 +365,25 @@
   border-radius: inherit;
 }
 
-/* Path for the glowing ball */
+/* the green "ball" that creates line illusion */
+.yellow-line {
+  position: absolute;
+  width: 26px;    /* bigger so it peeks out clearly */
+  height: 26px;
+  background: #adff00;
+  border-radius: 50%;
+  box-shadow: 0 0 18px #adff00;
+  z-index: 1;
+  animation: move-around 6s linear infinite;
+}
+
+/* square path around image */
 @keyframes move-around {
-  0%   { top: -6px; left: -6px; }
-  25%  { top: -6px; left: calc(100% - 6px); }
-  50%  { top: calc(100% - 6px); left: calc(100% - 6px); }
-  75%  { top: calc(100% - 6px); left: -6px; }
-  100% { top: -6px; left: -6px; }
+  0%   { top: -13px; left: -13px; } /* top-left */
+  25%  { top: -13px; left: calc(100% - 13px); } /* top-right */
+  50%  { top: calc(100% - 13px); left: calc(100% - 13px); } /* bottom-right */
+  75%  { top: calc(100% - 13px); left: -13px; } /* bottom-left */
+  100% { top: -13px; left: -13px; } /* back */
 }
 
 
@@ -840,18 +836,40 @@
 <h2 class="section-title">Understand Your<br>Contract at a Glance</h2>
 <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 
+<!-- === INSIGHTS SECTION === -->
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left moving-line-wrapper">
-  <span class="yellow-line"></span>
-  <div class="moving-line-content">
-    <img
-      class="insights-img"
-      src="https://i.imgur.com/a6QxhzQ.png"
-      alt="Insights UI"
-    />
+
+    <!-- LEFT: insights image with moving ball -->
+    <div class="insight-left moving-line-wrapper">
+      <span class="yellow-line"></span>
+      <div class="moving-line-content">
+        <img
+          class="insights-img"
+          src="https://i.imgur.com/a6QxhzQ.png"
+          alt="Insights UI"
+        />
+      </div>
+    </div>
+
+    <!-- RIGHT: text -->
+    <div class="insight-right">
+      <img
+        class="insight-icon"
+        src="https://imgur.com/v1HHp9T.png"
+        alt="Insights Icon"
+      />
+      <h2>Understand Your<br>Contract at a Glance</h2>
+      <p>
+        We highlight key terms, risks, and clauses so you can<br />
+        grasp the essentials without reading every line
+      </p>
+      <a href="#" class="cta-outline">Review A Contract ↗</a>
+    </div>
+
   </div>
-</div>
+</section>
+
 
 
 
