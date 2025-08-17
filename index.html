@@ -344,16 +344,19 @@
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: orbiting ball behind image (bigger ball, smaller peek) === */
-/* === INSIGHTS: thin moving line around the image === */
+/* === INSIGHTS: moving line around edges (centered on each side) === */
 .insight-frame{
   position: relative;
   display: inline-block;
-  border-radius: 20px;   /* match image corners */
-  overflow: hidden;      /* CRUCIAL: clips ball so it reads as a line */
+  border-radius: 20px;    /* match image corners */
+  overflow: hidden;       /* this makes it read as a line */
+  /* tuning */
+  --peek: 14px;           /* line thickness (bigger = thicker line) */
+  --ball: 380px;          /* ball diameter (bigger = flatter arc) */
+  --speed: 7s;            /* loop duration */
+  --color: #adff00;
 }
 
-/* Keep your size */
 .insight-frame .insights-img{
   display:block;
   width:520px;
@@ -361,51 +364,46 @@
   height:auto;
   border-radius:inherit;
   position:relative;
-  z-index:1;             /* image stays above the ball */
+  z-index:1;              /* image above the ball */
 }
 
-/* Tuning: line thickness & speed */
-.insight-frame{
-  --ball: 320px;   /* diameter of hidden ball (bigger = flatter arc) */
-  --peek: 14px;    /* how much of the ball is allowed to show = line thickness */
-  --speed: 7s;     /* loop duration */
-  --color: #adff00;
-}
-
-/* The “ball” that creates the line */
+/* the hidden ball that creates the line */
 .insight-frame::before{
   content:"";
   position:absolute;
   width:var(--ball);
   height:var(--ball);
-  background: var(--color);
+  background:var(--color);
   border-radius:50%;
-  z-index:0;                /* behind the photo */
-  box-shadow: 0 0 10px var(--color);
-  animation: orbit-edges var(--speed) linear infinite;
+  box-shadow:0 0 10px var(--color);
+  z-index:0;              /* behind the photo */
+  animation: edge-run var(--speed) linear infinite;
 }
 
-/* Move along TOP → RIGHT → BOTTOM → LEFT with constant peek */
-@keyframes orbit-edges{
-  /* TOP edge: only --peek shows inside */
-  0%   { top: calc(-1 * (var(--ball) - var(--peek)));
-         left: calc(-1 * (var(--ball) / 2)); }
-  25%  { top: calc(-1 * (var(--ball) - var(--peek)));
-         left: calc(100% - (var(--ball) / 2)); }
-
-  /* RIGHT edge */
-  50%  { top: calc(100% - (var(--ball) - var(--peek)));
-         left: calc(100% - (var(--ball) / 2)); }
-
-  /* LEFT edge */
-  75%  { top: calc(100% - (var(--ball) - var(--peek)));
-         left: calc(-1 * (var(--ball) / 2)); }
-
-  100% { top: calc(-1 * (var(--ball) - var(--peek)));
-         left: calc(-1 * (var(--ball) / 2)); }
+/* travel TOP → RIGHT → BOTTOM → LEFT with constant peek */
+@keyframes edge-run{
+  /* TOP (centered horizontally) */
+  0%,
+  100%{
+    top: calc(-1 * var(--peek));
+    left: calc(50% - (var(--ball) / 2));
+  }
+  /* RIGHT (centered vertically) */
+  25%{
+    top: calc(50% - (var(--ball) / 2));
+    left: calc(100% - var(--peek));
+  }
+  /* BOTTOM (centered horizontally) */
+  50%{
+    top: calc(100% - var(--peek));
+    left: calc(50% - (var(--ball) / 2));
+  }
+  /* LEFT (centered vertically) */
+  75%{
+    top: calc(50% - (var(--ball) / 2));
+    left: calc(-1 * var(--peek));
+  }
 }
-
-
 
 
 
@@ -858,10 +856,10 @@
 <p class="section-sub">We highlight key terms, risks, and clauses so you can<br>grasp the essentials without reading every line</p>
 
 <section class="insight-section">
-  <div class="insight-content">
 <div class="insight-left insight-frame">
   <img class="insights-img" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
 </div>
+
 
 
 
