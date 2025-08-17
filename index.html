@@ -361,71 +361,42 @@
 
 /* TUNING KNOBS */
 /* === INSIGHTS: edge-tracking ball (creates a thin moving line) === */
-:root{
-  --ball: 340px;  /* size of the hidden ball */
-  --peek: 10px;   /* how much shows past the edge (line thickness) */
-  --line: #adff00;
-}
-
-.insight-glow{
+.insight-glow {
   position: relative;
   display: inline-block;
-  border-radius: 20px;   /* match image corners */
-  overflow: hidden;      /* clip, so only a thin slice is visible */
+  border-radius: 20px;
+  overflow: visible;
 }
 
-.insight-glow .insights-img{
-  display:block;
-  width:520px;           /* your image width */
-  max-width:100%;
-  height:auto;
-  border-radius:inherit;
-  position:relative;
-  z-index:1;             /* image above the ball */
+.insights-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+  position: relative;
+  z-index: 2; /* photo stays on top */
 }
 
-/* The ball that moves behind the image */
-.insight-glow::before{
-  content:"";
-  position:absolute;
-  width:var(--ball);
-  height:var(--ball);
-  background: var(--line);
-  border-radius:50%;
-  z-index:0;             /* behind the photo */
-  /* No blur — we want a clean line look */
-  animation: edge-loop 7s linear infinite;
+.insight-glow::before {
+  content: "";
+  position: absolute;
+  width: 160px;   /* ball diameter — bigger = more line visible */
+  height: 160px;
+  background: #adff00;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #adff00;
+  animation: move-square 6s linear infinite;
+  z-index: 1;
 }
 
-/* Move along edges with a constant 'peek' so it reads as a line */
-@keyframes edge-loop{
-  /* TOP edge: only --peek shows inside */
-  0%{
-    top: calc(-1 * (var(--ball) - var(--peek)));
-    left: calc(-1 * (var(--ball) / 2));
-  }
-  25%{
-    top: calc(-1 * (var(--ball) - var(--peek)));
-    left: calc(100% - (var(--ball) / 2));
-  }
-  /* RIGHT edge */
-  50%{
-    top: calc(100% - (var(--ball) - var(--peek)));
-    left: calc(100% - (var(--ball) / 2));
-  }
-  /* BOTTOM + LEFT edges back to start */
-  75%{
-    top: calc(100% - (var(--ball) - var(--peek)));
-    left: calc(-1 * (var(--ball) / 2));
-  }
-  100%{
-    top: calc(-1 * (var(--ball) - var(--peek)));
-    left: calc(-1 * (var(--ball) / 2));
-  }
+/* square path, only edges peek outside */
+@keyframes move-square {
+  0%   { top: -80px; left: -80px; }               /* top-left */
+  25%  { top: -80px; left: calc(100% - 80px); }   /* top-right */
+  50%  { top: calc(100% - 80px); left: calc(100% - 80px); } /* bottom-right */
+  75%  { top: calc(100% - 80px); left: -80px; }   /* bottom-left */
+  100% { top: -80px; left: -80px; }               /* back to start */
 }
-
-
-
 
 
 
@@ -879,14 +850,14 @@
 
 <section class="insight-section">
   <div class="insight-content">
-<div class="insight-left insight-line">
-  <span class="orbit-ball"></span>
+<div class="insight-left insight-glow">
   <img
     class="insights-img"
     src="https://i.imgur.com/a6QxhzQ.png"
     alt="Insights UI"
   />
 </div>
+
 
 
 
