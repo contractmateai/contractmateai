@@ -344,41 +344,74 @@
 }
 
 /* === INSIGHTS ORBIT LINE === */
-.insight-orbit {
+/* === INSIGHTS ORBIT LINE — FIXED === */
+.insight-orbit{
   position: relative;
   display: inline-block;
-  border-radius: 20px;      /* match the image */
-  overflow: hidden;
+  border-radius: 20px;        /* match the image */
+  overflow: hidden;           /* we WANT to clip to create a thin line */
 }
 
-.insight-orbit .insights-img {
-  display: block;
-  width: 520px;
-  height: auto;
-  border-radius: inherit;
-  position: relative;
-  z-index: 1;
+/* keep the image size you want */
+.insight-orbit .insights-img{
+  display:block;
+  width:520px;                /* adjust if you want smaller/larger */
+  height:auto;
+  border-radius:inherit;
+  position:relative;
+  z-index:1;
 }
 
-.insight-line {
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: rgba(191, 246, 17, 0.9);
-  box-shadow: 0 0 35px 20px rgba(191, 246, 17, 0.6);
-  border-radius: 50%;
-  animation: move-around 8s linear infinite;
-  z-index: 0;
+/* tuning knobs */
+.insight-orbit{
+  --ball: 160px;              /* size of the glowing ball */
+  --peek: 30px;               /* how much of the ball intrudes INSIDE (the line thickness) */
+  --color: #adff00;
+  --speed: 7s;
+  --R: calc(var(--ball) / 2);
 }
 
-/* Animation path around all edges */
-@keyframes move-around {
-  0%   { top: -13px; left: -13px; }
-  25%  { top: -13px; left: calc(100% - 13px); }
-  50%  { top: calc(100% - 13px); left: calc(100% - 13px); }
-  75%  { top: calc(100% - 13px); left: -13px; }
-  100% { top: -13px; left: -13px; }
+/* the glowing ball that creates the moving line */
+.insight-orbit .insight-line{
+  content:"";
+  position:absolute;
+  width:var(--ball);
+  height:var(--ball);
+  border-radius:50%;
+  background: var(--color);
+  box-shadow:0 0 20px var(--color), 0 0 50px var(--color);
+  z-index:0;  /* behind photo */
+  animation: edge-orbit-ss var(--speed) linear infinite;
 }
+
+/* center the ball on each edge; keep --peek intruding so it's visible */
+@keyframes edge-orbit-ss{
+  /* TOP (centered) */
+  0%, 100% {
+    top: calc(-1 * var(--R) + var(--peek));
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  /* RIGHT (centered) */
+  25% {
+    top: 50%;
+    left: calc(100% - var(--R) - var(--peek));
+    transform: translateY(-50%);
+  }
+  /* BOTTOM (centered) */
+  50% {
+    top: calc(100% - var(--R) - var(--peek));
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  /* LEFT (centered) */
+  75% {
+    top: 50%;
+    left: calc(-1 * var(--R) + var(--peek));
+    transform: translateY(-50%);
+  }
+}
+
 
 .insight-right {
   max-width: 540px;
