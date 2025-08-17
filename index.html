@@ -344,39 +344,47 @@ what u r saying for me to replace i cannot find, look at the code fucking right 
     }
 
 /* === INSIGHTS: moving border line (glowing arc that orbits the border) === */
-/* === INSIGHTS: orbiting ball behind image === */
-.insight-line {
+/* === INSIGHTS: orbiting ball behind image (bigger ball, smaller peek) === */
+.insight-line{
   position: relative;
   display: inline-block;
+  border-radius: 20px;   /* match image radius */
+  overflow: hidden;      /* clips the ball so only a bit shows */
 }
 
-.insight-line .insights-img {
+.insight-line .insights-img{
   width: 520px;
-  border-radius: 20px;
+  border-radius: inherit;
   position: relative;
-  z-index: 2; /* image above ball */
+  z-index: 2;            /* image above the ball */
 }
 
-/* the green ball */
-.orbit-ball {
+/* TUNING KNOBS */
+:root{
+  --ball: 24px;          /* ball diameter (bigger = thicker “line”) */
+  --peek: 3px;           /* how much of the ball sticks out */
+}
+
+.orbit-ball{
   position: absolute;
-  width: 14px;     /* not too big, not too small */
-  height: 14px;
+  width: var(--ball);
+  height: var(--ball);
   background: #adff00;
   border-radius: 50%;
-  box-shadow: 0 0 8px #adff00;
-  z-index: 1; /* stays behind the photo */
+  box-shadow: 0 0 10px #adff00;
+  z-index: 1;
   animation: orbit-square 8s linear infinite;
 }
 
-/* square path around the image */
-@keyframes orbit-square {
-  0%   { top: -7px; left: -7px; } /* top-left */
-  25%  { top: -7px; left: calc(100% - 7px); } /* top-right */
-  50%  { top: calc(100% - 7px); left: calc(100% - 7px); } /* bottom-right */
-  75%  { top: calc(100% - 7px); left: -7px; } /* bottom-left */
-  100% { top: -7px; left: -7px; } /* back */
+/* square path that keeps only a small peek visible */
+@keyframes orbit-square{
+  0%   { top: calc(-1 * var(--peek));                    left: calc(-1 * var(--peek)); }
+  25%  { top: calc(-1 * var(--peek));                    left: calc(100% - (var(--ball) - var(--peek))); }
+  50%  { top: calc(100% - (var(--ball) - var(--peek)));  left: calc(100% - (var(--ball) - var(--peek))); }
+  75%  { top: calc(100% - (var(--ball) - var(--peek)));  left: calc(-1 * var(--peek)); }
+  100% { top: calc(-1 * var(--peek));                    left: calc(-1 * var(--peek)); }
 }
+
 
 
 
