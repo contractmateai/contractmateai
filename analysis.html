@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>SignSense — Analysis</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root{
@@ -18,124 +18,147 @@
       --red:#fe0000;
       --black:#000000;
       --radius:21px;
-      --gap:20px;
-      --sidebar:260px;
-      --col-left-max:620px; /* left column narrower as requested */
+      --gap:18px;
+      --sidebar:280px;
+      --left-max:780px;   /* wider left column */
+      --right-min:520px;  /* wider right column */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.65 Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
 
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
-    /* SIDEBAR */
+    /* ===== SIDEBAR ===== */
     .sidebar{
       background:#0f0e14;border-right:1px solid var(--border);
-      padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:14px
+      padding:18px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
     }
     .brand a{
-      display:flex;align-items:center;gap:10px;padding:10px 2px;border-radius:12px;
+      display:flex;align-items:center;gap:12px;padding:10px 4px;border-radius:12px;
       text-decoration:none;color:var(--white);
     }
-    .brand img{width:28px;height:28px}
-    .brand span{font-size:18px;color:var(--white);font-weight:400}
+    .brand img{width:34px;height:34px}
+    .brand span{font-size:22px;color:var(--white);font-weight:400}
 
-    .nav{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+    .nav{display:flex;flex-direction:column;gap:8px;margin-top:6px}
     .nav a{
-      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:10px;
-      padding:10px 12px;border-radius:14px;border:1px solid transparent;transition:border-color .2s ease
+      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:12px;
+      padding:12px 14px;border-radius:15px;border:1px solid transparent;transition:border-color .2s ease
     }
-    .nav a img.icon{width:20px;height:20px;opacity:.9}
-    .nav a img.arr{width:14px;height:14px;opacity:.9}
+    .nav a img.icon{width:22px;height:22px;opacity:.9}
+    .nav a img.arr{width:16px;height:16px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
+    .nav a.active:hover{background:#181620;border-color:var(--border)} /* no change on active */
 
     .push{flex:1}
-    .legal{margin-top:auto;color:var(--muted);font-size:14px;line-height:1.6}
-    .copy{color:var(--muted);font-size:14px;margin-top:6px}
+    .legal{margin-top:auto;color:var(--muted);font-size:15px;line-height:1.6}
+    .footer-sep{height:1px;background:var(--border);margin:8px 0}
+    .copy{color:var(--muted);font-size:15px}
 
-    /* MAIN */
-    .main{padding:10px 18px 120px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
+    /* ===== MAIN ===== */
+    .main{padding:10px 20px 120px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:center;justify-content:space-between;padding:10px 4px 14px;
-      /* no underline line */
+      display:flex;align-items:center;justify-content:space-between;padding:12px 6px 14px;
+      border-bottom:1px solid var(--border); /* restored thin line */
     }
-    .topbar .title{font-size:18px;color:var(--white);font-weight:400}
+    .top-left{display:flex;align-items:center;gap:12px}
+    .top-title{font-size:20px;color:var(--white);font-weight:400}
+
+    /* Language (hover opens) */
     .lang{position:relative}
     .lang-btn{
-      display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
-      font:400 14px/1 Inter;cursor:pointer;padding:6px 8px
+      display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--white);
+      font:400 16px/1 Inter;cursor:pointer;padding:8px 10px
     }
+    .lang-btn strong{font-weight:400}
     .lang-menu{
       position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:220px;max-height:168px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
-      scrollbar-width:none;
+      border-radius:12px;min-width:240px;max-height:176px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
-    .lang-menu::-webkit-scrollbar{width:0;height:0}
-    /* open on hover for desktop */
+    .lang-menu::-webkit-scrollbar{width:6px}
+    .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang:hover .lang-menu{display:block}
-
     .lang-item{
       display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer
     }
     .lang-item:hover{background:#17161e}
 
-    /* GRID */
-    .grid{display:grid;grid-template-columns:1fr 420px;gap:var(--gap)}
-    .left{max-width:var(--col-left-max);display:flex;flex-direction:column;gap:var(--gap)}
-    .right{display:flex;flex-direction:column;gap:var(--gap)}
-    .card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px
+    /* Grid 2 cols, closer to middle */
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(520px,1.25fr) minmax(var(--right-min),1fr);
+      gap:var(--gap);
+      align-items:start;
     }
-    .card h3{margin:0 0 12px;display:flex;align-items:center;gap:10px;font-size:18px;color:var(--white);font-weight:400}
-    .card h3 img{width:20px;height:20px}
+    .left{max-width:var(--left-max);display:flex;flex-direction:column;gap:var(--gap)}
+    .right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* text lists (no borders or chips) */
-    .list{display:flex;flex-direction:column;gap:12px}
-    .list p{margin:0;color:var(--muted);font-size:19px}
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px
+    }
+    .card h3{
+      margin:0 0 14px;display:flex;align-items:center;gap:12px;
+      font-size:22px;color:var(--white);font-weight:400
+    }
+    .card h3 img{width:24px;height:24px}
 
-    #summaryText p{font-size:19px}
+    /* Text blocks (no borders around sentences) */
+    .list{display:flex;flex-direction:column;gap:14px}
+    .list p{margin:0;color:var(--muted);font-size:20px}
 
-    /* Meters — thinner */
-    .meter-block{display:flex;flex-direction:column;gap:8px}
+    /* Meters (thinner; pure black track, no border) */
+    .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:10px;font-weight:400}
-    .meter-title img{width:20px;height:20px}
-    .meter{height:10px;border-radius:999px;background:var(--black);border:1px solid var(--border);overflow:hidden}
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:19px}
+    .meter-title img{width:24px;height:24px}
+    .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
-    /* Donuts — thinner, numbers larger but not bold; chart left / words right */
-    .hcard{display:flex;gap:14px;align-items:center}
+    /* Donuts (thinner stroke; value a bit larger, not bold) */
+    .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:150px;height:150px;position:relative;display:grid;place-items:center;flex:0 0 150px}
     .circle svg{transform:rotate(-90deg)}
-    .circle .val{position:absolute;font-weight:400;font-size:32px;color:var(--white)}
-    .circle circle.track{stroke:var(--black);stroke-width:12;fill:none}
-    .circle circle.arc{stroke-width:12;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
+    .circle .val{position:absolute;font-weight:400;font-size:34px;color:var(--white)}
+    .circle circle.track{stroke:var(--black);stroke-width:10;fill:none}
+    .circle circle.arc{stroke-width:10;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
     .htext{flex:1;display:flex;flex-direction:column;gap:6px}
-    .muted{color:var(--muted);font-size:16px}
-
-    /* status line: tiny colored square + text (no badges/borders) */
+    .muted{color:var(--muted);font-size:18px}
     .status{display:flex;align-items:center;gap:8px;margin-top:6px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
-    .status span{font-size:14px;color:var(--white);font-weight:400}
+    .status span{font-size:15px;color:var(--white);font-weight:400}
 
     /* scroll lists */
-    .scroll-y{max-height:270px;overflow:auto}
-    .scroll-y::-webkit-scrollbar{width:0;height:0}
-    .scroll-y{scrollbar-width:none}
+    .scroll-y{max-height:300px;overflow:auto;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
 
-    /* Smart Suggestions spans wide */
-    .wide{grid-column:1 / -1}
+    /* Smart Suggestions: full width, centered, wider */
+    .wide{grid-column:1 / -1;justify-self:center;width:min(1120px,100%)}
 
-    /* Sticky Download */
-    .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:14px;display:flex;justify-content:center;z-index:9}
+    /* Download button (appears at end only) */
+    .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
     .download{
-      background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;
-      padding:12px 18px;display:inline-flex;gap:10px;align-items:center;cursor:pointer;font-weight:400
+      background:#111015;color:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:14px 18px;display:inline-flex;gap:10px;align-items:center;cursor:pointer;font-weight:400
     }
+    .download:hover{filter:brightness(1.05)}
 
-    /* Back-to-top arrow (left side) */
+    /* Email modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
+    .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(460px,92vw)}
+    .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
+    .modal-row{display:flex;gap:10px;margin-top:12px}
+    .input{
+      flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter
+    }
+    .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
+    .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
+
+    /* Back to top arrow (left side) */
     .totop{
       position:fixed;left:12px;bottom:22px;background:#15141a;border:1px solid var(--border);
       width:44px;height:44px;border-radius:12px;display:grid;place-items:center;opacity:0;pointer-events:none;
@@ -150,12 +173,13 @@
       .download-wrap{left:0}
       .grid{grid-template-columns:1fr}
       .left{max-width:unset}
+      .wide{width:100%}
     }
   </style>
 </head>
 <body>
   <div class="layout">
-    <!-- SIDEBAR -->
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
       <div class="brand">
         <a href="index.html" aria-label="Go to homepage">
@@ -194,36 +218,37 @@
 
       <div class="push"></div>
       <div class="legal">Not legal advice.<br/>For informational use only.</div>
-      <div class="copy">SignSense 2025</div>
+      <div class="footer-sep"></div>
+      <div class="copy">© 2025 SignSense. All rights reserved.</div>
     </aside>
 
-    <!-- MAIN -->
+    <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
-        <div class="title">Overview</div>
-
-        <!-- Report Language (hover to open) -->
+        <div class="top-left">
+          <div class="top-title">Overview</div>
+        </div>
         <div class="lang">
-          <button class="lang-btn" id="langBtn" type="button">Report Language</button>
+          <button class="lang-btn" id="langBtn" type="button">Report Language: <strong id="langNow">English</strong></button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <div class="lang-item" data-lang="en">English</div>
-            <div class="lang-item" data-lang="es">Spanish</div>
-            <div class="lang-item" data-lang="de">German</div>
-            <div class="lang-item" data-lang="fr">French</div>
-            <div class="lang-item" data-lang="it">Italian</div>
-            <div class="lang-item" data-lang="pt">Portuguese</div>
-            <div class="lang-item" data-lang="nl">Dutch</div>
-            <div class="lang-item" data-lang="ro">Romanian</div>
-            <div class="lang-item" data-lang="sq">Albanian</div>
-            <div class="lang-item" data-lang="zh">Chinese</div>
-            <div class="lang-item" data-lang="ja">Japanese</div>
-            <div class="lang-item" data-lang="tr">Turkish</div>
+            <div class="lang-item" data-lang="English">English</div>
+            <div class="lang-item" data-lang="Spanish">Spanish</div>
+            <div class="lang-item" data-lang="German">German</div>
+            <div class="lang-item" data-lang="French">French</div>
+            <div class="lang-item" data-lang="Italian">Italian</div>
+            <div class="lang-item" data-lang="Portuguese">Portuguese</div>
+            <div class="lang-item" data-lang="Dutch">Dutch</div>
+            <div class="lang-item" data-lang="Romanian">Romanian</div>
+            <div class="lang-item" data-lang="Albanian">Albanian</div>
+            <div class="lang-item" data-lang="Chinese">Chinese</div>
+            <div class="lang-item" data-lang="Japanese">Japanese</div>
+            <div class="lang-item" data-lang="Turkish">Turkish</div>
           </div>
         </div>
       </div>
 
       <div class="grid">
-        <!-- LEFT COLUMN -->
+        <!-- LEFT -->
         <div class="left">
           <section class="card">
             <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
@@ -265,15 +290,15 @@
           </section>
         </div>
 
-        <!-- RIGHT COLUMN -->
+        <!-- RIGHT -->
         <div class="right">
-          <!-- Risk Level -->
+          <!-- Risk -->
           <section class="card">
             <div class="hcard">
               <div class="circle">
                 <svg width="150" height="150">
-                  <circle class="track" cx="75" cy="75" r="65"></circle>
-                  <circle id="riskArc" class="arc" cx="75" cy="75" r="65"></circle>
+                  <circle class="track" cx="75" cy="75" r="70"></circle>
+                  <circle id="riskArc" class="arc" cx="75" cy="75" r="70"></circle>
                 </svg>
                 <div class="val" id="riskVal">0%</div>
               </div>
@@ -285,13 +310,13 @@
             </div>
           </section>
 
-          <!-- Clause Clarity (on top) -->
+          <!-- Clarity -->
           <section class="card">
             <div class="hcard">
               <div class="circle">
                 <svg width="150" height="150">
-                  <circle class="track" cx="75" cy="75" r="65"></circle>
-                  <circle id="clarArc" class="arc" cx="75" cy="75" r="65"></circle>
+                  <circle class="track" cx="75" cy="75" r="70"></circle>
+                  <circle id="clarArc" class="arc" cx="75" cy="75" r="70"></circle>
                 </svg>
                 <div class="val" id="clarVal">0%</div>
               </div>
@@ -303,7 +328,7 @@
             </div>
           </section>
 
-          <!-- Main Clauses -->
+          <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
             <div class="list" id="clausesList"></div>
@@ -313,9 +338,22 @@
     </main>
   </div>
 
-  <!-- Sticky Download -->
-  <div class="download-wrap">
-    <button class="download" id="downloadBtn">Download Report ⬇</button>
+  <!-- Download (appears near bottom) -->
+  <div class="download-wrap" id="dlWrap">
+    <button class="download" id="downloadBtn">Download Report</button>
+  </div>
+
+  <!-- Email modal -->
+  <div class="modal" id="emailModal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <h4>Enter your email to download the PDF report</h4>
+      <div class="modal-row">
+        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+        <button class="btn primary" id="emailSubmit">Download</button>
+        <button class="btn" id="emailCancel">Cancel</button>
+      </div>
+      <div id="emailErr" style="color:#ff6b6b;font-size:13px;margin-top:8px;display:none">Please enter a valid email address.</div>
+    </div>
   </div>
 
   <!-- Back to top -->
@@ -325,29 +363,32 @@
 
 <script>
 (() => {
-  /* ---------- Data ---------- */
+  /* ---------- Demo Data (longer copy) ---------- */
   const demo = {
     summary: [
-      "This contract is generally favorable with low overall risk.",
-      "Payment schedule and termination rights are standard.",
-      "Watch late-fee compounding and define 'material breach'."
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien Lorem ips",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien Lorem ips",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien sectetu",
+      "Suspendisse viverra laoreet lorem, vitae fringilla sapien"
     ],
-    risk: { value: 25, note: "Low exposure overall; review late fees and indemnity scope." },
-    clarity: { value: 80, note: "Clauses are mostly explicit; a few definitions could be tightened." },
+    risk: { value: 25, note: "Low exposure overall with clearly stated obligations. Review late-fee escalation and the scope of indemnity for clarity." },
+    clarity: { value: 80, note: "Language is direct and definitions are mostly present. Tighten a couple of ambiguous terms related to remedies." },
     clauses: [
-      "Payment Terms — Net 30 with 2% per month late fee.",
-      "Scope of Work — Deliverables listed in Schedule A.",
-      "Termination — 30-day convenience; immediate for cause.",
-      "IP & Licensing — Client owns final assets; creator retains tooling."
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien sectetu\nSuspendisse viverra laoreet lorem, vitae fringilla sapien",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien sectetu\nSuspendisse viverra laoreet lorem, vitae fringilla sapien",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien sectetu\nSuspendisse viverra laoreet lorem, vitae fringilla sapien",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien sectetu\nSuspendisse viverra laoreet lorem, vitae fringilla sapien"
     ],
     issues: [
-      "Late fee compounding escalates on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability."
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra laoreet lorem, vitae fringilla sapien."
     ],
     suggestions: [
-      "Add a 5–7 day grace period before late fees.",
-      "Define 'material breach' + 10-day cure period.",
-      "List milestones and acceptance criteria."
+      "Expand milestone acceptance criteria and add explicit cure periods for minor breaches to reduce ambiguity during delivery.",
+      "Clarify late-fee policy with a short grace window and a hard cap to avoid compounding charges on extended delays.",
+      "Define confidentiality carve-outs and data handling steps to align with standard practice and avoid conflicts with privacy laws.",
+      "Add a mutual limitation of liability aligned to fees to keep risk proportional for both parties."
     ],
     meters:{ confidence:75, favorability:80, deadline:18 }
   };
@@ -360,29 +401,29 @@
 
   /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
-  const createP = (text) => { const p=document.createElement('p'); p.textContent=text; return p; };
-  const CIRC = 2*Math.PI*65; // r=65
-  const getVar = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const CIRC = 2*Math.PI*70; // r=70
+  const cssVar = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const between = (v,min,max)=>Math.max(min,Math.min(v,max));
 
   function colorFor(metric, v){
     if (metric === 'risk') {
-      if (v <= 25) return getVar('--green');
-      if (v <= 55) return getVar('--orange');
-      return getVar('--red');
+      if (v <= 25) return cssVar('--green');
+      if (v <= 55) return cssVar('--orange');
+      return cssVar('--red');
     }
     if (metric === 'clarity') {
-      if (v >= 80) return getVar('--green');
-      if (v >= 45) return getVar('--orange');
-      return getVar('--red');
+      if (v >= 80) return cssVar('--green');
+      if (v >= 45) return cssVar('--orange');
+      return cssVar('--red');
     }
     if (metric === 'deadline') {
-      if (v <= 25) return getVar('--green');
-      if (v <= 75) return getVar('--orange');
-      return getVar('--red');
+      if (v <= 25) return cssVar('--green');
+      if (v <= 75) return cssVar('--orange');
+      return cssVar('--red');
     }
-    if (v >= 76) return getVar('--green');
-    if (v >= 50) return getVar('--orange');
-    return getVar('--red');
+    if (v >= 76) return cssVar('--green');
+    if (v >= 50) return cssVar('--orange');
+    return cssVar('--red');
   }
   function statusText(metric, v){
     if (metric==='risk'){
@@ -397,41 +438,48 @@
     }
     return "";
   }
+  const addP = (el, text) => { const p=document.createElement('p'); p.textContent=text; el.appendChild(p); };
 
-  /* ---------- Apply text ---------- */
+  /* ---------- Fill text ---------- */
   const sBox = $("#summaryText"); sBox.innerHTML="";
-  (Array.isArray(data.summary)? data.summary : [String(data.summary)]).forEach(t=>sBox.appendChild(createP(t)));
-  const listTo = (id, arr) => { const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:["None"]).forEach(t=>el.appendChild(createP(t))); };
+  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+
+  const listTo = (id, arr) => {
+    const el=$(id); el.innerHTML="";
+    (arr && arr.length ? arr : ["None"]).forEach(t => addP(el, t));
+  };
   listTo("#clausesList", data.clauses);
   listTo("#issuesList", data.issues);
   listTo("#suggestionsList", data.suggestions);
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
-    valEl.textContent = (value||0) + "%";
+    const v = between(value||0, 0, 100);
+    valEl.textContent = v + "%";
     noteEl.textContent = note || "";
-    const color = colorFor(metric, value);
+    const color = colorFor(metric, v);
     arcEl.style.stroke = color;
     arcEl.style.strokeDasharray = CIRC;
     arcEl.style.strokeDashoffset = CIRC;
-    badgeEl.textContent = statusText(metric, value);
+    badgeEl.textContent = statusText(metric, v);
     dotEl.style.background = color;
-    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - (value||0)/100); });
+    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - v/100); });
   }
   setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
   setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
 
   /* ---------- Bars ---------- */
   function setMeter(fill, label, metric, value){
-    label.textContent = (value||0) + "%";
-    fill.style.background = colorFor(metric, value);
-    requestAnimationFrame(()=>{ fill.style.width = (value||0) + "%"; });
+    const v = between(value||0, 0, 100);
+    label.textContent = v + "%";
+    fill.style.background = colorFor(metric, v);
+    requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
   setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- Equalize heights: Potential Issues vs Main Clauses ---------- */
+  /* ---------- Align Potential Issues and Main Clauses bottoms ---------- */
   function equalize(){
     const a = $("#issuesCard"), b = $("#clausesCard");
     if(!a || !b) return;
@@ -442,8 +490,44 @@
   window.addEventListener("load", equalize);
   window.addEventListener("resize", ()=>setTimeout(equalize, 80));
 
-  /* ---------- Download PDF ---------- */
-  $("#downloadBtn").addEventListener("click", async ()=>{ await generatePDF("Report", data); });
+  /* ---------- Language UI ---------- */
+  const langNow = $("#langNow");
+  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>{
+    li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; });
+  });
+
+  /* ---------- Download button visibility near bottom ---------- */
+  const dlWrap = $("#dlWrap");
+  const showThresholdPx = 300; // show when 300px from bottom
+  function checkBottom(){
+    const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+    dlWrap.style.display = scrolledFromBottom <= showThresholdPx ? "flex" : "none";
+  }
+  window.addEventListener("scroll", checkBottom, {passive:true});
+  window.addEventListener("load", checkBottom);
+
+  /* ---------- Back-to-top ---------- */
+  const toTop = $("#toTop"), showAt = 400;
+  window.addEventListener("scroll", ()=>{ if (window.scrollY > showAt) toTop.classList.add("show"); else toTop.classList.remove("show"); }, {passive:true});
+  toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
+
+  /* ---------- Email modal + PDF ---------- */
+  const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
+  $("#downloadBtn").addEventListener("click", openModal);
+  $("#emailCancel").addEventListener("click", closeModal);
+
+  function validEmail(e){
+    // best-effort client validation (format + simple TLD check)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e.trim());
+  }
+  $("#emailSubmit").addEventListener("click", async ()=>{
+    const email = $("#emailInput").value || "";
+    const err = $("#emailErr");
+    if (!validEmail(email)){ err.style.display="block"; return; }
+    err.style.display="none";
+    await generatePDF("Report", data);
+    closeModal();
+  });
 
   async function generatePDF(title, d){
     const { jsPDF } = window.jspdf;
@@ -451,7 +535,7 @@
     const pageW = doc.internal.pageSize.getWidth();
     const margin = 48, width = pageW - margin*2, lh = 18;
 
-    doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F'); // header #1c1b22
+    doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
     doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
     doc.text("SignSense — Contract Analysis Report", margin, 48);
 
@@ -462,32 +546,23 @@
     y = section("Summary", y); y = bullets(d.summary, y);
     y = section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y = paragraph(d.risk?.note || "", y);
     y = section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y = paragraph(d.clarity?.note || "", y);
-    y = section("Main Clauses", y); y = ordered(d.clauses, y);
+    y = section("Main Clauses", y); y = bullets(d.clauses, y, true);
     y = section("Potential Issues", y); y = bullets(d.issues, y);
     y = section("Smart Suggestions", y); y = bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
     function section(t, y){ if (y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
     function paragraph(text, y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
-    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{ const lines=doc.splitTextToSize(t,width-12); if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y); lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} }); y+=lh; }); return y; }
-    function ordered(arr,y){ const list=Array.isArray(arr)?arr:[]; let n=1; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{ const prefix=`${n++}. `; const lines=doc.splitTextToSize(t,width-doc.getTextWidth(prefix)); if(y>780){doc.addPage(); y=64;} doc.text(prefix, margin, y);
-        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+doc.getTextWidth(prefix), y);} else { y+=lh; doc.text(line, margin+doc.getTextWidth(prefix), y);} }); y+=lh; }); return y; }
+    function bullets(arr,y,allowNewlines=false){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      list.forEach(t=>{ const text = allowNewlines ? t : String(t).replace(/\n+/g,' '); const lines=doc.splitTextToSize(text,width-12);
+        if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
+        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} });
+        y+=lh;
+      }); return y;
+    }
   }
 
-  /* ---------- To Top ---------- */
-  const toTop = $("#toTop"), showAt = 400;
-  window.addEventListener("scroll", ()=>{ if (window.scrollY > showAt) toTop.classList.add("show"); else toTop.classList.remove("show"); }, {passive:true});
-  toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
-
-  /* ---------- Language selection (no “— English” text) ---------- */
-  const menu = $("#langMenu");
-  menu.querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", ()=>{ menu.style.display="none"; }); // UI only
-  });
-
-  /* ---------- Review link ---------- */
+  /* ---------- Review link (placeholder) ---------- */
   $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
