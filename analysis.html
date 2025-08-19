@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>SignSense — Analysis</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root{
@@ -18,61 +18,64 @@
       --red:#fe0000;
       --black:#000000;
       --radius:21px;
-      --gap:16px;
+      --gap:20px;
       --sidebar:260px;
+      --col-left-max:620px; /* left column narrower as requested */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.6 Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.65 Inter,system-ui,Segoe UI,Roboto,Arial}
 
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
     /* SIDEBAR */
     .sidebar{
       background:#0f0e14;border-right:1px solid var(--border);
-      padding:18px 14px 18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:14px
+      padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:14px
     }
-    .brand{
-      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:#0f0e14
+    .brand a{
+      display:flex;align-items:center;gap:10px;padding:10px 2px;border-radius:12px;
+      text-decoration:none;color:var(--white);
     }
     .brand img{width:28px;height:28px}
-    .brand span{font-weight:700;font-size:18px;color:var(--white)}
+    .brand span{font-size:18px;color:var(--white);font-weight:400}
 
     .nav{display:flex;flex-direction:column;gap:6px;margin-top:6px}
     .nav a{
       text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:10px;
-      padding:10px 12px;border-radius:14px;border:1px solid transparent
+      padding:10px 12px;border-radius:14px;border:1px solid transparent;transition:border-color .2s ease
     }
     .nav a img.icon{width:20px;height:20px;opacity:.9}
     .nav a img.arr{width:14px;height:14px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
-    .nav a:hover{background:#17161e;border-color:var(--border);color:var(--white)}
+    .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
 
     .push{flex:1}
-    .legal{
-      margin-top:auto;color:var(--muted);font-size:14px;line-height:1.6
-    }
+    .legal{margin-top:auto;color:var(--muted);font-size:14px;line-height:1.6}
     .copy{color:var(--muted);font-size:14px;margin-top:6px}
 
     /* MAIN */
     .main{padding:10px 18px 120px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:center;justify-content:space-between;padding:10px 4px 14px;border-bottom:1px solid var(--border)
+      display:flex;align-items:center;justify-content:space-between;padding:10px 4px 14px;
+      /* no underline line */
     }
-    .topbar .title{font-weight:700;font-size:18px;color:var(--white)}
+    .topbar .title{font-size:18px;color:var(--white);font-weight:400}
     .lang{position:relative}
     .lang-btn{
       display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
-      font:600 14px/1 Inter;cursor:pointer
+      font:400 14px/1 Inter;cursor:pointer;padding:6px 8px
     }
-    .lang-btn:after{content:"▾";font-size:12px;opacity:.9}
     .lang-menu{
       position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:220px;max-height:168px; /* ~4 rows */
-      overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px
+      border-radius:12px;min-width:220px;max-height:168px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      scrollbar-width:none;
     }
-    .lang-menu.open{display:block}
+    .lang-menu::-webkit-scrollbar{width:0;height:0}
+    /* open on hover for desktop */
+    .lang:hover .lang-menu{display:block}
+
     .lang-item{
       display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer
     }
@@ -80,46 +83,56 @@
 
     /* GRID */
     .grid{display:grid;grid-template-columns:1fr 420px;gap:var(--gap)}
+    .left{max-width:var(--col-left-max);display:flex;flex-direction:column;gap:var(--gap)}
+    .right{display:flex;flex-direction:column;gap:var(--gap)}
     .card{
       background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px
     }
-    .card h3{margin:0 0 10px;display:flex;align-items:center;gap:10px;font-size:18px;color:var(--white)}
+    .card h3{margin:0 0 12px;display:flex;align-items:center;gap:10px;font-size:18px;color:var(--white);font-weight:400}
     .card h3 img{width:20px;height:20px}
 
+    /* text lists (no borders or chips) */
     .list{display:flex;flex-direction:column;gap:12px}
-    .list .item{background:#15141a;border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--muted);font-size:18px}
+    .list p{margin:0;color:var(--muted);font-size:19px}
 
-    /* SUMMARY text bigger */
-    #summaryText .item{font-size:18px}
+    #summaryText p{font-size:19px}
 
-    /* Meters */
+    /* Meters — thinner */
     .meter-block{display:flex;flex-direction:column;gap:8px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:10px}
+    .meter-title{display:flex;align-items:center;gap:10px;font-weight:400}
     .meter-title img{width:20px;height:20px}
-    .meter{height:14px;border-radius:999px;background:var(--black);border:1px solid var(--border);overflow:hidden}
-    .fill{height:100%;width:0%;transition:width 1.1s ease;border-radius:999px}
+    .meter{height:10px;border-radius:999px;background:var(--black);border:1px solid var(--border);overflow:hidden}
+    .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
-    /* Donuts (chart left, words right) */
+    /* Donuts — thinner, numbers larger but not bold; chart left / words right */
     .hcard{display:flex;gap:14px;align-items:center}
-    .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
+    .circle{width:150px;height:150px;position:relative;display:grid;place-items:center;flex:0 0 150px}
     .circle svg{transform:rotate(-90deg)}
-    .circle .val{position:absolute;font-weight:700;font-size:28px;color:var(--white)}
-    .circle circle.track{stroke:var(--black);stroke-width:16;fill:none}
-    .circle circle.arc{stroke-width:16;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
+    .circle .val{position:absolute;font-weight:400;font-size:32px;color:var(--white)}
+    .circle circle.track{stroke:var(--black);stroke-width:12;fill:none}
+    .circle circle.arc{stroke-width:12;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
     .htext{flex:1;display:flex;flex-direction:column;gap:6px}
-    .badge{display:inline-flex;align-items:center;gap:8px;background:#15141a;border:1px solid var(--border);border-radius:999px;padding:6px 10px;color:var(--white);font-weight:600}
+    .muted{color:var(--muted);font-size:16px}
 
-    /* Scrollable lists */
+    /* status line: tiny colored square + text (no badges/borders) */
+    .status{display:flex;align-items:center;gap:8px;margin-top:6px}
+    .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
+    .status span{font-size:14px;color:var(--white);font-weight:400}
+
+    /* scroll lists */
     .scroll-y{max-height:270px;overflow:auto}
-    .scroll-y::-webkit-scrollbar{width:8px}
-    .scroll-y::-webkit-scrollbar-thumb{background:#2a2d34;border-radius:8px}
+    .scroll-y::-webkit-scrollbar{width:0;height:0}
+    .scroll-y{scrollbar-width:none}
+
+    /* Smart Suggestions spans wide */
+    .wide{grid-column:1 / -1}
 
     /* Sticky Download */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:14px;display:flex;justify-content:center;z-index:9}
     .download{
       background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;
-      padding:12px 18px;display:inline-flex;gap:10px;align-items:center;font-weight:700;cursor:pointer
+      padding:12px 18px;display:inline-flex;gap:10px;align-items:center;cursor:pointer;font-weight:400
     }
 
     /* Back-to-top arrow (left side) */
@@ -136,6 +149,7 @@
       .layout{grid-template-columns:1fr}
       .download-wrap{left:0}
       .grid{grid-template-columns:1fr}
+      .left{max-width:unset}
     }
   </style>
 </head>
@@ -144,8 +158,10 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="brand">
-        <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo">
-        <span>SignSense</span>
+        <a href="index.html" aria-label="Go to homepage">
+          <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo">
+          <span>SignSense</span>
+        </a>
       </div>
 
       <nav class="nav">
@@ -171,14 +187,12 @@
         </a>
         <a href="#" id="leaveReview">
           <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-          <img class="icon" src="https://imgur.com/pb1ErtF.png" alt="">
-          <span>Leave Review</span>
+          <img class="icon" src="https://imgur.com/zwr9SOe.png" alt="">
+          <span>Leave a Review</span>
         </a>
       </nav>
 
       <div class="push"></div>
-
-      <!-- Bottom left — simplified per your request -->
       <div class="legal">Not legal advice.<br/>For informational use only.</div>
       <div class="copy">SignSense 2025</div>
     </aside>
@@ -188,11 +202,10 @@
       <div class="topbar">
         <div class="title">Overview</div>
 
-        <!-- Custom language dropdown -->
+        <!-- Report Language (hover to open) -->
         <div class="lang">
-          <button class="lang-btn" id="langBtn">Report Language</button>
+          <button class="lang-btn" id="langBtn" type="button">Report Language</button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <!-- first 4 visible, rest scroll -->
             <div class="lang-item" data-lang="en">English</div>
             <div class="lang-item" data-lang="es">Spanish</div>
             <div class="lang-item" data-lang="de">German</div>
@@ -219,7 +232,7 @@
 
           <section class="card meter-block">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <strong>Confidence to sign freely</strong></div>
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
               <div id="confVal">0%</div>
             </div>
             <div class="meter"><div id="confFill" class="fill"></div></div>
@@ -227,7 +240,7 @@
 
           <section class="card meter-block">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <strong>Favorability Index</strong></div>
+              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span>Favorability Index</span></div>
               <div id="favVal">0%</div>
             </div>
             <div class="meter"><div id="favFill" class="fill"></div></div>
@@ -235,18 +248,18 @@
 
           <section class="card meter-block">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <strong>Deadline pressure</strong></div>
+              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span>Deadline pressure</span></div>
               <div id="deadVal">0%</div>
             </div>
             <div class="meter"><div id="deadFill" class="fill"></div></div>
           </section>
 
-          <section class="card">
+          <section class="card" id="issuesCard">
             <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
             <div class="scroll-y list" id="issuesList"></div>
           </section>
 
-          <section class="card">
+          <section class="card wide">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
             <div class="scroll-y list" id="suggestionsList"></div>
           </section>
@@ -258,16 +271,16 @@
           <section class="card">
             <div class="hcard">
               <div class="circle">
-                <svg width="160" height="160">
-                  <circle class="track" cx="80" cy="80" r="70"></circle>
-                  <circle id="riskArc" class="arc" cx="80" cy="80" r="70"></circle>
+                <svg width="150" height="150">
+                  <circle class="track" cx="75" cy="75" r="65"></circle>
+                  <circle id="riskArc" class="arc" cx="75" cy="75" r="65"></circle>
                 </svg>
                 <div class="val" id="riskVal">0%</div>
               </div>
               <div class="htext">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt="">Risk Level</h3>
-                <div class="badge" id="riskBadge">Generally Safe</div>
-                <div class="muted" id="riskNote" style="color:var(--muted)"></div>
+                <div class="muted" id="riskNote"></div>
+                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
               </div>
             </div>
           </section>
@@ -276,22 +289,22 @@
           <section class="card">
             <div class="hcard">
               <div class="circle">
-                <svg width="160" height="160">
-                  <circle class="track" cx="80" cy="80" r="70"></circle>
-                  <circle id="clarArc" class="arc" cx="80" cy="80" r="70"></circle>
+                <svg width="150" height="150">
+                  <circle class="track" cx="75" cy="75" r="65"></circle>
+                  <circle id="clarArc" class="arc" cx="75" cy="75" r="65"></circle>
                 </svg>
                 <div class="val" id="clarVal">0%</div>
               </div>
               <div class="htext">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt="">Clause Clarity</h3>
-                <div class="badge" id="clarBadge">Generally Safe</div>
-                <div class="muted" id="clarNote" style="color:var(--muted)"></div>
+                <div class="muted" id="clarNote"></div>
+                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
               </div>
             </div>
           </section>
 
-          <!-- Main Clauses (below) -->
-          <section class="card">
+          <!-- Main Clauses -->
+          <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
             <div class="list" id="clausesList"></div>
           </section>
@@ -347,113 +360,90 @@
 
   /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
-  const create = (tag, cls, text) => { const el=document.createElement(tag); if(cls) el.className=cls; if(text!=null) el.textContent=text; return el; };
-  const CIRC = 2*Math.PI*70;
+  const createP = (text) => { const p=document.createElement('p'); p.textContent=text; return p; };
+  const CIRC = 2*Math.PI*65; // r=65
+  const getVar = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
-  // Colors per rules
   function colorFor(metric, v){
     if (metric === 'risk') {
-      if (v <= 25) return get('--green');
-      if (v <= 55) return get('--orange');
-      return get('--red');
+      if (v <= 25) return getVar('--green');
+      if (v <= 55) return getVar('--orange');
+      return getVar('--red');
     }
     if (metric === 'clarity') {
-      if (v >= 80) return get('--green');
-      if (v >= 45) return get('--orange');
-      return get('--red');
+      if (v >= 80) return getVar('--green');
+      if (v >= 45) return getVar('--orange');
+      return getVar('--red');
     }
     if (metric === 'deadline') {
-      if (v <= 25) return get('--green');
-      if (v <= 75) return get('--orange');
-      return get('--red');
+      if (v <= 25) return getVar('--green');
+      if (v <= 75) return getVar('--orange');
+      return getVar('--red');
     }
-    // confidence & favorability
-    if (v >= 76) return get('--green');
-    if (v >= 50) return get('--orange');
-    return get('--red');
+    if (v >= 76) return getVar('--green');
+    if (v >= 50) return getVar('--orange');
+    return getVar('--red');
   }
-  function get(varName){ return getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); }
-
-  function setSummary(lines){
-    const box = $("#summaryText"); box.innerHTML="";
-    (Array.isArray(lines)? lines : [String(lines)]).forEach(t => {
-      const item = create("div","item",t);
-      box.appendChild(item);
-    });
-  }
-  function setList(id, arr){
-    const box = $(id); box.innerHTML="";
-    (arr && arr.length ? arr : ["None"]).forEach(t => box.appendChild(create("div","item",t)));
-  }
-  function animateArc(el, metric, value){
-    const color = colorFor(metric, value);
-    el.style.stroke = color;
-    el.style.transition = "stroke-dashoffset 1.1s ease";
-    requestAnimationFrame(()=>{ el.style.strokeDashoffset = CIRC * (1 - (value||0)/100); });
-  }
-  function setMeter(fillEl, valEl, metric, value){
-    const color = colorFor(metric, value);
-    valEl.textContent = (value||0) + "%";
-    fillEl.style.background = color;
-    requestAnimationFrame(()=>{ fillEl.style.width = (value||0) + "%"; });
-  }
-  function badgeText(metric, value){
+  function statusText(metric, v){
     if (metric==='risk'){
-      if (value<=25) return "Generally Safe";
-      if (value<=55) return "Not Quite Safe";
+      if (v<=25) return "Generally Safe";
+      if (v<=55) return "Not Quite Safe";
       return "Not Safe";
     }
     if (metric==='clarity'){
-      if (value>=80) return "Generally Safe";
-      if (value>=45) return "Not Quite Safe";
+      if (v>=80) return "Generally Safe";
+      if (v>=45) return "Not Quite Safe";
       return "Not Safe";
     }
     return "";
   }
 
-  /* ---------- Apply data ---------- */
-  setSummary(data.summary);
-  setList("#clausesList", data.clauses);
-  setList("#issuesList", data.issues);
-  setList("#suggestionsList", data.suggestions);
+  /* ---------- Apply text ---------- */
+  const sBox = $("#summaryText"); sBox.innerHTML="";
+  (Array.isArray(data.summary)? data.summary : [String(data.summary)]).forEach(t=>sBox.appendChild(createP(t)));
+  const listTo = (id, arr) => { const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:["None"]).forEach(t=>el.appendChild(createP(t))); };
+  listTo("#clausesList", data.clauses);
+  listTo("#issuesList", data.issues);
+  listTo("#suggestionsList", data.suggestions);
 
-  $("#riskVal").textContent = (data.risk?.value ?? 0) + "%";
-  $("#riskNote").textContent = data.risk?.note || "";
-  $("#riskArc").style.strokeDasharray = CIRC;
-  $("#riskArc").style.strokeDashoffset = CIRC;
-  animateArc($("#riskArc"), 'risk', data.risk?.value ?? 0);
-  $("#riskBadge").textContent = badgeText('risk', data.risk?.value ?? 0);
+  /* ---------- Donuts ---------- */
+  function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
+    valEl.textContent = (value||0) + "%";
+    noteEl.textContent = note || "";
+    const color = colorFor(metric, value);
+    arcEl.style.stroke = color;
+    arcEl.style.strokeDasharray = CIRC;
+    arcEl.style.strokeDashoffset = CIRC;
+    badgeEl.textContent = statusText(metric, value);
+    dotEl.style.background = color;
+    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - (value||0)/100); });
+  }
+  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
+  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
 
-  $("#clarVal").textContent = (data.clarity?.value ?? 0) + "%";
-  $("#clarNote").textContent = data.clarity?.note || "";
-  $("#clarArc").style.strokeDasharray = CIRC;
-  $("#clarArc").style.strokeDashoffset = CIRC;
-  animateArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0);
-  $("#clarBadge").textContent = badgeText('clarity', data.clarity?.value ?? 0);
-
+  /* ---------- Bars ---------- */
+  function setMeter(fill, label, metric, value){
+    label.textContent = (value||0) + "%";
+    fill.style.background = colorFor(metric, value);
+    requestAnimationFrame(()=>{ fill.style.width = (value||0) + "%"; });
+  }
   setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- Language dropdown ---------- */
-  const btn = $("#langBtn"), menu = $("#langMenu");
-  btn.addEventListener("click", () => menu.classList.toggle("open"));
-  document.addEventListener("click", (e)=>{
-    if (!menu.contains(e.target) && !btn.contains(e.target)) menu.classList.remove("open");
-  });
-  menu.querySelectorAll(".lang-item").forEach(item=>{
-    item.addEventListener("click", ()=>{
-      const label = item.textContent.trim();
-      btn.textContent = `Report Language — ${label}`;
-      menu.classList.remove("open");
-      // (optional) plug translations here later; UI only for now
-    });
-  });
+  /* ---------- Equalize heights: Potential Issues vs Main Clauses ---------- */
+  function equalize(){
+    const a = $("#issuesCard"), b = $("#clausesCard");
+    if(!a || !b) return;
+    a.style.minHeight = b.style.minHeight = "auto";
+    const h = Math.max(a.getBoundingClientRect().height, b.getBoundingClientRect().height);
+    a.style.minHeight = b.style.minHeight = h + "px";
+  }
+  window.addEventListener("load", equalize);
+  window.addEventListener("resize", ()=>setTimeout(equalize, 80));
 
   /* ---------- Download PDF ---------- */
-  $("#downloadBtn").addEventListener("click", async ()=>{
-    await generatePDF("Report", data);
-  });
+  $("#downloadBtn").addEventListener("click", async ()=>{ await generatePDF("Report", data); });
 
   async function generatePDF(title, d){
     const { jsPDF } = window.jspdf;
@@ -461,88 +451,43 @@
     const pageW = doc.internal.pageSize.getWidth();
     const margin = 48, width = pageW - margin*2, lh = 18;
 
-    // Header
-    doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F'); // #1c1b22
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(18);
+    doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F'); // header #1c1b22
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
     doc.text("SignSense — Contract Analysis Report", margin, 48);
-    doc.setDrawColor(60,60,60); doc.setLineWidth(1); doc.line(margin, 70, pageW - margin, 70);
 
     let y = 100;
     const date = new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
     doc.text(`Generated: ${date}`, margin, y); y += lh*1.6;
 
-    y = section(doc, "Summary", y);
-    y = bullets(doc, d.summary, y);
-
-    y = section(doc, `Risk Level: ${d.risk?.value ?? 0}%`, y);
-    y = paragraph(doc, d.risk?.note || "", y);
-
-    y = section(doc, `Clause Clarity: ${d.clarity?.value ?? 0}%`, y);
-    y = paragraph(doc, d.clarity?.note || "", y);
-
-    y = section(doc, "Main Clauses", y);
-    y = ordered(doc, d.clauses, y);
-
-    y = section(doc, "Potential Issues", y);
-    y = bullets(doc, d.issues, y);
-
-    y = section(doc, "Smart Suggestions", y);
-    y = bullets(doc, d.suggestions, y);
-
+    y = section("Summary", y); y = bullets(d.summary, y);
+    y = section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y = paragraph(d.risk?.note || "", y);
+    y = section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y = paragraph(d.clarity?.note || "", y);
+    y = section("Main Clauses", y); y = ordered(d.clauses, y);
+    y = section("Potential Issues", y); y = bullets(d.issues, y);
+    y = section("Smart Suggestions", y); y = bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
-    function section(doc, title, y){
-      doc.setFont("helvetica","bold"); doc.setTextColor(255,255,255); doc.setFontSize(12); 
-      if (y>780){ newPage(doc); y=64; }
-      doc.text(title, margin, y); return y+12;
-    }
-    function paragraph(doc, text, y){
-      if(!text) return y;
-      doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      let lines = doc.splitTextToSize(text, width);
-      lines.forEach(line=>{ if(y>780){ newPage(doc); y=64; } doc.text(line, margin, y); y+=lh; });
-      return y;
-    }
-    function bullets(doc, arr, y){
-      const list = Array.isArray(arr)?arr:[];
-      doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{
-        const lines = doc.splitTextToSize(t, width-12);
-        if(y>780){ newPage(doc); y=64; }
-        doc.text("•", margin, y);
-        lines.forEach((line,i)=>{ if(i===0){ doc.text(line, margin+12, y); } else { y+=lh; doc.text(line, margin+12, y);} });
-        y+=lh;
-      });
-      return y;
-    }
-    function ordered(doc, arr, y){
-      const list = Array.isArray(arr)?arr:[]; let n=1;
-      doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{
-        const prefix = `${n++}. `; const lines = doc.splitTextToSize(t, width - doc.getTextWidth(prefix));
-        if(y>780){ newPage(doc); y=64; }
-        doc.text(prefix, margin, y);
-        lines.forEach((line,i)=>{ if(i===0){ doc.text(line, margin+doc.getTextWidth(prefix), y); } else { y+=lh; doc.text(line, margin+doc.getTextWidth(prefix), y);} });
-        y+=lh;
-      });
-      return y;
-    }
-    function newPage(doc){
-      doc.addPage();
-      const w = doc.internal.pageSize.getWidth();
-      doc.setDrawColor(60,60,60); doc.line(margin, 40, w-margin, 40);
-    }
+    function section(t, y){ if (y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
+    function paragraph(text, y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
+    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      list.forEach(t=>{ const lines=doc.splitTextToSize(t,width-12); if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y); lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} }); y+=lh; }); return y; }
+    function ordered(arr,y){ const list=Array.isArray(arr)?arr:[]; let n=1; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      list.forEach(t=>{ const prefix=`${n++}. `; const lines=doc.splitTextToSize(t,width-doc.getTextWidth(prefix)); if(y>780){doc.addPage(); y=64;} doc.text(prefix, margin, y);
+        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+doc.getTextWidth(prefix), y);} else { y+=lh; doc.text(line, margin+doc.getTextWidth(prefix), y);} }); y+=lh; }); return y; }
   }
 
   /* ---------- To Top ---------- */
-  const toTop = $("#toTop");
-  const showAt = 400;
-  window.addEventListener("scroll", ()=>{
-    if (window.scrollY > showAt) toTop.classList.add("show"); else toTop.classList.remove("show");
-  }, {passive:true});
+  const toTop = $("#toTop"), showAt = 400;
+  window.addEventListener("scroll", ()=>{ if (window.scrollY > showAt) toTop.classList.add("show"); else toTop.classList.remove("show"); }, {passive:true});
   toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
 
-  /* ---------- Hook review link ---------- */
+  /* ---------- Language selection (no “— English” text) ---------- */
+  const menu = $("#langMenu");
+  menu.querySelectorAll(".lang-item").forEach(li=>{
+    li.addEventListener("click", ()=>{ menu.style.display="none"; }); // UI only
+  });
+
+  /* ---------- Review link ---------- */
   $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
