@@ -10,7 +10,7 @@
     :root{
       --bg:#0e0c13;
       --card:#1c1b22;
-      --border:#3b3b3b;            /* hairline card border */
+      --border:#3b3b3b;
       --white:#ffffff;
       --muted:#bdbdbd;
       --green:#00ff65;
@@ -19,7 +19,7 @@
       --black:#000000;
       --radius:21px;
       --gap:18px;
-      --sidebar:300px;             /* larger sidebar */
+      --sidebar:300px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -34,7 +34,7 @@
     }
     .brand{padding:0 2px}
     .brand a{
-      display:flex;align-items:center;gap:12px;height:52px;       /* aligns with topbar height */
+      display:flex;align-items:center;gap:12px;height:52px;
       text-decoration:none;color:var(--white);
     }
     .brand img{width:34px;height:34px}
@@ -43,17 +43,17 @@
     .nav{display:flex;flex-direction:column;gap:12px;margin-top:6px}
     .nav a{
       text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
-      padding:15px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:20px; /* a bit larger */
+      padding:15px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:19px;  /* a bit larger */
     }
-    .nav a img.icon{width:30px;height:30px;opacity:.95}  /* larger icons */
+    .nav a img.icon{width:30px;height:30px;opacity:.95} /* larger icons */
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
-    .nav a.active:hover{background:#181620;border-color:var(--border)} /* no change on active */
+    .nav a.active:hover{background:#181620;border-color:var(--border)}
 
     .push{flex:1}
-    .end-only{display:none} /* will show at page end */
+    .end-only{display:none}
 
     .legal{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
@@ -65,8 +65,8 @@
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
       display:flex;align-items:center;justify-content:space-between;padding:0 6px;
-      height:52px;border-bottom:1px solid var(--border); /* thin separator */
-      margin-top:10px; /* bring Overview + Report Language a bit lower */
+      height:56px;border-bottom:1px solid var(--border);
+      margin-top:14px; /* bring the whole strip a bit lower */
     }
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
@@ -91,7 +91,7 @@
     }
     .lang-item:hover{background:#17161e}
 
-    /* Grid 2 cols, widened to meet near middle */
+    /* Grid 2 cols */
     .grid{
       display:grid;
       grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
@@ -107,23 +107,27 @@
     }
     .card h3{
       margin:0 0 16px;display:flex;align-items:center;gap:12px;
-      font-size:24px;color:var(--white);font-weight:400
+      font-size:26px;color:var(--white);font-weight:400   /* titles a bit bigger */
     }
-    .card h3 img{width:30px;height:30px} /* icons next to titles */
+    .card h3 img{width:34px;height:34px} /* larger icons next to titles */
 
-    /* Text blocks (no borders around sentences) */
+    /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px}
 
-    /* Meters (thin; pure black track, no border) */
+    /* Ordered list for Main Clauses */
+    .olist{margin:0;padding-left:22px;color:var(--muted);font-size:20px}
+    .olist li{margin:0 0 12px 0}
+
+    /* Bars (thinner track, larger labels/icons) */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}  /* larger titles */
-    .meter-title img{width:32px;height:32px} /* larger bar icons */
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}  /* bigger title */
+    .meter-title img{width:32px;height:32px}                                /* bigger icon */
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
-    /* Donuts (slightly thicker stroke; value not bold) */
+    /* Donuts */
     .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
     .circle svg{transform:rotate(-90deg)}
@@ -136,13 +140,8 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* scroll lists */
-    .scroll-y{max-height:320px;overflow:auto;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
-    .scroll-y::-webkit-scrollbar{width:6px}
-    .scroll-y::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-
-    /* Smart Suggestions: full width, centered, wider */
-    .wide{grid-column:1 / -1;justify-self:center;width:min(1240px,100%)}
+    /* Smart Suggestions spans full width */
+    .wide{grid-column:1 / -1;justify-self:center;width:100%}
 
     /* Download (appears at end only) */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
@@ -215,11 +214,10 @@
 
       <!-- Only show at page end -->
       <div class="end-only" id="sidebarEnd">
-        <!-- order swapped per your request -->
-        <div class="copy">Not legal advice.<br/>For informational use only.</div>
-        <div class="footer-sep"></div>
         <div class="legal">All rights reserved.</div>
         <div class="copy2">© 2025 SignSense</div>
+        <div class="footer-sep"></div>
+        <div class="copy">Not legal advice.<br/>For informational use only.</div>
       </div>
     </aside>
 
@@ -282,12 +280,12 @@
 
           <section class="card" id="issuesCard">
             <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
-            <div class="scroll-y list" id="issuesList"></div>
+            <div class="list" id="issuesList"></div>
           </section>
 
           <section class="card wide" id="suggestionsCard">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
-            <div class="scroll-y list" id="suggestionsList"></div>
+            <div class="list" id="suggestionsList"></div>
           </section>
         </div>
 
@@ -359,45 +357,48 @@
 
 <script>
 (() => {
-  /* ---------- LONG content (always used; no localStorage override) ---------- */
-  const data = {
+  /* ---------- Demo Data (your exact copy) ---------- */
+  const demo = {
     summary: [
-      "This Website Redesign Services Agreement outlines discovery, design, development, testing, and launch responsibilities between the client and the agency, with milestones tied to approvals and payments.",
-      "Scope is broadly framed and anticipates iterative feedback, but the path for handling mid-project scope changes and associated costs could be clearer to avoid disputes about what is “in” versus “out” of scope.",
-      "IP terms grant the client ownership of final deliverables while allowing the agency to keep pre-existing tools and frameworks; the treatment of improvements to those tools would benefit from an explicit carve-out.",
-      "Risk is moderate and manageable if acceptance criteria, response times, and defect remedy timelines are documented at each milestone so that approvals and warranties don’t overlap or conflict."
+      "The agreement defines services, deliverables, and payment clearly, but several timelines and remedies are loose and could be misread unless tightened with simple, direct wording.",
+      "Duties look balanced—mutual NDA, standard IP, fair rights—yet who owns tools and any spin-off work should be stated in plain words to avoid surprises.",
+      "Add a brief grace period and clear acceptance checks to keep delivery smooth and reduce billing noise."
     ],
     risk: {
       value: 25,
-      note: "Overall risk is moderate because termination, dispute handling, and scope changes are underspecified; once these are tightened, exposure drops significantly."
+      note: "Termination, dispute handling, and scope changes need to be tightened better than now."
     },
     clarity: {
       value: 80,
-      note: "Most provisions are written in plain English, but several are thin on definitions or cross-referencing, which reduces predictability if a disagreement arises."
+      note: "Several provisions are thin on definitions, which reduces predictability in disagreements."
     },
     clauses: [
-      "Scope of Work — Covers discovery, wireframes, visual design, development, QA, and launch; acceptance criteria are mentioned but not exhaustively defined for each milestone.",
-      "Payment Terms — Milestone-based invoicing is appropriate, yet the triggers for invoice approval and handling of client delays should be clarified to avoid cash-flow friction.",
-      "Intellectual Property — Client receives ownership of final deliverables; the agency retains pre-existing tools and libraries; improvements to internal tools should remain with the agency while granting broad usage rights to the client.",
-      "Confidentiality & Data Protection — Standard confidentiality is present, but data handling, encryption expectations, and deletion timelines would be stronger in a short annex.",
-      "Termination — Either party may terminate with notice; rules for partial deliverables, license status, and payment true-ups during early termination should be spelled out."
+      "Scope & Deliverables — Work is listed by milestone with an exhibit; add simple acceptance checks so sign-off is based on clear behavior, not opinion.",
+      "Payment Terms — Net-30 with late fees; add a seven-day grace period and cap interest so charges stay fair during admin delays.",
+      "Change Control — Out-of-scope work needs a change order, but the steps and timelines are vague; define who approves changes, how costs are quoted, and how any schedule shifts are agreed.",
+      "Intellectual Property — Client owns final deliverables; provider keeps pre-existing tools and know-how. Clarify ownership of improvements and the license scope for internal tools.",
+      "Confidentiality & Privacy — Standard NDA terms apply; add carve-outs for independently developed info and a short data appendix covering access limits and deletion timelines."
     ],
     issues: [
-      "Change requests are referenced but the price/timeline adjustment process is not formalized; without a written change-order mechanism, small requests can accumulate into unpaid scope creep.",
-      "Dispute resolution points straight to litigation without a negotiation/mediation step, which can escalate costs and damage the working relationship before practical solutions are explored.",
-      "Warranty and paid maintenance blur together; the document does not clearly define which fixes are free defect repairs versus enhancements that require a separate estimate.",
-      "Early termination lacks detail on partial deliverables, access to files, and pro-rata payments, leaving uncertainty around what each party must hand over if the project stops mid-stream."
+      "Late-fee compounding could create outsized penalties during longer disputes or internal invoice holds; a cap or switch to simple interest would be more predictable and commercially typical.",
+      "Indemnity is one-sided and uncapped for certain categories; a mutual indemnity with a commercial cap tied to fees helps keep risk proportional while still covering third-party claims.",
+      "Breach cure periods are referenced but undefined; adding a ten-day cure for non-critical issues avoids accidental termination over administrative mistakes or minor delays."
     ],
     suggestions: [
-      "Insert a formal change-order process with a template that captures request description, impact on price and timeline, and sign-off requirements.",
-      "Add a tiered dispute resolution ladder (direct negotiation → mediation → binding arbitration) before litigation to promote faster, lower-cost outcomes.",
-      "Clarify acceptance criteria for each milestone and include a short user-testing window so approvals are objective and time-boxed.",
-      "Separate warranty coverage (defect correction within a defined period) from paid maintenance/enhancements, including response times and hourly rates.",
-      "Publish security and data handling expectations in an appendix—minimum encryption standards, access controls, backup strategy, and data deletion on project close.",
-      "State the ownership and license treatment of partial deliverables on early termination, including access to source files once all earned fees are paid."
+      "Add objective acceptance criteria and a short user-testing window for each milestone so approvals are clear and disputes are resolved by reference to documented behaviors rather than opinions.",
+      "Include a seven-day grace period before late fees accrue, convert compounding to simple interest, and cap total late charges to maintain predictability for both finance teams.",
+      "Define “material breach” and insert a standard ten-day cure period, excluding true emergencies, to reduce termination risk from minor or quickly fixable issues.",
+      "Clarify IP ownership of enhancements to internal tools, confirming that the client receives broad usage rights while the provider retains the underlying frameworks.",
+      "Attach a brief security and data handling appendix referencing encryption at rest, limited access, and deletion timelines to satisfy common privacy expectations."
     ],
     meters:{ confidence:75, favorability:80, deadline:18 }
   };
+
+  let data;
+  try{
+    const raw = localStorage.getItem('analysisData');
+    data = raw ? JSON.parse(raw) : demo;
+  }catch(e){ data = demo; }
 
   /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
@@ -442,12 +443,18 @@
 
   /* ---------- Fill text ---------- */
   const sBox = $("#summaryText"); sBox.innerHTML="";
-  data.summary.forEach(t=>addP(sBox,t));
+  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; arr.forEach(t=>addP(el, t)); }
-  listTo("#clausesList", data.clauses);
+  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:["None"]).forEach(t=>addP(el, t)); }
+  function listToOrdered(id, arr){
+    const el=$(id); el.innerHTML="";
+    const ol=document.createElement('ol'); ol.className='olist';
+    (arr && arr.length?arr:[]).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ol.appendChild(li); });
+    el.appendChild(ol);
+  }
+  listToOrdered("#clausesList", data.clauses);
   listTo("#issuesList", data.issues);
-  listTo("#suggestionsList", data.suggestions); // 6 items
+  listTo("#suggestionsList", data.suggestions);
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
@@ -462,8 +469,8 @@
     dotEl.style.background = color;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - v/100); });
   }
-  setArc($("#riskArc"), 'risk', data.risk.value, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk.note);
-  setArc($("#clarArc"), 'clarity', data.clarity.value, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity.note);
+  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
+  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
 
   /* ---------- Bars ---------- */
   function setMeter(fill, label, metric, value){
@@ -472,9 +479,9 @@
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
-  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters.confidence);
-  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters.favorability);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters.deadline);
+  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
+  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
+  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
   /* ---------- Equalize heights for Issues & Clauses ---------- */
   function equalize(){
@@ -493,21 +500,20 @@
     li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; });
   });
 
-  /* ---------- Show elements only when Smart Suggestions has ended ---------- */
+  /* ---------- Show elements only when Smart Suggestions is fully in view ---------- */
   const dlWrap = $("#dlWrap");
   const endBox = $("#sidebarEnd");
-  const suggCard = $("#suggestionsCard");
-  function showAtEnd(){
-    if(!suggCard) return;
-    const rect = suggCard.getBoundingClientRect();
-    const cardBottomOnPage = rect.bottom + window.scrollY;
-    const viewportBottom = window.scrollY + window.innerHeight;
-    const pastEnd = viewportBottom >= (cardBottomOnPage - 10); // small cushion
-    dlWrap.style.display = pastEnd ? "flex" : "none";
-    endBox.style.display = pastEnd ? "block" : "none";
+  function checkReveal(){
+    const card = document.getElementById('suggestionsCard');
+    if(!card){ dlWrap.style.display="none"; endBox.style.display="none"; return; }
+    const rect = card.getBoundingClientRect();
+    const fullyVisible = rect.bottom <= (window.innerHeight + 16);
+    dlWrap.style.display = fullyVisible ? "flex" : "none";
+    endBox.style.display = fullyVisible ? "block" : "none";
   }
-  window.addEventListener("scroll", showAtEnd, {passive:true});
-  window.addEventListener("load", showAtEnd);
+  window.addEventListener("scroll", checkReveal, {passive:true});
+  window.addEventListener("load", checkReveal);
+  window.addEventListener("resize", checkReveal);
 
   /* ---------- Email modal + PDF ---------- */
   const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
