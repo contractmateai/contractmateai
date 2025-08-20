@@ -43,8 +43,8 @@
     .nav{display:flex;flex-direction:column;gap:12px;margin-top:6px}
     .nav a{
       text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
-      padding:15px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px;
+      padding:16px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:18.5px;
     }
     .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
@@ -61,12 +61,12 @@
     .copy2{color:var(--muted);font-size:15px;margin-top:6px}
 
     /* ===== MAIN ===== */
-    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
+    .main{padding:8px 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:center;justify-content:space-between;padding:0 6px;
-      height:56px;border-bottom:1px solid var(--border);
-      margin-top:14px; /* bring the strip a bit lower */
+      display:flex;align-items:center;justify-content:space-between;padding:8px 6px 10px;
+      height:64px;border-bottom:1px solid var(--border);
+      margin-top:6px; /* brings the whole bar a bit lower */
     }
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
@@ -75,7 +75,7 @@
     .lang{position:relative}
     .lang-btn{
       display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--white);
-      font:400 16px/1 Inter;cursor:pointer;padding:8px 10px
+      font:400 17px/1 Inter;cursor:pointer;padding:8px 10px
     }
     .lang-btn strong{font-weight:400}
     .lang-menu{
@@ -91,7 +91,7 @@
     }
     .lang-item:hover{background:#17161e}
 
-    /* Grid 2 cols */
+    /* Grid */
     .grid{
       display:grid;
       grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
@@ -106,24 +106,20 @@
       background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px
     }
     .card h3{
-      margin:0 0 16px;display:flex;align-items:center;gap:12px;
-      font-size:26px;color:var(--white);font-weight:400
+      margin:0 0 16px;display:flex;align-items:center;gap:14px;
+      font-size:25px;color:var(--white);font-weight:400
     }
-    .card h3 img{width:34px;height:34px}
+    .card h3 img{width:32px;height:32px}
 
     /* Text blocks */
-    .list{display:flex;flex-direction:column;gap:16px}
-    .list p{margin:0;color:var(--muted);font-size:20px}
+    .list{display:flex;flex-direction:column;gap:14px}
+    .list p{margin:0;color:var(--muted);font-size:19px}
 
-    /* Ordered list for Main Clauses */
-    .olist{margin:0;padding-left:22px;color:var(--muted);font-size:20px}
-    .olist li{margin:0 0 12px 0}
-
-    /* Bars (thinner track, larger labels/icons) */
+    /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
-    .meter-title img{width:32px;height:32px}
+    .meter-title{display:flex;align-items:center;gap:14px;font-size:22px}
+    .meter-title img{width:30px;height:30px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
@@ -140,8 +136,15 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Smart Suggestions spans full width */
-    .wide{grid-column:1 / -1;justify-self:center;width:100%}
+    /* Numbered for clauses */
+    .list.numbered p{counter-increment:item}
+    .list.numbered p::before{
+      content: counter(item) ".";
+      margin-right:10px;color:var(--muted)
+    }
+
+    /* Smart Suggestions: full width */
+    .wide{grid-column:1 / -1;justify-self:center;width:min(1380px,100%)}
 
     /* Download (appears at end only) */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
@@ -283,7 +286,7 @@
             <div class="list" id="issuesList"></div>
           </section>
 
-          <section class="card wide" id="suggestionsCard">
+          <section class="card wide">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
             <div class="list" id="suggestionsList"></div>
           </section>
@@ -330,7 +333,7 @@
           <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
-            <div class="list" id="clausesList"></div>
+            <div class="list numbered" id="clausesList"></div>
           </section>
         </div>
       </div>
@@ -357,47 +360,67 @@
 
 <script>
 (() => {
-  /* ---------- EXACT SENTENCES YOU SPECIFIED ---------- */
+  /* ---------- Long copy we agreed ---------- */
   const demo = {
     summary: [
-      "The agreement defines services, deliverables, and payment clearly, but several timelines and remedies are loose and could be misread unless tightened with simple, direct wording.",
-      "Duties look balanced—mutual NDA, standard IP, fair rights—yet who owns tools and any spin-off work should be stated in plain words to avoid surprises.",
-      "Add a brief grace period and clear acceptance checks to keep delivery smooth and reduce billing noise."
+      "This contract is generally favorable and low-risk, but a few operational details—change requests and acceptance steps—should be clearer so reviews don’t stall.",
+      "Duties and IP are mostly balanced; wording around scope changes and who pays for extra work can be simpler to avoid back-and-forth.",
+      "Set objective acceptance steps and add a short grace period on invoices to prevent disputes over timing and late fees."
     ],
     risk: {
       value: 25,
-      note: "Termination, dispute handdling and scope changes need to be tightened better than now."
+      note: "Termination, dispute handling, and scope changes need tighter wording than they have now."
     },
     clarity: {
       value: 80,
-      note: "Several provisions are thin on definitions which reduces predictability in disagreements."
+      note: "Several provisions are thin on definitions, which lowers predictability during disagreements."
     },
     clauses: [
-      "Scope & Deliverables — Work is listed by milestone with an exhibit; add simple acceptance checks so sign-off is based on clear behavior, not opinion.",
-      "Payment Terms — Net-30 with late fees; add a seven-day grace period and cap interest so charges stay fair during admin delays.",
-      "Change Control — Out-of-scope work needs a change order, but the steps and timelines are vague; define who approves changes, how costs are quoted, and how any schedule shifts are agreed.",
-      "Intellectual Property — Client owns final deliverables; provider keeps pre-existing tools and know-how. Clarify ownership of improvements and the license scope for internal tools.",
-      "Confidentiality & Privacy — Standard NDA terms apply; add carve-outs for independently developed info and a short data appendix covering access limits and deletion timelines."
+      "Payment Terms — Net 30 with a 2% monthly late fee; add a short grace period and cap charges.",
+      "Scope of Work — Deliverables listed in Schedule A; require change-order steps for out-of-scope asks.",
+      "Termination — Either party may end for convenience with 30 days’ notice; immediate for material breach with a defined ten-day cure.",
+      "IP & Licensing — Client owns final assets; provider retains tools and know-how; improvements stay with provider.",
+      "Confidentiality & Data — Standard NDA terms; add a light data-handling annex for security and deletion timelines."
     ],
     issues: [
-      "Late-fee compounding could create outsized penalties during longer disputes or internal invoice holds; a cap or switch to simple interest would be more predictable and commercially typical.",
-      "Indemnity is one-sided and uncapped for certain categories; a mutual indemnity with a commercial cap tied to fees helps keep risk proportional while still covering third-party claims.",
-      "Breach cure periods are referenced but undefined; adding a ten-day cure for non-critical issues avoids accidental termination over administrative mistakes or minor delays."
+      "Late-fee compounding can produce outsized penalties during longer invoice holds; use simple interest and introduce a ceiling.",
+      "Indemnity is one-sided and uncapped in places; a mutual indemnity with a commercial cap tied to fees keeps risk proportional.",
+      "Breach cure is referenced but not defined; a ten-day cure for non-critical issues reduces termination over minor delays.",
+      "Change requests lack pricing and approval steps; small additions can snowball without documented scope control."
     ],
     suggestions: [
-      "Add objective acceptance criteria and a short user-testing window for each milestone so approvals are clear and disputes are resolved by reference to documented behaviors rather than opinions.",
-      "Include a seven-day grace period before late fees accrue, convert compounding to simple interest, and cap total late charges to maintain predictability for both finance teams.",
-      "Define “material breach” and insert a standard ten-day cure period, excluding true emergencies, to reduce termination risk from minor or quickly fixable issues.",
-      "Clarify IP ownership of enhancements to internal tools, confirming that the client receives broad usage rights while the provider retains the underlying frameworks.",
-      "Attach a brief security and data handling appendix referencing encryption at rest, limited access, and deletion timelines to satisfy common privacy expectations."
+      "Adopt objective acceptance checks and a two-step review window so approvals rely on behavior, not opinion.",
+      "Add a 5–7 day grace period before late fees, switch to simple interest, and cap total late charges.",
+      "Define “material breach” and include a standard ten-day cure period except for true emergencies.",
+      "Introduce a lightweight change-order process with estimates and written approval before extra work starts.",
+      "Confirm ownership of enhancements to internal tools while granting the client broad, perpetual usage rights.",
+      "Attach a short security appendix: limited access, encryption at rest, incident notice, and deletion timelines."
     ],
     meters:{ confidence:75, favorability:80, deadline:18 }
   };
 
-  let data;
+  /* ---------- Use demo unless existing data is clearly richer ---------- */
+  let data = demo;
   try{
     const raw = localStorage.getItem('analysisData');
-    data = raw ? JSON.parse(raw) : demo;
+    if (raw) {
+      const parsed = JSON.parse(raw) || {};
+      // Merge but ensure minimum lengths so we don't get the tiny mock
+      const need = { summary:3, issues:4, clauses:5, suggestions:6 };
+      data = {
+        ...demo,
+        ...parsed,
+      };
+      Object.keys(need).forEach(k=>{
+        if (!Array.isArray(parsed[k]) || parsed[k].length < need[k]) {
+          data[k] = demo[k];
+        }
+      });
+      // Persist the upgraded data so refresh keeps the longer text
+      localStorage.setItem('analysisData', JSON.stringify(data));
+    } else {
+      localStorage.setItem('analysisData', JSON.stringify(demo));
+    }
   }catch(e){ data = demo; }
 
   /* ---------- Helpers ---------- */
@@ -445,14 +468,16 @@
   const sBox = $("#summaryText"); sBox.innerHTML="";
   (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:["None"]).forEach(t=>addP(el, t)); }
-  function listToOrdered(id, arr){
+  function listTo(id, arr, numbered=false){
     const el=$(id); el.innerHTML="";
-    const ol=document.createElement('ol'); ol.className='olist';
-    (arr && arr.length?arr:[]).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ol.appendChild(li); });
-    el.appendChild(ol);
+    (arr && arr.length?arr:["None"]).forEach((t,i)=>{
+      const p=document.createElement('p');
+      if(numbered){ p.style.counterReset="item "+i; } // CSS numbering handled by .numbered container
+      p.textContent = t;
+      el.appendChild(p);
+    });
   }
-  listToOrdered("#clausesList", data.clauses);
+  listTo("#clausesList", data.clauses, true);
   listTo("#issuesList", data.issues);
   listTo("#suggestionsList", data.suggestions);
 
@@ -500,20 +525,16 @@
     li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; });
   });
 
-  /* ---------- Show elements only when Smart Suggestions is fully in view ---------- */
+  /* ---------- Show elements only at the very end ---------- */
   const dlWrap = $("#dlWrap");
   const endBox = $("#sidebarEnd");
-  function checkReveal(){
-    const card = document.getElementById('suggestionsCard');
-    if(!card){ dlWrap.style.display="none"; endBox.style.display="none"; return; }
-    const rect = card.getBoundingClientRect();
-    const fullyVisible = rect.bottom <= (window.innerHeight + 16);
-    dlWrap.style.display = fullyVisible ? "flex" : "none";
-    endBox.style.display = fullyVisible ? "block" : "none";
+  function nearBottom(){
+    const atBottom = (window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 4);
+    dlWrap.style.display = atBottom ? "flex" : "none";
+    endBox.style.display = atBottom ? "block" : "none";
   }
-  window.addEventListener("scroll", checkReveal, {passive:true});
-  window.addEventListener("load", checkReveal);
-  window.addEventListener("resize", checkReveal);
+  window.addEventListener("scroll", nearBottom, {passive:true});
+  window.addEventListener("load", nearBottom);
 
   /* ---------- Email modal + PDF ---------- */
   const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
