@@ -10,7 +10,7 @@
     :root{
       --bg:#0e0c13;
       --card:#1c1b22;
-      --border:#3b3b3b;
+      --border:#3b3b3b;            /* hairline card border */
       --white:#ffffff;
       --muted:#bdbdbd;
       --green:#00ff65;
@@ -40,14 +40,14 @@
     .brand img{width:34px;height:34px}
     .brand span{font-size:22px;color:var(--white);font-weight:400}
 
-    .nav{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+    .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .nav a{
-      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
-      padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px;
+      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:14px;
+      padding:14px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:17px;
     }
-    .nav a img.icon{width:30px;height:30px;opacity:.95}
-    .nav a img.arr{width:20px;height:20px;opacity:.9}
+    .nav a img.icon{width:26px;height:26px;opacity:.95}
+    .nav a img.arr{width:18px;height:18px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)}
@@ -55,18 +55,15 @@
     .push{flex:1}
     .end-only{display:none}
 
-    .legal{color:var(--muted);font-size:15px;line-height:1.6}
+    .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
-    .copy{color:var(--muted);font-size:15px}
-    .copy2{color:var(--muted);font-size:15px;margin-top:6px}
 
     /* ===== MAIN ===== */
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
       display:flex;align-items:center;justify-content:space-between;padding:0 6px;
-      height:56px;border-bottom:1px solid var(--border);
-      margin-top:12px; /* bring the whole bar a bit lower */
+      height:52px;border-bottom:1px solid var(--border);
     }
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
@@ -81,9 +78,10 @@
     .lang-menu{
       position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
       border-radius:12px;min-width:260px;max-height:176px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
-      scrollbar-width:none;
+      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
-    .lang-menu::-webkit-scrollbar{display:none}
+    .lang-menu::-webkit-scrollbar{width:6px}
+    .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang:hover .lang-menu{display:block}
     .lang-item{
       display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer
@@ -98,31 +96,37 @@
       align-items:start;
       margin-top:18px;
     }
-    .left{display:flex;flex-direction:column;gap:var(--gap)}
-    .right{display:flex;flex-direction:column;gap:var(--gap)}
+    .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
     .card{
       background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px
     }
     .card h3{
-      margin:0 0 16px;display:flex;align-items:center;gap:14px;
-      font-size:26px;color:var(--white);font-weight:400
+      margin:0 0 16px;display:flex;align-items:center;gap:12px;
+      font-size:24px;color:var(--white);font-weight:400
     }
-    .card h3 img{width:34px;height:34px}
+    .card h3 img{width:30px;height:30px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
-    .list p{margin:0;color:var(--muted);font-size:20px}
+    .list p{
+      margin:0;color:var(--muted);font-size:20px;
+      overflow-wrap:anywhere;word-break:break-word; /* prevents layout blow-ups */
+    }
 
-    /* Numbered lists */
-    .nlist{margin:0;color:var(--muted);font-size:20px;display:flex;flex-direction:column;gap:14px;padding-left:22px}
-    .nlist li{margin-left:6px}
+    /* Numbered lists helper (for Main Clauses / Suggestions) */
+    .numbered{counter-reset:item}
+    .numbered p{position:relative;padding-left:26px}
+    .numbered p::before{
+      counter-increment:item;content:counter(item) ".";
+      position:absolute;left:0;top:0;color:var(--muted)
+    }
 
-    /* Bars */
+    /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:14px;font-size:22px}
-    .meter-title img{width:32px;height:32px}
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:20px}
+    .meter-title img{width:28px;height:28px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
@@ -140,7 +144,10 @@
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
     /* Smart Suggestions: full width */
-    .wide{grid-column:1 / -1;width:100%}
+    .wide{grid-column:1 / -1;justify-self:center;width:min(1240px,100%)}
+
+    /* Remove inner scrolls globally (auto-expansion) */
+    .scroll-y{max-height:none !important;overflow:visible !important}
 
     /* Download (appears at end only) */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
@@ -211,7 +218,7 @@
 
       <div class="push"></div>
 
-      <!-- Only show at page end -->
+      <!-- Show only near page end -->
       <div class="end-only" id="sidebarEnd">
         <div class="legal">All rights reserved.</div>
         <div class="copy2">© 2025 SignSense</div>
@@ -282,9 +289,9 @@
             <div class="list" id="issuesList"></div>
           </section>
 
-          <section class="card wide" id="suggestionsCard">
+          <section class="card wide">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
-            <ol class="nlist" id="suggestionsList"></ol>
+            <div class="list numbered" id="suggestionsList"></div>
           </section>
         </div>
 
@@ -329,7 +336,7 @@
           <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
-            <ol class="nlist" id="clausesList"></ol>
+            <div class="list numbered" id="clausesList"></div>
           </section>
         </div>
       </div>
@@ -356,60 +363,43 @@
 
 <script>
 (() => {
-  /* ---------- Numbers can still come from storage, but TEXT is forced to our agreed copy ---------- */
-  let store = {};
-  try {
-    const raw = localStorage.getItem('analysisData');
-    store = raw ? JSON.parse(raw) : {};
-  } catch(e){ store = {}; }
-
-  const data = {
-    // TEXT (always use our copy)
+  /* ---------- Content (you can freely lengthen; boxes will auto-grow) ---------- */
+  const demo = {
     summary: [
-      "This contract is broadly favorable with low overall risk, though a few terms would benefit from clearer timing and simpler phrasing.",
-      "Payment schedule and termination rights are standard and described in plain, short words for easier reading.",
-      "Please define 'material breach' and cap any late-fee compounding."
+      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
+      "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
+      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into unnecessary disputes."
     ],
-    risk: {
-      value: store?.risk?.value ?? 25,
-      note: "Termination, dispute handdling and scope changes need to be tightened better than now."
-    },
-    clarity: {
-      value: store?.clarity?.value ?? 80,
-      note: "Several provisions are thin on definitions which reduces predictability in disagreements."
-    },
+    risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened better than now." },
+    clarity: { value: 80, note: "Several provisions are thin on definitions which reduces predictability in disagreements." },
     clauses: [
-      "Payment Terms — Net 30 with 2% per month late fee.",
-      "Scope of Work — Deliverables listed in Schedule A.",
-      "Termination — 30-day convenience; immediate for cause.",
-      "IP & Licensing — Client owns final assets; creator keeps tools.",
-      "Dispute Resolution — Arbitration under local rules; pre-notice."
+      "Payment Terms — Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
+      "Scope of Work — Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
+      "Termination — 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
+      "IP & Licensing — Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
+      "Confidentiality — Standard carve-outs (public information, independently developed) and reasonable survival period."
     ],
     issues: [
-      "Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability.""Late fee compounding escalates costs on long delays.",
-      "Indemnity is one-sided; consider mutual or capped liability."
+      "Late-fee compounding escalates costs on long delays; consider switching to simple interest with a reasonable cap to prevent outsized penalties.",
+      "Indemnity is one-sided and uncapped for some categories; a mutual indemnity with a commercial cap tied to fees keeps risk proportional.",
+      "Undefined cure periods allow immediate termination over minor faults; add a ten-day cure for non-critical breaches to reduce churn."
     ],
     suggestions: [
-      "Add a 5–7 day grace period before late fees.",
-      "Define “material breach” and add a 10-day cure period.",
-      "List milestones and clear acceptance criteria.",
-      "Clarify scope to prevent disputes over deliverables.",
-      "Add mutual indemnity or cap liability exposure.",
-      "State a step-by-step process to try before arbitration."
+      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
+      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
+      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.",
+      "Confirm ownership of enhancements to internal tools; grant broad client usage rights while retaining underlying frameworks.",
+      "Attach a lightweight data-handling appendix covering access limits, encryption at rest, and deletion timelines.",
+      "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
-    // NUMBERS
-    meters:{ 
-      confidence: store?.meters?.confidence ?? 75,
-      favorability: store?.meters?.favorability ?? 80,
-      deadline:    store?.meters?.deadline ?? 18
-    }
+    meters:{ confidence:75, favorability:80, deadline:18 }
   };
+
+  let data;
+  try{
+    const raw = localStorage.getItem('analysisData');
+    data = raw ? JSON.parse(raw) : demo;
+  }catch(e){ data = demo; }
 
   /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
@@ -417,7 +407,6 @@
   const cssVar = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const between = (v,min,max)=>Math.max(min,Math.min(v,max));
   const addP = (el, text) => { const p=document.createElement('p'); p.textContent=text; el.appendChild(p); };
-  const addLi = (ol, text) => { const li=document.createElement('li'); li.textContent=text; ol.appendChild(li); };
 
   function colorFor(metric, v){
     if (metric === 'risk') {
@@ -455,16 +444,12 @@
 
   /* ---------- Fill text ---------- */
   const sBox = $("#summaryText"); sBox.innerHTML="";
-  data.summary.forEach(t=>addP(sBox,t));
+  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-  const clausesOl = $("#clausesList"); clausesOl.innerHTML="";
-  data.clauses.forEach(t=>addLi(clausesOl,t));
-
-  const issuesBox = $("#issuesList"); issuesBox.innerHTML="";
-  data.issues.forEach(t=>addP(issuesBox,t));
-
-  const suggOl = $("#suggestionsList"); suggOl.innerHTML="";
-  data.suggestions.forEach(t=>addLi(suggOl,t));
+  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:[""]).forEach(t=>addP(el, t)); }
+  listTo("#clausesList", data.clauses);
+  listTo("#issuesList", data.issues);
+  listTo("#suggestionsList", data.suggestions);
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
@@ -479,8 +464,8 @@
     dotEl.style.background = color;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - v/100); });
   }
-  setArc($("#riskArc"), 'risk', data.risk.value, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk.note);
-  setArc($("#clarArc"), 'clarity', data.clarity.value, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity.note);
+  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
+  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
 
   /* ---------- Bars ---------- */
   function setMeter(fill, label, metric, value){
@@ -489,9 +474,23 @@
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
-  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters.confidence);
-  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters.favorability);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',     data.meters.deadline);
+  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
+  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
+  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
+
+  /* ---------- Keep Potential Issues & Main Clauses bottoms aligned even as content changes ---------- */
+  function equalize(){
+    const a = $("#issuesCard"), b = $("#clausesCard");
+    if(!a || !b) return;
+    a.style.minHeight = b.style.minHeight = "auto";
+    const h = Math.max(a.offsetHeight, b.offsetHeight);
+    a.style.minHeight = b.style.minHeight = h + "px";
+  }
+  window.addEventListener("load", equalize);
+  window.addEventListener("resize", ()=>setTimeout(equalize, 80));
+  // Re-equalize when content height changes after edits
+  const ro = ('ResizeObserver' in window) ? new ResizeObserver(equalize) : null;
+  if(ro){ ro.observe($("#issuesCard")); ro.observe($("#clausesCard")); }
 
   /* ---------- Language UI ---------- */
   const langNow = $("#langNow");
@@ -499,18 +498,18 @@
     li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; });
   });
 
-  /* ---------- Show elements only when Smart Suggestions is reached ---------- */
+  /* ---------- Show elements only near bottom ---------- */
   const dlWrap = $("#dlWrap");
   const endBox = $("#sidebarEnd");
-  const suggCard = $("#suggestionsCard");
-  function toggleEndUI(){
-    const rect = suggCard.getBoundingClientRect();
-    const reached = rect.bottom - window.innerHeight <= 12;
-    dlWrap.style.display = reached ? "flex" : "none";
-    endBox.style.display = reached ? "block" : "none";
+  const showThresholdPx = 300; // reveal when 300px from bottom
+  function nearBottom(){
+    const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+    const show = scrolledFromBottom <= showThresholdPx;
+    dlWrap.style.display = show ? "flex" : "none";
+    endBox.style.display = show ? "block" : "none";
   }
-  window.addEventListener("scroll", toggleEndUI, {passive:true});
-  window.addEventListener("load", toggleEndUI);
+  window.addEventListener("scroll", nearBottom, {passive:true});
+  window.addEventListener("load", nearBottom);
 
   /* ---------- Email modal + PDF ---------- */
   const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
@@ -566,4 +565,3 @@
 </script>
 </body>
 </html>
-
