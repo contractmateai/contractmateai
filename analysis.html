@@ -359,8 +359,8 @@
 
 <script>
 (() => {
-  /* ---------- Demo Data: LONGER sentences you requested ---------- */
-  const demo = {
+  /* ---------- LONG content (always used; no localStorage override) ---------- */
+  const data = {
     summary: [
       "This Website Redesign Services Agreement outlines discovery, design, development, testing, and launch responsibilities between the client and the agency, with milestones tied to approvals and payments.",
       "Scope is broadly framed and anticipates iterative feedback, but the path for handling mid-project scope changes and associated costs could be clearer to avoid disputes about what is “in” versus “out” of scope.",
@@ -398,12 +398,6 @@
     ],
     meters:{ confidence:75, favorability:80, deadline:18 }
   };
-
-  let data;
-  try{
-    const raw = localStorage.getItem('analysisData');
-    data = raw ? JSON.parse(raw) : demo;
-  }catch(e){ data = demo; }
 
   /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
@@ -448,12 +442,12 @@
 
   /* ---------- Fill text ---------- */
   const sBox = $("#summaryText"); sBox.innerHTML="";
-  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+  data.summary.forEach(t=>addP(sBox,t));
 
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:["None"]).forEach(t=>addP(el, t)); }
+  function listTo(id, arr){ const el=$(id); el.innerHTML=""; arr.forEach(t=>addP(el, t)); }
   listTo("#clausesList", data.clauses);
   listTo("#issuesList", data.issues);
-  listTo("#suggestionsList", data.suggestions); // use 6 items as provided
+  listTo("#suggestionsList", data.suggestions); // 6 items
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
@@ -468,8 +462,8 @@
     dotEl.style.background = color;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - v/100); });
   }
-  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
-  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
+  setArc($("#riskArc"), 'risk', data.risk.value, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk.note);
+  setArc($("#clarArc"), 'clarity', data.clarity.value, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity.note);
 
   /* ---------- Bars ---------- */
   function setMeter(fill, label, metric, value){
@@ -478,9 +472,9 @@
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
-  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
-  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
+  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters.confidence);
+  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters.favorability);
+  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters.deadline);
 
   /* ---------- Equalize heights for Issues & Clauses ---------- */
   function equalize(){
