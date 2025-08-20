@@ -44,9 +44,9 @@
     .nav a{
       text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
       padding:15px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px;  /* a bit larger */
+      font-size:19px;
     }
-    .nav a img.icon{width:30px;height:30px;opacity:.95} /* larger icons */
+    .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
@@ -66,7 +66,7 @@
       position:sticky;top:0;z-index:5;background:var(--bg);
       display:flex;align-items:center;justify-content:space-between;padding:0 6px;
       height:56px;border-bottom:1px solid var(--border);
-      margin-top:14px; /* bring the whole strip a bit lower */
+      margin-top:14px; /* bring the strip a bit lower */
     }
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
@@ -107,9 +107,9 @@
     }
     .card h3{
       margin:0 0 16px;display:flex;align-items:center;gap:12px;
-      font-size:26px;color:var(--white);font-weight:400   /* titles a bit bigger */
+      font-size:26px;color:var(--white);font-weight:400
     }
-    .card h3 img{width:34px;height:34px} /* larger icons next to titles */
+    .card h3 img{width:34px;height:34px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
@@ -122,8 +122,8 @@
     /* Bars (thinner track, larger labels/icons) */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}  /* bigger title */
-    .meter-title img{width:32px;height:32px}                                /* bigger icon */
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
+    .meter-title img{width:32px;height:32px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
@@ -357,7 +357,7 @@
 
 <script>
 (() => {
-  /* ---------- Demo Data (your exact copy) ---------- */
+  /* ---------- EXACT SENTENCES YOU SPECIFIED ---------- */
   const demo = {
     summary: [
       "The agreement defines services, deliverables, and payment clearly, but several timelines and remedies are loose and could be misread unless tightened with simple, direct wording.",
@@ -366,11 +366,11 @@
     ],
     risk: {
       value: 25,
-      note: "Termination, dispute handling, and scope changes need to be tightened better than now."
+      note: "Termination, dispute handdling and scope changes need to be tightened better than now."
     },
     clarity: {
       value: 80,
-      note: "Several provisions are thin on definitions, which reduces predictability in disagreements."
+      note: "Several provisions are thin on definitions which reduces predictability in disagreements."
     },
     clauses: [
       "Scope & Deliverables — Work is listed by milestone with an exhibit; add simple acceptance checks so sign-off is based on clear behavior, not opinion.",
