@@ -10,7 +10,7 @@
     :root{
       --bg:#0e0c13;
       --card:#1c1b22;
-      --border:#3b3b3b;           /* hairline card border */
+      --border:#3b3b3b;            /* hairline card border */
       --white:#ffffff;
       --muted:#bdbdbd;
       --green:#00ff65;
@@ -18,83 +18,72 @@
       --red:#fe0000;
       --black:#000000;
       --radius:21px;
-      --gap:20px;
-      --sidebar:310px;            /* slightly wider sidebar */
-      --mastH:60px;               /* sticky header height */
-      --topOffset:10px;           /* bring header a bit lower */
+      --gap:18px;
+      --sidebar:300px;             /* larger sidebar */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--white);font:400 16.5px/1.75 Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
 
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
     /* ===== SIDEBAR ===== */
     .sidebar{
       background:#0f0e14;border-right:1px solid var(--border);
-      padding:0 16px 16px;
-      position:sticky;top:0;height:100vh;
-      display:flex;flex-direction:column;gap:16px
+      padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
     }
-    .brand{padding:0 12px 0 14px} /* move a bit to the right */
+    .brand{padding:0 2px}
     .brand a{
-      display:flex;align-items:center;gap:12px;
-      height:var(--mastH);                 /* aligns with header row */
+      display:flex;align-items:center;gap:12px;height:52px;       /* aligns with topbar height */
       text-decoration:none;color:var(--white);
     }
-    .brand img{width:36px;height:36px}
-    .brand span{font-size:24px;color:var(--white);font-weight:400}
+    .brand img{width:34px;height:34px}
+    .brand span{font-size:22px;color:var(--white);font-weight:400}
 
-    .nav{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+    .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .nav a{
-      text-decoration:none;color:var(--muted);
-      display:flex;align-items:center;gap:16px;
-      padding:15px 16px;border-radius:16px;border:1px solid transparent;
-      transition:border-color .2s ease;
-      font-size:19px;                      /* larger labels */
+      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:14px;
+      padding:14px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:17px;
     }
-    .nav a img.icon{width:30px;height:30px;opacity:.95}    /* larger icons */
-    .nav a img.arr{width:20px;height:20px;opacity:.9}
+    .nav a img.icon{width:26px;height:26px;opacity:.95}
+    .nav a img.arr{width:18px;height:18px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)} /* no change on active */
 
     .push{flex:1}
-    .end-only{display:none}
-    .legal{color:var(--muted);font-size:15.5px;line-height:1.6}
-    .footer-sep{height:1px;background:var(--border);margin:10px 0}
-    .copy{color:var(--muted);font-size:15.5px}
-    .copy2{color:var(--muted);font-size:15.5px;margin-top:6px}
+    .end-only{display:none} /* will show at page end */
 
-    /* ===== MAIN / TOP STRIP ===== */
+    .legal{color:var(--muted);font-size:15px;line-height:1.6}
+    .footer-sep{height:1px;background:var(--border);margin:10px 0}
+    .copy{color:var(--muted);font-size:15px}
+    .copy2{color:var(--muted);font-size:15px;margin-top:6px}
+
+    /* ===== MAIN ===== */
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
-      position:sticky;top:var(--topOffset);z-index:6;background:var(--bg);
+      position:sticky;top:0;z-index:5;background:var(--bg);
       display:flex;align-items:center;justify-content:space-between;padding:0 6px;
-      height:var(--mastH);
-    }
-    .mastline{            /* full-width line under brand + header */
-      position:sticky;top:calc(var(--topOffset) + var(--mastH));
-      height:1px;background:var(--border);z-index:5;
-      width:100vw;left:0;margin-left:calc(-1 * (var(--sidebar) + 20px));
+      height:52px;border-bottom:1px solid var(--border); /* thin separator */
     }
     .top-left{display:flex;align-items:center;gap:12px}
-    .top-title{font-size:22px;color:var(--white);font-weight:400}
+    .top-title{font-size:20px;color:var(--white);font-weight:400}
 
     /* Language (hover opens) */
     .lang{position:relative}
     .lang-btn{
       display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--white);
-      font:400 17px/1 Inter;cursor:default;padding:8px 10px
+      font:400 16px/1 Inter;cursor:pointer;padding:8px 10px
     }
     .lang-btn strong{font-weight:400}
     .lang-menu{
-      position:absolute;right:0;top:115%;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:260px;max-height:180px; /* ~4 items */
-      overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
-      scrollbar-width:none; /* Firefox: hide */
+      position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
+      border-radius:12px;min-width:260px;max-height:176px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
-    .lang-menu::-webkit-scrollbar{width:0;height:0} /* WebKit: hide */
+    .lang-menu::-webkit-scrollbar{width:6px}
+    .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang:hover .lang-menu{display:block}
     .lang-item{
       display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer
@@ -104,69 +93,68 @@
     /* Grid 2 cols, widened to meet near middle */
     .grid{
       display:grid;
-      grid-template-columns:minmax(590px,1.25fr) minmax(590px,1fr);
+      grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
       gap:var(--gap);
       align-items:start;
-      margin-top:10px;
+      margin-top:18px;
     }
     .left{display:flex;flex-direction:column;gap:var(--gap)}
     .right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Cards */
     .card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 22px
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px
     }
     .card h3{
-      margin:0 0 16px;display:flex;align-items:center;gap:14px;
-      font-size:26px;color:var(--white);font-weight:400      /* bigger titles */
+      margin:0 0 16px;display:flex;align-items:center;gap:12px;
+      font-size:24px;color:var(--white);font-weight:400
     }
-    .card h3 img{width:34px;height:34px}                     /* bigger title icons */
+    .card h3 img{width:30px;height:30px} /* larger icons next to titles */
 
     /* Text blocks (no borders around sentences) */
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px}
 
-    /* Meters (thin bar; pure black track, no border) */
-    .meter-block{display:flex;flex-direction:column;gap:12px}
+    /* Meters (thin; pure black track, no border) */
+    .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:14px;font-size:22px}     /* bigger bar titles */
-    .meter-title img{width:32px;height:32px}                                   /* bigger bar icons */
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:20px}
+    .meter-title img{width:28px;height:28px} /* larger bar icons */
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
-    /* Donuts (slightly thicker; value a bit larger, not bold) */
-    .hcard{display:flex;gap:18px;align-items:center}
+    /* Donuts (slightly thicker stroke; value not bold) */
+    .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
     .circle svg{transform:rotate(-90deg)}
-    .circle .val{position:absolute;font-weight:400;font-size:40px;color:var(--white)} /* bigger % */
-    .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}               /* thicker */
-    .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
-    .htext{flex:1;display:flex;flex-direction:column;gap:8px}
-    .muted{color:var(--muted);font-size:19px}
-    .status{display:flex;align-items:center;gap:8px;margin-top:6px}
+    .circle .val{position:absolute;font-weight:400;font-size:34px;color:var(--white)}
+    .circle circle.track{stroke:var(--black);stroke-width:12;fill:none}
+    .circle circle.arc{stroke-width:12;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
+    .htext{flex:1;display:flex;flex-direction:column;gap:6px}
+    .muted{color:var(--muted);font-size:18px}
+    .status{display:flex;align-items:center;gap:8px;margin-top:8px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
-    .status span{font-size:19px;color:var(--white);font-weight:400}
+    .status span{font-size:17px;color:var(--white);font-weight:400} /* larger status text */
 
-    /* Scrollable lists inside cards */
-    .scroll-y{max-height:340px;overflow:auto;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
+    /* scroll lists */
+    .scroll-y{max-height:320px;overflow:auto;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
     .scroll-y::-webkit-scrollbar{width:6px}
     .scroll-y::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
 
     /* Smart Suggestions: full width, centered, wider */
-    .wide{grid-column:1 / -1;justify-self:center;width:min(1260px,100%)}
+    .wide{grid-column:1 / -1;justify-self:center;width:min(1240px,100%)}
 
     /* Download (appears at end only) */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
     .download{
       background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;
-      padding:18px 30px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;
+      padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:17px;
       box-shadow:0 6px 28px rgba(0,0,0,.28);
     }
     .download:hover{filter:brightness(1.03)}
 
     /* Email modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
-    .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(520px,92vw)}
+    .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
     .modal-row{display:flex;gap:10px;margin-top:12px}
     .input{
@@ -175,12 +163,21 @@
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
 
-    @media (max-width:1150px){
+    /* Back to top arrow (left side) */
+    .totop{
+      position:fixed;left:12px;bottom:22px;background:#15141a;border:1px solid var(--border);
+      width:44px;height:44px;border-radius:12px;display:grid;place-items:center;opacity:0;pointer-events:none;
+      transition:opacity .25s ease, transform .2s ease; z-index:10
+    }
+    .totop img{width:22px;height:22px}
+    .totop.show{opacity:1;pointer-events:auto}
+    .totop:hover{transform:translateY(-2px)}
+
+    @media (max-width:1100px){
       .layout{grid-template-columns:1fr}
       .download-wrap{left:0}
       .grid{grid-template-columns:1fr}
       .wide{width:100%}
-      .mastline{margin-left:0}
     }
   </style>
 </head>
@@ -227,10 +224,10 @@
 
       <!-- Only show at page end -->
       <div class="end-only" id="sidebarEnd">
-        <div class="copy">Not legal advice.<br/>For informational use only.</div>
-        <div class="footer-sep"></div>
         <div class="legal">All rights reserved.</div>
         <div class="copy2">© 2025 SignSense</div>
+        <div class="footer-sep"></div>
+        <div class="copy">Not legal advice.<br/>For informational use only.</div>
       </div>
     </aside>
 
@@ -240,8 +237,8 @@
         <div class="top-left">
           <div class="top-title">Overview</div>
         </div>
-        <div class="lang" aria-haspopup="listbox">
-          <div class="lang-btn">Report Language: <strong id="langNow">English</strong></div>
+        <div class="lang">
+          <button class="lang-btn" id="langBtn" type="button">Report Language: <strong id="langNow">English</strong></button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
             <div class="lang-item" data-lang="English">English</div>
             <div class="lang-item" data-lang="Spanish">Spanish</div>
@@ -258,7 +255,6 @@
           </div>
         </div>
       </div>
-      <div class="mastline"></div>
 
       <div class="grid">
         <!-- LEFT -->
@@ -369,49 +365,42 @@
     </div>
   </div>
 
+  <!-- Back to top -->
+  <button class="totop" id="toTop" aria-label="Back to top">
+    <img src="https://imgur.com/CHGomYz.png" alt="">
+  </button>
+
 <script>
 (() => {
-  /* ---------- Demo Data: much longer sentences ---------- */
+  /* ---------- Demo Data: longer sentences ---------- */
   const demo = {
     summary: [
-      "This agreement provides a comprehensive description of services, deliverables, and responsibilities, yet it would benefit from clearer sequencing between milestone acceptance, invoicing triggers, and warranty windows so both teams can anticipate exactly when obligations start and end without room for administrative interpretation.",
-      "Overall, the commercial posture is balanced and pragmatic; confidentiality is mutual and intellectual-property ownership is addressed, but the treatment of background tools and improvements should explicitly reserve provider know-how while granting the client broad, perpetual rights to use the outputs within its business without hidden dependencies or unexpected relicensing costs later.",
-      "Timeframes are achievable provided the parties confirm decision makers and define acceptance criteria up front; adding a brief grace period before penalties, with clear notice mechanics, reduces unnecessary escalations and keeps schedule pressure aligned with the project’s real-world risks and dependencies.",
-      "Liability is proportionate to fees and excludes indirect damages, which is standard across the industry; still, it can be worth carving out intentional misconduct and data security violations from caps to maintain incentives for diligence while keeping exposure commercially manageable.",
-      "Operationally, both sides should agree on a single shared artifact for scope (e.g., a numbered statement of work), where even small updates are versioned, timestamped, and acknowledged to avoid disputes driven by stale drafts or email threads that contradict the canonical record."
+      "This agreement outlines the services, deliverables, and payment expectations in clear language, but several remedies and timing definitions could benefit from tighter phrasing to remove avoidable misunderstandings between the parties.",
+      "Rights and responsibilities are balanced overall, with mutual confidentiality and standard intellectual-property ownership; however, the treatment of background tools and derivative works should be clarified to prevent unintentional transfer.",
+      "The timeline is achievable if milestones are confirmed early; adding acceptance criteria and a short grace period before penalties would support smoother collaboration and reduce administrative escalations.",
+      "Liability is proportionate to fees and excludes consequential damages, which is common; consider explicitly carving out data protection violations to keep the risk profile aligned with both parties’ expectations."
     ],
-    risk: {
-      value: 25,
-      note: "Risk is generally low because obligations and exit rights are specific and time-bound; the main watchouts are late-fee compounding during invoice disputes and a one-sided indemnity that could be tuned to reflect proportional responsibility."
-    },
-    clarity: {
-      value: 80,
-      note: "Language is plain and readable; however, definitions for material breach, acceptance testing, and data handling could include one or two clarifying sentences to remove ambiguity in edge cases without bloating the contract."
-    },
+    risk: { value: 25, note: "Low overall exposure; obligations are explicit and termination is reasonable. Watch late-fee escalation and fine-tune indemnity carve-outs to reflect practical risk sharing." },
+    clarity: { value: 80, note: "Plain wording and definitions cover most terms. Two areas—remedies on material breach and data handling specifics—would read cleaner with one or two clarifying sentences." },
     clauses: [
-      "Scope & Deliverables — Work is captured at a high level with an exhibit; convert this into a numbered milestone table with objective acceptance tests, so approvals rely on observable outcomes and not subjective preference statements that can stall progress.",
-      "Payment Terms — Net-30 with monthly penalties that may compound; introduce a seven-day grace period, switch to simple interest, and set a hard cap to keep finance friction predictable during longer approvals or procurement delays.",
-      "Intellectual Property — Client owns final outputs while provider retains background tools and frameworks; clarify ownership of improvements to those tools and grant the client broad usage rights to avoid accidental transfer or future relicensing.",
-      "Confidentiality & Privacy — Mutual obligations are standard; add explicit carve-outs for independent development and public information, plus a short security appendix covering encryption, access controls, and deletion timelines where personal data is processed.",
-      "Termination — Convenience termination with notice and immediate termination for cause are present; define a reasonable cure period for non-critical breaches to reduce accidental exits caused by fixable operational slips."
+      "Scope & Deliverables — Work is described at a high level with references to an exhibit. Expand each milestone with acceptance criteria so approval is objective and does not depend on subjective interpretation by either party.",
+      "Payment Terms — Net-30 with a monthly late fee that may compound; include a seven-day grace period and a hard cap on interest to prevent disproportionate charges during extended administrative delays.",
+      "Intellectual Property — Client owns final deliverables while the provider retains pre-existing tools and know-how; confirm whether improvements to those tools remain with the provider to avoid implied assignment.",
+      "Confidentiality & Privacy — Standard confidentiality terms apply. Add explicit carve-outs for information independently developed, and reference a basic data handling annex if personal data is processed."
     ],
     issues: [
-      "Compounding late fees can create disproportionate charges during extended procurement or billing disputes; shifting to simple interest with a cap protects the relationship while preserving an incentive to pay on time.",
-      "Indemnity is one-sided and uncapped for certain categories; a mutual structure with a commercial cap tied to fees aligns incentives and contains exposure without undermining third-party protections.",
-      "Definitions of material breach and acceptance criteria are thin; codifying objective tests and cure periods minimizes the risk of termination over minor defects or quickly resolvable mismatches in expectations.",
-      "Data processing references lack specifics on storage location and deletion timelines; a short annex with retention limits and audit cooperation avoids confusion when privacy reviews arise later."
+      "Late-fee compounding could create outsized penalties during longer disputes or internal invoice holds; a cap or switch to simple interest would be more predictable and commercially typical.",
+      "Indemnity is one-sided and uncapped for certain categories; a mutual indemnity with a commercial cap tied to fees helps keep risk proportional while still covering third-party claims.",
+      "Breach cure periods are referenced but undefined; adding a ten-day cure for non-critical issues avoids accidental termination over administrative mistakes or minor delays."
     ],
     suggestions: [
-      "Publish a milestone table with measurable acceptance tests and a brief user-testing window, so approvals flow on evidence rather than opinion and teams avoid stalled work while waiting on subjective sign-offs.",
-      "Adopt a seven-day grace period before any finance penalties accrue, replace compounding with simple interest, and cap total late charges to a sensible ceiling that both finance teams can plan against without surprises.",
-      "Insert a clear definition of material breach and a ten-day cure period for non-critical issues, while carving out truly urgent harms, which reduces termination drama and supports pragmatic course correction.",
-      "State that improvements to background tools remain with the provider while granting the client a broad, perpetual, royalty-free license to use deliverables internally, preventing accidental transfers and future relicensing risk.",
-      "Add a concise security appendix specifying encryption at rest and in transit, least-privilege access, breach notification timing, and data deletion upon project completion or termination.",
-      "Require a single ‘source of truth’ document for scope (versioned SOW) and mandate written acknowledgment for scope changes, ensuring that email drafts or slide decks do not silently override canonical obligations.",
-      "Clarify notice mechanics (email vs. portal, required recipients) so time-based rights like termination, renewals, and fee adjustments are triggered in a predictable and auditable way for both parties.",
-      "Specify escalation contacts and weekly status cadence for the first month, which improves alignment and allows early detection of slippage without invoking contractual penalties prematurely."
+      "Add objective acceptance criteria and a short user-testing window for each milestone so approvals are clear and disputes are resolved by reference to documented behaviors rather than opinions.",
+      "Include a seven-day grace period before late fees accrue, convert compounding to simple interest, and cap total late charges to maintain predictability for both finance teams.",
+      "Define “material breach” and insert a standard ten-day cure period, excluding true emergencies, to reduce termination risk from minor or quickly fixable issues.",
+      "Clarify IP ownership of enhancements to internal tools, confirming that the client receives broad usage rights while the provider retains the underlying frameworks.",
+      "Attach a brief security and data handling appendix referencing encryption at rest, limited access, and deletion timelines to satisfy common privacy expectations."
     ],
-    meters:{ confidence:78, favorability:82, deadline:22 }
+    meters:{ confidence:75, favorability:80, deadline:18 }
   };
 
   let data;
@@ -461,15 +450,14 @@
     return "";
   }
 
-  /* ---------- Fill text (longer sentences) ---------- */
+  /* ---------- Fill text ---------- */
   const sBox = $("#summaryText"); sBox.innerHTML="";
   (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
   function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:["None"]).forEach(t=>addP(el, t)); }
   listTo("#clausesList", data.clauses);
-  listTo("#issuesList", data.issues.concat(data.issues.slice(0,1)));      // make it longer
-  // Smart suggestions: make it quite many + longer
-  listTo("#suggestionsList", data.suggestions.concat(data.suggestions.slice(0,4)));
+  listTo("#issuesList", data.issues);
+  listTo("#suggestionsList", data.suggestions.concat(data.suggestions)); // make it quite many
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
@@ -518,7 +506,7 @@
   /* ---------- Show elements only near bottom ---------- */
   const dlWrap = $("#dlWrap");
   const endBox = $("#sidebarEnd");
-  const showThresholdPx = 300; // reveal when ~end of page
+  const showThresholdPx = 300; // reveal when 300px from bottom
   function nearBottom(){
     const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
     const show = scrolledFromBottom <= showThresholdPx;
@@ -527,6 +515,11 @@
   }
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
+
+  /* ---------- Back-to-top ---------- */
+  const toTop = $("#toTop"), showAt = 400;
+  window.addEventListener("scroll", ()=>{ if (window.scrollY > showAt) toTop.classList.add("show"); else toTop.classList.remove("show"); }, {passive:true});
+  toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
 
   /* ---------- Email modal + PDF ---------- */
   const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
@@ -581,4 +574,10 @@
 })();
 </script>
 </body>
-</html>
+</html> 
+All rights reserved.
+© 2025 SignSense these 2 just as they are need to swap places with Not legal advice.
+For informational use only.
+now enough with the left part.
+on the top we got overview and report language: english, those 2 along with the long line under them need to be brought a bit lower
+make the titles and icons of the bars larger 
