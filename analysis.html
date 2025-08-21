@@ -128,16 +128,15 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* ===== Score Checker (Clause-Clarity style) ===== */
-    #scoreCard .score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    /* ===== Score Checker (Clause-Clarity style, edited) ===== */
+    #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
-    #scoreCard .score-sub{font-size:18px;color:var(--muted);margin-top:6px}
 
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
+    .score-remark{font-size:20px;color:var(--muted)} /* bigger sentence */
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
-    .score-remark{font-size:16px;color:var(--muted)}
 
     /* Remove inner scrolls globally */
     .scroll-y{max-height:none !important;overflow:visible !important}
@@ -180,11 +179,7 @@
           <img class="icon" src="https://imgur.com/lnQTDuo.png" alt="">
           <span>Overview</span>
         </a>
-        <a href="index.html">
-          <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-          <img class="icon" src="https://imgur.com/kE3okdE.png" alt="">
-          <span>Home</span>
-        </a>
+        <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
         <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
         <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
         <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Leave a Review</span></a>
@@ -219,9 +214,10 @@
             <div class="list" id="summaryText"></div>
           </section>
 
+          <!-- CHANGED: becomes Professionalism @95% with new icon -->
           <section class="card meter-block">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
+              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span>Professionalism</span></div>
               <div id="confVal">0%</div>
             </div>
             <div class="meter"><div id="confFill" class="fill"></div></div>
@@ -298,10 +294,10 @@
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- NEW: Score Checker (Clause Clarity layout) -->
+          <!-- Score Checker (donut left, icon+title+sentence+bar right) -->
           <section class="card" id="scoreCard">
             <div class="hcard">
-              <!-- Donut on the left -->
+              <!-- Donut -->
               <div class="circle">
                 <svg width="160" height="160" viewBox="0 0 160 160">
                   <circle class="track" cx="80" cy="80" r="74"></circle>
@@ -309,22 +305,31 @@
                 </svg>
                 <div class="score-center">
                   <div class="score-pct" id="scorePct">80%</div>
-                  <div class="score-sub">Overall</div>
                 </div>
               </div>
 
-              <!-- Title + bar + remark on the right -->
+              <!-- Right side -->
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
+
+                <!-- Swapped order: sentence ABOVE bar -->
+                <div class="score-remark">The contract is nearly perfectly done.</div>
 
                 <div class="score-bar">
                   <span class="score-ind" id="scoreInd"></span>
                 </div>
                 <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
-
-                <div class="score-remark">The contract is nearly perfectly done.</div>
               </div>
             </div>
+          </section>
+
+          <!-- NEW card under Score Checker: Confidence to sign freely -->
+          <section class="card meter-block" id="confRightCard">
+            <div class="meter-head">
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
+              <div id="conf2Val">0%</div>
+            </div>
+            <div class="meter"><div id="conf2Fill" class="fill"></div></div>
           </section>
         </div>
       </div>
@@ -351,7 +356,7 @@
 
 <script>
 (() => {
-  /* ---------- Static content (same as before) ---------- */
+  /* ---------- Static content ---------- */
   const demo = {
     summary: [
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
@@ -384,7 +389,7 @@
       "Attach a lightweight data-handling appendix covering access limits, encryption at rest, and deletion timelines.",
       "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
-    meters:{ confidence:75, favorability:80, deadline:18 }
+    meters:{ professionalism:95, confidence:75, favorability:80, deadline:18 }
   };
 
   const data = demo;
@@ -399,13 +404,8 @@
     if (metric === 'deadline') { if (v<=25) return cssVar('--green'); if (v<=75) return cssVar('--orange'); return cssVar('--red'); }
     if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
   }
-  function statusText(metric, v){
-    if (metric==='risk'){ if (v<=25) return "Generally Safe"; if (v<=55) return "Not Quite Safe"; return "Not Safe"; }
-    if (metric==='clarity'){ if (v>=80) return "Generally Safe"; if (v>=45) return "Not Quite Safe"; return "Not Safe"; }
-    return "";
-  }
 
-  /* Summary */
+  /* Summary text */
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
@@ -418,7 +418,7 @@
   listTo("#suggestionsList", data.suggestions);
 
   /* Donut helper */
-  function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
+  function setArc(arcEl, metric, value){
     const v = between(value||0, 0, 100);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2*Math.PI*rr;
@@ -426,15 +426,11 @@
     arcEl.style.strokeDasharray = circ;
     arcEl.style.strokeDashoffset = circ;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
-    if(valEl) valEl.textContent = v + "%";
-    if(badgeEl) badgeEl.textContent = statusText(metric, v);
-    if(dotEl) dotEl.style.background = colorFor(metric, v);
-    if(noteEl) noteEl.textContent = note || "";
   }
 
   /* Right-column donuts */
-  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
-  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
+  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0);
+  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0);
 
   /* Bars */
   function setMeter(fill, label, metric, value){
@@ -443,8 +439,9 @@
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
-  setMeter($("#confFill"), $("#confVal"), 'confidence', data.meters?.confidence ?? 0);
-  setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
+  /* LEFT column meters */
+  setMeter($("#confFill"), $("#confVal"), 'professionalism', data.meters?.professionalism ?? 95);
+  setMeter($("#favFill"), $("#favVal"), 'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
   /* Score Checker */
@@ -452,15 +449,17 @@
     const v = 80;
     setArc($("#scoreArc"), 'confidence', v);
     $("#scorePct").textContent = v + "%";
-    // pointer at exactly 80%
     $("#scoreInd").style.left = "calc(80% - 1.5px)";
   })();
 
-  /* Language UI */
+  /* NEW right-side Confidence bar */
+  setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', data.meters?.confidence ?? 0);
+
+  /* Language dropdown */
   const langNow=$("#langNow");
   $("#langMenu").querySelectorAll(".lang-item").forEach(li=>li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; }));
 
-  /* Show elements only near bottom */
+  /* Bottom reveals */
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd"), showThresholdPx=300;
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
@@ -480,7 +479,7 @@
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    await generatePDF("Report", data);
+    await generatePDF("Report", demo);
     closeModal();
   });
 
