@@ -150,13 +150,22 @@
     /* Smart Suggestions previously full width — keep to LEFT column now */
     .wide{grid-column:auto}
 
-    /* ===== Score Checker (bigger circle, bar lower+shorter, centered labels) ===== */
+    /* ===== Score Checker (bigger/thicker circle, bar lower+shorter, centered text) ===== */
     #scoreCard{min-height:640px}
     #scoreCard .circle{width:360px;height:360px;flex:0 0 360px}
     #scoreCard .circle svg{width:360px;height:360px}
-    #scoreCard .score-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+    /* make the donut MUCH thicker only here */
+    #scoreCard .circle circle.track{stroke-width:28}
+    #scoreCard .circle circle.arc{stroke-width:28}
+
+    #scoreCard .score-center{
+      position:absolute;inset:0;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center
+    }
     #scoreCard .score-num{font-size:68px}
     #scoreCard .score-label{font-size:22px;color:var(--muted);margin-top:6px}
+    #scoreCard .score-note{font-size:16px;color:var(--muted);margin-top:6px}
 
     .score-wrap{display:grid;place-items:center;margin-top:6px}
     .score-center{position:absolute;text-align:center} /* base */
@@ -173,9 +182,8 @@
       margin:0 auto;
     }
     .score-ind{
-      --pos:96%;                     /* near the end (very safe) */
       position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;
-      left:0;transform:translateX(calc(var(--pos) - 1.5px));
+      left:calc(99% - 1.5px);        /* hard-push to the VERY SAFE end */
       box-shadow:0 0 8px rgba(255,255,255,.6);
     }
     .score-scale{
@@ -378,7 +386,7 @@
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- NEW: Score Checker -->
+          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <h3><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
             <div class="score-wrap">
@@ -390,6 +398,7 @@
                 <div class="score-center">
                   <div class="score-num" id="scoreNum">80/100</div>
                   <div class="score-label">Overall</div>
+                  <div class="score-note">the contract seems nearly perfectly done.</div>
                 </div>
               </div>
             </div>
@@ -559,8 +568,9 @@
     const scoreValue = data.score ?? 80;
     setArc($("#scoreArc"), 'confidence', scoreValue); // animation + color
     $("#scoreNum").textContent = `${scoreValue}/100`;
-    // Pointer almost at the far end (very safe)
-    $("#scoreInd").style.setProperty('--pos', '96%');
+    // Force pointer to VERY SAFE side visually
+    const ind = document.getElementById("scoreInd");
+    ind.style.left = "calc(99% - 1.5px)";
   })();
 
   /* ---------- Language UI ---------- */
