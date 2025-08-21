@@ -146,10 +146,15 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Smart Suggestions previously full width — keep to LEFT column now */
+    /* Smart Suggestions now LEFT column */
     .wide{grid-column:auto}
 
-    /* Score Checker card */
+    /* Score Checker card — make it LONGER (taller) and graph bigger, bar shorter */
+    #scoreCard{min-height:520px}
+    #scoreCard .circle{width:240px;height:240px;flex:0 0 240px}
+    #scoreCard .circle svg{width:240px;height:240px}
+    #scoreCard .score-num{font-size:52px}
+    #scoreCard .score-label{font-size:20px}
     .score-wrap{display:grid;place-items:center;margin-top:6px}
     .score-center{position:absolute;text-align:center}
     .score-num{font-size:38px;font-weight:400}
@@ -161,6 +166,8 @@
       background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);
       border:1px solid #2f2f2f;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+      width:68%;                         /* shorter bar */
+      margin:0 auto;                     /* centered */
     }
     .score-ind{
       --pos:80%;
@@ -168,7 +175,11 @@
       left:0;transform:translateX(calc(var(--pos) - 1.5px));
       box-shadow:0 0 8px rgba(255,255,255,.6);
     }
-    .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted);margin-top:8px}
+    .score-scale{
+      width:68%;                          /* match bar width */
+      margin:8px auto 0;
+      display:flex;justify-content:space-between;font-size:16px;color:var(--muted);
+    }
 
     /* Remove inner scrolls globally (auto-expansion) */
     .scroll-y{max-height:none !important;overflow:visible !important}
@@ -198,6 +209,7 @@
       .download-wrap{left:0}
       .grid{grid-template-columns:1fr}
       .wide{width:100%}
+      #scoreCard{min-height:520px}
     }
   </style>
 </head>
@@ -313,7 +325,6 @@
             <ul class="bullets" id="issuesList"></ul>
           </section>
 
-          <!-- Smart Suggestions now stays on the LEFT column -->
           <section class="card" id="suggestionsCard">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
             <div class="list numbered" id="suggestionsList"></div>
@@ -364,12 +375,12 @@
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- NEW: Score Checker to the right of Smart Suggestions -->
+          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <h3><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
             <div class="score-wrap">
               <div class="circle">
-                <svg width="160" height="160">
+                <svg width="240" height="240">
                   <circle class="track" cx="80" cy="80" r="74"></circle>
                   <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
@@ -445,7 +456,7 @@
       "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
     meters:{ confidence:75, favorability:80, deadline:18 },
-    score: 80   /* for Score Checker */
+    score: 80
   };
 
   const data = demo;
@@ -536,15 +547,13 @@
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- Score Checker ---------- */
-  (function setScore(v){
-    const val = between(v||0,0,100);
-    setArc($("#scoreArc"), 'confidence', val);                      // reuse coloring/animation
+  /* ---------- Score Checker (pointer fixed to 80%) ---------- */
+  (function setScore(){
+    const val = 80;                                // fixed pointer at 80%
+    setArc($("#scoreArc"), 'confidence', val);     // reuse coloring/animation
     $("#scoreNum").textContent = `${val}/100`;
-    // indicator position on gradient bar
-    const ind = $("#scoreInd");
-    ind.style.setProperty('--pos', val + '%');
-  })(data.score ?? 80);
+    $("#scoreInd").style.setProperty('--pos', val + '%');
+  })();
 
   /* ---------- Language UI ---------- */
   const langNow = $("#langNow");
