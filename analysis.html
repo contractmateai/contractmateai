@@ -10,7 +10,7 @@
     :root{
       --bg:#0e0c13;
       --card:#1c1b22;
-      --border:#3b3b3b;            /* hairline card border */
+      --border:#3b3b3b;
       --white:#ffffff;
       --muted:#bdbdbd;
       --green:#00ff65;
@@ -34,20 +34,19 @@
     }
     .brand{padding:0 2px}
     .brand a{
-      display:flex;align-items:center;gap:12px;height:52px;
-      text-decoration:none;color:var(--white);
+      display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white);
     }
     .brand img{width:34px;height:34px}
     .brand span{font-size:22px;color:var(--white);font-weight:400}
 
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .nav a{
-      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:14px;
-      padding:14px 16px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:17px;
+      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
+      padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:19px;                                  /* bigger nav text */
     }
-    .nav a img.icon{width:26px;height:26px;opacity:.95}
-    .nav a img.arr{width:18px;height:18px;opacity:.9}
+    .nav a img.icon{width:30px;height:30px;opacity:.95}/* bigger nav icons */
+    .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)}
@@ -111,7 +110,7 @@
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{
       margin:0;color:var(--muted);font-size:20px;
-      overflow-wrap:anywhere;word-break:break-word; /* prevents layout blow-ups */
+      overflow-wrap:anywhere;word-break:break-word;
     }
 
     /* Bullet lists (for Potential Issues) */
@@ -129,8 +128,8 @@
     /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:20px}
-    .meter-title img{width:28px;height:28px}
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px} /* bigger bar titles */
+    .meter-title img{width:32px;height:32px}                              /* bigger bar icons */
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
@@ -147,8 +146,29 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Smart Suggestions: FULL width across both grid columns */
-    .wide{grid-column:1 / -1;justify-self:stretch;width:100%}
+    /* Smart Suggestions previously full width — keep to LEFT column now */
+    .wide{grid-column:auto}
+
+    /* Score Checker card */
+    .score-wrap{display:grid;place-items:center;margin-top:6px}
+    .score-center{position:absolute;text-align:center}
+    .score-num{font-size:38px;font-weight:400}
+    .score-label{font-size:18px;color:var(--muted);margin-top:6px}
+
+    .score-bar-wrap{margin-top:18px}
+    .score-bar{
+      position:relative;height:22px;border-radius:14px;
+      background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);
+      border:1px solid #2f2f2f;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .score-ind{
+      --pos:80%;
+      position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;
+      left:0;transform:translateX(calc(var(--pos) - 1.5px));
+      box-shadow:0 0 8px rgba(255,255,255,.6);
+    }
+    .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted);margin-top:8px}
 
     /* Remove inner scrolls globally (auto-expansion) */
     .scroll-y{max-height:none !important;overflow:visible !important}
@@ -293,7 +313,8 @@
             <ul class="bullets" id="issuesList"></ul>
           </section>
 
-          <section class="card wide">
+          <!-- Smart Suggestions now stays on the LEFT column -->
+          <section class="card" id="suggestionsCard">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
             <div class="list numbered" id="suggestionsList"></div>
           </section>
@@ -341,6 +362,29 @@
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
             <div class="list numbered" id="clausesList"></div>
+          </section>
+
+          <!-- NEW: Score Checker to the right of Smart Suggestions -->
+          <section class="card" id="scoreCard">
+            <h3><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
+            <div class="score-wrap">
+              <div class="circle">
+                <svg width="160" height="160">
+                  <circle class="track" cx="80" cy="80" r="74"></circle>
+                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
+                </svg>
+                <div class="score-center">
+                  <div class="score-num" id="scoreNum">0/100</div>
+                  <div class="score-label">Overall</div>
+                </div>
+              </div>
+            </div>
+            <div class="score-bar-wrap">
+              <div class="score-bar" id="scoreBar">
+                <span class="score-ind" id="scoreInd"></span>
+              </div>
+              <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+            </div>
           </section>
         </div>
       </div>
@@ -400,10 +444,10 @@
       "Attach a lightweight data-handling appendix covering access limits, encryption at rest, and deletion timelines.",
       "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
-    meters:{ confidence:75, favorability:80, deadline:18 }
+    meters:{ confidence:75, favorability:80, deadline:18 },
+    score: 80   /* for Score Checker */
   };
 
-  /* ---------- ALWAYS use in-file content; NO localStorage ---------- */
   const data = demo;
 
   /* ---------- Helpers ---------- */
@@ -454,7 +498,6 @@
   function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:[""]).forEach(t=>addP(el, t)); }
   listTo("#clausesList", data.clauses);
 
-  /* bullets for Potential Issues */
   (function renderIssues(){
     const el = $("#issuesList"); el.innerHTML="";
     (data.issues||[]).forEach(t=>{
@@ -464,20 +507,19 @@
     });
   })();
 
-  /* numbered for Suggestions */
   listTo("#suggestionsList", data.suggestions);
 
   /* ---------- Donuts ---------- */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
     const v = between(value||0, 0, 100);
-    valEl.textContent = v + "%";
-    noteEl.textContent = note || "";
+    if(valEl) valEl.textContent = v + "%";
+    if(noteEl) noteEl.textContent = note || "";
     const color = colorFor(metric, v);
     arcEl.style.stroke = color;
     arcEl.style.strokeDasharray = CIRC;
     arcEl.style.strokeDashoffset = CIRC;
-    badgeEl.textContent = statusText(metric, v);
-    dotEl.style.background = color;
+    if(badgeEl) badgeEl.textContent = statusText(metric, v);
+    if(dotEl) dotEl.style.background = color;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = CIRC * (1 - v/100); });
   }
   setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
@@ -494,7 +536,15 @@
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- REMOVED equalize so boxes auto-size to content (no half-empty cards) ---------- */
+  /* ---------- Score Checker ---------- */
+  (function setScore(v){
+    const val = between(v||0,0,100);
+    setArc($("#scoreArc"), 'confidence', val);                      // reuse coloring/animation
+    $("#scoreNum").textContent = `${val}/100`;
+    // indicator position on gradient bar
+    const ind = $("#scoreInd");
+    ind.style.setProperty('--pos', val + '%');
+  })(data.score ?? 80);
 
   /* ---------- Language UI ---------- */
   const langNow = $("#langNow");
@@ -505,7 +555,7 @@
   /* ---------- Show elements only near bottom ---------- */
   const dlWrap = $("#dlWrap");
   const endBox = $("#sidebarEnd");
-  const showThresholdPx = 300; // reveal when 300px from bottom
+  const showThresholdPx = 300;
   function nearBottom(){
     const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
     const show = scrolledFromBottom <= showThresholdPx;
