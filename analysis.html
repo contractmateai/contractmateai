@@ -32,10 +32,10 @@
       background:#0f0e14;border-right:1px solid var(--border);
       padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
     }
-    .brand{padding:0 2px 0 10px} /* nudge brand a little to the right */
+    .brand{padding:0 2px 0 18px} /* more to the right */
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
-    .brand span{font-size:22px;color:var(--white);font-weight:400}
+    .brand span{font-size:24px;color:var(--white);font-weight:400} /* larger SignSense */
 
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .nav a{
@@ -50,7 +50,7 @@
     .nav a.active:hover{background:#181620;border-color:var(--border)}
 
     .push{flex:1}
-    .end-only{display:none}
+    .end-only{display:none;opacity:0;transform:translateY(8px)} /* for fade-in */
 
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
@@ -65,26 +65,26 @@
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Language (hover opens) */
+    /* Language control */
     .lang{position:relative}
     .lang-btn{
-      display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--white);
-      font:400 16px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px
+      display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
+      font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none
     }
     .lang-btn #langNow{letter-spacing:.6px}
-    /* tiny line under the code */
-    .lang-btn::after{
-      content:"";display:block;width:18px;height:2px;background:rgba(255,255,255,.7);
-      border-radius:2px;margin:3px auto 0;
-    }
+    .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
+
     .lang-menu{
-      position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:240px;max-height:220px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
+      border-radius:12px;min-width:240px;max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
       scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-    .lang:hover .lang-menu{display:block}
+
+    /* keep menu open when hovering either the button or the menu, and also when .open is set by JS */
+    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
+
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
@@ -98,12 +98,14 @@
     }
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
+    /* Fade-in base */
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+    .fade-in{animation:fadeIn .8s ease forwards}
+
     .card{
       background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;
-      opacity:0;transform:translateY(8px); /* start hidden for fade-in */
+      opacity:0;transform:translateY(8px);
     }
-    .card.fade-in{animation:fadeIn .8s ease forwards}
-    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
 
     .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
@@ -153,6 +155,10 @@
     /* ===== Score Checker (Clause-Clarity style, edited) ===== */
     #scoreCard{margin-top:12px;}
     #confRightCard{margin-top:12px;}
+    #summaryCard,#riskCard,#clarCard,
+    #profCard,#favCard,#deadCard,#issuesCard,#clausesCard,
+    #suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
 
@@ -164,8 +170,9 @@
 
     .scroll-y{max-height:none !important;overflow:visible !important}
 
-    .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
-    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:17px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
+    /* Download button (bigger and higher, fades in) */
+    .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
+    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
 
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
@@ -219,8 +226,11 @@
     <main class="main">
       <div class="topbar">
         <div class="top-left"><div class="top-title">Overview</div></div>
-        <div class="lang">
-          <button class="lang-btn" id="langBtn" type="button"><span id="langNow">EN</span></button>
+        <div class="lang" id="lang">
+          <button class="lang-btn" id="langBtn" type="button">
+            <span id="langNow">EN</span>
+            <span class="caret" aria-hidden="true"></span>
+          </button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
             <div class="lang-item" data-lang="English">English</div>
             <div class="lang-item" data-lang="Italiano">Italiano</div>
@@ -241,12 +251,12 @@
       <div class="grid">
         <!-- LEFT -->
         <div class="left">
-          <section class="card">
+          <section class="card" id="summaryCard">
             <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
             <div class="list" id="summaryText"></div>
           </section>
 
-          <section class="card meter-block">
+          <section class="card meter-block" id="profCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span>Professionalism</span></div>
               <div id="confVal">0%</div>
@@ -254,7 +264,7 @@
             <div class="meter"><div id="confFill" class="fill"></div></div>
           </section>
 
-          <section class="card meter-block">
+          <section class="card meter-block" id="favCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span>Favorability Index</span></div>
               <div id="favVal">0%</div>
@@ -262,7 +272,7 @@
             <div class="meter"><div id="favFill" class="fill"></div></div>
           </section>
 
-          <section class="card meter-block">
+          <section class="card meter-block" id="deadCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span>Deadline pressure</span></div>
               <div id="deadVal">0%</div>
@@ -284,7 +294,7 @@
         <!-- RIGHT -->
         <div class="right">
           <!-- Risk -->
-          <section class="card">
+          <section class="card" id="riskCard">
             <div class="hcard">
               <div class="circle">
                 <svg width="160" height="160" viewBox="0 0 160 160">
@@ -302,7 +312,7 @@
           </section>
 
           <!-- Clarity -->
-          <section class="card">
+          <section class="card" id="clarCard">
             <div class="hcard">
               <div class="circle">
                 <svg width="160" height="160" viewBox="0 0 160 160">
@@ -366,10 +376,12 @@
     </main>
   </div>
 
+  <!-- Download (appears near bottom + fades in) -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
 
+  <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <h4>Enter your email to download the PDF report</h4>
@@ -430,13 +442,24 @@
     if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
   }
 
-  /* Fade in all cards with a slight stagger */
-  window.addEventListener('load', () => {
-    document.querySelectorAll('.card').forEach((el,i)=>{
-      el.style.animationDelay = (i*80)+'ms';
-      el.classList.add('fade-in');
-    });
+  /* Language UI: sticky hover + click toggle + codes */
+  const lang = $("#lang");
+  const langBtn = $("#langBtn");
+  const langMenu = $("#langMenu");
+  const langNow = $("#langNow");
+  const codeMap = {
+    "English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES",
+    "Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO",
+    "Shqip":"SQ","Türkçe":"TR","中文":"中文","日本語":"日本語"
+  };
+  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>{
+    li.addEventListener("click", ()=>{ langNow.textContent = codeMap[li.dataset.lang] || "EN"; });
   });
+  // Keep menu open while hovering; small delay on leave to prevent flicker.
+  let hoverTimer=null;
+  lang.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); lang.classList.add("open"); });
+  lang.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>lang.classList.remove("open"),150); });
+  langBtn.addEventListener("click", ()=>{ lang.classList.toggle("open"); });
 
   /* Summary text */
   const sBox=$("#summaryText"); sBox.innerHTML="";
@@ -467,7 +490,7 @@
   setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
   setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
 
-  /* Bars (slower width already via CSS) */
+  /* Bars */
   function setMeter(fill, label, metric, value){
     const v = between(value||0, 0, 100);
     label.textContent = v + "%";
@@ -489,24 +512,37 @@
   /* Right-side Confidence bar */
   setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', data.meters?.confidence ?? 0);
 
-  /* Language UI: show code (EN/IT/DE/ES/FR/PT/NL/RO/SQ/TR/中文/日本語) */
-  const langNow=$("#langNow");
-  const codeMap = {
-    "English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES",
-    "Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO",
-    "Shqip":"SQ","Türkçe":"TR","中文":"中文","日本語":"日本語"
-  };
-  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", ()=>{ langNow.textContent = codeMap[li.dataset.lang] || "EN"; });
+  /* ====== REVEAL LOGIC ======
+     Group 1: summary + risk + clarity (all at once)
+     Group 2: professionalism/favorability/deadline + issues + main clauses
+     Group 3 (lazy): suggestions + score checker + right-side confidence on scroll
+  */
+  window.addEventListener('load', () => {
+    // Group 1 together
+    ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
+    // Group 2 after a short beat
+    setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
   });
 
-  /* Bottom reveals */
+  // Group 3: lazy on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.18 });
+  ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
+
+  /* Bottom reveals (download + footer) with fade-in */
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd"), showThresholdPx=300;
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
     const show=scrolledFromBottom<=showThresholdPx;
     dlWrap.style.display=show?"flex":"none";
     endBox.style.display=show?"block":"none";
+    if(show){
+      dlWrap.classList.add('fade-in');
+      endBox.classList.add('fade-in');
+    }
   }
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
