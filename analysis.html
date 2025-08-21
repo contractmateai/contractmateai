@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -114,6 +114,10 @@
       overflow-wrap:anywhere;word-break:break-word; /* prevents layout blow-ups */
     }
 
+    /* Bullet lists (for Potential Issues) */
+    .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
+    .bullets li{margin:0 0 12px}
+
     /* Numbered lists helper (for Main Clauses / Suggestions) */
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px}
@@ -143,8 +147,8 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Smart Suggestions: full width */
-    .wide{grid-column:1 / -1;justify-self:center;width:min(1240px,100%)}
+    /* Smart Suggestions: FULL width across both grid columns */
+    .wide{grid-column:1 / -1;justify-self:stretch;width:100%}
 
     /* Remove inner scrolls globally (auto-expansion) */
     .scroll-y{max-height:none !important;overflow:visible !important}
@@ -286,7 +290,7 @@
 
           <section class="card" id="issuesCard">
             <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
-            <div class="list" id="issuesList"></div>
+            <ul class="bullets" id="issuesList"></ul>
           </section>
 
           <section class="card wide">
@@ -380,9 +384,16 @@
       "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period."
     ],
     issues: [
-      "Late-fee compounding escalates costs on long delays; consider switching to simple interest with a reasonable cap to prevent outsized penalties.",
-      "Indemnity is one-sided and uncapped for some categories; a mutual indemnity with a commercial cap tied to fees keeps risk proportional.",
-      "Undefined cure periods allow immediate termination over minor faults; add a ten-day cure for non-critical breaches to reduce churn."
+      "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
+      "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
+      "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
+      "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
+      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured.",
+      "Confidentiality survival is undefined; set a clear survival term (e.g., 3–5 years) with reasonable carve-outs.",
+      "Warranty disclaimers are overly broad; narrow them and add a basic performance warranty aligned to the SOW.",
+      "Payment dispute process is missing; include a short dispute window and suspend-then-resume rules to avoid shutdowns.",
+      "Governing law/jurisdiction unclear; pick one venue to reduce forum shopping and unpredictability.",
+      "Force majeure lacks modern events; add cyber incidents and cloud outages, with notification obligations."
     ],
     suggestions: [
       "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
@@ -445,7 +456,18 @@
 
   function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:[""]).forEach(t=>addP(el, t)); }
   listTo("#clausesList", data.clauses);
-  listTo("#issuesList", data.issues);
+
+  /* bullets for Potential Issues */
+  (function renderIssues(){
+    const el = $("#issuesList"); el.innerHTML="";
+    (data.issues||[]).forEach(t=>{
+      const li=document.createElement('li');
+      li.textContent = t;
+      el.appendChild(li);
+    });
+  })();
+
+  /* numbered for Suggestions */
   listTo("#suggestionsList", data.suggestions);
 
   /* ---------- Donuts ---------- */
@@ -475,19 +497,7 @@
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- Keep Potential Issues & Main Clauses bottoms aligned even as content changes ---------- */
-  function equalize(){
-    const a = $("#issuesCard"), b = $("#clausesCard");
-    if(!a || !b) return;
-    a.style.minHeight = b.style.minHeight = "auto";
-    const h = Math.max(a.offsetHeight, b.offsetHeight);
-    a.style.minHeight = b.style.minHeight = h + "px";
-  }
-  window.addEventListener("load", equalize);
-  window.addEventListener("resize", ()=>setTimeout(equalize, 80));
-  // Re-equalize when content height changes after edits
-  const ro = ('ResizeObserver' in window) ? new ResizeObserver(equalize) : null;
-  if(ro){ ro.observe($("#issuesCard")); ro.observe($("#clausesCard")); }
+  /* ---------- REMOVED equalize so boxes auto-size to content (no half-empty cards) ---------- */
 
   /* ---------- Language UI ---------- */
   const langNow = $("#langNow");
