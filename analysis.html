@@ -129,6 +129,8 @@
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
     /* ===== Score Checker (Clause-Clarity style, edited) ===== */
+    #scoreCard{margin-top:12px;}                 /* lower a bit to align with Smart Suggestions */
+    #confRightCard{margin-top:12px;}             /* lower the added right-side confidence bar too */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
 
@@ -214,7 +216,7 @@
             <div class="list" id="summaryText"></div>
           </section>
 
-          <!-- CHANGED: becomes Professionalism @95% with new icon -->
+          <!-- Professionalism @95% with new icon (unchanged from last turn) -->
           <section class="card meter-block">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span>Professionalism</span></div>
@@ -294,7 +296,7 @@
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- Score Checker (donut left, icon+title+sentence+bar right) -->
+          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <div class="hcard">
               <!-- Donut -->
@@ -312,7 +314,7 @@
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
 
-                <!-- Swapped order: sentence ABOVE bar -->
+                <!-- Sentence ABOVE bar -->
                 <div class="score-remark">The contract is nearly perfectly done.</div>
 
                 <div class="score-bar">
@@ -323,7 +325,7 @@
             </div>
           </section>
 
-          <!-- NEW card under Score Checker: Confidence to sign freely -->
+          <!-- Confidence to sign freely (under Score Checker) -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
@@ -417,8 +419,8 @@
 
   listTo("#suggestionsList", data.suggestions);
 
-  /* Donut helper */
-  function setArc(arcEl, metric, value){
+  /* Donut helper — now also updates % and note when provided */
+  function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value||0, 0, 100);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2*Math.PI*rr;
@@ -426,11 +428,13 @@
     arcEl.style.strokeDasharray = circ;
     arcEl.style.strokeDashoffset = circ;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
+    if (valEl) valEl.textContent = v + "%";
+    if (noteEl) noteEl.textContent = note || "";
   }
 
-  /* Right-column donuts */
-  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0);
-  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0);
+  /* Right-column donuts — bring back 25% and 80% + their notes */
+  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
+  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
 
   /* Bars */
   function setMeter(fill, label, metric, value){
@@ -452,7 +456,7 @@
     $("#scoreInd").style.left = "calc(80% - 1.5px)";
   })();
 
-  /* NEW right-side Confidence bar */
+  /* Right-side Confidence bar */
   setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', data.meters?.confidence ?? 0);
 
   /* Language dropdown */
