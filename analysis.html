@@ -10,7 +10,7 @@
     :root{
       --bg:#0e0c13;
       --card:#1c1b22;
-      --border:#3b3b3b;            
+      --border:#3b3b3b;
       --white:#ffffff;
       --muted:#bdbdbd;
       --green:#00ff65;
@@ -33,10 +33,7 @@
       padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
     }
     .brand{padding:0 2px}
-    .brand a{
-      display:flex;align-items:center;gap:12px;height:52px;
-      text-decoration:none;color:var(--white);
-    }
+    .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
     .brand span{font-size:22px;color:var(--white);font-weight:400}
 
@@ -44,9 +41,9 @@
     .nav a{
       text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
       padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px; /* larger */
+      font-size:19px;
     }
-    .nav a img.icon{width:30px;height:30px;opacity:.95} /* larger */
+    .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
@@ -70,10 +67,7 @@
 
     /* Language (hover opens) */
     .lang{position:relative}
-    .lang-btn{
-      display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--white);
-      font:400 16px/1 Inter;cursor:pointer;padding:8px 10px
-    }
+    .lang-btn{display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--white);font:400 16px/1 Inter;cursor:pointer;padding:8px 10px}
     .lang-btn strong{font-weight:400}
     .lang-menu{
       position:absolute;right:0;top:120%;background:var(--card);border:1px solid var(--border);
@@ -83,9 +77,7 @@
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang:hover .lang-menu{display:block}
-    .lang-item{
-      display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer
-    }
+    .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
     /* Grid */
@@ -98,39 +90,28 @@
     }
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    .card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px
-    }
-    .card h3{
-      margin:0 0 16px;display:flex;align-items:center;gap:12px;
-      font-size:24px;color:var(--white);font-weight:400
-    }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px}
+    .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
-    .list p{
-      margin:0;color:var(--muted);font-size:20px;
-      overflow-wrap:anywhere;word-break:break-word; 
-    }
+    .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
 
-    /* Bullet lists (for Potential Issues) */
+    /* Bullets (Potential Issues) */
     .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
     .bullets li{margin:0 0 12px}
 
-    /* Numbered lists helper (for Main Clauses / Suggestions) */
+    /* Numbered (Main Clauses / Suggestions) */
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px}
-    .numbered p::before{
-      counter-increment:item;content:counter(item) ".";
-      position:absolute;left:0;top:0;color:var(--muted)
-    }
+    .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
 
     /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px} /* bigger bar titles */
-    .meter-title img{width:32px;height:32px}                              /* bigger bar icons */
+    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
+    .meter-title img{width:32px;height:32px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1s ease;border-radius:999px}
 
@@ -141,74 +122,29 @@
     .circle .val{position:absolute;font-weight:400;font-size:34px;color:var(--white)}
     .circle circle.track{stroke:var(--black);stroke-width:12;fill:none}
     .circle circle.arc{stroke-width:12;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
-    .htext{flex:1;display:flex;flex-direction:column;gap:6px}
+    .htext{flex:1;display:flex;flex-direction:column;gap:8px}
     .muted{color:var(--muted);font-size:18px}
     .status{display:flex;align-items:center;gap:8px;margin-top:8px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Smart Suggestions previously full width — keep to LEFT column now */
-    .wide{grid-column:auto}
+    /* ===== Score Checker (Clause-Clarity style) ===== */
+    #scoreCard .score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    #scoreCard .score-pct{font-size:42px}
+    #scoreCard .score-sub{font-size:18px;color:var(--muted);margin-top:6px}
 
-    /* ===== Score Checker (thicker circle, bar lower+shorter, centered text) ===== */
-    #scoreCard{min-height:540px} /* shorter box */
-    #scoreCard .circle{width:360px;height:360px;flex:0 0 360px}
-    #scoreCard .circle svg{width:360px;height:360px}
-    /* thick donut only here */
-    #scoreCard .circle circle.track{stroke-width:28}
-    #scoreCard .circle circle.arc{stroke-width:28}
+    .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
+    .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
+    .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
+    .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
+    .score-remark{font-size:16px;color:var(--muted)}
 
-    #scoreCard .score-center{
-      position:absolute;inset:0;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      text-align:center
-    }
-    #scoreCard .score-num{font-size:68px}
-    #scoreCard .score-label{font-size:22px;color:var(--muted);margin-top:6px}
-
-    .score-wrap{display:grid;place-items:center;margin-top:6px}
-    .score-center{position:absolute;text-align:center} /* base */
-    .score-num{font-size:38px;font-weight:400}
-    .score-label{font-size:18px;color:var(--muted);margin-top:6px}
-
-    /* NEW: note between donut and bar */
-    .score-remark{
-      text-align:center;
-      font-size:16px;
-      color:var(--muted);
-      margin-top:14px;
-    }
-
-    .score-bar-wrap{margin-top:26px}
-    .score-bar{
-      position:relative;height:22px;border-radius:14px;
-      background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);
-      border:1px solid #2f2f2f;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-      width:50%;                     /* shorter bar */
-      margin:0 auto;
-    }
-    .score-ind{
-      position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;
-      left:calc(80% - 1.5px);        /* line at EXACTLY 80% */
-      box-shadow:0 0 8px rgba(255,255,255,.6);
-    }
-    .score-scale{
-      width:50%;
-      margin:8px auto 0;
-      display:flex;justify-content:space-between;font-size:16px;color:var(--muted);
-    }
-
-    /* Remove inner scrolls globally (auto-expansion) */
+    /* Remove inner scrolls globally */
     .scroll-y{max-height:none !important;overflow:visible !important}
 
-    /* Download (appears at end only) */
+    /* Download button */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:16px;display:none;justify-content:center;z-index:9}
-    .download{
-      background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;
-      padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:17px;
-      box-shadow:0 6px 28px rgba(0,0,0,.28);
-    }
+    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:17px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
 
     /* Email modal */
@@ -216,9 +152,7 @@
     .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
     .modal-row{display:flex;gap:10px;margin-top:12px}
-    .input{
-      flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter
-    }
+    .input{flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter}
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
 
@@ -226,8 +160,6 @@
       .layout{grid-template-columns:1fr}
       .download-wrap{left:0}
       .grid{grid-template-columns:1fr}
-      .wide{width:100%}
-      #scoreCard{min-height:540px}
     }
   </style>
 </head>
@@ -253,26 +185,12 @@
           <img class="icon" src="https://imgur.com/kE3okdE.png" alt="">
           <span>Home</span>
         </a>
-        <a href="#">
-          <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-          <img class="icon" src="https://imgur.com/krMnFVT.png" alt="">
-          <span>Privacy</span>
-        </a>
-        <a href="#">
-          <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-          <img class="icon" src="https://imgur.com/6zHviT6.png" alt="">
-          <span>Contact Us</span>
-        </a>
-        <a href="#" id="leaveReview">
-          <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-          <img class="icon" src="https://imgur.com/zwr9SOe.png" alt="">
-          <span>Leave a Review</span>
-        </a>
+        <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
+        <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
+        <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Leave a Review</span></a>
       </nav>
 
       <div class="push"></div>
-
-      <!-- Show only near page end -->
       <div class="end-only" id="sidebarEnd">
         <div class="legal">All rights reserved.</div>
         <div class="copy2">© 2025 SignSense</div>
@@ -284,24 +202,11 @@
     <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
-        <div class="top-left">
-          <div class="top-title">Overview</div>
-        </div>
+        <div class="top-left"><div class="top-title">Overview</div></div>
         <div class="lang">
           <button class="lang-btn" id="langBtn" type="button">Report Language: <strong id="langNow">English</strong></button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <div class="lang-item" data-lang="English">English</div>
-            <div class="lang-item" data-lang="Spanish">Spanish</div>
-            <div class="lang-item" data-lang="German">German</div>
-            <div class="lang-item" data-lang="French">French</div>
-            <div class="lang-item" data-lang="Italian">Italian</div>
-            <div class="lang-item" data-lang="Portuguese">Portuguese</div>
-            <div class="lang-item" data-lang="Dutch">Dutch</div>
-            <div class="lang-item" data-lang="Romanian">Romanian</div>
-            <div class="lang-item" data-lang="Albanian">Albanian</div>
-            <div class="lang-item" data-lang="Chinese">Chinese</div>
-            <div class="lang-item" data-lang="Japanese">Japanese</div>
-            <div class="lang-item" data-lang="Turkish">Turkish</div>
+            <div class="lang-item" data-lang="English">English</div><div class="lang-item" data-lang="Spanish">Spanish</div><div class="lang-item" data-lang="German">German</div><div class="lang-item" data-lang="French">French</div><div class="lang-item" data-lang="Italian">Italian</div><div class="lang-item" data-lang="Portuguese">Portuguese</div><div class="lang-item" data-lang="Dutch">Dutch</div><div class="lang-item" data-lang="Romanian">Romanian</div><div class="lang-item" data-lang="Albanian">Albanian</div><div class="lang-item" data-lang="Chinese">Chinese</div><div class="lang-item" data-lang="Japanese">Japanese</div><div class="lang-item" data-lang="Turkish">Turkish</div>
           </div>
         </div>
       </div>
@@ -393,30 +298,32 @@
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- Score Checker -->
+          <!-- NEW: Score Checker (Clause Clarity layout) -->
           <section class="card" id="scoreCard">
-            <h3><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
-            <div class="score-wrap">
+            <div class="hcard">
+              <!-- Donut on the left -->
               <div class="circle">
-                <svg width="360" height="360" viewBox="0 0 360 360">
-                  <circle class="track" cx="180" cy="180" r="160"></circle>
-                  <circle id="scoreArc" class="arc" cx="180" cy="180" r="160"></circle>
+                <svg width="160" height="160" viewBox="0 0 160 160">
+                  <circle class="track" cx="80" cy="80" r="74"></circle>
+                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
                 <div class="score-center">
-                  <div class="score-num" id="scoreNum">80/100</div>
-                  <div class="score-label">Overall</div>
+                  <div class="score-pct" id="scorePct">80%</div>
+                  <div class="score-sub">Overall</div>
                 </div>
               </div>
-            </div>
 
-            <!-- The sentence placed between donut and bar -->
-            <div class="score-remark">The contract is nearly perfectly done.</div>
+              <!-- Title + bar + remark on the right -->
+              <div class="score-side">
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
 
-            <div class="score-bar-wrap">
-              <div class="score-bar" id="scoreBar">
-                <span class="score-ind" id="scoreInd"></span>
+                <div class="score-bar">
+                  <span class="score-ind" id="scoreInd"></span>
+                </div>
+                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+
+                <div class="score-remark">The contract is nearly perfectly done.</div>
               </div>
-              <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
             </div>
           </section>
         </div>
@@ -444,7 +351,7 @@
 
 <script>
 (() => {
-  /* ---------- Content: EDIT THESE WORDS ---------- */
+  /* ---------- Static content (same as before) ---------- */
   const demo = {
     summary: [
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
@@ -477,92 +384,59 @@
       "Attach a lightweight data-handling appendix covering access limits, encryption at rest, and deletion timelines.",
       "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
-    meters:{ confidence:75, favorability:80, deadline:18 },
-    score: 80   /* for Score Checker display (numeric) */
+    meters:{ confidence:75, favorability:80, deadline:18 }
   };
 
-  /* ---------- ALWAYS use in-file content; NO localStorage ---------- */
   const data = demo;
-
-  /* ---------- Helpers ---------- */
   const $ = s => document.querySelector(s);
-  const cssVar = (v)=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const between = (v,min,max)=>Math.max(min,Math.min(v,max));
-  const addP = (el, text) => { const p=document.createElement('p'); p.textContent=text; el.appendChild(p); };
+  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
 
   function colorFor(metric, v){
-    if (metric === 'risk') {
-      if (v <= 25) return cssVar('--green');
-      if (v <= 55) return cssVar('--orange');
-      return cssVar('--red');
-    }
-    if (metric === 'clarity') {
-      if (v >= 80) return cssVar('--green');
-      if (v >= 45) return cssVar('--orange');
-      return cssVar('--red');
-    }
-    if (metric === 'deadline') {
-      if (v <= 25) return cssVar('--green');
-      if (v <= 75) return cssVar('--orange');
-      return cssVar('--red');
-    }
-    if (v >= 76) return cssVar('--green');
-    if (v >= 50) return cssVar('--orange');
-    return cssVar('--red');
+    if (metric === 'risk') { if (v<=25) return cssVar('--green'); if (v<=55) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'clarity') { if (v>=80) return cssVar('--green'); if (v>=45) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'deadline') { if (v<=25) return cssVar('--green'); if (v<=75) return cssVar('--orange'); return cssVar('--red'); }
+    if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
   }
   function statusText(metric, v){
-    if (metric==='risk'){
-      if (v<=25) return "Generally Safe";
-      if (v<=55) return "Not Quite Safe";
-      return "Not Safe";
-    }
-    if (metric==='clarity'){
-      if (v>=80) return "Generally Safe";
-      if (v>=45) return "Not Quite Safe";
-      return "Not Safe";
-    }
+    if (metric==='risk'){ if (v<=25) return "Generally Safe"; if (v<=55) return "Not Quite Safe"; return "Not Safe"; }
+    if (metric==='clarity'){ if (v>=80) return "Generally Safe"; if (v>=45) return "Not Quite Safe"; return "Not Safe"; }
     return "";
   }
 
-  /* ---------- Fill text ---------- */
-  const sBox = $("#summaryText"); sBox.innerHTML="";
+  /* Summary */
+  const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr && arr.length?arr:[""]).forEach(t=>addP(el, t)); }
+  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:[""]).forEach(t=>addP(el,t)); }
   listTo("#clausesList", data.clauses);
 
-  /* bullets for Potential Issues */
-  (function renderIssues(){
-    const el = $("#issuesList"); el.innerHTML="";
-    (data.issues||[]).forEach(t=>{
-      const li=document.createElement('li');
-      li.textContent = t;
-      el.appendChild(li);
-    });
-  })();
+  /* Issues */
+  (function(){ const el=$("#issuesList"); el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
 
-  /* numbered for Suggestions */
   listTo("#suggestionsList", data.suggestions);
 
-  /* ---------- Donuts ---------- */
+  /* Donut helper */
   function setArc(arcEl, metric, value, valEl, badgeEl, dotEl, noteEl, note){
     const v = between(value||0, 0, 100);
-    if(valEl) valEl.textContent = v + "%";
-    if(noteEl) noteEl.textContent = note || "";
-    const color = colorFor(metric, v);
-    const rr = parseFloat(arcEl.getAttribute('r')) || 74;  // radius per element
+    const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2*Math.PI*rr;
-    arcEl.style.stroke = color;
+    arcEl.style.stroke = colorFor(metric, v);
     arcEl.style.strokeDasharray = circ;
     arcEl.style.strokeDashoffset = circ;
-    if(badgeEl) badgeEl.textContent = statusText(metric, v);
-    if(dotEl) dotEl.style.background = color;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
+    if(valEl) valEl.textContent = v + "%";
+    if(badgeEl) badgeEl.textContent = statusText(metric, v);
+    if(dotEl) dotEl.style.background = colorFor(metric, v);
+    if(noteEl) noteEl.textContent = note || "";
   }
+
+  /* Right-column donuts */
   setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskBadge"), $("#riskDot"), $("#riskNote"), data.risk?.note);
   setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarBadge"), $("#clarDot"), $("#clarNote"), data.clarity?.note);
 
-  /* ---------- Bars ---------- */
+  /* Bars */
   function setMeter(fill, label, metric, value){
     const v = between(value||0, 0, 100);
     label.textContent = v + "%";
@@ -573,44 +447,38 @@
   setMeter($("#favFill"),  $("#favVal"),  'favorability', data.meters?.favorability ?? 0);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* ---------- Score Checker ---------- */
-  (function setScore(){
-    const scoreValue = data.score ?? 80;
-    setArc($("#scoreArc"), 'confidence', scoreValue); // animation + color
-    $("#scoreNum").textContent = `${scoreValue}/100`;
-    // Pointer exactly at 80%
-    document.getElementById("scoreInd").style.left = "calc(80% - 1.5px)";
+  /* Score Checker */
+  (function scoreChecker(){
+    const v = 80;
+    setArc($("#scoreArc"), 'confidence', v);
+    $("#scorePct").textContent = v + "%";
+    // pointer at exactly 80%
+    $("#scoreInd").style.left = "calc(80% - 1.5px)";
   })();
 
-  /* ---------- Language UI ---------- */
-  const langNow = $("#langNow");
-  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; });
-  });
+  /* Language UI */
+  const langNow=$("#langNow");
+  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>li.addEventListener("click", ()=>{ langNow.textContent = li.dataset.lang; }));
 
-  /* ---------- Show elements only near bottom ---------- */
-  const dlWrap = $("#dlWrap");
-  const endBox = $("#sidebarEnd");
-  const showThresholdPx = 300; // reveal when 300px from bottom
+  /* Show elements only near bottom */
+  const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd"), showThresholdPx=300;
   function nearBottom(){
-    const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-    const show = scrolledFromBottom <= showThresholdPx;
-    dlWrap.style.display = show ? "flex" : "none";
-    endBox.style.display = show ? "block" : "none";
+    const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
+    const show=scrolledFromBottom<=showThresholdPx;
+    dlWrap.style.display=show?"flex":"none";
+    endBox.style.display=show?"block":"none";
   }
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
 
-  /* ---------- Email modal + PDF ---------- */
-  const modal = $("#emailModal"), openModal = ()=>modal.style.display="flex", closeModal = ()=>modal.style.display="none";
+  /* Email modal + PDF (unchanged) */
+  const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
-
   function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
   $("#emailSubmit").addEventListener("click", async ()=>{
-    const email = $("#emailInput").value || "";
-    const err = $("#emailErr");
-    if (!validEmail(email)){ err.style.display="block"; return; }
+    const email=$("#emailInput").value||"", err=$("#emailErr");
+    if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
     await generatePDF("Report", data);
     closeModal();
@@ -618,28 +486,28 @@
 
   async function generatePDF(title, d){
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:"pt", format:"a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 48, width = pageW - margin*2, lh = 18;
+    const doc=new jsPDF({ unit:"pt", format:"a4" });
+    const pageW=doc.internal.pageSize.getWidth();
+    const margin=48, width=pageW-margin*2, lh=18;
 
     doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
     doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
     doc.text("SignSense — Contract Analysis Report", margin, 48);
 
-    let y = 100;
-    const date = new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
-    doc.text(`Generated: ${date}`, margin, y); y += lh*1.6;
+    let y=100;
+    const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
+    doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
 
-    y = section("Summary", y); y = bullets(d.summary, y);
-    y = section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y = paragraph(d.risk?.note || "", y);
-    y = section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y = paragraph(d.clarity?.note || "", y);
-    y = section("Main Clauses", y); y = bullets(d.clauses, y);
-    y = section("Potential Issues", y); y = bullets(d.issues, y);
-    y = section("Smart Suggestions", y); y = bullets(d.suggestions, y);
+    y=section("Summary", y); y=bullets(d.summary, y);
+    y=section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
+    y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
+    y=section("Main Clauses", y); y=bullets(d.clauses, y);
+    y=section("Potential Issues", y); y=bullets(d.issues, y);
+    y=section("Smart Suggestions", y); y=bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
-    function section(t, y){ if (y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
-    function paragraph(text, y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
+    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
+    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
     function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
       list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
         if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
@@ -649,7 +517,6 @@
     }
   }
 
-  /* ---------- Review link (placeholder) ---------- */
   $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
