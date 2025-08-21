@@ -98,10 +98,14 @@
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
 
-    /* Editable support (prevents collapse when empty) */
-    .editable{outline:none;white-space:pre-wrap}
-    .editable:empty::before{content:attr(data-placeholder);color:var(--muted);opacity:.55}
-    .keep-height{min-height:120px}       /* keeps cards from collapsing even if you delete all text */
+    /* ---- SAFE HEIGHTS when you delete text in code (no visual change if not empty) ---- */
+    #summaryText:empty{min-height:72px}
+    #issuesList:empty{min-height:72px}
+    #suggestionsList:empty{min-height:72px}
+    #clausesList:empty{min-height:72px}
+    #riskNote:empty,#clarNote:empty{min-height:24px}
+    #scoreCard .score-remark:empty{min-height:40px}
+    /* ------------------------------------------------------------------------------- */
 
     /* Bullets (Potential Issues) */
     .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
@@ -134,14 +138,13 @@
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
     /* ===== Score Checker (Clause-Clarity style, edited) ===== */
-    #scoreCard{margin-top:12px;}                 
-    #confRightCard{margin-top:12px;}             
+    #scoreCard{margin-top:12px;}                 /* lower a bit to align with Smart Suggestions */
+    #confRightCard{margin-top:12px;}             /* lower the added right-side confidence bar too */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
 
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
-    .score-remark{font-size:20px;color:var(--muted)}
-    .score-remark.keep-height{min-height:48px}   /* sentence area keeps some space if empty */
+    .score-remark{font-size:20px;color:var(--muted)} /* bigger sentence */
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
@@ -219,10 +222,10 @@
         <div class="left">
           <section class="card">
             <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
-            <div id="summaryText" class="list editable keep-height" contenteditable="true" data-placeholder="Type summary…"></div>
+            <div class="list" id="summaryText"></div>
           </section>
 
-          <!-- Professionalism @95% with new icon -->
+          <!-- Professionalism @95% with new icon (unchanged from last turn) -->
           <section class="card meter-block">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span>Professionalism</span></div>
@@ -249,12 +252,12 @@
 
           <section class="card" id="issuesCard">
             <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
-            <ul id="issuesList" class="bullets editable keep-height" contenteditable="true" data-placeholder="Add potential issues…"></ul>
+            <ul class="bullets" id="issuesList"></ul>
           </section>
 
           <section class="card" id="suggestionsCard">
             <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
-            <div id="suggestionsList" class="list numbered editable keep-height" contenteditable="true" data-placeholder="Add smart suggestions…"></div>
+            <div class="list numbered" id="suggestionsList"></div>
           </section>
         </div>
 
@@ -272,7 +275,7 @@
               </div>
               <div class="htext">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt="">Risk Level</h3>
-                <div id="riskNote" class="muted editable" contenteditable="true" data-placeholder="Add a short note…"></div>
+                <div class="muted" id="riskNote"></div>
                 <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
               </div>
             </div>
@@ -290,7 +293,7 @@
               </div>
               <div class="htext">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt="">Clause Clarity</h3>
-                <div id="clarNote" class="muted editable" contenteditable="true" data-placeholder="Add a short note…"></div>
+                <div class="muted" id="clarNote"></div>
                 <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
               </div>
             </div>
@@ -299,7 +302,7 @@
           <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
-            <div id="clausesList" class="list numbered editable keep-height" contenteditable="true" data-placeholder="List main clauses…"></div>
+            <div class="list numbered" id="clausesList"></div>
           </section>
 
           <!-- Score Checker -->
@@ -320,8 +323,8 @@
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
 
-                <!-- Sentence ABOVE bar (editable, keeps height) -->
-                <div id="scoreRemark" class="score-remark editable keep-height" contenteditable="true" data-placeholder="Add a short remark…">The contract is nearly perfectly done.</div>
+                <!-- Sentence ABOVE bar -->
+                <div class="score-remark">The contract is nearly perfectly done.</div>
 
                 <div class="score-bar">
                   <span class="score-ind" id="scoreInd"></span>
@@ -392,7 +395,10 @@
     suggestions: [
       "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
       "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.".
+      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.",
+      "Confirm ownership of enhancements to internal tools; grant broad client usage rights while retaining underlying frameworks.",
+      "Attach a lightweight data-handling appendix covering access limits, encryption at rest, and deletion timelines.",
+      "List milestone dates in one table with responsible owners to reduce email back-and-forth and keep expectations aligned."
     ],
     meters:{ professionalism:95, confidence:75, favorability:80, deadline:18 }
   };
@@ -435,7 +441,7 @@
     if (noteEl) noteEl.textContent = note || "";
   }
 
-  /* Right-column donuts — 25% and 80% + their notes */
+  /* Right-column donuts — bring back 25% and 80% + their notes */
   setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
   setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
 
