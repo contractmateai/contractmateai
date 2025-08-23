@@ -5,11 +5,8 @@
   <title>SignSense — Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Icons -->
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-
-  <!-- Inter (all text normal weight) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
 
   <style>
@@ -19,33 +16,32 @@
       --muted:#d8cccc;
 
       --bar:#04040e;
-      --bar-border:#3f3f3f;   /* darker border as requested */
+      --bar-border:#3f3f3f;
 
       --badge-text:#c8acff;
       --badge-bg:#1f1a34;
 
-      --panel:#0b0814;       /* contact card panel */
-      --field:#1f1a28;       /* input/textarea background */
-      --faq-block:#191624;   /* unified QA color */
+      --panel:#0b0814;
+      --field:#1f1a28;
+      --faq-block:#191624;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family:"Inter",system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      font-family:"Inter",sans-serif;
       font-weight:400;
       color:var(--text);
-      background:var(--bg); /* rest of the page is BLACK */
+      background:var(--bg);
       overflow-x:hidden;
     }
 
-    /* ===== TOP BAR (hide on scroll) ===== */
+    /* ===== TOP BAR ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
       transition:transform .28s ease, opacity .25s ease;
-      opacity:0; transform:translateY(-6px); animation:fadeDown .6s ease forwards .15s;
     }
     .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
     .topbar{
@@ -60,62 +56,50 @@
     }
     .topbar-left{display:flex; align-items:center; gap:10px;}
     .topbar-logo{height:38px; width:auto; border-radius:8px;}
-    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none;}
-    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px;}
+    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
+    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
     .topbar-nav a:hover{opacity:.85}
 
-    /* Keeps content from hiding under fixed bar; hero will pull up to start at top */
     .pad-top{height:120px}
 
-    /* ===== HERO IMAGE BLOCK (starts at TOP, scrolls away) ===== */
+    /* ===== HERO ===== */
     .hero-frame{
       position:relative;
-      height:44vh;               /* ends where it does now (< half screen) */
+      height:44vh;
       min-height:360px;
       width:100%;
-      overflow:hidden;           /* keeps gradient attached to image bottom */
-      margin-top:-120px;         /* pull up so image starts at very top */
+      overflow:hidden;
+      margin-top:-120px;
     }
     .hero-bg{
       position:absolute; inset:0;
       background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-      opacity:0; transform:translateY(10px); /* image fades in LAST */
-      animation:fadeUp .8s ease forwards 1.1s;
     }
     .hero-bg::after{
-      /* shadow glued to the image bottom; scrolls WITH the image */
       content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
       background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
-      pointer-events:none;
     }
 
     .hero-content{
       position:relative; z-index:1;
       max-width:1160px; margin:0 auto; padding:0 24px;
       text-align:center;
-      display:flex; flex-direction:column; align-items:center;
-      justify-content:flex-start;
-      /* slightly higher (was calc(120px + 72px)) */
       padding-top:calc(120px + 66px);
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
-      background:var(--badge-bg); color:var(--badge-text); font-size:15px;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .25s;
+      background:var(--badge-bg); color:var(--badge-text); font-size:15px; font-weight:400;
     }
     .hero-title{
-      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .4s;
+      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
     }
     .hero-sub{
-      color:var(--muted); font-size:20px;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .5s;
+      color:var(--muted); font-size:20px; font-weight:400;
     }
 
-    /* spacer below hero — contact section a LITTLE LOWER (was 56px) */
     .after-hero-spacer{height:72px}
 
-    /* ===== CONTACT (background stays black) ===== */
+    /* ===== CONTACT ===== */
     .contact-section{ background:transparent; }
     .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
     .contact-card{
@@ -126,17 +110,15 @@
       display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
       box-shadow:0 26px 60px rgba(0,0,0,.55);
       min-height:560px;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .6s;
     }
     @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
 
-    /* left form */
     .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px}
     @media (max-width:640px){ .row{grid-template-columns:1fr} }
     .field{
       width:100%; background:var(--field); color:#f0f0f0;
       border:none; border-radius:16px;
-      padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif;
+      padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif; font-weight:400;
     }
     .field::placeholder{color:#a0a0a0;}
     input.field.email{margin-bottom:18px}
@@ -145,100 +127,53 @@
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
       width:100%;
       background:#fefefe; color:#000; border:none; border-radius:16px;
-      padding:16px 24px; font-size:17px; cursor:pointer;
-      box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
-      transition:box-shadow .25s ease, transform .06s ease, filter .25s ease;
-      margin-top:12px;
+      padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
     }
-    .send-btn:hover{ box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35); filter:saturate(1.05); }
-    .send-btn:active{transform:translateY(1px)}
-    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center}
+    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center; font-weight:400;}
 
-    /* right info (title/sub slightly higher; WA/Email lower) */
     aside.contact-info{padding-left:48px;}
-    .info-title{font-size:28px; margin:0 0 4px; color:#ffffff;}
-    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px;}
+    .info-title{font-size:28px; margin:0 0 4px; color:#ffffff; font-weight:400;}
+    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px; font-weight:400;}
     .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
     .info-item{display:flex; align-items:center; gap:18px}
     .info-icon{width:48px; height:48px; display:block}
     .info-text{display:flex; flex-direction:column; gap:4px}
-    .info-label{color:#ffffff; font-size:18px}
-    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px}
-    .info-value a:hover{text-decoration:underline}
+    .info-label{color:#ffffff; font-size:18px; font-weight:400;}
+    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400;}
 
-    /* ===== FAQ (normal flow: opening pushes items below) ===== */
-    .faq-section{
-      max-width:1120px; margin:120px auto 0; padding:0 24px 110px;
-      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .7s;
-    }
-    .faq-title{
-      text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;
-    }
+    /* ===== FAQ ===== */
+    .faq-section{max-width:1120px; margin:120px auto 0; padding:0 24px 110px;}
+    .faq-title{text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;}
     .faq-list{display:flex; flex-direction:column; gap:16px}
-    .faq-item{
-      border-radius:16px;
-      background:transparent; /* NO field when closed */
-      overflow:hidden;
-      cursor:pointer;
-      transition:background .2s ease;
-    }
-    .faq-head{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:10px 6px; color:#fff9f9; font-size:22px;
-      background:transparent;
-    }
-    .faq-arrow{
-      width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;
-    }
-
-    /* OPEN: question + answer share SAME #191624 block */
+    .faq-item{border-radius:16px; background:transparent; overflow:hidden; cursor:pointer;}
+    .faq-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; color:#fff9f9; font-size:22px; font-weight:400;}
+    .faq-arrow{width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;}
     .faq-item.open{ background:var(--faq-block); }
     .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
     .faq-item.open .faq-arrow{ transform:rotate(180deg); }
+    .faq-a{background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, padding .2s ease; border-radius:0 0 16px 16px; font-weight:400;}
+    .faq-item.open .faq-a{padding:12px 18px 18px; max-height:420px; opacity:1;}
 
-    .faq-a{
-      background:var(--faq-block); /* same as container so looks like one field */
-      color:#c3c3c3; font-size:19px; line-height:1.65;
-      padding:0 18px;
-      max-height:0; opacity:0; overflow:hidden;
-      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
-      border-radius:0 0 16px 16px;
-    }
-    .faq-item.open .faq-a{
-      padding:12px 18px 18px;
-      max-height:420px; opacity:1;
-    }
-
-    /* ===== FOOTER (lower) ===== */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 180px;} /* LOWER footer */
+    /* ===== FOOTER LOWER ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 360px;} /* LOWER */
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
       grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
       column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .8s;
     }
-    :root{--footer-rail:40px; --logo-gap:12px;}
-    .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
-    .footer-logo{width:32px; height:32px; border-radius:0 !important; object-fit:contain; margin:0 !important; transform:translateY(-2px);}
-    .footer-left-inner{display:flex; flex-direction:column;}
-    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none;}
-    .footer-tagline{
-      color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5;
-      position:relative; left:-40px;
-    }
+    .footer-left{display:flex; align-items:flex-start; gap:12px;}
+    .footer-logo{width:32px; height:32px; object-fit:contain;}
+    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+    .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
     .footer-col{display:flex; flex-direction:column; gap:10px;}
-    .footer-title{color:#fff; font-size:22px;}
-    .footer-links{display:flex; flex-direction:column; gap:8px !important;}
-    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px;}
-    .footer-links a:hover{opacity:.9}
+    .footer-title{color:#fff; font-size:22px; font-weight:400;}
+    .footer-links{display:flex; flex-direction:column; gap:8px;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
     .footer-bottom{margin-top:24px;}
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
-    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
     .footer-copy{margin-left:auto;}
-
-    @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
-    @keyframes fadeDown{to{opacity:1; transform:translateY(0)}}
   </style>
 </head>
 <body>
@@ -247,10 +182,8 @@
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar">
       <div class="topbar-left">
-        <a href="index.html" aria-label="Go to homepage">
-          <img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
-        </a>
-        <a href="index.html" class="topbar-brand" aria-label="Go to homepage">SignSense</a>
+        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
+        <a href="index.html" class="topbar-brand">SignSense</a>
       </div>
       <nav class="topbar-nav">
         <a href="index.html#how-it-works">See How It Works</a>
@@ -262,9 +195,9 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO (image starts at the very top and scrolls away; rest is black) -->
+  <!-- HERO -->
   <section class="hero-frame">
-    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-bg"></div>
     <div class="hero-content">
       <div class="badge">We’re Here For You</div>
       <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
@@ -274,37 +207,31 @@
 
   <div class="after-hero-spacer"></div>
 
-  <!-- CONTACT (no colored background behind; stays black) -->
+  <!-- CONTACT -->
   <section class="contact-section">
     <div class="contact-wrap" id="contact">
       <div class="contact-card">
-        <!-- LEFT: FORM -->
         <div>
           <div class="row">
-            <input class="field" type="text" placeholder="Name" aria-label="Full name" />
-            <input class="field" type="tel" placeholder="Phone" aria-label="Phone" />
+            <input class="field" type="text" placeholder="Name" />
+            <input class="field" type="tel" placeholder="Phone" />
           </div>
-          <input class="field email" type="email" placeholder="Email" aria-label="Email" />
-          <textarea class="field" placeholder="Message" aria-label="Message"></textarea>
-
+          <input class="field email" type="email" placeholder="Email" />
+          <textarea class="field" placeholder="Message"></textarea>
           <button class="send-btn" type="button">Send</button>
           <div class="sla">We will contact you within 24 hours.</div>
         </div>
-
-        <!-- RIGHT: INFO -->
         <aside class="contact-info">
           <div class="info-title">Contact Information</div>
           <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
-
           <div class="info-list">
             <div class="info-item">
               <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
               <div class="info-text">
                 <div class="info-label">WhatsApp:</div>
-                <div class="info-value"><a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a></div>
+                <div class="info-value"><a href="https://wa.me/355696902900">+355 69 690 2900</a></div>
               </div>
             </div>
-
             <div class="info-item">
               <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
               <div class="info-text">
@@ -318,10 +245,9 @@
     </div>
   </section>
 
-  <!-- FAQ (normal flow: opening pushes items below; single-open) -->
+  <!-- FAQ -->
   <section class="faq-section">
     <h2 class="faq-title">Frequently Asked Questions</h2>
-
     <div class="faq-list" id="faqList">
       <div class="faq-item">
         <div class="faq-head">
@@ -330,7 +256,6 @@
         </div>
         <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
       </div>
-
       <div class="faq-item">
         <div class="faq-head">
           <span>Is SignSense legally binding?</span>
@@ -338,7 +263,6 @@
         </div>
         <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
       </div>
-
       <div class="faq-item">
         <div class="faq-head">
           <span>What types of contracts can I upload?</span>
@@ -346,7 +270,6 @@
         </div>
         <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
       </div>
-
       <div class="faq-item">
         <div class="faq-head">
           <span>Is my data secure?</span>
@@ -361,18 +284,15 @@
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
-        <a href="index.html" aria-label="Go to homepage">
-          <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
-        </a>
+        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
         <div class="footer-left-inner">
-          <a href="index.html" class="footer-brand" aria-label="Go to homepage">SignSense</a>
+          <a href="index.html" class="footer-brand">SignSense</a>
           <div class="footer-tagline">
             <div>No confusion, no legal jargon.</div>
             <div>For informational use only. Not legal advice.</div>
           </div>
         </div>
       </div>
-
       <div class="footer-col">
         <div class="footer-title">Quick Menu</div>
         <nav class="footer-links">
@@ -380,7 +300,6 @@
           <a href="index.html#review">Leave Review</a>
         </nav>
       </div>
-
       <div class="footer-col">
         <div class="footer-title">Information</div>
         <nav class="footer-links">
@@ -388,7 +307,6 @@
           <a href="index.html#features">Features</a>
         </nav>
       </div>
-
       <div class="footer-col">
         <div class="footer-title">Socials</div>
         <nav class="footer-links">
@@ -398,7 +316,6 @@
         </nav>
       </div>
     </footer>
-
     <div class="footer-bottom">
       <div class="footer-divider"></div>
       <div class="footer-bottom-links">
@@ -410,27 +327,16 @@
   </div>
 
   <script>
-    /* Hide topbar on scroll down / show on up — immediate, no threshold */
-    (() => {
-      const bar = document.getElementById("topbarWrap");
-      let lastY = window.scrollY;
-      window.addEventListener("scroll", () => {
-        const y = window.scrollY;
-        if (y > lastY) {
-          bar.classList.add("hide");     // scrolling down -> hide
-        } else {
-          bar.classList.remove("hide");  // scrolling up -> show
-        }
-        lastY = y;
-      }, { passive: true });
-    })();
+    // Topbar hide/show on scroll
+    const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
+    window.addEventListener("scroll",()=>{const y=window.scrollY; if(y>lastY&&y>80)bar.classList.add("hide"); else bar.classList.remove("hide"); lastY=y<=0?0:y;},{passive:true});
 
-    /* FAQ: single-open; click anywhere toggles; normal flow pushes items below */
-    document.querySelectorAll(".faq-item").forEach((item)=>{
-      item.addEventListener("click", ()=>{
-        document.querySelectorAll(".faq-item.open").forEach(i=>{
-          if(i!==item) i.classList.remove("open");
-        });
+    // FAQ toggle (only one open at a time)
+    document.querySelectorAll(".faq-item").forEach(item=>{
+      item.addEventListener("click",()=>{
+        if(!item.classList.contains("open")){
+          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
+        }
         item.classList.toggle("open");
       });
     });
