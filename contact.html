@@ -1,204 +1,480 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>SignSense — Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact – AI ContractMate</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" type="image/png">
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://imgur.com/VFu8eyq.png"
+    sizes="64x64"
+  />
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+
   <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #0b0b0f;
-      color: #f5f5f5;
+    :root{
+      --bg:#01040b;
+      --text:#fff9f9;
+      --muted:#d8cccc;
+      --bar:#04040e;
+      --bar-border:#b4b4b4;
+      --badge-text:#c8acff;
+      --badge-bg:#1f1a34;
+      --contact-panel:#100326;
+      --field:#2c2938;
+      --green:#adff00;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    /* ==== TOP BAR (fixed) ==== */
+    .topbar-wrap{
+      position:fixed; top:18px; left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; pointer-events:none;
+    }
+    .topbar{
+      pointer-events:auto;
+      background:var(--bar);
+      border:1px solid var(--bar-border);
+      border-radius:16px;
+      min-height:72px; padding:12px 18px;
+      width:min(1120px, calc(100% - 60px));
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:0 8px 30px rgba(0,0,0,.28);
+    }
+    .topbar-left{display:flex; align-items:center; gap:10px;}
+    .topbar-logo{
+      height:38px; width:auto; border-radius:8px;
+    }
+    .topbar-brand{
+      font-family:"Shoika",sans-serif;
+      font-size:28px; color:#fff9f9; letter-spacing:.2px;
+    }
+    .topbar-nav a{
+      text-decoration:none; font-size:20px; margin-left:24px;
+      color:#d8cccc;
+    }
+    .topbar-nav a:hover{opacity:.85}
+
+    /* push content under fixed bar */
+    .page-pad{height:120px}
+
+    /* ==== HERO ==== */
+    .hero{
+      max-width:1160px; margin:0 auto; padding:0 24px 24px;
+      position:relative;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--badge-bg);
+      color:var(--badge-text);
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:15px;
+      box-shadow:0 0 20px rgba(173,255,0,.18);
+    }
+
+    .hero h1{
+      font-family:"Shoika",sans-serif; font-weight:400;
+      font-size:56px; line-height:1.15; margin:16px 0 10px;
+      color:#fff9f9;
+    }
+    .hero p.sub{
+      font-size:20px; color:var(--muted); margin:10px 0 20px;
+    }
+
+    /* background photo strip that ENDS a bit under the subtext */
+    .hero-photo{
+      position:relative; width:100%; height:360px;
+      margin-top:12px; border-radius:20px; overflow:hidden;
+      background:url("https://i.imgur.com/tyPrC9z.png") center/cover no-repeat;
+      box-shadow:0 18px 40px rgba(0,0,0,.45);
+    }
+    /* soft fade at the bottom of the photo for smooth blend */
+    .hero-photo:after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:120px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.8) 75%, rgba(1,4,11,1) 100%);
+    }
+
+    /* black shadow between subtext and next section to make image go smoothly */
+    .hero-shadow{
+      height:70px;
+      background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 100%);
+      margin-top:-20px;
+    }
+
+    /* ==== CONTACT SECTION ==== */
+    .contact-wrap{
+      max-width:1160px; margin:0 auto; padding:0 24px 90px; position:relative;
+    }
+
+    .contact-card{
+      background:var(--contact-panel);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:22px;
+      padding:32px;
+      display:grid; grid-template-columns:1.1fr .9fr; gap:28px;
+      box-shadow:0 22px 50px rgba(0,0,0,.45);
+    }
+    @media (max-width:980px){
+      .contact-card{grid-template-columns:1fr}
+    }
+
+    .form-title{
+      font-family:"Shoika",sans-serif;
+      font-weight:400; font-size:30px; margin:0 0 18px;
+      color:#fff;
+    }
+    .form-note{
+      color:#b4b4b4; font-size:16px; margin:6px 0 24px;
+    }
+
+    .field{
+      background:var(--field);
+      border:1px solid rgba(255,255,255,.1);
+      color:#f0f0f0;
+      border-radius:14px;
+      padding:14px 16px;
+      width:100%;
+      font-size:16px;
+      outline:none;
+    }
+    .field::placeholder{color:#a9a9a9}
+    textarea.field{min-height:140px; resize:vertical}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+    @media (max-width:680px){.row{grid-template-columns:1fr}}
+
+    .send-wrap{display:flex; align-items:center; gap:16px; margin-top:14px}
+    .send-btn{
+      display:inline-flex; align-items:center; gap:10px;
+      background:#fefefe; color:#000;
+      border:none; border-radius:12px; padding:14px 20px;
+      font-size:16px; cursor:pointer; font-weight:600;
+      box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
+      transition:transform .06s ease, box-shadow .2s ease;
+    }
+    .send-btn:active{transform:translateY(1px)}
+    .send-btn img{width:18px; height:18px; display:block}
+
+    .sla{color:#9a9a9a; font-size:14px}
+
+    /* RIGHT: Contact info */
+    .info-title{
+      font-family:"Shoika",sans-serif; font-weight:400; font-size:28px; margin:0 0 12px;
+      color:#ffffff;
+    }
+    .info-list{display:flex; flex-direction:column; gap:14px; margin-top:10px}
+    .info-item{display:flex; align-items:center; gap:12px}
+    .info-icon{width:28px; height:28px; display:block}
+    .info-label{color:#ffffff; font-size:16px; opacity:.96}
+    .info-value a{color:#fff9f9; text-decoration:none; font-size:18px}
+    .info-value a:hover{text-decoration:underline}
+
+    /* ==== FAQ (same styles from homepage) ==== */
+    .faq-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 40px;
+      font-family: "Inter", sans-serif;
+      text-align: center;
+    }
+    .faq-title {
+      font-size: 64px;
+      line-height: 1.1;
+      color: #fff9f9;
+      margin-bottom: 34px;
+      font-weight: 400;
+    }
+    .faq-list {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      gap: 20px;
+      text-align: left;
     }
+    .faq-item { border-radius: 24px; overflow: hidden; background: transparent; }
+    .faq-q{
+      width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:30px 34px; border:none; cursor:pointer; background:#0b0a12; color:#fff9f9;
+      font-size:26px; font-weight:500; border-radius:24px; transition:background .2s ease;
+    }
+    .faq-q:hover{ background:#12101a; }
+    .faq-item.open{ background:#191624; border-radius:24px; }
+    .faq-item.open .faq-q{ background:transparent; border-radius:24px 24px 0 0; }
+    .faq-a{
+      background:transparent; color:#cfcbd6; font-size:22px; line-height:1.7;
+      padding:0 34px; max-height:0; opacity:0; overflow:hidden;
+      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+    }
+    .faq-item.open .faq-a{ padding:18px 34px 24px; max-height:480px; opacity:1; border-radius:0 0 24px 24px;}
 
-    header {
-      border-bottom: 1px solid #444;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 32px;
-      background-color: #000;
+    /* ==== FOOTER (same as homepage you sent) ==== */
+    .site-footer-wrap {
+      max-width: 1400px;
+      margin: 40px auto 0;
+      padding: 0 24px 56px;
+      font-family: "Inter", sans-serif;
     }
-
-    header .logo {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
+    .site-footer {
+      background: transparent;
+      border: none; box-shadow: none; padding: 0;
+      display: grid;
+      grid-template-columns:
+        minmax(460px, 1fr) minmax(220px, max-content) minmax(220px, max-content) minmax(220px, max-content);
+      column-gap: 88px; align-items: start; justify-items: start;
+      padding-left: 40px !important;
     }
-
-    header img {
-      height: 52px;
-      margin-right: 14px;
+    :root{ --footer-rail:40px; --logo-gap:12px; }
+    .footer-left{
+      display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important;
+      gap:var(--logo-gap) !important;
     }
-
-    header h1 {
-      font-size: 26px;
-      margin: 0;
-      color: #ffffff;
+    .footer-logo{ width:32px; height:32px; border-radius:0 !important; object-fit:contain; margin:0 !important; transform:translateY(-2px);}
+    .footer-left-inner{ display:flex; flex-direction:column; margin:0 !important; padding:0 !important;}
+    .footer-brand{ color:#e1e1e1; font-size:26px; font-weight:400; line-height:1.1; margin-left:0 !important;}
+    .footer-tagline{ color:#c5c5c5; margin-top:8px; font-size:18px; line-height:1.5; margin-left:0 !important;}
+    .footer-cta{
+      align-self:flex-start; margin-top:22px; padding:9px 18px; background:#adff00; color:#000; text-decoration:none;
+      font-size:16px; font-weight:400; border-radius:10px; box-shadow:0 0 12px rgba(173,255,0,.55); transition:box-shadow .25s ease;
+      margin-left:0 !important;
     }
-
-    .menu {
-      position: relative;
+    .footer-cta:hover{ box-shadow:0 0 20px rgba(173,255,0,.85); }
+    .footer-col{ display:flex; flex-direction:column; gap:10px; align-items:flex-start !important; text-align:left !important;}
+    .footer-title{ color:#fff; font-size:22px; font-weight:400; line-height:1; margin:0; padding:0;}
+    .footer-links{ display:flex; flex-direction:column; gap:8px !important;}
+    .footer-links a{ color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; line-height:1.4; display:block; margin:0 !important; padding:0 !important;}
+    .footer-links a:hover{ opacity:.9;}
+    .footer-bottom{ margin-top:24px;}
+    .footer-divider{ width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
+    .footer-bottom-links{ display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
+    .footer-copy{ margin-left:auto;}
+    @media (max-width:1000px){
+      .site-footer{ grid-template-columns:1fr; padding-left:0;}
+      .footer-copy{ margin-left:0;}
     }
-
-    .menu-button {
-      background: none;
-      border: 2px solid #888;
-      color: #f5f5f5;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .menu-content {
-      display: none;
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background-color: #1a1a20;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px;
-      z-index: 1000;
-      width: 180px;
-    }
-
-    .menu-content a {
-      display: block;
-      padding: 10px;
-      color: #f5f5f5;
-      text-decoration: none;
-      font-size: 16px;
-    }
-
-    .menu-content a:hover {
-      background-color: #292934;
-    }
-
-    .menu:hover .menu-content,
-    .menu:focus-within .menu-content {
-      display: block;
-    }
-
-    .section {
-      padding: 60px 24px 40px;
-      text-align: center;
-      flex-grow: 1;
-    }
-
-    .contact-card {
-      background-color: #1c1c26;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 32px;
-      border-radius: 14px;
-      box-shadow: 0 0 16px rgba(32, 104, 193, 0.3);
-      font-size: 18px;
-    }
-
-    .contact-item {
-      margin-bottom: 24px;
-    }
-
-    .contact-item a {
-      color: #00bfff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .contact-item a:hover {
-      text-decoration: underline;
-    }
-
-    footer {
-      background-color: #1a1a24;
-      color: #bbb;
-      text-align: center;
-      padding: 40px 20px 20px;
-    }
-
-    .footer-icons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      margin: 16px 0;
-    }
-
-    .footer-icons img {
-      height: 36px;
-      filter: brightness(200%);
-      border-radius: 8px;
-    }
-
-    .footer-nav {
-      margin-top: 16px;
-    }
-
-    .footer-nav a {
-      color: #bbb;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-
-    @media (max-width: 768px) {
-      .section {
-        padding: 40px 16px;
-      }
-    }
+    /* small helper */
+    a.clean{ text-decoration:none; color:inherit;}
   </style>
 </head>
 <body>
-  <header>
-    <a class="logo" href="index.html">
-      <img src="https://cdn-icons-png.flaticon.com/128/18960/18960926.png" alt="Logo" />
-      <h1>AI ContractMate</h1>
-    </a>
-    <div class="menu" tabindex="0">
-      <button class="menu-button">☰</button>
-      <div class="menu-content">
-        <a href="index.html">Home</a>
-        <a href="https://www.youtube.com">See How It Works</a>
-        <a href="contact.html">Contact</a>
+
+  <!-- TOP BAR -->
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <img class="topbar-logo" src="https://i.imgur.com/t8UWYN3.png" alt="SignSense logo" />
+        <span class="topbar-brand">SignSense</span>
+      </div>
+      <nav class="topbar-nav">
+        <a href="index.html#how-it-works">See How It Works</a>
+        <a href="index.html#features">Features</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="page-pad"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">We’re here for u</div>
+    <h1>We’re here to listen and help you</h1>
+    <p class="sub">Whether it's feedback, questions, or ideas — we're just a message away.</p>
+
+    <!-- Background photo block that ends a bit under the subtext -->
+    <div class="hero-photo" aria-hidden="true"></div>
+  </section>
+
+  <!-- smooth shadow bridge -->
+  <div class="hero-shadow"></div>
+
+  <!-- CONTACT SECTION -->
+  <section class="contact-wrap" id="contact">
+    <div class="contact-card">
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="form-title">Send us a message</div>
+        <div class="form-note">Fill out the fields below and we’ll get back to you.</div>
+
+        <div class="row" style="margin-bottom:12px">
+          <input class="field" type="text" placeholder="Jane Smith" aria-label="Full name" />
+          <input class="field" type="tel" placeholder="+355 69 690 2900" aria-label="Phone" />
+        </div>
+        <input class="field" type="email" placeholder="Email address" aria-label="Email" style="margin-bottom:12px" />
+        <textarea class="field" placeholder="Your message" aria-label="Message"></textarea>
+
+        <div class="send-wrap">
+          <button class="send-btn" type="button">
+            Send
+            <img src="https://i.imgur.com/UMMoCUn.png" alt="" />
+          </button>
+          <div class="sla">We will contact you within 24 business hours.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: INFO -->
+      <aside>
+        <div class="info-title">Contact Information</div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <img class="info-icon" src="https://i.imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
+            <div>
+              <div class="info-label">WhatsApp:</div>
+              <div class="info-value">
+                <a href="https://wa.me/355696902900" class="clean" target="_blank" rel="noopener">+355 69 690 2900</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <img class="info-icon" src="https://i.imgur.com/V3ziuzH.png" alt="Email icon" />
+            <div>
+              <div class="info-label">Email:</div>
+              <div class="info-value">
+                <a href="mailto:support@signsense.io" class="clean">support@signsense.io</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- FAQ (same as homepage) -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span>What languages do you support?</span>
+          <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+            <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!
+        </div>
+      </div>
+
+      <div class="faq-item open">
+        <button class="faq-q" type="button">
+          <span>Is SignSense legally binding or a replacement for a lawyer?</span>
+          <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+            <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span>What types of contracts can I upload?</span>
+          <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+            <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button">
+          <span>Is my data secure when I upload a contract?</span>
+          <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
+            <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
+        </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <div class="section">
-    <h2 style="font-size: 28px; margin-bottom: 12px;">Get in Touch</h2>
-    <p style="color: #ccc; font-size: 17px; margin-bottom: 36px;">
-      For further inquiries, questions, or collaborations — reach out to us through the channels below.
-    </p>
-
-    <div class="contact-card">
-      <div class="contact-item">
-        Email:  
-        <a href="mailto:contractmateai@gmail.com">contractmateai@gmail.com</a>
+  <!-- FOOTER (same as homepage code) -->
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <div class="footer-left">
+        <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
+        <div class="footer-left-inner">
+          <div class="footer-brand">SignSense</div>
+          <div class="footer-tagline">
+            <div>No confusion, no legal jargon.</div>
+            <div>For informational use only. Not legal advice.</div>
+          </div>
+          <a href="index.html#review" class="footer-cta">Review A Contract ↗</a>
+        </div>
       </div>
-      <div class="contact-item">
-         WhatsApp:  
-        <a href="https://wa.me/355696902900" target="_blank">+355 6969 02900</a>
+
+      <div class="footer-col">
+        <div class="footer-title">Quick Menu</div>
+        <nav class="footer-links">
+          <a href="index.html#how-it-works">How it Works</a>
+          <a href="index.html#review">Leave Review</a>
+        </nav>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Information</div>
+        <nav class="footer-links">
+          <a href="contact.html">Contact</a>
+          <a href="index.html#features">Features</a>
+        </nav>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Socials</div>
+        <nav class="footer-links">
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">X</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div class="footer-bottom">
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-links">
+        <span>Privacy Policy</span>
+        <span>Terms &amp; Conditions</span>
+        <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
       </div>
     </div>
   </div>
 
-  <footer>
-    <p style="color: #ccc; font-weight: 500;">Not legal advice. For informational use only.</p>
-    <div class="footer-icons">
-      <a href="#"><img src="https://i.pinimg.com/736x/8f/94/c6/8f94c616ec0a60bafb4de4e0260719da.jpg" alt="Instagram" /></a>
-      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" /></a>
-      <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="X (Twitter)" /></a>
-    </div>
-    <div class="footer-nav">
-      <a href="index.html">Home</a> | <a href="contact.html">Contact</a>
-    </div>
-    <p style="color: gray;">©️ 2025 AI ContractMate</p>
-  </footer>
+  <!-- FAQ JS -->
+  <script>
+    document.querySelectorAll(".faq-item .faq-q").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const item = btn.parentElement;
+        if (!item.classList.contains("open")) {
+          document.querySelectorAll(".faq-item.open").forEach((i)=>i.classList.remove("open"));
+        }
+        item.classList.toggle("open");
+      });
+    });
+
+    // TEMP: mock send (no backend yet)
+    document.querySelector(".send-btn")?.addEventListener("click", ()=>{
+      alert("Thanks! Your message was recorded locally for now. We'll wire this to email later.");
+    });
+  </script>
 </body>
 </html>
