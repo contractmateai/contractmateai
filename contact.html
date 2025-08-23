@@ -19,14 +19,13 @@
       --muted:#d8cccc;
 
       --bar:#04040e;
-      --bar-border:#b4b4b4;
+      --bar-border:#3f3f3f;   /* darker border as requested */
 
       --badge-text:#c8acff;
       --badge-bg:#1f1a34;
 
       --panel:#0b0814;       /* contact card panel */
       --field:#1f1a28;       /* input/textarea background */
-
       --faq-block:#191624;   /* unified QA color */
     }
 
@@ -96,7 +95,8 @@
       text-align:center;
       display:flex; flex-direction:column; align-items:center;
       justify-content:flex-start;
-      padding-top:calc(120px + 84px); /* distance from bar so badge/title/sub are lower */
+      /* moved a little UP (was calc(120px + 84px)) */
+      padding-top:calc(120px + 72px);
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
@@ -104,7 +104,7 @@
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .25s;
     }
     .hero-title{
-      margin:20px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9;
+      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9;
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .4s;
     }
     .hero-sub{
@@ -112,10 +112,11 @@
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .5s;
     }
 
-    .after-hero-spacer{height:44px}
+    /* spacer below hero — pushed contact a bit LOWER (was 44px) */
+    .after-hero-spacer{height:56px}
 
-    /* ===== CONTACT (BACKGROUND MUST BE BLACK) ===== */
-    .contact-section{ background:transparent; } /* no colored band behind — stays black */
+    /* ===== CONTACT (background stays black) ===== */
+    .contact-section{ background:transparent; }
     .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
     .contact-card{
       background:var(--panel);
@@ -138,7 +139,7 @@
       padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif;
     }
     .field::placeholder{color:#a0a0a0;}
-    input.field.email{margin-bottom:18px} /* same distance as row->email */
+    input.field.email{margin-bottom:18px}
     textarea.field{min-height:220px; resize:none; margin-bottom:20px}
     .send-btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
@@ -151,13 +152,13 @@
     }
     .send-btn:hover{ box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35); filter:saturate(1.05); }
     .send-btn:active{transform:translateY(1px)}
-    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center} /* a bit lower */
+    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center}
 
     /* right info (title/sub slightly higher; WA/Email lower) */
     aside.contact-info{padding-left:48px;}
     .info-title{font-size:28px; margin:0 0 4px; color:#ffffff;}
     .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px;}
-    .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;} /* lower */
+    .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
     .info-item{display:flex; align-items:center; gap:18px}
     .info-icon{width:48px; height:48px; display:block}
     .info-text{display:flex; flex-direction:column; gap:4px}
@@ -165,9 +166,9 @@
     .info-value a{color:#d8cccc; text-decoration:none; font-size:20px}
     .info-value a:hover{text-decoration:underline}
 
-    /* ===== FAQ (normal flow so opening pushes items below) ===== */
+    /* ===== FAQ (normal flow: opening pushes items below) ===== */
     .faq-section{
-      max-width:1120px; margin:110px auto 0; padding:0 24px 90px;
+      max-width:1120px; margin:120px auto 0; padding:0 24px 110px;
       opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .7s;
     }
     .faq-title{
@@ -178,7 +179,7 @@
       border-radius:16px;
       background:transparent; /* NO field when closed */
       overflow:hidden;
-      cursor:pointer; /* click anywhere toggles */
+      cursor:pointer;
       transition:background .2s ease;
     }
     .faq-head{
@@ -208,8 +209,8 @@
       max-height:420px; opacity:1;
     }
 
-    /* ===== FOOTER (same as before) ===== */
-    .site-footer-wrap{max-width:1400px; margin:80px auto 0; padding:0 24px 90px;}
+    /* ===== FOOTER (moved LOWER) ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 130px;} /* lower footer (was 90px) */
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
@@ -267,7 +268,7 @@
     <div class="hero-content">
       <div class="badge">We’re Here For You</div>
       <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
-      <div class="hero-sub">Your voice is important to us, and we look forward to connecting with you.</div>
+      <div class="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
     </div>
   </section>
 
@@ -317,7 +318,7 @@
     </div>
   </section>
 
-  <!-- FAQ (normal flow: opening pushes items below) -->
+  <!-- FAQ (normal flow: opening pushes items below; single-open) -->
   <section class="faq-section">
     <h2 class="faq-title">Frequently Asked Questions</h2>
 
@@ -409,7 +410,7 @@
   </div>
 
   <script>
-    /* Hide topbar on scroll down / show on up */
+    /* Hide topbar on scroll down / show on up (already enabled) */
     (function(){
       const bar = document.getElementById("topbarWrap");
       let lastY = window.scrollY, ticking = false;
@@ -428,11 +429,9 @@
     /* FAQ: single-open; click anywhere on item toggles; normal flow pushes items below */
     document.querySelectorAll(".faq-item").forEach((item)=>{
       item.addEventListener("click", ()=>{
-        // close others
         document.querySelectorAll(".faq-item.open").forEach(i=>{
           if(i!==item) i.classList.remove("open");
         });
-        // toggle this one
         item.classList.toggle("open");
       });
     });
