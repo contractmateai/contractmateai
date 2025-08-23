@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <title>SignSense — Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicons -->
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+
+  <!-- Fonts (all text uses Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root{
@@ -21,32 +25,18 @@
       --field:#2c2938;
     }
 
+    /* reset */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family:"Inter",sans-serif;
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; /* ALL Inter */
       color:var(--text);
       background:var(--bg);
       overflow-x:hidden;
     }
 
-    /* ====== FULLSCREEN BG IMAGE (behind titles) ====== */
-    .hero-bg{
-      position:fixed;
-      inset:0;
-      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-      z-index:-2;
-    }
-    /* soft bottom gradient so the image visually ends just under subtext */
-    .hero-fade{
-      position:fixed;
-      left:0; right:0; top:0; bottom:0;
-      background:linear-gradient(to bottom, rgba(1,4,11,0) 64%, rgba(1,4,11,.75) 86%, rgba(1,4,11,1) 100%);
-      z-index:-1;
-    }
-
-    /* ====== TOP BAR ====== */
+    /* ====== TOP BAR (hide on scroll) ====== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -66,46 +56,66 @@
     }
     .topbar-left{display:flex; align-items:center; gap:10px;}
     .topbar-logo{height:38px; width:auto; border-radius:8px;}
-    .topbar-brand{font-family:"Shoika",sans-serif; font-size:28px; color:#fff9f9; text-decoration:none;}
+    .topbar-brand{
+      font-size:28px; color:#fff9f9; text-decoration:none; font-weight:600;
+    }
     .topbar-nav a{
-      text-decoration:none; font-size:20px; margin-left:24px;
-      color:#d8cccc;
+      text-decoration:none; font-size:20px; margin-left:24px; color:#d8cccc;
     }
     .topbar-nav a:hover{opacity:.85}
 
     /* push content below bar */
     .pad-top{height:120px}
 
-    /* ====== HERO TEXT ====== */
+    /* ====== HERO (BG image behind text; < half screen) ====== */
     .hero{
-      max-width:1160px; margin:0 auto; padding:0 24px 0; text-align:center;
+      position:relative;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
     }
+    /* background image layer */
+    .hero::before{
+      content:"";
+      position:absolute; left:0; right:0; top:-40px; /* sit slightly behind bar */
+      height:44vh;               /* < half screen as requested */
+      min-height:340px;          /* keep presence on small screens */
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      z-index:-2;
+      border-radius:0;
+    }
+    /* fade so image visually ENDS just below subtext */
+    .hero::after{
+      content:"";
+      position:absolute; left:0; right:0; top:-40px;
+      height:44vh; min-height:340px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 65%, rgba(1,4,11,.7) 90%, rgba(1,4,11,1) 100%);
+      z-index:-1;
+    }
+
     .badge{
       display:inline-flex; align-items:center; gap:8px;
       background:var(--badge-bg); color:var(--badge-text);
       padding:8px 14px; border-radius:999px; font-size:15px;
       box-shadow:0 0 20px rgba(173,255,0,.18);
+      margin-top:12px;
     }
     .hero h1{
-      font-family:"Shoika",sans-serif; font-weight:400;
-      font-size:56px; line-height:1.15; margin:18px 0 8px;
-      color:#fff9f9;
+      font-weight:600; letter-spacing:.2px;
+      font-size:56px; line-height:1.15; margin:18px 0 8px; color:#fff9f9;
     }
     .hero .sub{
-      font-size:20px; color:var(--muted); margin:8px 0 0;
+      font-size:20px; color:var(--muted); margin:8px 0 0 0;
     }
 
-    /* BIG shadow between hero and contact area */
+    /* shadow separator below hero so image blends into content */
     .shadow-bridge{
-      height:140px;
-      margin-top:26px;
+      height:120px;
       background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.65) 70%, rgba(0,0,0,.85) 100%);
+      margin-top:18px;
     }
 
-    /* ====== CONTACT BLOCK ====== */
-    .contact-wrap{
-      max-width:1160px; margin:0 auto; padding:0 24px 80px;
-    }
+    /* ====== CONTACT AREA ====== */
+    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 80px; }
     .contact-card{
       background:var(--panel);
       border:1px solid rgba(255,255,255,.06);
@@ -115,30 +125,27 @@
       box-shadow:0 26px 60px rgba(0,0,0,.55);
       position:relative;
     }
-    /* a subtle inner shadow line to separate form and info */
-    .contact-card:before{
-      content:""; position:absolute; top:24px; bottom:24px; left:50%;
-      width:1px; background:linear-gradient(to bottom, transparent, rgba(0,0,0,.9), transparent);
-      transform:translateX(-8px);
-      border-radius:1px;
-      filter:blur(.2px);
-    }
-
-    @media (max-width:980px){
-      .contact-card{grid-template-columns:1fr}
-      .contact-card:before{display:none}
-    }
+    @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
 
     /* left form */
     .row{display:grid; grid-template-columns:1fr 1fr; gap:14px}
     @media (max-width:640px){ .row{grid-template-columns:1fr} }
+
     .field{
-      width:100%; background:var(--field); color:#f0f0f0;
-      border:1px solid rgba(255,255,255,.1); border-radius:16px;
-      padding:14px 16px; font-size:16px; outline:none;
+      width:100%;
+      background:var(--field);
+      color:#f0f0f0;
+      border:none;                        /* no borders */
+      border-radius:16px;
+      padding:14px 16px;
+      font-size:16px;
+      outline:none;
     }
     .field::placeholder{color:#a0a0a0}
-    textarea.field{min-height:160px; resize:vertical}
+    textarea.field{
+      min-height:160px;
+      resize:none;                        /* not expandable */
+    }
 
     .send-wrap{margin-top:16px}
     .send-btn{
@@ -147,29 +154,41 @@
       background:#fefefe; color:#000; border:none; border-radius:16px;
       padding:16px 24px; font-size:17px; font-weight:700; cursor:pointer;
       box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
-      transition:transform .06s ease, box-shadow .2s ease;
+      transition:transform .06s ease, box-shadow .25s ease, filter .25s ease;
+    }
+    .send-btn:hover{
+      box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35); /* glowy white */
+      filter:saturate(1.1);
     }
     .send-btn:active{transform:translateY(1px)}
     .send-btn img{width:20px; height:20px; display:block}
     .sla{color:#9a9a9a; font-size:14px; margin-top:10px; text-align:center}
 
-    /* right info (shifted more to the right) */
+    /* right info — pushed down and spaced out */
     aside.contact-info{
       padding-left:42px;
-      transform:translateX(12px);
+      margin-top:34px;                     /* quite lower */
     }
     .info-title{
-      font-family:"Shoika",sans-serif; font-weight:400; font-size:28px; margin:0 0 16px;
-      color:#ffffff;
+      font-weight:600; font-size:28px; margin:0 0 10px; color:#ffffff;
     }
-    .info-list{display:flex; flex-direction:column; gap:18px}
-    .info-item{display:flex; align-items:center; gap:14px}
-    .info-icon{width:40px; height:40px; display:block}
+    .info-sub{
+      color:#9fa0a7;                       /* gray line under title */
+      font-size:16px;
+      margin-bottom:26px;
+      max-width:520px;
+    }
+    .info-list{display:flex; flex-direction:column; gap:28px} /* more distance */
+    .info-item{display:flex; align-items:center; gap:16px}
+    .info-icon{width:44px; height:44px; display:block}
     .info-label{color:#ffffff; font-size:18px}
-    .info-value a{color:#fff9f9; text-decoration:none; font-size:20px}
+    .info-value a{
+      color:#d8cccc;                       /* number + email in gray */
+      text-decoration:none; font-size:20px
+    }
     .info-value a:hover{text-decoration:underline}
 
-    /* ====== FOOTER (no "Review A Contract"; move lines left) ====== */
+    /* ====== FOOTER (no Review button; move lines left & lower) ====== */
     .site-footer-wrap{max-width:1400px; margin:40px auto 0; padding:0 24px 56px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
@@ -181,15 +200,16 @@
     .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
     .footer-logo{width:32px; height:32px; border-radius:0 !important; object-fit:contain; margin:0 !important; transform:translateY(-2px);}
     .footer-left-inner{display:flex; flex-direction:column;}
-    .footer-brand{color:#e1e1e1; font-size:26px; font-weight:400; line-height:1.1;}
+    .footer-brand{color:#e1e1e1; font-size:26px; font-weight:600; line-height:1.1; text-decoration:none;}
     .footer-tagline{
-      color:#c5c5c5; margin-top:8px; font-size:18px; line-height:1.5;
-      position:relative; left:-30px;    /* move the two lines more to the left */
+      color:#c5c5c5; margin-top:14px;      /* a bit lower */
+      font-size:18px; line-height:1.5;
+      position:relative; left:-40px;       /* a bit more to the left */
     }
     .footer-col{display:flex; flex-direction:column; gap:10px; align-items:flex-start !important; text-align:left !important;}
-    .footer-title{color:#fff; font-size:22px; font-weight:400; line-height:1;}
+    .footer-title{color:#fff; font-size:22px; font-weight:600; line-height:1;}
     .footer-links{display:flex; flex-direction:column; gap:8px !important;}
-    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; line-height:1.4;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:500; line-height:1.4;}
     .footer-links a:hover{opacity:.9}
     .footer-bottom{margin-top:24px;}
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
@@ -201,14 +221,11 @@
       .footer-tagline{left:0;}
     }
 
+    /* utility */
     a.clean{ text-decoration:none; color:inherit;}
   </style>
 </head>
 <body>
-
-  <!-- BG layers -->
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-fade" aria-hidden="true"></div>
 
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
@@ -229,14 +246,14 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO TEXT -->
+  <!-- HERO -->
   <section class="hero">
     <div class="badge">We’re Here For You</div>
-    <h1>We’re here to listen<br/>and help you</h1>
-    <div class="sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
+    <h1>We’re Ready To<br/>Listen And Respond</h1>
+    <div class="sub">Your voice is important to us, and we look forward to connecting with you.</div>
   </section>
 
-  <!-- BIG shadow separator -->
+  <!-- shadow that ends the background image before the form -->
   <div class="shadow-bridge"></div>
 
   <!-- CONTACT SECTION -->
@@ -260,9 +277,10 @@
         </div>
       </div>
 
-      <!-- RIGHT: INFO (moved right + bigger icons/text) -->
+      <!-- RIGHT: INFO -->
       <aside class="contact-info">
         <div class="info-title">Contact Information</div>
+        <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
 
         <div class="info-list">
           <div class="info-item">
@@ -289,7 +307,7 @@
     </div>
   </section>
 
-  <!-- FOOTER (logo + SignSense go to homepage; no Review button) -->
+  <!-- FOOTER -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
