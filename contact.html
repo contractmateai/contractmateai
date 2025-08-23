@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
 
-  <!-- Inter (all text uses Inter, no bold) -->
+  <!-- Inter (all text uses Inter, normal weight) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
 
   <style>
@@ -22,7 +22,7 @@
       --badge-text:#c8acff;
       --badge-bg:#1f1a34;
       --panel:#100326;
-      --field:#2c2938;
+      --field:#1f1a28;          /* fields color (updated) */
       --faq-block:#191624;
     }
 
@@ -32,25 +32,10 @@
     body{
       margin:0;
       font-family:"Inter",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      font-weight:400; /* no bold anywhere */
+      font-weight:400;                 /* no bold anywhere */
       color:var(--text);
       background:var(--bg);
       overflow-x:hidden;
-    }
-
-    /* ======= TOP BG IMAGE (touches top, full width; same height) ======= */
-    .bg-top{
-      position:fixed; top:0; left:0; right:0;
-      height:44vh; min-height:340px;
-      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-      z-index:-2;
-      opacity:0; transform:translateY(8px);
-      animation:fadeUp .7s ease forwards .15s;
-    }
-    /* soft fade so image ends before contact section */
-    .bg-top:after{
-      content:""; position:absolute; left:0; right:0; bottom:0; height:160px;
-      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.7) 60%, rgba(1,4,11,1) 100%);
     }
 
     /* ======= TOP BAR (hides on scroll) ======= */
@@ -58,8 +43,10 @@
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
       transition:transform .28s ease, opacity .25s ease;
+      opacity:0; transform:translateY(-6px); animation:fadeDown .6s ease forwards .15s;
     }
     .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
+
     .topbar{
       pointer-events:auto;
       background:var(--bar);
@@ -69,66 +56,78 @@
       width:min(1120px, calc(100% - 60px));
       display:flex; align-items:center; justify-content:space-between;
       box-shadow:0 8px 30px rgba(0,0,0,.28);
-      opacity:0; transform:translateY(-6px);
-      animation:fadeDown .5s ease forwards .22s;
     }
     .topbar-left{display:flex; align-items:center; gap:10px;}
     .topbar-logo{height:38px; width:auto; border-radius:8px;}
-    .topbar-brand{
-      font-size:28px; color:#fff9f9; text-decoration:none;
-      font-weight:400; /* normal */
-    }
-    .topbar-nav a{
-      text-decoration:none; font-size:20px; margin-left:24px; color:#d8cccc;
-      font-weight:400;
-    }
+    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
+    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
     .topbar-nav a:hover{opacity:.85}
 
     /* push content below bar */
     .pad-top{height:120px}
 
-    /* ======= HERO TEXT (over the image) ======= */
-    .hero{
-      max-width:1160px; margin:0 auto; padding:0 24px; text-align:center;
+    /* ======= HERO FRAME (image + gradient move together on scroll) ======= */
+    .hero-frame{
+      position:relative;
+      height:44vh; min-height:360px;       /* < half screen; taller feel */
+      width:100%;
+      overflow:hidden;                      /* keep gradient “stuck” to image */
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      opacity:0; transform:translateY(10px);   /* image fades in LAST */
+      animation:fadeUp .8s ease forwards 1.0s; /* delay > other elements */
+    }
+    .hero-bg::after{
+      /* shadow glued to the image bottom; scrolls with it */
+      content:""; position:absolute; left:0; right:0; bottom:0; height:160px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.7) 60%, rgba(1,4,11,1) 100%);
+      pointer-events:none;
+    }
+
+    /* HERO TEXT sits inside hero-frame so it's “on” the image */
+    .hero-content{
+      position:relative; z-index:1;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:flex-start;
+      padding-top:32px;                    /* push text a bit lower */
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
       background:var(--badge-bg); color:var(--badge-text); font-size:15px;
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .25s;
     }
-    .hero h1{
-      margin:18px 0 10px; font-size:54px; line-height:1.15; color:#fff9f9;
-      font-weight:400;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .32s;
+    .hero-title{
+      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .35s;
     }
-    .hero .sub{
-      color:var(--muted); font-size:20px; margin-bottom:0;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .38s;
+    .hero-sub{
+      color:var(--muted); font-size:20px; margin:2px 0 0 0;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .45s;
     }
 
-    /* big separator shadow below hero */
-    .shadow-bridge{
-      height:120px;
-      background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.65) 70%, rgba(0,0,0,.85) 100%);
-    }
+    /* extra space after hero to push the card down a little more */
+    .after-hero-spacer{height:36px}
 
     /* ======= CONTACT AREA ======= */
-    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 80px; }
+    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 100px; }
     .contact-card{
       background:var(--panel);
       border:1px solid rgba(255,255,255,.06);
       border-radius:28px;
-      padding:48px; /* taller */
-      display:grid; grid-template-columns:1.05fr .95fr; gap:32px;
+      padding:56px;                         /* taller */
+      display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
       box-shadow:0 26px 60px rgba(0,0,0,.55);
-      opacity:0; transform:translateY(10px);
-      animation:fadeUp .7s ease forwards .45s;
-      min-height:520px; /* taller panel */
+      min-height:560px;                     /* taller panel */
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .55s;
     }
     @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
 
-    /* form */
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px}
+    /* left form */
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:16px}
     @media (max-width:640px){ .row{grid-template-columns:1fr} }
     .field{
       width:100%; background:var(--field); color:#f0f0f0;
@@ -137,9 +136,9 @@
     }
     .field::placeholder{color:#a0a0a0; font-family:"Inter",sans-serif;}
     input.field{margin-bottom:14px}
-    input.field.email{margin-bottom:16px}   /* extra space above message */
+    input.field.email{margin-bottom:18px}    /* distance above message */
     textarea.field{
-      min-height:210px; resize:none; margin-bottom:18px; /* not expandable + spaced */
+      min-height:220px; resize:none; margin-bottom:20px; /* not expandable + spaced */
     }
 
     .send-btn{
@@ -149,7 +148,7 @@
       padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
       box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
       transition:box-shadow .25s ease, transform .06s ease, filter .25s ease;
-      margin-top:6px; /* distance from message field */
+      margin-top:6px;                        /* distance from message field */
     }
     .send-btn:hover{
       box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35);
@@ -158,66 +157,63 @@
     .send-btn:active{transform:translateY(1px)}
     .sla{color:#9a9a9a; font-size:14px; margin-top:10px; text-align:center}
 
-    /* contact info (slightly higher title, icons/info lower) */
-    aside.contact-info{
-      padding-left:44px;
-    }
+    /* right info */
+    aside.contact-info{padding-left:48px;}
     .info-title{
       font-size:28px; margin:0 0 6px; color:#ffffff; font-weight:400;
-      transform:translateY(-6px); /* a bit more up */
+      transform:translateY(-8px); /* a bit higher */
     }
     .info-sub{
-      color:#9fa0a7; font-size:16px; margin:0 0 18px; max-width:520px;
-      transform:translateY(-6px); /* up with title */
+      color:#9fa0a7; font-size:16px; margin:0 0 14px; max-width:520px;
+      transform:translateY(-8px);
     }
 
-    .info-list{display:flex; flex-direction:column; gap:44px; margin-top:28px;} /* icons/info lower, spaced */
-    .info-item{display:flex; align-items:center; gap:16px}
-    .info-icon{width:44px; height:44px; display:block}
+    .info-list{display:flex; flex-direction:column; gap:48px; margin-top:34px;} /* icons/info lower, spaced */
+    .info-item{display:flex; align-items:center; gap:18px}
+    .info-icon{width:48px; height:48px; display:block}
     .info-text{display:flex; flex-direction:column; gap:4px}
-    .info-label{color:#ffffff; font-size:18px; font-weight:400} /* 'WhatsApp:' / 'Email:' */
+    .info-label{color:#ffffff; font-size:18px; font-weight:400}        /* “WhatsApp:” / “Email:” */
     .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400}
     .info-value a:hover{text-decoration:underline}
 
-    /* ======= FAQ (compact, smaller, all closed by default) ======= */
+    /* ======= FAQ (bigger text; NO frame when closed) ======= */
     .faq-section{
-      max-width:1000px; margin:48px auto 0; padding:0 24px;
-      opacity:0; transform:translateY(10px);
-      animation:fadeUp .7s ease forwards .55s;
+      max-width:1120px; margin:84px auto 0; padding:0 24px; /* more distance from card */
+      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .65s;
     }
     .faq-title{
-      text-align:center; font-size:32px; margin-bottom:16px; color:#fff9f9;
+      text-align:center; font-size:40px; margin-bottom:22px; color:#fff9f9;
       font-weight:400; /* not bold */
     }
-    .faq-list{display:flex; flex-direction:column; gap:10px}
-    .faq-item{
-      border-radius:16px; overflow:hidden; background:#0b0a12;
-      transition:background .2s ease;
-    }
+    .faq-list{display:flex; flex-direction:column; gap:14px}
+    .faq-item{border-radius:16px; overflow:hidden; background:transparent; }
     .faq-q{
       width:100%; display:flex; align-items:center; justify-content:space-between;
-      padding:16px 18px; border:none; cursor:pointer; background:#0b0a12;
-      color:#fff9f9; font-size:18px; font-weight:400; text-align:left;
+      padding:18px 4px; border:none; cursor:pointer; background:transparent;
+      color:#fff9f9; font-size:20px; font-weight:400; text-align:left;
     }
     .faq-a{
-      background:var(--faq-block);         /* #191624 */
-      color:#c3c3c3;                       /* answer color */
-      font-size:16px; line-height:1.55;
+      background:var(--faq-block);           /* #191624 */
+      color:#c3c3c3;                         /* answer color */
+      font-size:18px; line-height:1.6;
       padding:0 18px;
       max-height:0; opacity:0; overflow:hidden;
       transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+      border-radius:14px;
     }
-    .faq-item.open .faq-q{ background:var(--faq-block); color:#fff; } /* q bg same as a when open */
-    .faq-item.open .faq-a{ padding:10px 18px 16px; max-height:300px; opacity:1; }
+    .faq-item.open .faq-q{
+      background:var(--faq-block); color:#fff; padding:18px; border-radius:14px 14px 0 0;
+    }
+    .faq-item.open .faq-a{ padding:12px 18px 18px; max-height:360px; opacity:1; }
 
-    /* ======= FOOTER (unchanged layout) ======= */
-    .site-footer-wrap{max-width:1400px; margin:60px auto 0; padding:0 24px 56px;}
+    /* ======= FOOTER (as before) ======= */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 72px;} /* extra distance below FAQ */
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
       grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
       column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .65s;
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .75s;
     }
     :root{--footer-rail:40px; --logo-gap:12px;}
     .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
@@ -226,8 +222,7 @@
     .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
     .footer-tagline{
       color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5;
-      position:relative; left:-40px; /* more left as requested previously */
-      font-weight:400;
+      position:relative; left:-40px; font-weight:400;
     }
     .footer-col{display:flex; flex-direction:column; gap:10px;}
     .footer-title{color:#fff; font-size:22px; font-weight:400;}
@@ -245,19 +240,14 @@
       .footer-tagline{left:0;}
     }
 
-    /* ======= simple fade/scroll animation helpers ======= */
+    /* ======= simple fade helpers ======= */
     @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
     @keyframes fadeDown{to{opacity:1; transform:translateY(0)}}
-
-    /* elements that reveal on scroll */
     .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
     .reveal.visible{opacity:1; transform:translateY(0)}
   </style>
 </head>
 <body>
-
-  <!-- BG image (starts at exact top, full width) -->
-  <div class="bg-top" aria-hidden="true"></div>
 
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
@@ -278,14 +268,17 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO TEXT -->
-  <section class="hero">
-    <div class="badge">We’re Here For You</div>
-    <h1>We’re Ready To<br/>Listen And Respond</h1>
-    <div class="sub">Your voice is important to us, and we look forward to connecting with you.</div>
+  <!-- HERO (image + shadow that move together) -->
+  <section class="hero-frame">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="badge">We’re Here For You</div>
+      <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
+      <div class="hero-sub">Your voice is important to us, and we look forward to connecting with you.</div>
+    </div>
   </section>
 
-  <div class="shadow-bridge"></div>
+  <div class="after-hero-spacer"></div>
 
   <!-- CONTACT SECTION -->
   <section class="contact-wrap">
@@ -329,7 +322,7 @@
     </div>
   </section>
 
-  <!-- FAQ (all closed by default) -->
+  <!-- FAQ (all closed by default; larger) -->
   <section class="faq-section">
     <h2 class="faq-title">Frequently Asked Questions</h2>
     <div class="faq-list">
@@ -352,7 +345,7 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (unchanged structure) -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
@@ -421,7 +414,7 @@
       }, { passive:true });
     })();
 
-    /* FAQ toggle — all closed by default; question and answer share #191624 when open */
+    /* FAQ toggle — all closed by default; open shares #191624 */
     document.querySelectorAll(".faq-item .faq-q").forEach((btn)=>{
       btn.addEventListener("click", ()=>{
         const item = btn.parentElement;
@@ -445,3 +438,4 @@
   </script>
 </body>
 </html>
+
