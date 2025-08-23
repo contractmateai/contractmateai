@@ -98,7 +98,7 @@
       padding:44px;
       display:grid; grid-template-columns:1.05fr .95fr; gap:28px;
       box-shadow:0 26px 60px rgba(0,0,0,.55);
-      min-height:480px; /* taller */
+      min-height:500px; /* taller */
     }
     @media(max-width:980px){.contact-card{grid-template-columns:1fr}}
 
@@ -121,11 +121,11 @@
 
     .sla{text-align:center; font-size:14px; color:#9a9a9a; margin-top:10px;}
 
-    aside.contact-info{padding-left:42px; margin-top:10px;}
+    aside.contact-info{padding-left:42px; margin-top:4px;}
     .info-title{font-size:28px; font-weight:600; margin:0 0 6px;}
-    .info-sub{font-size:16px; color:#9fa0a7; margin-bottom:30px;}
+    .info-sub{font-size:16px; color:#9fa0a7; margin-bottom:20px;}
 
-    .info-list{display:flex; flex-direction:column; gap:38px;} /* lower + spaced */
+    .info-list{display:flex; flex-direction:column; gap:38px; margin-top:34px;} /* lower + spaced */
     .info-item{display:flex; align-items:center; gap:16px;}
     .info-icon{width:44px; height:44px;}
     .info-value a{color:#d8cccc; font-size:20px; text-decoration:none;}
@@ -133,7 +133,7 @@
 
     /* ===== FAQ ===== */
     .faq-section{
-      max-width:900px; margin:60px auto 0; padding:0 24px;
+      max-width:900px; margin:40px auto 0; padding:0 24px;
     }
     .faq-title{text-align:center; font-size:36px; margin-bottom:20px;}
     .faq-list{display:flex; flex-direction:column; gap:12px;}
@@ -149,6 +149,39 @@
     }
     .faq-item.open .faq-a{max-height:300px; opacity:1; padding:10px 20px 18px;}
     .faq-item.open .faq-q{background:#191624;}
+
+    /* ===== FOOTER ===== */
+    .site-footer-wrap{max-width:1400px; margin:60px auto 0; padding:0 24px 56px;}
+    .site-footer{
+      background:transparent; border:none; box-shadow:none; padding:0;
+      display:grid;
+      grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
+      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
+    }
+    :root{--footer-rail:40px; --logo-gap:12px;}
+    .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
+    .footer-logo{width:32px; height:32px; border-radius:0 !important; object-fit:contain; margin:0 !important; transform:translateY(-2px);}
+    .footer-left-inner{display:flex; flex-direction:column;}
+    .footer-brand{color:#e1e1e1; font-size:26px; font-weight:600; line-height:1.1; text-decoration:none;}
+    .footer-tagline{
+      color:#c5c5c5; margin-top:18px; /* a bit lower */
+      font-size:18px; line-height:1.5;
+      position:relative; left:-40px; /* more left */
+    }
+    .footer-col{display:flex; flex-direction:column; gap:10px;}
+    .footer-title{color:#fff; font-size:22px; font-weight:600;}
+    .footer-links{display:flex; flex-direction:column; gap:8px !important;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px;}
+    .footer-links a:hover{opacity:.9}
+    .footer-bottom{margin-top:24px;}
+    .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px;}
+    .footer-copy{margin-left:auto;}
+    @media(max-width:1000px){
+      .site-footer{grid-template-columns:1fr; padding-left:0;}
+      .footer-copy{margin-left:0;}
+      .footer-tagline{left:0;}
+    }
   </style>
 </head>
 <body>
@@ -235,6 +268,56 @@
     </div>
   </section>
 
+  <!-- FOOTER -->
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <div class="footer-left">
+        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png"></a>
+        <div class="footer-left-inner">
+          <a href="index.html" class="footer-brand">SignSense</a>
+          <div class="footer-tagline">
+            <div>No confusion, no legal jargon.</div>
+            <div>For informational use only. Not legal advice.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Quick Menu</div>
+        <nav class="footer-links">
+          <a href="index.html#how-it-works">How it Works</a>
+          <a href="index.html#review">Leave Review</a>
+        </nav>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Information</div>
+        <nav class="footer-links">
+          <a href="contact.html">Contact</a>
+          <a href="index.html#features">Features</a>
+        </nav>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Socials</div>
+        <nav class="footer-links">
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">X</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div class="footer-bottom">
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-links">
+        <span>Privacy Policy</span>
+        <span>Terms &amp; Conditions</span>
+        <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Hide topbar on scroll down
     const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
@@ -253,3 +336,4 @@
   </script>
 </body>
 </html>
+
