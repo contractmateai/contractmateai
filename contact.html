@@ -372,30 +372,36 @@
     });
 
     // HERO PARTICLES
-    (function(){
-      const container=document.getElementById("heroParticles");
-      if(!container) return;
-      const NUM=110;
-      const DURATION=16;
-      const H=container.getBoundingClientRect().height||360;
+ // HERO PARTICLES
+(function(){
+  const container=document.getElementById("heroParticles");
+  if(!container) return;
+  const NUM=55;  // half as many as before
+  const DURATION=16;
+  const H=container.getBoundingClientRect().height||360;
 
-      function sideBiasedPercent(){
-        const r=Math.random();
-        if(r<0.375){ return Math.random()*20; }
-        else if(r<0.75){ return 80 + Math.random()*20; }
-        else { return 20 + Math.random()*60; }
-      }
+  function sideBiasedPercent(){
+    const r=Math.random();
+    if(r<0.375){ return Math.random()*20; }
+    else if(r<0.75){ return 80 + Math.random()*20; }
+    else { return 20 + Math.random()*60; }
+  }
 
-      for(let i=0;i<NUM;i++){
-        const p=document.createElement("div");
-        p.className="particle";
-        p.style.left = sideBiasedPercent()+"%";
-        p.style.bottom = (Math.random()*H)+"px";
-        p.style.animationDuration = DURATION+"s";
-        p.style.animationDelay = (-Math.random()*DURATION)+"s";
-        container.appendChild(p);
-      }
-    })();
+  for(let i=0;i<NUM;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left = sideBiasedPercent()+"%";
+
+    // NEW: always start just below the hero frame
+    p.style.bottom = -20 + "px";
+
+    p.style.animationDuration = DURATION+"s";
+    // stagger their start so some are already mid-screen at load
+    p.style.animationDelay = (-Math.random()*DURATION)+"s";
+    container.appendChild(p);
+  }
+})();
+
   </script>
 </body>
 </html>
