@@ -26,7 +26,7 @@
       --field:#1f1a28;
       --faq-block:#191624;
 
-      --particle-color:#b28bff; /* brighter purple */
+      --particle-color:#b28bff;
     }
 
     *{box-sizing:border-box}
@@ -92,12 +92,10 @@
       position:absolute;
       background-color:var(--particle-color);
       border-radius:50%;
-      width:2px; height:2px; /* smaller base */
-      /* stronger multi-glow */
-      box-shadow:
-        0 0 8px var(--particle-color),
-        0 0 16px var(--particle-color),
-        0 0 26px rgba(178,139,255,.7);
+      width:3.5px; height:3.5px;
+      box-shadow:0 0 10px var(--particle-color),
+                 0 0 20px var(--particle-color),
+                 0 0 30px rgba(178,139,255,.85);
       animation: floatUp linear infinite;
     }
     @keyframes floatUp{
@@ -363,7 +361,7 @@
     const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
     window.addEventListener("scroll",()=>{const y=window.scrollY; if(y>lastY&&y>80)bar.classList.add("hide"); else bar.classList.remove("hide"); lastY=y<=0?0:y;},{passive:true});
 
-    // FAQ toggle (only one open at a time)
+    // FAQ toggle
     document.querySelectorAll(".faq-item").forEach(item=>{
       item.addEventListener("click",()=>{
         if(!item.classList.contains("open")){
@@ -373,35 +371,28 @@
       });
     });
 
-    // HERO PARTICLES (smaller, brighter, side-biased, same speed)
+    // HERO PARTICLES
     (function(){
       const container=document.getElementById("heroParticles");
       if(!container) return;
-      const NUM=80;               // more particles
-      const H=container.offsetHeight||360;
-      const DURATION=16;          // same speed for all
+      const NUM=110;
+      const DURATION=16;
+      const H=container.getBoundingClientRect().height||360;
 
-      // sample an x% biased toward left/right edges
       function sideBiasedPercent(){
         const r=Math.random();
-        // 75% chance: place on sides (split evenly left/right), 25% middle
-        if(r<0.375){ // left side 0–20%
-          return Math.random()*20;
-        }else if(r<0.75){ // right side 80–100%
-          return 80 + Math.random()*20;
-        }else{ // middle 20–80% (fewer)
-          return 20 + Math.random()*60;
-        }
+        if(r<0.375){ return Math.random()*20; }
+        else if(r<0.75){ return 80 + Math.random()*20; }
+        else { return 20 + Math.random()*60; }
       }
 
       for(let i=0;i<NUM;i++){
         const p=document.createElement("div");
         p.className="particle";
-        const size=0.8 + Math.random()*1.6; // smaller
-        p.style.left=sideBiasedPercent()+"%";
-        p.style.bottom=(-Math.random()*H)+"px";
-        p.style.width=size+"px"; p.style.height=size+"px";
-        p.style.animationDuration=DURATION+"s"; // uniform speed
+        p.style.left = sideBiasedPercent()+"%";
+        p.style.bottom = (Math.random()*H)+"px";
+        p.style.animationDuration = DURATION+"s";
+        p.style.animationDelay = (-Math.random()*DURATION)+"s";
         container.appendChild(p);
       }
     })();
