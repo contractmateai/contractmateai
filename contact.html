@@ -17,14 +17,18 @@
       --bg:#01040b;
       --text:#fff9f9;
       --muted:#d8cccc;
+
       --bar:#04040e;
       --bar-border:#b4b4b4;
+
       --badge-text:#c8acff;
       --badge-bg:#1f1a34;
-      --panel:#100326;
-      --field:#1f1a28;        /* INPUT / TEXTAREA background */
-      --faq-block:#191624;    /* unified QA block color */
-      --info-wrap:#0e0a18;    /* deeper wrap around contact info */
+
+      --section-deep:#0b0814;   /* WHOLE contact section deeper color */
+      --panel:#0b0814;          /* panel matches section color for seamless look */
+      --field:#1f1a28;          /* input/textarea background */
+
+      --faq-block:#191624;      /* unified QA color */
     }
 
     *{box-sizing:border-box}
@@ -32,25 +36,10 @@
     body{
       margin:0;
       font-family:"Inter",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      font-weight:400; /* no bold */
+      font-weight:400; /* no bold anywhere */
       color:var(--text);
       background:var(--bg);
       overflow-x:hidden;
-    }
-
-    /* ===== TOP BG IMAGE (starts at exact top; fixed) ===== */
-    .bg-top{
-      position:fixed; top:0; left:0; right:0;
-      height:44vh; min-height:360px;       /* < half screen */
-      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-      z-index:-2;
-      opacity:0; transform:translateY(10px); /* fade in LAST on page */
-      animation:fadeUp .8s ease forwards 1.2s;
-    }
-    .bg-top::after{
-      /* shadow attached to the image bottom (so it scrolls with the image) */
-      content:""; position:absolute; left:0; right:0; bottom:0; height:160px;
-      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.7) 60%, rgba(1,4,11,1) 100%);
     }
 
     /* ===== TOP BAR (hide on scroll) ===== */
@@ -61,7 +50,6 @@
       opacity:0; transform:translateY(-6px); animation:fadeDown .6s ease forwards .15s;
     }
     .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
-
     .topbar{
       pointer-events:auto;
       background:var(--bar);
@@ -80,29 +68,58 @@
 
     .pad-top{height:120px}
 
-    /* ===== HERO TEXT on top of image ===== */
-    .hero{
+    /* ===== HERO: image block that STARTS AT TOP and scrolls away ===== */
+    .hero-frame{
+      position:relative;
+      height:44vh; min-height:360px;       /* < half screen */
+      width:100%;
+      overflow:hidden;                      /* keep gradient glued */
+      margin-top:0;
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      opacity:0; transform:translateY(10px); /* image fades in LAST */
+      animation:fadeUp .8s ease forwards 1.1s;
+    }
+    .hero-bg::after{
+      /* SHADOW attached to the image bottom so it scrolls WITH the image */
+      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
+      pointer-events:none;
+    }
+
+    .hero-content{
+      position:relative; z-index:1;
       max-width:1160px; margin:0 auto; padding:0 24px;
       text-align:center;
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:flex-start;
+      padding-top:84px; /* MORE distance from top bar to badge/title/sub */
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
       background:var(--badge-bg); color:var(--badge-text); font-size:15px;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .35s;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .25s;
     }
-    .hero h1{
-      margin:20px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .45s;
+    .hero-title{
+      margin:20px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .4s;
+      font-weight:400;
     }
-    .hero .sub{
+    .hero-sub{
       color:var(--muted); font-size:20px;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .55s;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .5s;
     }
 
-    /* extra spacer to push card lower + create distance from image/shadow */
-    .after-hero-spacer{height:56px}
+    /* small spacer so card is clearly below hero fade */
+    .after-hero-spacer{height:44px}
 
-    /* ===== CONTACT AREA ===== */
+    /* ===== CONTACT SECTION (WHOLE deeper color) ===== */
+    .contact-section{
+      background:var(--section-deep);
+      /* extend full width band behind the card */
+    }
     .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
     .contact-card{
       background:var(--panel);
@@ -112,7 +129,7 @@
       display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
       box-shadow:0 26px 60px rgba(0,0,0,.55);
       min-height:560px;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .65s;
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .6s;
     }
     @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
 
@@ -125,7 +142,7 @@
       padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif;
     }
     .field::placeholder{color:#a0a0a0; font-family:"Inter",sans-serif;}
-    input.field.email{margin-bottom:18px} /* email->message distance (matches row->email) */
+    input.field.email{margin-bottom:18px} /* email->message distance (same as row->email) */
     textarea.field{min-height:220px; resize:none; margin-bottom:20px}
     .send-btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
@@ -134,45 +151,52 @@
       padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
       box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
       transition:box-shadow .25s ease, transform .06s ease, filter .25s ease;
-      margin-top:12px; /* extra distance from message */
+      margin-top:12px; /* distance from message */
     }
     .send-btn:hover{ box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35); filter:saturate(1.05); }
     .send-btn:active{transform:translateY(1px)}
-    .sla{color:#9a9a9a; font-size:14px; margin-top:14px; text-align:center} /* a bit lower */
+    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center} /* a bit lower */
 
-    /* right info (with deeper wrap behind this side only) */
+    /* right info (title/sub a little higher, icons/info lower) */
     aside.contact-info{padding-left:48px;}
     .info-inner{
-      background:var(--info-wrap);
-      border:1px solid rgba(255,255,255,.05);
+      background:transparent; /* whole section already deep */
       border-radius:20px;
-      padding:22px 22px 26px;
+      padding:4px 0 0;
     }
-    .info-title{font-size:28px; margin:0 0 6px; color:#ffffff; font-weight:400;}
-    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 10px; max-width:520px;}
-
-    .info-list{display:flex; flex-direction:column; gap:64px; margin-top:44px;} /* lower lower */
+    .info-title{font-size:28px; margin:0 0 4px; color:#ffffff;}
+    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px;}
+    .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;} /* LOWER LOWER */
     .info-item{display:flex; align-items:center; gap:18px}
     .info-icon{width:48px; height:48px; display:block}
     .info-text{display:flex; flex-direction:column; gap:4px}
-    .info-label{color:#ffffff; font-size:18px; font-weight:400} /* WhatsApp: / Email: */
-    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400}
+    .info-label{color:#ffffff; font-size:18px}
+    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px}
     .info-value a:hover{text-decoration:underline}
 
-    /* ===== FAQ (bigger; unified QA block; vector arrow) ===== */
+    /* ===== FAQ (bigger; single-open; unified QA; overlay so footer doesn't move) ===== */
     .faq-section{
-      max-width:1120px; margin:90px auto 0; padding:0 24px;
-      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .75s;
+      position:relative;
+      max-width:1120px; margin:110px auto 0; padding:0 24px 200px; /* big bottom padding for overlay room */
+      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .7s;
     }
     .faq-title{
       text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;
     }
-    .faq-list{display:flex; flex-direction:column; gap:16px}
+    .faq-stage{
+      position:relative; height:560px; /* fixed stage height so footer doesn't get pushed */
+      overflow:visible;
+    }
+    .faq-list{
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; gap:16px;
+    }
     .faq-item{
+      position:relative;
       border-radius:16px;
-      background:transparent; /* no field when closed */
-      overflow:hidden;
-      cursor:pointer; /* clicking anywhere toggles */
+      background:transparent; /* NO field when closed */
+      overflow:visible;
+      cursor:pointer; /* click anywhere toggles */
     }
     .faq-head{
       display:flex; align-items:center; justify-content:space-between;
@@ -181,61 +205,59 @@
     .faq-arrow{
       width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;
     }
-    /* opened = unified block look */
-    .faq-item.open{ background:var(--faq-block); }
-    .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
-    .faq-item.open .faq-arrow{ transform:rotate(180deg); } /* points up when open */
-    .faq-a{
-      background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65;
-      padding:0 18px; max-height:0; opacity:0; overflow:hidden;
-      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
-      border-radius:0 0 16px 16px;
+    /* OPENED: build a single block that visually merges Q + A */
+    .faq-item.open .faq-head{
+      background:var(--faq-block); color:#fff; padding:16px 18px; border-radius:16px 16px 0 0;
     }
-    .faq-item.open .faq-a{ padding:0 18px 18px; max-height:420px; opacity:1; }
+    .faq-item.open .faq-arrow{ transform:rotate(180deg); }
+    .faq-a{
+      position:absolute; left:0; right:0; top:0; /* overlays under the head */
+      transform:translateY(58px);            /* sits right below the open head */
+      background:var(--faq-block);
+      color:#c3c3c3; font-size:19px; line-height:1.65;
+      padding:0 18px 0; border-radius:0 0 16px 16px;
+      max-height:0; opacity:0; overflow:hidden;
+      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+      z-index:5;
+    }
+    .faq-item.open .faq-a{
+      padding:12px 18px 18px;
+      max-height:360px; opacity:1;
+    }
 
-    /* ===== FOOTER (unchanged layout) ===== */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 72px;}
+    /* ===== FOOTER (a bit lower; stays visually put because FAQ overlays) ===== */
+    .site-footer-wrap{max-width:1400px; margin:80px auto 0; padding:0 24px 90px;} /* a bit lower */
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
       grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
       column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .85s;
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .8s;
     }
     :root{--footer-rail:40px; --logo-gap:12px;}
     .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
     .footer-logo{width:32px; height:32px; border-radius:0 !important; object-fit:contain; margin:0 !important; transform:translateY(-2px);}
     .footer-left-inner{display:flex; flex-direction:column;}
-    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none;}
     .footer-tagline{
       color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5;
-      position:relative; left:-40px; font-weight:400;
+      position:relative; left:-40px;
     }
     .footer-col{display:flex; flex-direction:column; gap:10px;}
-    .footer-title{color:#fff; font-size:22px; font-weight:400;}
+    .footer-title{color:#fff; font-size:22px;}
     .footer-links{display:flex; flex-direction:column; gap:8px !important;}
-    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px;}
     .footer-links a:hover{opacity:.9}
     .footer-bottom{margin-top:24px;}
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
     .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px;}
     .footer-copy{margin-left:auto;}
 
-    @media(max-width:1000px){
-      .site-footer{grid-template-columns:1fr; padding-left:0;}
-      .footer-copy{margin-left:0;}
-      .footer-tagline{left:0;}
-    }
-
-    /* ===== Animations ===== */
     @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
     @keyframes fadeDown{to{opacity:1; transform:translateY(0)}}
   </style>
 </head>
 <body>
-
-  <!-- BG image (starts at top, fixed, fades in LAST) -->
-  <div class="bg-top" aria-hidden="true"></div>
 
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
@@ -256,98 +278,106 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO TEXT -->
-  <section class="hero">
-    <div class="badge">We’re Here For You</div>
-    <h1>We’re Ready To<br/>Listen And Respond</h1>
-    <div class="sub">Your voice is important to us, and we look forward to connecting with you.</div>
+  <!-- HERO (image starts at the very top, scrolls away with page) -->
+  <section class="hero-frame">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="badge">We’re Here For You</div>
+      <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
+      <div class="hero-sub">Your voice is important to us, and we look forward to connecting with you.</div>
+    </div>
   </section>
 
   <div class="after-hero-spacer"></div>
 
-  <!-- CONTACT SECTION -->
-  <section class="contact-wrap" id="contact">
-    <div class="contact-card">
-      <!-- LEFT: FORM -->
-      <div>
-        <div class="row">
-          <input class="field" type="text" placeholder="Name" aria-label="Full name" />
-          <input class="field" type="tel" placeholder="Phone" aria-label="Phone" />
+  <!-- CONTACT (whole deeper section) -->
+  <section class="contact-section">
+    <div class="contact-wrap" id="contact">
+      <div class="contact-card">
+        <!-- LEFT: FORM -->
+        <div>
+          <div class="row">
+            <input class="field" type="text" placeholder="Name" aria-label="Full name" />
+            <input class="field" type="tel" placeholder="Phone" aria-label="Phone" />
+          </div>
+          <input class="field email" type="email" placeholder="Email" aria-label="Email" />
+          <textarea class="field" placeholder="Message" aria-label="Message"></textarea>
+
+          <button class="send-btn" type="button">Send</button>
+          <div class="sla">We will contact you within 24 hours.</div>
         </div>
-        <input class="field email" type="email" placeholder="Email" aria-label="Email" />
-        <textarea class="field" placeholder="Message" aria-label="Message"></textarea>
 
-        <button class="send-btn" type="button">Send</button>
-        <div class="sla">We will contact you within 24 hours.</div>
-      </div>
+        <!-- RIGHT: INFO -->
+        <aside class="contact-info">
+          <div class="info-inner">
+            <div class="info-title">Contact Information</div>
+            <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
 
-      <!-- RIGHT: INFO (deeper background only around this area) -->
-      <aside class="contact-info">
-        <div class="info-inner">
-          <div class="info-title">Contact Information</div>
-          <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
-
-          <div class="info-list">
-            <div class="info-item">
-              <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
-              <div class="info-text">
-                <div class="info-label">WhatsApp:</div>
-                <div class="info-value"><a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a></div>
+            <div class="info-list">
+              <div class="info-item">
+                <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
+                <div class="info-text">
+                  <div class="info-label">WhatsApp:</div>
+                  <div class="info-value"><a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a></div>
+                </div>
               </div>
-            </div>
 
-            <div class="info-item">
-              <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
-              <div class="info-text">
-                <div class="info-label">Email:</div>
-                <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
+              <div class="info-item">
+                <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
+                <div class="info-text">
+                  <div class="info-label">Email:</div>
+                  <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <!-- FAQ (bigger; unified block; vector arrow; all closed by default) -->
+  <!-- FAQ (overlay stage so footer doesn't get pushed) -->
   <section class="faq-section">
     <h2 class="faq-title">Frequently Asked Questions</h2>
-    <div class="faq-list" id="faqList">
-      <div class="faq-item">
-        <div class="faq-head">
-          <span>What languages do you support?</span>
-          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
-      </div>
 
-      <div class="faq-item">
-        <div class="faq-head">
-          <span>Is SignSense legally binding?</span>
-          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="faq-stage">
+      <div class="faq-list" id="faqList">
+        <div class="faq-item">
+          <div class="faq-head">
+            <span>What languages do you support?</span>
+            <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
         </div>
-        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
-      </div>
 
-      <div class="faq-item">
-        <div class="faq-head">
-          <span>What types of contracts can I upload?</span>
-          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <div class="faq-head">
+            <span>Is SignSense legally binding?</span>
+            <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
         </div>
-        <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
-      </div>
 
-      <div class="faq-item">
-        <div class="faq-head">
-          <span>Is my data secure?</span>
-          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <div class="faq-head">
+            <span>What types of contracts can I upload?</span>
+            <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
         </div>
-        <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+
+        <div class="faq-item">
+          <div class="faq-head">
+            <span>Is my data secure?</span>
+            <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (a bit lower) -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
@@ -416,12 +446,15 @@
       }, { passive:true });
     })();
 
-    /* FAQ: toggle when clicking question, answer, arrow, or field (whole item) */
+    /* FAQ: single-open accordion; click anywhere (question, answer, arrow, field) */
     document.querySelectorAll(".faq-item").forEach((item)=>{
-      const toggle = ()=> item.classList.toggle("open");
-      item.addEventListener("click", (e)=> {
-        // If clicking inside the item anywhere, toggle
-        toggle();
+      item.addEventListener("click", (e)=>{
+        // close others
+        document.querySelectorAll(".faq-item.open").forEach(i=>{
+          if(i!==item) i.classList.remove("open");
+        });
+        // toggle this one
+        item.classList.toggle("open");
       });
     });
   </script>
