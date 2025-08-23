@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
 
   <style>
     :root{
@@ -25,7 +26,7 @@
       --field:#1f1a28;
       --faq-block:#191624;
 
-      --particle-color:#682fd8; /* purple */
+      --particle-color:#a86bff; /* brighter purple */
     }
 
     *{box-sizing:border-box}
@@ -82,7 +83,6 @@
       background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
     }
 
-    /* particles container in hero */
     .hero-particles{
       position:absolute; inset:0;
       pointer-events:none;
@@ -92,13 +92,13 @@
       position:absolute;
       background-color:var(--particle-color);
       border-radius:50%;
-      width:3px; height:3px;
-      box-shadow:0 0 6px var(--particle-color);
+      width:4px; height:4px;
+      box-shadow:0 0 10px var(--particle-color);
       animation: floatUp linear infinite;
     }
     @keyframes floatUp{
       from { transform: translateY(0); opacity:1; }
-      to   { transform: translateY(-380px); opacity:0; }
+      to   { transform: translateY(-420px); opacity:0; }
     }
 
     .hero-content{
@@ -149,7 +149,9 @@
       width:100%;
       background:#fefefe; color:#000; border:none; border-radius:16px;
       padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
+      transition:box-shadow .25s ease;
     }
+    .send-btn:hover{box-shadow:0 0 16px rgba(255,255,255,.8);}
     .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center; font-weight:400;}
 
     aside.contact-info{padding-left:48px;}
@@ -217,11 +219,11 @@
   <div class="pad-top"></div>
 
   <!-- HERO -->
-  <section class="hero-frame">
+  <section class="hero-frame" data-aos="fade-in">
     <div class="hero-bg">
       <div class="hero-particles" id="heroParticles"></div>
     </div>
-    <div class="hero-content">
+    <div class="hero-content" data-aos="fade-up">
       <div class="badge">We’re Here For You</div>
       <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
       <div class="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
@@ -231,7 +233,7 @@
   <div class="after-hero-spacer"></div>
 
   <!-- CONTACT -->
-  <section class="contact-section">
+  <section class="contact-section" data-aos="fade-up">
     <div class="contact-wrap" id="contact">
       <div class="contact-card">
         <div>
@@ -269,7 +271,7 @@
   </section>
 
   <!-- FAQ -->
-  <section class="faq-section">
+  <section class="faq-section" data-aos="fade-up">
     <h2 class="faq-title">Frequently Asked Questions</h2>
     <div class="faq-list" id="faqList">
       <div class="faq-item">
@@ -304,7 +306,7 @@
   </section>
 
   <!-- FOOTER -->
-  <div class="site-footer-wrap">
+  <div class="site-footer-wrap" data-aos="fade-in">
     <footer class="site-footer">
       <div class="footer-left">
         <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
@@ -349,7 +351,10 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
+    AOS.init({ once:true, duration:800 });
+
     // Topbar hide/show on scroll
     const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
     window.addEventListener("scroll",()=>{const y=window.scrollY; if(y>lastY&&y>80)bar.classList.add("hide"); else bar.classList.remove("hide"); lastY=y<=0?0:y;},{passive:true});
@@ -368,13 +373,13 @@
     (function(){
       const container=document.getElementById("heroParticles");
       if(!container) return;
-      const NUM=22;
+      const NUM=60; // way more
       const H=container.offsetHeight||360;
       for(let i=0;i<NUM;i++){
         const p=document.createElement("div");
         p.className="particle";
-        const size=1+Math.random()*2;
-        const dur=18+Math.random()*12;
+        const size=2+Math.random()*3;
+        const dur=12+Math.random()*18;
         p.style.left=(Math.random()*100)+"%";
         p.style.bottom=(-Math.random()*H)+"px";
         p.style.width=size+"px"; p.style.height=size+"px";
