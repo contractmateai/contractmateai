@@ -1,438 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>SignSense — Contact</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://imgur.com/VFu8eyq.png"
-      sizes="64x64"
-    />
-    <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #000;                 /* page black */
-        --text: #fff9f9;
-        --muted: #d8cccc;
-        --chip-bg: #1f1a34;
-        --chip-text: #c8acff;
-        --bar-border: #6a6a6a;      /* a bit darker than before */
-        --field: #2c2938;
-        --panel: #100326;
-        --contact-panel: #1f1a28;
-        --shadow: rgba(0,0,0,.75);
-        --particle-color: #682fd8;  /* same as homepage */
-        --accent: #adff00;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense — Contact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      *{box-sizing:border-box;margin:0;padding:0}
-      html,body{height:100%}
-      body{
-        font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-        color:var(--text);
-        background: var(--bg);
-        overflow-x:hidden;
-      }
+  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
 
-      /* ===== Top bar (floating) ===== */
-      .topbar-wrap{
-        position:fixed; top:18px; left:0; right:0; z-index:1000;
-        display:flex; justify-content:center; pointer-events:none;
-        transition: transform .28s ease, opacity .25s ease;
-      }
-      .topbar-wrap.hide{ transform: translateY(-140%); opacity:.0; }
-      .topbar{
-        pointer-events:auto; background:#04040e;
-        border:1px solid var(--bar-border); border-radius:16px;
-        min-height:72px; padding:12px 18px;
-        width:min(1120px, calc(100% - 60px));
-        display:flex; align-items:center; justify-content:space-between;
-        box-shadow:0 8px 30px rgba(0,0,0,.25);
-      }
-      .topbar-left{ display:flex; align-items:center; gap:10px; }
-      .topbar-logo{ height:38px; width:auto; border-radius:8px; cursor:pointer; }
-      .topbar-brand{ font-size:28px; color:#fff; cursor:pointer; }
-      .topbar-nav a{
-        text-decoration:none; font-size:20px; color:#d8cccc; margin-left:24px;
-      }
-      .topbar-nav a:hover{ opacity:.85 }
+  <style>
+    :root{
+      --bg:#01040b;
+      --text:#fff9f9;
+      --muted:#d8cccc;
 
-      /* ===== Hero with BG image + particles ===== */
-      .hero{
-        position:relative;
-        padding-top:140px; /* creates space for topbar */
-        padding-bottom:40px;
-        text-align:center;
-        background: url("https://imgur.com/tyPrC9z.png") no-repeat center / cover;
-        /* Less than half screen tall look */
-        min-height: 520px;
-      }
-      /* particle layer just over hero bg, behind content */
-      .hero-particles{
-        position:absolute; inset:0 auto auto 0;
-        left:0; right:0; top:0; height:520px;
-        pointer-events:none; z-index:0;
-      }
-      .particle{
-        position:absolute; background-color:var(--particle-color);
-        border-radius:50%; width:3px; height:3px;
-        box-shadow:0 0 6px var(--particle-color);
-        animation: floatUp linear infinite;
-      }
-      @keyframes floatUp{
-        from { transform: translateY(0); opacity:1; }
-        to   { transform: translateY(-520px); opacity:0; }
-      }
+      --bar:#04040e;
+      --bar-border:#3f3f3f;
 
-      .hero-inner{ position:relative; z-index:1; max-width:1100px; margin:0 auto; }
-      .badge{
-        display:inline-flex; align-items:center; gap:10px;
-        background:var(--chip-bg); color:var(--chip-text);
-        padding:8px 14px; border-radius:999px; font-size:14px;
-      }
-      .title{
-        font-size: clamp(38px, 6.2vw, 68px);
-        line-height:1.12; margin-top:18px; font-weight:400;
-      }
-      .subtext{
-        margin-top:14px; font-size:20px; color:#d8cccc;
-      }
+      --badge-text:#c8acff;
+      --badge-bg:#1f1a34;
 
-      /* ===== Shadow separator that scrolls with hero ===== */
-      .hero-shadow{
-        position:relative; height:36px; margin-top:18px;
-      }
-      .hero-shadow::after{
-        content:""; position:absolute; left:0; right:0; top:-24px; height:64px;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,1));
-        filter: blur(6px);
-      }
+      --panel:#0b0814;
+      --field:#1f1a28;
+      --faq-block:#191624;
+    }
 
-      /* ===== Contact panel (form + info) ===== */
-      .contact-wrap{
-        max-width: 1160px; margin: 24px auto 0; padding: 0 20px;
-      }
-      .contact-panel{
-        background: var(--contact-panel);
-        border:1px solid #0b0b0b; border-radius:24px;
-        padding:40px; display:grid; grid-template-columns: 1.2fr 1fr; gap:42px;
-        box-shadow: 0 40px 120px -40px var(--shadow);
-      }
-      @media (max-width: 900px){
-        .contact-panel{ grid-template-columns: 1fr; }
-      }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      font-weight:400;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
 
-      .form{
-        display:grid; gap:14px;
-      }
-      .input, .textarea{
-        background:var(--field);
-        color:#fff9f9; border:none; border-radius:14px;
-        padding:16px 16px; font-size:16px; outline:none;
-      }
-      .input::placeholder, .textarea::placeholder{ color:#8b8b8b; }
-      .textarea{ height:140px; resize:none; }
-      .row{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
-      @media (max-width:700px){ .row{ grid-template-columns: 1fr; } }
+    /* ===== TOP BAR ===== */
+    .topbar-wrap{
+      position:fixed; top:18px; left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; pointer-events:none;
+      transition:transform .28s ease, opacity .25s ease;
+    }
+    .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
+    .topbar{
+      pointer-events:auto;
+      background:var(--bar);
+      border:1px solid var(--bar-border);
+      border-radius:16px;
+      min-height:72px; padding:12px 18px;
+      width:min(1120px, calc(100% - 60px));
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:0 8px 30px rgba(0,0,0,.28);
+    }
+    .topbar-left{display:flex; align-items:center; gap:10px;}
+    .topbar-logo{height:38px; width:auto; border-radius:8px;}
+    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
+    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
+    .topbar-nav a:hover{opacity:.85}
 
-      .send{
-        background:#fefefe; color:#000; border:none; border-radius:14px;
-        padding:16px 20px; font-size:17px; cursor:pointer;
-        transition: box-shadow .25s ease, transform .04s ease;
-      }
-      .send:hover{ box-shadow:0 0 18px rgba(255,255,255,.65); }
-      .send:active{ transform: translateY(1px); }
-      .sla{ margin-top:10px; color:#9a9a9a; font-size:14px; }
+    .pad-top{height:120px}
 
-      .info h3{ font-size:28px; font-weight:400; color:#fff9f9; }
-      .info p.lead{ margin-top:8px; color:#bcbcbc; font-size:18px; }
-      .info-list{ margin-top:26px; display:flex; flex-direction:column; gap:26px; }
-      .info-item{ display:flex; align-items:flex-start; gap:14px; }
-      .info-item img{ width:34px; height:34px; display:block; }
-      .info-item .label{ color:#fff9f9; font-size:18px; }
-      .info-item .value{ color:#cfcfcf; font-size:18px; margin-top:4px; }
+    /* ===== HERO ===== */
+    .hero-frame{
+      position:relative;
+      height:44vh;
+      min-height:360px;
+      width:100%;
+      overflow:hidden;
+      margin-top:-120px;
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+    }
+    .hero-bg::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
+    }
 
-      /* ===== FAQ ===== */
-      .faq{
-        max-width: 1160px; margin: 42px auto 0; padding: 0 20px 16px;
-      }
-      .faq h2{ font-size:42px; font-weight:400; text-align:center; margin-bottom:18px; }
-      .faq-list{ display:flex; flex-direction:column; gap:14px; max-width:980px; margin:0 auto; }
-      .faq-item{ border-radius:18px; overflow:hidden; background: transparent; }
-      .faq-q{
-        width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
-        padding:22px 22px; background:#0b0a12; color:#fff9f9; font-size:22px;
-        border:none; cursor:pointer; border-radius:18px; transition: background .2s ease;
-      }
-      .faq-q:hover{ background:#12101a; }
-      .faq-item.open{ background:#191624; }
-      .faq-item.open .faq-q{ background:transparent; border-radius:18px 18px 0 0; }
-      .faq-a{
-        color:#c3c3c3; font-size:18px; line-height:1.7;
-        padding:0 22px; max-height:0; opacity:0; overflow:hidden;
-        transition: max-height .3s ease, opacity .25s ease, padding .2s ease;
-      }
-      .faq-item.open .faq-a{ padding:14px 22px 20px; max-height:420px; opacity:1; }
+    .hero-content{
+      position:relative; z-index:1;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
+      padding-top:calc(120px + 66px);
+    }
+    .badge{
+      display:inline-block; padding:8px 14px; border-radius:999px;
+      background:var(--badge-bg); color:var(--badge-text); font-size:15px; font-weight:400;
+    }
+    .hero-title{
+      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+    }
+    .hero-sub{
+      color:var(--muted); font-size:20px; font-weight:400;
+    }
 
-      /* ===== Footer (kept compact) ===== */
-      .site-footer-wrap{
-        max-width:1400px; margin: 60px auto 0; padding: 0 24px 28px;
-      }
-      .site-footer{
-        background:transparent; border:none; display:grid;
-        grid-template-columns: minmax(460px,1fr) repeat(3, minmax(220px,max-content));
-        column-gap: 88px; align-items:start; justify-items:start;
-      }
-      .footer-left{ display:flex; align-items:flex-start; gap:12px; }
-      .footer-logo{ width:32px; height:32px; object-fit:contain; }
-      .footer-brand{ color:#e1e1e1; font-size:26px; font-weight:400; line-height:1.1; }
-      .footer-tagline{ color:#c5c5c5; margin-top:8px; font-size:18px; line-height:1.5; position:relative; left:-35px; }
-      .footer-col{ display:flex; flex-direction:column; gap:10px; }
-      .footer-title{ color:#fff; font-size:22px; font-weight:400; }
-      .footer-links a{ color:#c5c5c5; text-decoration:none; font-size:18px; }
-      .footer-bottom{ margin-top:16px; }
-      .footer-divider{ height:1px; background:#c5c5c5; opacity:.28; margin-bottom:10px; }
-      .footer-bottom-links{ display:flex; gap:28px; color:#c5c5c5; font-size:16px; }
-      .footer-copy{ margin-left:auto; }
+    .after-hero-spacer{height:72px}
 
-      @media (max-width:1000px){
-        .site-footer{ grid-template-columns: 1fr; }
-        .footer-copy{ margin-left:0; }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- TOP BAR -->
-    <div class="topbar-wrap" id="topbarWrap">
-      <div class="topbar">
-        <div class="topbar-left" onclick="location.href='index.html'">
-          <img class="topbar-logo" src="https://imgur.com/NgUKedh.png" alt="SignSense" />
-          <span class="topbar-brand">SignSense</span>
-        </div>
-        <nav class="topbar-nav">
-          <a href="index.html#how-it-works">See How It Works</a>
-          <a href="index.html#features">Features</a>
-          <a href="contact.html">Contact Us</a>
-        </nav>
+    /* ===== CONTACT ===== */
+    .contact-section{ background:transparent; }
+    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
+    .contact-card{
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:28px;
+      padding:56px;
+      display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
+      box-shadow:0 26px 60px rgba(0,0,0,.55);
+      min-height:560px;
+    }
+    @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px}
+    @media (max-width:640px){ .row{grid-template-columns:1fr} }
+    .field{
+      width:100%; background:var(--field); color:#f0f0f0;
+      border:none; border-radius:16px;
+      padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif; font-weight:400;
+    }
+    .field::placeholder{color:#a0a0a0;}
+    input.field.email{margin-bottom:18px}
+    textarea.field{min-height:220px; resize:none; margin-bottom:20px}
+    .send-btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      width:100%;
+      background:#fefefe; color:#000; border:none; border-radius:16px;
+      padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
+    }
+    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center; font-weight:400;}
+
+    aside.contact-info{padding-left:48px;}
+    .info-title{font-size:28px; margin:0 0 4px; color:#ffffff; font-weight:400;}
+    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px; font-weight:400;}
+    .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
+    .info-item{display:flex; align-items:center; gap:18px}
+    .info-icon{width:48px; height:48px; display:block}
+    .info-text{display:flex; flex-direction:column; gap:4px}
+    .info-label{color:#ffffff; font-size:18px; font-weight:400;}
+    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400;}
+
+    /* ===== FAQ ===== */
+    .faq-section{max-width:1120px; margin:120px auto 0; padding:0 24px 110px;}
+    .faq-title{text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;}
+    .faq-list{display:flex; flex-direction:column; gap:16px}
+    .faq-item{border-radius:16px; background:transparent; overflow:hidden; cursor:pointer;}
+    .faq-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; color:#fff9f9; font-size:22px; font-weight:400;}
+    .faq-arrow{width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;}
+    .faq-item.open{ background:var(--faq-block); }
+    .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
+    .faq-item.open .faq-arrow{ transform:rotate(180deg); }
+    .faq-a{background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, padding .2s ease; border-radius:0 0 16px 16px; font-weight:400;}
+    .faq-item.open .faq-a{padding:12px 18px 18px; max-height:420px; opacity:1;}
+
+    /* ===== FOOTER LOWER ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;} /* LOWER */
+    .site-footer{
+      background:transparent; border:none; box-shadow:none; padding:0;
+      display:grid;
+      grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
+      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
+    }
+    .footer-left{display:flex; align-items:flex-start; gap:12px;}
+    .footer-logo{width:32px; height:32px; object-fit:contain;}
+    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+    .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
+    .footer-col{display:flex; flex-direction:column; gap:10px;}
+    .footer-title{color:#fff; font-size:22px; font-weight:400;}
+    .footer-links{display:flex; flex-direction:column; gap:8px;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
+    .footer-bottom{margin-top:24px;}
+    .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
+    .footer-copy{margin-left:auto;}
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar-wrap" id="topbarWrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
+        <a href="index.html" class="topbar-brand">SignSense</a>
       </div>
+      <nav class="topbar-nav">
+        <a href="index.html#how-it-works">See How It Works</a>
+        <a href="index.html#features">Features</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
     </div>
+  </div>
 
-    <!-- HERO (bg image starts at the very top) -->
-    <header class="hero" id="hero">
-      <div class="hero-particles" id="heroParticles"></div>
-      <div class="hero-inner" data-aos="fade-up" data-aos-duration="700">
-        <div class="badge">We’re Here For You</div>
-        <h1 class="title">We’re Ready To Listen And Respond</h1>
-        <p class="subtext">Whether it's feedback, questions, or ideas — we're just a message away.</p>
-      </div>
-      <div class="hero-shadow"></div>
-    </header>
+  <div class="pad-top"></div>
 
-    <!-- CONTACT PANEL -->
-    <section class="contact-wrap" aria-label="Contact">
-      <div class="contact-panel" data-aos="fade-up" data-aos-duration="700" data-aos-delay="80">
-        <!-- form -->
-        <form class="form" onsubmit="return false;">
-          <input class="input" type="text" placeholder="Name" />
+  <!-- HERO -->
+  <section class="hero-frame">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="badge">We’re Here For You</div>
+      <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
+      <div class="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
+    </div>
+  </section>
+
+  <div class="after-hero-spacer"></div>
+
+  <!-- CONTACT -->
+  <section class="contact-section">
+    <div class="contact-wrap" id="contact">
+      <div class="contact-card">
+        <div>
           <div class="row">
-            <input class="input" type="tel" placeholder="Phone" />
-            <input class="input" type="email" placeholder="Email" />
+            <input class="field" type="text" placeholder="Name" />
+            <input class="field" type="tel" placeholder="Phone" />
           </div>
-          <textarea class="textarea" placeholder="Message"></textarea>
-          <button class="send" type="submit">Send ↗</button>
-          <div class="sla">We will contact you within 24 business hours.</div>
-        </form>
-
-        <!-- info -->
-        <div class="info">
-          <h3>Contact Information</h3>
-          <p class="lead">Contact us. Your feedback matters. Let’s build a better future together.</p>
-
+          <input class="field email" type="email" placeholder="Email" />
+          <textarea class="field" placeholder="Message"></textarea>
+          <button class="send-btn" type="button">Send</button>
+          <div class="sla">We will contact you within 24 hours.</div>
+        </div>
+        <aside class="contact-info">
+          <div class="info-title">Contact Information</div>
+          <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
           <div class="info-list">
             <div class="info-item">
-              <img src="https://imgur.com/Drq6L0n.png" alt="WhatsApp" />
-              <div>
-                <div class="label">WhatsApp:</div>
-                <div class="value">+355 69 690 2900</div>
+              <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
+              <div class="info-text">
+                <div class="info-label">WhatsApp:</div>
+                <div class="info-value"><a href="https://wa.me/355696902900">+355 69 690 2900</a></div>
               </div>
             </div>
-
             <div class="info-item">
-              <img src="https://imgur.com/V3ziuzH.png" alt="Email" />
-              <div>
-                <div class="label">Email:</div>
-                <div class="value">support@signsense.io</div>
+              <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
+              <div class="info-text">
+                <div class="info-label">Email:</div>
+                <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq" aria-label="FAQ">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-list" id="faqList">
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>What languages do you support?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="faq-a">
-            We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>Is SignSense legally binding or a replacement for a lawyer?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="faq-a">
-            No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>What types of contracts can I upload?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="faq-a">
-            Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>Is my data secure when I upload a contract?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="faq-a">
-            Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-    <div class="site-footer-wrap">
-      <footer class="site-footer">
-        <div class="footer-left" onclick="location.href='index.html'">
-          <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
-          <div class="footer-left-inner">
-            <div class="footer-brand">SignSense</div>
-            <div class="footer-tagline">
-              <div>No confusion, no legal jargon.</div>
-              <div>For informational use only. Not legal advice.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Quick Menu</div>
-          <nav class="footer-links">
-            <a href="index.html#how-it-works">How it Works</a>
-            <a href="index.html#review">Leave Review</a>
-          </nav>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Information</div>
-          <nav class="footer-links">
-            <a href="contact.html">Contact</a>
-            <a href="index.html#features">Features</a>
-          </nav>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Socials</div>
-          <nav class="footer-links">
-            <a href="#">Instagram</a>
-            <a href="#">YouTube</a>
-            <a href="#">X</a>
-          </nav>
-        </div>
-      </footer>
-
-      <div class="footer-bottom">
-        <div class="footer-divider"></div>
-        <div class="footer-bottom-links">
-          <span>Privacy Policy</span>
-          <span>Terms &amp; Conditions</span>
-          <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
-        </div>
+        </aside>
       </div>
     </div>
+  </section>
 
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-      AOS.init({ once:true });
+  <!-- FAQ -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What languages do you support?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is SignSense legally binding?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What types of contracts can I upload?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is my data secure?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+      </div>
+    </div>
+  </section>
 
-      /* Hide/reveal topbar on scroll */
-      (function(){
-        const bar = document.getElementById('topbarWrap');
-        let lastY = window.scrollY, ticking = false;
-        function onScroll(){
-          const y = window.scrollY;
-          if (y > lastY && y > 80) bar.classList.add('hide');
-          else bar.classList.remove('hide');
-          lastY = y <= 0 ? 0 : y; ticking = false;
+  <!-- FOOTER -->
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <div class="footer-left">
+        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
+        <div class="footer-left-inner">
+          <a href="index.html" class="footer-brand">SignSense</a>
+          <div class="footer-tagline">
+            <div>No confusion, no legal jargon.</div>
+            <div>For informational use only. Not legal advice.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Quick Menu</div>
+        <nav class="footer-links">
+          <a href="index.html#how-it-works">How it Works</a>
+          <a href="index.html#review">Leave Review</a>
+        </nav>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Information</div>
+        <nav class="footer-links">
+          <a href="contact.html">Contact</a>
+          <a href="index.html#features">Features</a>
+        </nav>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Socials</div>
+        <nav class="footer-links">
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">X</a>
+        </nav>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-links">
+        <span>Privacy Policy</span>
+        <span>Terms &amp; Conditions</span>
+        <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Topbar hide/show on scroll
+    const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
+    window.addEventListener("scroll",()=>{const y=window.scrollY; if(y>lastY&&y>80)bar.classList.add("hide"); else bar.classList.remove("hide"); lastY=y<=0?0:y;},{passive:true});
+
+    // FAQ toggle (only one open at a time)
+    document.querySelectorAll(".faq-item").forEach(item=>{
+      item.addEventListener("click",()=>{
+        if(!item.classList.contains("open")){
+          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
         }
-        window.addEventListener('scroll', () => {
-          if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
-        }, { passive:true });
-      })();
-
-      /* Particles only in hero area (fewer than homepage) */
-      (function(){
-        const container = document.getElementById('heroParticles');
-        if (!container) return;
-        const NUM = 24;
-        const H = container.clientHeight || 520;
-        for (let i = 0; i < NUM; i++){
-          const p = document.createElement('div');
-          p.className = 'particle';
-          const duration = 22 + Math.random()*12;
-          const size = 1 + Math.random()*2.5;
-          p.style.left = (Math.random()*window.innerWidth) + 'px';
-          p.style.top  = (Math.random()*H) + 'px';
-          p.style.width = size + 'px';
-          p.style.height = size + 'px';
-          p.style.animationDuration = duration + 's';
-          container.appendChild(p);
-        }
-      })();
-
-      /* FAQ open-one-at-a-time */
-      document.querySelectorAll('.faq-q').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const item = btn.parentElement;
-          if (!item.classList.contains('open')){
-            document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
-          }
-          item.classList.toggle('open');
-        });
+        item.classList.toggle("open");
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
