@@ -95,8 +95,8 @@
       text-align:center;
       display:flex; flex-direction:column; align-items:center;
       justify-content:flex-start;
-      /* moved a little UP (was calc(120px + 84px)) */
-      padding-top:calc(120px + 72px);
+      /* slightly higher (was calc(120px + 72px)) */
+      padding-top:calc(120px + 66px);
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
@@ -112,8 +112,8 @@
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .5s;
     }
 
-    /* spacer below hero — pushed contact a bit LOWER (was 44px) */
-    .after-hero-spacer{height:56px}
+    /* spacer below hero — contact section a LITTLE LOWER (was 56px) */
+    .after-hero-spacer{height:72px}
 
     /* ===== CONTACT (background stays black) ===== */
     .contact-section{ background:transparent; }
@@ -209,8 +209,8 @@
       max-height:420px; opacity:1;
     }
 
-    /* ===== FOOTER (moved LOWER) ===== */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 130px;} /* lower footer (was 90px) */
+    /* ===== FOOTER (lower) ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 180px;} /* LOWER footer */
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
@@ -410,23 +410,22 @@
   </div>
 
   <script>
-    /* Hide topbar on scroll down / show on up (already enabled) */
-    (function(){
+    /* Hide topbar on scroll down / show on up — immediate, no threshold */
+    (() => {
       const bar = document.getElementById("topbarWrap");
-      let lastY = window.scrollY, ticking = false;
-      function onScroll(){
-        const y = window.scrollY;
-        if (y > lastY && y > 80) bar.classList.add("hide");
-        else bar.classList.remove("hide");
-        lastY = y <= 0 ? 0 : y;
-        ticking = false;
-      }
+      let lastY = window.scrollY;
       window.addEventListener("scroll", () => {
-        if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
-      }, { passive:true });
+        const y = window.scrollY;
+        if (y > lastY) {
+          bar.classList.add("hide");     // scrolling down -> hide
+        } else {
+          bar.classList.remove("hide");  // scrolling up -> show
+        }
+        lastY = y;
+      }, { passive: true });
     })();
 
-    /* FAQ: single-open; click anywhere on item toggles; normal flow pushes items below */
+    /* FAQ: single-open; click anywhere toggles; normal flow pushes items below */
     document.querySelectorAll(".faq-item").forEach((item)=>{
       item.addEventListener("click", ()=>{
         document.querySelectorAll(".faq-item.open").forEach(i=>{
