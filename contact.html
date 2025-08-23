@@ -24,6 +24,8 @@
       --panel:#0b0814;
       --field:#1f1a28;
       --faq-block:#191624;
+
+      --particle-color:#682fd8; /* purple */
     }
 
     *{box-sizing:border-box}
@@ -80,8 +82,27 @@
       background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
     }
 
+    /* particles container in hero */
+    .hero-particles{
+      position:absolute; inset:0;
+      pointer-events:none;
+      z-index:1;
+    }
+    .particle{
+      position:absolute;
+      background-color:var(--particle-color);
+      border-radius:50%;
+      width:3px; height:3px;
+      box-shadow:0 0 6px var(--particle-color);
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from { transform: translateY(0); opacity:1; }
+      to   { transform: translateY(-380px); opacity:0; }
+    }
+
     .hero-content{
-      position:relative; z-index:1;
+      position:relative; z-index:2;
       max-width:1160px; margin:0 auto; padding:0 24px;
       text-align:center;
       padding-top:calc(120px + 66px);
@@ -154,8 +175,8 @@
     .faq-a{background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, padding .2s ease; border-radius:0 0 16px 16px; font-weight:400;}
     .faq-item.open .faq-a{padding:12px 18px 18px; max-height:420px; opacity:1;}
 
-    /* ===== FOOTER LOWER ===== */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;} /* LOWER */
+    /* ===== FOOTER ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
@@ -197,7 +218,9 @@
 
   <!-- HERO -->
   <section class="hero-frame">
-    <div class="hero-bg"></div>
+    <div class="hero-bg">
+      <div class="hero-particles" id="heroParticles"></div>
+    </div>
     <div class="hero-content">
       <div class="badge">We’re Here For You</div>
       <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
@@ -340,6 +363,25 @@
         item.classList.toggle("open");
       });
     });
+
+    // HERO PARTICLES
+    (function(){
+      const container=document.getElementById("heroParticles");
+      if(!container) return;
+      const NUM=22;
+      const H=container.offsetHeight||360;
+      for(let i=0;i<NUM;i++){
+        const p=document.createElement("div");
+        p.className="particle";
+        const size=1+Math.random()*2;
+        const dur=18+Math.random()*12;
+        p.style.left=(Math.random()*100)+"%";
+        p.style.bottom=(-Math.random()*H)+"px";
+        p.style.width=size+"px"; p.style.height=size+"px";
+        p.style.animationDuration=dur+"s";
+        container.appendChild(p);
+      }
+    })();
   </script>
 </body>
 </html>
