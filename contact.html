@@ -5,11 +5,11 @@
   <title>SignSense — Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicons -->
+  <!-- Icons -->
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
 
-  <!-- Inter (all text uses Inter, normal weight) -->
+  <!-- Inter (all text normal weight) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
 
   <style>
@@ -22,23 +22,38 @@
       --badge-text:#c8acff;
       --badge-bg:#1f1a34;
       --panel:#100326;
-      --field:#1f1a28;          /* fields color (updated) */
-      --faq-block:#191624;
+      --field:#1f1a28;        /* INPUT / TEXTAREA background */
+      --faq-block:#191624;    /* unified QA block color */
+      --info-wrap:#0e0a18;    /* deeper wrap around contact info */
     }
 
-    /* reset */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       font-family:"Inter",system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      font-weight:400;                 /* no bold anywhere */
+      font-weight:400; /* no bold */
       color:var(--text);
       background:var(--bg);
       overflow-x:hidden;
     }
 
-    /* ======= TOP BAR (hides on scroll) ======= */
+    /* ===== TOP BG IMAGE (starts at exact top; fixed) ===== */
+    .bg-top{
+      position:fixed; top:0; left:0; right:0;
+      height:44vh; min-height:360px;       /* < half screen */
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      z-index:-2;
+      opacity:0; transform:translateY(10px); /* fade in LAST on page */
+      animation:fadeUp .8s ease forwards 1.2s;
+    }
+    .bg-top::after{
+      /* shadow attached to the image bottom (so it scrolls with the image) */
+      content:""; position:absolute; left:0; right:0; bottom:0; height:160px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.7) 60%, rgba(1,4,11,1) 100%);
+    }
+
+    /* ===== TOP BAR (hide on scroll) ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -63,71 +78,46 @@
     .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
     .topbar-nav a:hover{opacity:.85}
 
-    /* push content below bar */
     .pad-top{height:120px}
 
-    /* ======= HERO FRAME (image + gradient move together on scroll) ======= */
-    .hero-frame{
-      position:relative;
-      height:44vh; min-height:360px;       /* < half screen; taller feel */
-      width:100%;
-      overflow:hidden;                      /* keep gradient “stuck” to image */
-    }
-    .hero-bg{
-      position:absolute; inset:0;
-      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-      opacity:0; transform:translateY(10px);   /* image fades in LAST */
-      animation:fadeUp .8s ease forwards 1.0s; /* delay > other elements */
-    }
-    .hero-bg::after{
-      /* shadow glued to the image bottom; scrolls with it */
-      content:""; position:absolute; left:0; right:0; bottom:0; height:160px;
-      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.7) 60%, rgba(1,4,11,1) 100%);
-      pointer-events:none;
-    }
-
-    /* HERO TEXT sits inside hero-frame so it's “on” the image */
-    .hero-content{
-      position:relative; z-index:1;
+    /* ===== HERO TEXT on top of image ===== */
+    .hero{
       max-width:1160px; margin:0 auto; padding:0 24px;
       text-align:center;
-      display:flex; flex-direction:column; align-items:center;
-      justify-content:flex-start;
-      padding-top:32px;                    /* push text a bit lower */
     }
     .badge{
       display:inline-block; padding:8px 14px; border-radius:999px;
       background:var(--badge-bg); color:var(--badge-text); font-size:15px;
-      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .25s;
-    }
-    .hero-title{
-      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .35s;
     }
-    .hero-sub{
-      color:var(--muted); font-size:20px; margin:2px 0 0 0;
+    .hero h1{
+      margin:20px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
       opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .45s;
     }
+    .hero .sub{
+      color:var(--muted); font-size:20px;
+      opacity:0; transform:translateY(8px); animation:fadeUp .6s ease forwards .55s;
+    }
 
-    /* extra space after hero to push the card down a little more */
-    .after-hero-spacer{height:36px}
+    /* extra spacer to push card lower + create distance from image/shadow */
+    .after-hero-spacer{height:56px}
 
-    /* ======= CONTACT AREA ======= */
-    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 100px; }
+    /* ===== CONTACT AREA ===== */
+    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
     .contact-card{
       background:var(--panel);
       border:1px solid rgba(255,255,255,.06);
       border-radius:28px;
-      padding:56px;                         /* taller */
+      padding:56px;
       display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
       box-shadow:0 26px 60px rgba(0,0,0,.55);
-      min-height:560px;                     /* taller panel */
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .55s;
+      min-height:560px;
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .65s;
     }
     @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
 
     /* left form */
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:16px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px} /* row->email distance */
     @media (max-width:640px){ .row{grid-template-columns:1fr} }
     .field{
       width:100%; background:var(--field); color:#f0f0f0;
@@ -135,12 +125,8 @@
       padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif;
     }
     .field::placeholder{color:#a0a0a0; font-family:"Inter",sans-serif;}
-    input.field{margin-bottom:14px}
-    input.field.email{margin-bottom:18px}    /* distance above message */
-    textarea.field{
-      min-height:220px; resize:none; margin-bottom:20px; /* not expandable + spaced */
-    }
-
+    input.field.email{margin-bottom:18px} /* email->message distance (matches row->email) */
+    textarea.field{min-height:220px; resize:none; margin-bottom:20px}
     .send-btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
       width:100%;
@@ -148,72 +134,73 @@
       padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
       box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 10px 24px rgba(0,0,0,.25);
       transition:box-shadow .25s ease, transform .06s ease, filter .25s ease;
-      margin-top:6px;                        /* distance from message field */
+      margin-top:12px; /* extra distance from message */
     }
-    .send-btn:hover{
-      box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35);
-      filter:saturate(1.05);
-    }
+    .send-btn:hover{ box-shadow:0 0 22px rgba(255,255,255,.55), 0 12px 26px rgba(0,0,0,.35); filter:saturate(1.05); }
     .send-btn:active{transform:translateY(1px)}
-    .sla{color:#9a9a9a; font-size:14px; margin-top:10px; text-align:center}
+    .sla{color:#9a9a9a; font-size:14px; margin-top:14px; text-align:center} /* a bit lower */
 
-    /* right info */
+    /* right info (with deeper wrap behind this side only) */
     aside.contact-info{padding-left:48px;}
-    .info-title{
-      font-size:28px; margin:0 0 6px; color:#ffffff; font-weight:400;
-      transform:translateY(-8px); /* a bit higher */
+    .info-inner{
+      background:var(--info-wrap);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:20px;
+      padding:22px 22px 26px;
     }
-    .info-sub{
-      color:#9fa0a7; font-size:16px; margin:0 0 14px; max-width:520px;
-      transform:translateY(-8px);
-    }
+    .info-title{font-size:28px; margin:0 0 6px; color:#ffffff; font-weight:400;}
+    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 10px; max-width:520px;}
 
-    .info-list{display:flex; flex-direction:column; gap:48px; margin-top:34px;} /* icons/info lower, spaced */
+    .info-list{display:flex; flex-direction:column; gap:64px; margin-top:44px;} /* lower lower */
     .info-item{display:flex; align-items:center; gap:18px}
     .info-icon{width:48px; height:48px; display:block}
     .info-text{display:flex; flex-direction:column; gap:4px}
-    .info-label{color:#ffffff; font-size:18px; font-weight:400}        /* “WhatsApp:” / “Email:” */
+    .info-label{color:#ffffff; font-size:18px; font-weight:400} /* WhatsApp: / Email: */
     .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400}
     .info-value a:hover{text-decoration:underline}
 
-    /* ======= FAQ (bigger text; NO frame when closed) ======= */
+    /* ===== FAQ (bigger; unified QA block; vector arrow) ===== */
     .faq-section{
-      max-width:1120px; margin:84px auto 0; padding:0 24px; /* more distance from card */
-      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .65s;
+      max-width:1120px; margin:90px auto 0; padding:0 24px;
+      opacity:0; transform:translateY(14px); animation:fadeUp .7s ease forwards .75s;
     }
     .faq-title{
-      text-align:center; font-size:40px; margin-bottom:22px; color:#fff9f9;
-      font-weight:400; /* not bold */
+      text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;
     }
-    .faq-list{display:flex; flex-direction:column; gap:14px}
-    .faq-item{border-radius:16px; overflow:hidden; background:transparent; }
-    .faq-q{
-      width:100%; display:flex; align-items:center; justify-content:space-between;
-      padding:18px 4px; border:none; cursor:pointer; background:transparent;
-      color:#fff9f9; font-size:20px; font-weight:400; text-align:left;
+    .faq-list{display:flex; flex-direction:column; gap:16px}
+    .faq-item{
+      border-radius:16px;
+      background:transparent; /* no field when closed */
+      overflow:hidden;
+      cursor:pointer; /* clicking anywhere toggles */
     }
+    .faq-head{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:10px 6px; background:transparent; color:#fff9f9; font-size:22px;
+    }
+    .faq-arrow{
+      width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;
+    }
+    /* opened = unified block look */
+    .faq-item.open{ background:var(--faq-block); }
+    .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
+    .faq-item.open .faq-arrow{ transform:rotate(180deg); } /* points up when open */
     .faq-a{
-      background:var(--faq-block);           /* #191624 */
-      color:#c3c3c3;                         /* answer color */
-      font-size:18px; line-height:1.6;
-      padding:0 18px;
-      max-height:0; opacity:0; overflow:hidden;
+      background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65;
+      padding:0 18px; max-height:0; opacity:0; overflow:hidden;
       transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
-      border-radius:14px;
+      border-radius:0 0 16px 16px;
     }
-    .faq-item.open .faq-q{
-      background:var(--faq-block); color:#fff; padding:18px; border-radius:14px 14px 0 0;
-    }
-    .faq-item.open .faq-a{ padding:12px 18px 18px; max-height:360px; opacity:1; }
+    .faq-item.open .faq-a{ padding:0 18px 18px; max-height:420px; opacity:1; }
 
-    /* ======= FOOTER (as before) ======= */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 72px;} /* extra distance below FAQ */
+    /* ===== FOOTER (unchanged layout) ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 72px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
       grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
       column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .75s;
+      opacity:0; transform:translateY(12px); animation:fadeUp .7s ease forwards .85s;
     }
     :root{--footer-rail:40px; --logo-gap:12px;}
     .footer-left{display:flex !important; align-items:flex-start !important; padding-left:var(--footer-rail) !important; gap:var(--logo-gap) !important;}
@@ -240,14 +227,15 @@
       .footer-tagline{left:0;}
     }
 
-    /* ======= simple fade helpers ======= */
+    /* ===== Animations ===== */
     @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
     @keyframes fadeDown{to{opacity:1; transform:translateY(0)}}
-    .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
-    .reveal.visible{opacity:1; transform:translateY(0)}
   </style>
 </head>
 <body>
+
+  <!-- BG image (starts at top, fixed, fades in LAST) -->
+  <div class="bg-top" aria-hidden="true"></div>
 
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
@@ -268,53 +256,52 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO (image + shadow that move together) -->
-  <section class="hero-frame">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-content">
-      <div class="badge">We’re Here For You</div>
-      <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
-      <div class="hero-sub">Your voice is important to us, and we look forward to connecting with you.</div>
-    </div>
+  <!-- HERO TEXT -->
+  <section class="hero">
+    <div class="badge">We’re Here For You</div>
+    <h1>We’re Ready To<br/>Listen And Respond</h1>
+    <div class="sub">Your voice is important to us, and we look forward to connecting with you.</div>
   </section>
 
   <div class="after-hero-spacer"></div>
 
   <!-- CONTACT SECTION -->
-  <section class="contact-wrap">
+  <section class="contact-wrap" id="contact">
     <div class="contact-card">
       <!-- LEFT: FORM -->
-      <div class="reveal">
+      <div>
         <div class="row">
-          <input class="field" type="text" placeholder="Jane Smith" aria-label="Full name" />
+          <input class="field" type="text" placeholder="Name" aria-label="Full name" />
           <input class="field" type="tel" placeholder="Phone" aria-label="Phone" />
         </div>
         <input class="field email" type="email" placeholder="Email" aria-label="Email" />
         <textarea class="field" placeholder="Message" aria-label="Message"></textarea>
 
         <button class="send-btn" type="button">Send</button>
-        <div class="sla">We will contact you within 24 business hours.</div>
+        <div class="sla">We will contact you within 24 hours.</div>
       </div>
 
-      <!-- RIGHT: INFO -->
-      <aside class="contact-info reveal">
-        <div class="info-title">Contact Information</div>
-        <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
+      <!-- RIGHT: INFO (deeper background only around this area) -->
+      <aside class="contact-info">
+        <div class="info-inner">
+          <div class="info-title">Contact Information</div>
+          <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
 
-        <div class="info-list">
-          <div class="info-item">
-            <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
-            <div class="info-text">
-              <div class="info-label">WhatsApp:</div>
-              <div class="info-value"><a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a></div>
+          <div class="info-list">
+            <div class="info-item">
+              <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
+              <div class="info-text">
+                <div class="info-label">WhatsApp:</div>
+                <div class="info-value"><a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a></div>
+              </div>
             </div>
-          </div>
 
-          <div class="info-item">
-            <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
-            <div class="info-text">
-              <div class="info-label">Email:</div>
-              <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
+            <div class="info-item">
+              <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
+              <div class="info-text">
+                <div class="info-label">Email:</div>
+                <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
+              </div>
             </div>
           </div>
         </div>
@@ -322,30 +309,45 @@
     </div>
   </section>
 
-  <!-- FAQ (all closed by default; larger) -->
+  <!-- FAQ (bigger; unified block; vector arrow; all closed by default) -->
   <section class="faq-section">
     <h2 class="faq-title">Frequently Asked Questions</h2>
-    <div class="faq-list">
-      <div class="faq-item reveal">
-        <button class="faq-q" type="button">What languages do you support?</button>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What languages do you support?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
         <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
       </div>
-      <div class="faq-item reveal">
-        <button class="faq-q" type="button">Is SignSense legally binding?</button>
+
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is SignSense legally binding?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
         <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
       </div>
-      <div class="faq-item reveal">
-        <button class="faq-q" type="button">What types of contracts can I upload?</button>
+
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What types of contracts can I upload?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
         <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
       </div>
-      <div class="faq-item reveal">
-        <button class="faq-q" type="button">Is my data secure?</button>
+
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is my data secure?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
         <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER (unchanged structure) -->
+  <!-- FOOTER -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
@@ -414,28 +416,14 @@
       }, { passive:true });
     })();
 
-    /* FAQ toggle — all closed by default; open shares #191624 */
-    document.querySelectorAll(".faq-item .faq-q").forEach((btn)=>{
-      btn.addEventListener("click", ()=>{
-        const item = btn.parentElement;
-        if(!item.classList.contains("open")){
-          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
-        }
-        item.classList.toggle("open");
+    /* FAQ: toggle when clicking question, answer, arrow, or field (whole item) */
+    document.querySelectorAll(".faq-item").forEach((item)=>{
+      const toggle = ()=> item.classList.toggle("open");
+      item.addEventListener("click", (e)=> {
+        // If clicking inside the item anywhere, toggle
+        toggle();
       });
     });
-
-    /* Scroll reveal for elements with .reveal */
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.classList.add("visible");
-          io.unobserve(e.target);
-        }
-      });
-    }, {threshold: 0.12});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
   </script>
 </body>
 </html>
-
