@@ -14,17 +14,26 @@
       --bg:#01040b;
       --text:#fff9f9;
       --muted:#9f9f9d;
+
       --bar:#04040e;
       --bar-border:#3f3f3f;
+
+      --badge-text:#c8acff;
+      --badge-bg:#1f1a34;
+
+      --panel:#0b0814;
+      --faq-block:#191624;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       font-family:"Inter",sans-serif;
-      background:var(--bg);
-      color:var(--text);
       font-weight:400;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
     }
 
     /* ===== TOP BAR ===== */
@@ -45,17 +54,18 @@
       box-shadow:0 8px 30px rgba(0,0,0,.28);
     }
     .topbar-left{display:flex; align-items:center; gap:10px;}
-    .topbar-logo{height:38px; border-radius:8px;}
+    .topbar-logo{height:38px; width:auto; border-radius:8px;}
     .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
     .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
     .topbar-nav a:hover{opacity:.85}
+
     .pad-top{height:120px}
 
-    /* ===== HERO HEADER ===== */
+    /* ===== HERO ===== */
     .hero-frame{
       position:relative;
-      height:42vh;
-      min-height:340px;
+      height:44vh;
+      min-height:360px;
       width:100%;
       overflow:hidden;
       margin-top:-120px;
@@ -63,61 +73,100 @@
     .hero-bg{
       position:absolute; inset:0;
       background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      opacity:0; transform:scale(1.03);
+      transition:opacity .8s ease .6s, transform .8s ease .6s; /* comes LAST */
     }
     .hero-bg::after{
       content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
       background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
     }
     .hero-content{
-      position:relative; z-index:2;
+      position:relative; z-index:1;
       max-width:1160px; margin:0 auto; padding:0 24px;
       text-align:center;
       padding-top:calc(120px + 66px);
     }
     .hero-title{
-      font-size:56px;
-      line-height:1.15;
-      color:#fff9f9;
-      font-weight:400;
-      margin:0;
-      text-shadow:0 4px 22px rgba(0,0,0,.55);
+      margin:18px 0 6px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .6s ease .1s, transform .6s ease .1s;
+    }
+    .hero-sub{
+      color:var(--muted); font-size:18px; font-weight:400;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .6s ease .2s, transform .6s ease .2s;
     }
 
-    .after-hero-spacer{height:72px}
+    /* activate animations */
+    .page-in .hero-title,
+    .page-in .hero-sub{ opacity:1; transform:none; }
+    .page-in .hero-bg{ opacity:1; transform:none; }
 
-    /* ===== CONTENT ===== */
-    .content{max-width:960px; margin:0 auto; padding:0 24px 100px;}
-    .intro-title{
-      font-size:32px;
-      color:var(--text);
-      font-weight:400;
-      margin-bottom:20px;
-      text-align:left;
+    .after-hero-spacer{height:48px}
+
+    /* ===== POLICY CONTENT ===== */
+    .policy-wrap{
+      max-width:1160px; margin:0 auto; padding:0 24px 110px;
     }
-    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
-    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
-    ul{padding-left:20px;}
-
-    /* ===== READY SECTION ===== */
-    .ready-section{max-width:960px; margin:80px auto; padding:0 24px; text-align:center;}
-    .ready-section img{width:100%; max-width:680px; border-radius:16px; box-shadow:0 0 30px rgba(0,0,0,.5);}
-    .back-btn{
-      margin-top:28px;
-      display:inline-block;
-      padding:14px 26px;
-      background:#adff00;
-      color:#000;
-      font-size:18px;
-      border:none;
-      border-radius:12px;
-      text-decoration:none;
-      font-weight:400;
-      box-shadow:0 0 14px rgba(173,255,0,.65);
-      transition:box-shadow .25s ease;
+    .policy h2{
+      font-size:28px; color:#fff9f9; font-weight:400; margin:28px 0 8px;
+      opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease;
     }
-    .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
+    .policy p, .policy li{
+      color:var(--muted); font-size:19px; line-height:1.7; margin:0 0 12px;
+      opacity:0; transform:translateY(8px); transition:opacity .6s ease, transform .6s ease;
+    }
+    .policy ul{padding-left:22px; margin:0 0 10px}
+    .policy li{list-style:disc}
 
-    /* ===== FOOTER ===== */
+    /* staged reveal */
+    .page-in .reveal { opacity:1; transform:none; }
+
+    /* ===== READY IMAGE BLOCK ===== */
+    .ready{
+      max-width:1160px; margin:80px auto 0; padding:0 24px 80px;
+    }
+    .ready-hero{
+      position:relative; display:flex; justify-content:center;
+    }
+    .ready-img{
+      width:min(980px, 96%);
+      border:1px solid rgba(20,20,24,.85); /* very thin dark border */
+      border-radius:18px;
+      display:block;
+      box-shadow:0 18px 60px rgba(0,0,0,.45);
+      opacity:0; transform:translateY(10px);
+      transition:opacity .6s ease .2s, transform .6s ease .2s;
+    }
+    .page-in .ready-img{ opacity:1; transform:none; }
+
+    /* Overlay button positioned inside the image near bottom-center (below the “even if you have never studied law” line) */
+    .ready-cta{
+      position:absolute; left:50%;
+      bottom:30px; transform:translateX(-50%);
+      background:#ffffff; color:#000; text-decoration:none;
+      font-size:17px; padding:14px 22px; border-radius:20px; /* more rounded */
+      border:1px solid rgba(0,0,0,.25);
+      box-shadow:0 8px 24px rgba(0,0,0,.35);
+      opacity:0; transform:translate(-50%,10px);
+      transition:opacity .6s ease .35s, transform .6s ease .35s;
+    }
+    .page-in .ready-cta{ opacity:1; transform:translate(-50%,0); }
+
+    /* ===== FAQ (kept same styles you use) ===== */
+    .faq-section{max-width:1120px; margin:40px auto 0; padding:0 24px 110px;}
+    .faq-title{text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;}
+    .faq-list{display:flex; flex-direction:column; gap:16px}
+    .faq-item{border-radius:16px; background:transparent; overflow:hidden; cursor:pointer;}
+    .faq-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; color:#fff9f9; font-size:22px; font-weight:400;}
+    .faq-arrow{width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;}
+    .faq-item.open{ background:var(--faq-block); }
+    .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
+    .faq-item.open .faq-arrow{ transform:rotate(180deg); }
+    .faq-a{background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, padding .2s ease; border-radius:0 0 16px 16px; font-weight:400;}
+    .faq-item.open .faq-a{padding:12px 18px 18px; max-height:420px; opacity:1;}
+
+    /* ===== FOOTER (EXACT as your Contact page) ===== */
     .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
@@ -137,9 +186,13 @@
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
     .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
     .footer-copy{margin-left:auto;}
+
+    /* small helpers */
+    .subtle{color:var(--muted); font-size:16px}
   </style>
 </head>
 <body>
+
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar">
@@ -157,86 +210,113 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO HEADER -->
+  <!-- HERO -->
   <section class="hero-frame">
-    <div class="hero-bg"></div>
+    <div class="hero-bg" id="heroBg"></div>
     <div class="hero-content">
       <h1 class="hero-title">Privacy Policy</h1>
+      <div class="hero-sub">Last Updated: 24 August 2025</div>
     </div>
   </section>
 
   <div class="after-hero-spacer"></div>
 
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="intro-title">Intro</div>
-    <p>Welcome to SignSense (“we”, “our”, or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our website and AI-powered contract review services.</p>
+  <!-- POLICY CONTENT -->
+  <div class="policy-wrap policy" id="policy">
+    <!-- Intro -->
+    <h2 class="reveal">Intro</h2>
+    <p class="reveal">Welcome to SignSense (“we”, “our”, or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our website and AI-powered contract review services.</p>
 
-    <h2>1. Information We Collect</h2>
-    <p>We only collect the minimal information necessary to provide our services:</p>
-    <ul>
-      <li><b>Uploaded Documents:</b> When you upload a contract or document, the content is temporarily processed by our AI systems to generate an analysis. We do not permanently store your documents after processing unless explicitly stated (e.g., if you request report storage).</li>
-      <li><b>Usage Data:</b> We may collect non-identifiable usage information (e.g., page visits, clicks, or device type) to improve our website and services.</li>
-      <li><b>Email Address (Optional):</b> If you request a downloadable report or sign up for updates, we may collect your email. Providing your email is optional and will never be shared or sold.</li>
+    <!-- 1 -->
+    <h2 class="reveal">1. Information We Collect</h2>
+    <p class="reveal">We only collect the minimal information necessary to provide our services:</p>
+    <ul class="reveal">
+      <li><strong>Uploaded Documents:</strong> When you upload a contract or document, the content is temporarily processed by our AI systems to generate an analysis. We do not permanently store your documents after processing unless explicitly stated (e.g., if you request report storage).</li>
+      <li><strong>Usage Data:</strong> We may collect non-identifiable usage information (e.g., page visits, clicks, or device type) to improve our website and services.</li>
+      <li><strong>Email Address (Optional):</strong> If you request a downloadable report or sign up for updates, we may collect your email. Providing your email is optional and will never be shared or sold.</li>
     </ul>
 
-    <h2>2. How We Use Your Information</h2>
-    <p>We use your information solely to:</p>
-    <ul>
+    <!-- 2 -->
+    <h2 class="reveal">2. How We Use Your Information</h2>
+    <p class="reveal">We use your information solely to:</p>
+    <ul class="reveal">
       <li>Process and analyze uploaded contracts with AI.</li>
       <li>Deliver requested results or reports back to you.</li>
       <li>Improve the performance, reliability, and security of our services.</li>
       <li>Communicate with you only if you provide your email for reports or updates.</li>
     </ul>
-    <p>We do not sell, rent, or share your data with third parties for advertising or marketing.</p>
+    <p class="reveal">We do not sell, rent, or share your data with third parties for advertising or marketing.</p>
 
-    <h2>3. Data Processing & Third Parties</h2>
-    <p>Our AI contract analysis may be powered by OpenAI or similar trusted providers. Documents may be transmitted to these services strictly for analysis purposes. All third-party providers are required to follow strong privacy and security practices and comply with data protection laws (such as GDPR and, where applicable, CCPA).</p>
+    <!-- 3 -->
+    <h2 class="reveal">3. Data Processing &amp; Third Parties</h2>
+    <p class="reveal">Our AI contract analysis may be powered by OpenAI or similar trusted providers. Documents may be transmitted to these services strictly for analysis purposes.</p>
+    <p class="reveal">All third-party providers are required to follow strong privacy and security practices and comply with data protection laws (such as GDPR and, where applicable, CCPA).</p>
 
-    <h2>4. Data Retention</h2>
-    <ul>
-      <li>Uploaded contracts are not stored after analysis, except for temporary caching required to process your request.</li>
-      <li>Emails (if provided) are stored securely and used only to deliver requested reports or updates.</li>
-    </ul>
+    <!-- 4 -->
+    <h2 class="reveal">4. Data Retention</h2>
+    <p class="reveal">Uploaded contracts are not stored after analysis, except for temporary caching required to process your request.</p>
+    <p class="reveal">Emails (if provided) are stored securely and used only to deliver requested reports or updates.</p>
 
-    <h2>5. Cookies and Analytics</h2>
-    <p>We may use cookies or privacy-focused analytics tools (e.g., Google Analytics, Plausible) to monitor performance and improve our website. These tools do not collect personal or contract data.</p>
+    <!-- 5 -->
+    <h2 class="reveal">5. Cookies and Analytics</h2>
+    <p class="reveal">We may use cookies or privacy-focused analytics tools (e.g., Google Analytics, Plausible) to monitor performance and improve our website. These tools do not collect personal or contract data.</p>
 
-    <h2>6. Your Rights</h2>
-    <p>Depending on your location, you may have the right to:</p>
-    <ul>
+    <!-- 6 -->
+    <h2 class="reveal">6. Your Rights</h2>
+    <p class="reveal">Depending on your location, you may have the right to:</p>
+    <ul class="reveal">
       <li>Request access to the personal data we hold about you.</li>
       <li>Request correction or deletion of your data.</li>
       <li>Opt out of any optional communications.</li>
     </ul>
-    <p>To exercise your rights, contact us at: [Insert Email].</p>
+    <p class="reveal">To exercise your rights, contact us at: [Insert Email].</p>
 
-    <h2>7. Data Security</h2>
-    <p>We take steps to protect your information during transmission and processing, including encryption and secure connections. However, no system is 100% secure. We recommend avoiding uploads of highly sensitive or classified documents.</p>
+    <!-- 7 -->
+    <h2 class="reveal">7. Data Security</h2>
+    <p class="reveal">We take steps to protect your information during transmission and processing, including encryption and secure connections. However, no system is 100% secure. We recommend avoiding uploads of highly sensitive or classified documents.</p>
 
-    <h2>8. Legal Basis (GDPR Notice)</h2>
-    <p>If you are located in the European Economic Area (EEA), we process your personal data under the following legal bases:</p>
-    <ul>
+    <!-- 8 -->
+    <h2 class="reveal">8. Legal Basis (GDPR Notice)</h2>
+    <p class="reveal">If you are located in the European Economic Area (EEA), we process your personal data under the following legal bases:</p>
+    <ul class="reveal">
       <li>To provide and operate our services (Article 6(1)(b) GDPR).</li>
       <li>With your consent, where applicable (Article 6(1)(a) GDPR).</li>
       <li>To comply with legal obligations (Article 6(1)(c) GDPR).</li>
     </ul>
 
-    <h2>9. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.</p>
+    <!-- 9 -->
+    <h2 class="reveal">9. Changes to This Policy</h2>
+    <p class="reveal">We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.</p>
 
-    <h2>10. Contact Us</h2>
-    <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:<br/>Email: [Insert Contact Email]</p>
+    <!-- 10 -->
+    <h2 class="reveal">10. Contact Us</h2>
+    <p class="reveal">If you have questions about this Privacy Policy or how we handle your data, please contact us:</p>
+    <p class="reveal">Email: [Insert Contact Email]</p>
   </div>
 
-  <!-- READY SECTION -->
-  <section class="ready-section">
-    <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
-    <br/>
-    <a href="index.html" class="back-btn">← Back to Homepage</a>
+  <!-- READY IMAGE BLOCK (your image + button in-image) -->
+  <section class="ready">
+    <div class="ready-hero">
+      <img class="ready-img" src="https://imgur.com/pgBZqHw.png" alt="Ready to review a contract now?" />
+      <a class="ready-cta" href="index.html">Back to Homepage</a>
+    </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- (Optional) FAQ block kept exactly styled if you plan to add items later -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is SignSense legally binding?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (exact from your Contact page) -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
@@ -281,5 +361,56 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Topbar hide/show on scroll
+    (function(){
+      const bar=document.getElementById("topbarWrap");
+      let lastY=window.scrollY, ticking=false;
+      function onScroll(){
+        const y=window.scrollY;
+        if(y>lastY && y>80) bar.classList.add("hide");
+        else bar.classList.remove("hide");
+        lastY=y<=0?0:y; ticking=false;
+      }
+      window.addEventListener("scroll", ()=>{
+        if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }
+      }, {passive:true});
+    })();
+
+    // Page fade-in sequencing (content first, hero bg last)
+    window.addEventListener("load", ()=>{
+      // mark page-in for hero/title/sub and ready block
+      document.body.classList.add("page-in");
+
+      // stagger policy content
+      const items=[...document.querySelectorAll(".policy .reveal")];
+      items.forEach((el,i)=>{
+        el.style.transitionDelay = (0.10 + i*0.05) + "s";
+        el.classList.add("reveal"); // already has class; ensures style applied
+        requestAnimationFrame(()=> el.classList.add("page-kick"));
+        // toggle visible state
+        setTimeout(()=> el.classList.add("reveal-on"), 0);
+      });
+      // actually reveal by adding .reveal-on (we use .page-in on body to show others)
+      setTimeout(()=> items.forEach(el=>el.classList.add("reveal-on")), 60);
+    });
+
+    // Make reveal-on map to .reveal styles
+    // (we use same selector by adding .reveal-on to trigger opacity 1/transform none)
+    const style = document.createElement('style');
+    style.textContent = `.reveal.reveal-on{opacity:1!important;transform:none!important}`;
+    document.head.appendChild(style);
+
+    // FAQ toggle
+    document.querySelectorAll(".faq-item").forEach(item=>{
+      item.addEventListener("click",()=>{
+        if(!item.classList.contains("open")){
+          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
+        }
+        item.classList.toggle("open");
+      });
+    });
+  </script>
 </body>
 </html>
