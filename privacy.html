@@ -8,31 +8,26 @@
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
 
   <style>
     :root{
       --bg:#01040b;
       --text:#fff9f9;
-      --muted:#9f9f9d;
+      --muted:#d8cccc;
       --bar:#04040e;
       --bar-border:#3f3f3f;
-      --badge-bg:#1f1a34;
-      --badge-text:#c8acff;
-      --panel:#0b0814;
-      --particle:#682fd8;
     }
 
-    *{box-sizing:border-box;}
+    *{box-sizing:border-box}
     body{
       margin:0;
       font-family:"Inter",sans-serif;
       background:var(--bg);
       color:var(--text);
-      overflow-x:hidden;
+      font-weight:400;
     }
 
-    /* === TOP BAR === */
+    /* ===== TOP BAR ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -52,114 +47,63 @@
     .topbar-left{display:flex; align-items:center; gap:10px;}
     .topbar-logo{height:38px; border-radius:8px;}
     .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
-    .topbar-nav a{color:var(--muted); text-decoration:none; font-size:20px; margin-left:24px;}
-    .topbar-nav a:hover{opacity:.85;}
+    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
+    .topbar-nav a:hover{opacity:.85}
+    .pad-top{height:120px}
 
-    .pad-top{height:120px;}
+    /* ===== CONTENT ===== */
+    .content{max-width:960px; margin:0 auto; padding:0 24px 100px;}
+    h1{font-size:42px; font-weight:400; color:var(--text); margin-bottom:30px; text-align:center;}
+    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
+    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
+    ul{padding-left:20px;}
 
-    /* === HERO === */
-    .hero-frame{
-      position:relative;
-      height:44vh;
-      min-height:360px;
-      width:100%;
-      overflow:hidden;
-      margin-top:-120px;
-    }
-    .hero-bg{
-      position:absolute; inset:0;
-      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
-    }
-    .hero-bg::after{
-      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
-      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
-    }
-    /* particles */
-    .particle-container{
-      position:absolute; inset:0; z-index:0; pointer-events:none;
-    }
-    .particle{
-      position:absolute;
-      width:5px; height:5px;
-      background:var(--particle);
-      border-radius:50%;
-      box-shadow:0 0 8px var(--particle);
-      animation:floatUp linear infinite;
-    }
-    @keyframes floatUp{
-      from{transform:translateY(0); opacity:1;}
-      to{transform:translateY(-100vh); opacity:0;}
+    .intro-title{
+      font-size:32px;
+      color:var(--text);
+      font-weight:400;
+      margin-bottom:20px;
+      text-align:left;
     }
 
-    .hero-content{
-      position:relative; z-index:1;
-      max-width:800px; margin:0 auto; text-align:center;
-      padding-top:calc(120px + 66px);
+    /* ===== READY SECTION ===== */
+    .ready-section{max-width:960px; margin:80px auto; padding:0 24px; text-align:center;}
+    .ready-section img{width:100%; max-width:680px; border-radius:16px; box-shadow:0 0 30px rgba(0,0,0,.5);}
+    .back-btn{
+      margin-top:28px;
+      display:inline-block;
+      padding:14px 26px;
+      background:#adff00;
+      color:#000;
+      font-size:18px;
+      border:none;
+      border-radius:12px;
+      text-decoration:none;
+      font-weight:400;
+      box-shadow:0 0 14px rgba(173,255,0,.65);
+      transition:box-shadow .25s ease;
     }
-    .hero-title{font-size:56px; font-weight:400; margin:18px 0 10px;}
-    .hero-sub{font-size:20px; font-weight:400; color:var(--muted);}
+    .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
 
-    /* === PRIVACY BODY === */
-    .privacy-wrap{
-      max-width:960px;
-      margin:80px auto;
-      padding:0 24px 120px;
-    }
-    .privacy-wrap h1{
-      font-size:46px; font-weight:400; margin-bottom:12px; color:var(--text);
-      text-align:center;
-    }
-    .privacy-wrap .updated{
-      text-align:center; color:var(--muted); margin-bottom:40px; font-size:17px;
-    }
-    .privacy-wrap h2{
-      font-size:24px; font-weight:400; margin:30px 0 12px; color:var(--text);
-    }
-    .privacy-wrap p, .privacy-wrap li{
-      font-size:18px; line-height:1.7; color:var(--muted);
-    }
-    ul{margin:0 0 16px 22px; padding:0;}
-
-    /* === CTA BLOCK === */
-    .cta-block{
-      max-width:1100px;
-      margin:0 auto 80px;
-      background:#0d0d0d;
-      border-radius:22px;
-      padding:44px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:40px;
-    }
-    .cta-block h3{font-size:34px; color:var(--text); font-weight:400; margin:0 0 12px;}
-    .cta-block p{font-size:19px; color:var(--muted); margin:0 0 20px;}
-    .cta-block button{
-      background:#adff00; color:#000; border:none;
-      padding:14px 28px; border-radius:14px;
-      font-size:18px; cursor:pointer; font-weight:500;
-      box-shadow:0 0 16px rgba(173,255,0,.7);
-    }
-    .cta-block button:hover{box-shadow:0 0 26px rgba(173,255,0,.95);}
-    .cta-icon{width:110px;}
-
-    /* === FOOTER === */
-    .site-footer-wrap{max-width:1400px; margin:80px auto 0; padding:0 24px 35px;}
+    /* ===== FOOTER (from contact page) ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
     .site-footer{
+      background:transparent; border:none; box-shadow:none; padding:0;
       display:grid;
       grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
-      column-gap:88px;
-      align-items:start;
-      padding-left:40px;
+      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
     }
-    .footer-left{display:flex; gap:12px;}
-    .footer-logo{width:32px; height:32px;}
-    .footer-brand{font-size:26px; color:#e1e1e1; text-decoration:none;}
-    .footer-tagline{color:#c5c5c5; margin-top:12px; font-size:16px;}
+    .footer-left{display:flex; align-items:flex-start; gap:12px;}
+    .footer-logo{width:32px; height:32px; object-fit:contain;}
+    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+    .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
     .footer-col{display:flex; flex-direction:column; gap:10px;}
-    .footer-title{font-size:20px; color:#fff;}
-    .footer-links a{font-size:18px; color:#c5c5c5; text-decoration:none;}
+    .footer-title{color:#fff; font-size:22px; font-weight:400;}
+    .footer-links{display:flex; flex-direction:column; gap:8px;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
     .footer-bottom{margin-top:24px;}
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
-    .footer-bottom-links{display:flex; gap:28px; font-size:16px; color:#c5c5c5;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
     .footer-copy{margin-left:auto;}
   </style>
 </head>
@@ -168,7 +112,7 @@
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar">
       <div class="topbar-left">
-        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo"/></a>
+        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
         <a href="index.html" class="topbar-brand">SignSense</a>
       </div>
       <nav class="topbar-nav">
@@ -181,82 +125,81 @@
 
   <div class="pad-top"></div>
 
-  <!-- HERO -->
-  <section class="hero-frame">
-    <div class="hero-bg">
-      <div class="particle-container" id="particles"></div>
-    </div>
-    <div class="hero-content" data-aos="fade-up">
-      <h1 class="hero-title">Privacy Policy</h1>
-      <div class="hero-sub">Last updated: April 2025</div>
-    </div>
-  </section>
-
-  <!-- BODY -->
-  <div class="privacy-wrap">
-    <p class="updated">Intro</p>
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="intro-title">Intro</div>
     <p>Welcome to SignSense (“we”, “our”, or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our website and AI-powered contract review services.</p>
 
     <h2>1. Information We Collect</h2>
     <p>We only collect the minimal information necessary to provide our services:</p>
     <ul>
-      <li><b>Uploaded Documents:</b> When you upload a contract or document, the content is temporarily processed by our AI systems to generate an analysis. We do not permanently store your documents after processing unless explicitly stated.</li>
-      <li><b>Usage Data:</b> We may collect non-identifiable usage information (e.g., page visits, clicks, device type) to improve our services.</li>
-      <li><b>Email Address (Optional):</b> If you request a downloadable report, we may collect your email. This is optional and never shared or sold.</li>
+      <li><b>Uploaded Documents:</b> When you upload a contract or document, the content is temporarily processed by our AI systems to generate an analysis. We do not permanently store your documents after processing unless explicitly stated (e.g., if you request report storage).</li>
+      <li><b>Usage Data:</b> We may collect non-identifiable usage information (e.g., page visits, clicks, or device type) to improve our website and services.</li>
+      <li><b>Email Address (Optional):</b> If you request a downloadable report or sign up for updates, we may collect your email. Providing your email is optional and will never be shared or sold.</li>
     </ul>
 
     <h2>2. How We Use Your Information</h2>
+    <p>We use your information solely to:</p>
     <ul>
       <li>Process and analyze uploaded contracts with AI.</li>
       <li>Deliver requested results or reports back to you.</li>
-      <li>Improve performance, reliability, and security of services.</li>
-      <li>Communicate only if you provide your email for reports or updates.</li>
+      <li>Improve the performance, reliability, and security of our services.</li>
+      <li>Communicate with you only if you provide your email for reports or updates.</li>
     </ul>
+    <p>We do not sell, rent, or share your data with third parties for advertising or marketing.</p>
 
     <h2>3. Data Processing & Third Parties</h2>
-    <p>Our AI contract analysis may be powered by OpenAI or similar providers. Documents may be transmitted to these services strictly for analysis purposes. We ensure compliance with GDPR and CCPA where applicable.</p>
+    <p>Our AI contract analysis may be powered by OpenAI or similar trusted providers. Documents may be transmitted to these services strictly for analysis purposes. All third-party providers are required to follow strong privacy and security practices and comply with data protection laws (such as GDPR and, where applicable, CCPA).</p>
 
     <h2>4. Data Retention</h2>
     <ul>
-      <li>Uploaded contracts are not stored after analysis, except for temporary caching.</li>
-      <li>Emails (if provided) are stored securely and used only to deliver requested reports.</li>
+      <li>Uploaded contracts are not stored after analysis, except for temporary caching required to process your request.</li>
+      <li>Emails (if provided) are stored securely and used only to deliver requested reports or updates.</li>
     </ul>
 
     <h2>5. Cookies and Analytics</h2>
-    <p>We may use cookies or analytics tools (e.g., Google Analytics, Plausible) to improve site performance. These do not collect contract content.</p>
+    <p>We may use cookies or privacy-focused analytics tools (e.g., Google Analytics, Plausible) to monitor performance and improve our website. These tools do not collect personal or contract data.</p>
 
     <h2>6. Your Rights</h2>
-    <p>You may request access, correction, or deletion of your data, or opt out of communications. Contact us at: [Insert Email]</p>
+    <p>Depending on your location, you may have the right to:</p>
+    <ul>
+      <li>Request access to the personal data we hold about you.</li>
+      <li>Request correction or deletion of your data.</li>
+      <li>Opt out of any optional communications.</li>
+    </ul>
+    <p>To exercise your rights, contact us at: [Insert Email].</p>
 
     <h2>7. Data Security</h2>
-    <p>We implement safeguards for data during transmission and processing. However, no method is 100% secure; avoid uploading highly sensitive documents.</p>
+    <p>We take steps to protect your information during transmission and processing, including encryption and secure connections. However, no system is 100% secure. We recommend avoiding uploads of highly sensitive or classified documents.</p>
 
     <h2>8. Legal Basis (GDPR Notice)</h2>
-    <p>If in the EEA, we process data under GDPR Articles 6(1)(a)-(c).</p>
+    <p>If you are located in the European Economic Area (EEA), we process your personal data under the following legal bases:</p>
+    <ul>
+      <li>To provide and operate our services (Article 6(1)(b) GDPR).</li>
+      <li>With your consent, where applicable (Article 6(1)(a) GDPR).</li>
+      <li>To comply with legal obligations (Article 6(1)(c) GDPR).</li>
+    </ul>
 
     <h2>9. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy; the latest version will always be posted here.</p>
+    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.</p>
 
     <h2>10. Contact Us</h2>
-    <p>If you have questions, contact us: Email: [Insert Contact Email]</p>
+    <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:<br/>Email: [Insert Contact Email]</p>
   </div>
 
-  <!-- CTA BLOCK -->
-  <div class="cta-block" data-aos="fade-up">
-    <div>
-      <h3>Ready to review a contract now?</h3>
-      <p>Our analysis are fully understandable even if you have never studied law.</p>
-      <button onclick="location.href='index.html'">Back to homepage ↗</button>
-    </div>
-    <img class="cta-icon" src="https://imgur.com/pgBZqHw.png" alt="Contract Icon"/>
-  </div>
+  <!-- READY SECTION -->
+  <section class="ready-section">
+    <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
+    <br/>
+    <a href="index.html" class="back-btn">← Back to Homepage</a>
+  </section>
 
   <!-- FOOTER -->
   <div class="site-footer-wrap">
     <footer class="site-footer">
       <div class="footer-left">
-        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo"/></a>
-        <div>
+        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
+        <div class="footer-left-inner">
           <a href="index.html" class="footer-brand">SignSense</a>
           <div class="footer-tagline">
             <div>No confusion, no legal jargon.</div>
@@ -291,33 +234,10 @@
       <div class="footer-divider"></div>
       <div class="footer-bottom-links">
         <span>Privacy Policy</span>
-        <span>Terms & Conditions</span>
+        <span>Terms &amp; Conditions</span>
         <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
       </div>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>
-    AOS.init({ once:true });
-
-    // Topbar hide/show on scroll
-    const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
-    window.addEventListener("scroll",()=>{const y=window.scrollY;if(y>lastY&&y>80)bar.classList.add("hide");else bar.classList.remove("hide");lastY=y<=0?0:y;},{passive:true});
-
-    // particles
-    const container=document.getElementById("particles");
-    const num=40; // adjust number
-    for(let i=0;i<num;i++){
-      const p=document.createElement("div");
-      p.className="particle";
-      const size=5;
-      p.style.width=size+"px";p.style.height=size+"px";
-      p.style.left=Math.random()*100+"%";
-      p.style.top=Math.random()*100+"%";
-      p.style.animationDuration=(15+Math.random()*15)+"s";
-      container.appendChild(p);
-    }
-  </script>
 </body>
 </html>
