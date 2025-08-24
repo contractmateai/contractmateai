@@ -13,7 +13,7 @@
     :root{
       --bg:#01040b;
       --text:#fff9f9;
-      --muted:#d8cccc;
+      --muted:#9f9f9d;
       --bar:#04040e;
       --bar-border:#3f3f3f;
     }
@@ -51,13 +51,42 @@
     .topbar-nav a:hover{opacity:.85}
     .pad-top{height:120px}
 
+    /* ===== HERO HEADER ===== */
+    .hero-frame{
+      position:relative;
+      height:42vh;
+      min-height:340px;
+      width:100%;
+      overflow:hidden;
+      margin-top:-120px;
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+    }
+    .hero-bg::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
+    }
+    .hero-content{
+      position:relative; z-index:2;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
+      padding-top:calc(120px + 66px);
+    }
+    .hero-title{
+      font-size:56px;
+      line-height:1.15;
+      color:#fff9f9;
+      font-weight:400;
+      margin:0;
+      text-shadow:0 4px 22px rgba(0,0,0,.55);
+    }
+
+    .after-hero-spacer{height:72px}
+
     /* ===== CONTENT ===== */
     .content{max-width:960px; margin:0 auto; padding:0 24px 100px;}
-    h1{font-size:42px; font-weight:400; color:var(--text); margin-bottom:30px; text-align:center;}
-    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
-    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
-    ul{padding-left:20px;}
-
     .intro-title{
       font-size:32px;
       color:var(--text);
@@ -65,6 +94,9 @@
       margin-bottom:20px;
       text-align:left;
     }
+    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
+    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
+    ul{padding-left:20px;}
 
     /* ===== READY SECTION ===== */
     .ready-section{max-width:960px; margin:80px auto; padding:0 24px; text-align:center;}
@@ -85,7 +117,7 @@
     }
     .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
 
-    /* ===== FOOTER (from contact page) ===== */
+    /* ===== FOOTER ===== */
     .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
@@ -124,6 +156,16 @@
   </div>
 
   <div class="pad-top"></div>
+
+  <!-- HERO HEADER -->
+  <section class="hero-frame">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Privacy Policy</h1>
+    </div>
+  </section>
+
+  <div class="after-hero-spacer"></div>
 
   <!-- CONTENT -->
   <div class="content">
