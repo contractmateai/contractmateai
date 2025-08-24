@@ -1,1 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense — Terms & Conditions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#01040b;
+      --text:#fff9f9;
+      --muted:#9f9f9d;
+      --bar:#04040e;
+      --bar-border:#3f3f3f;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      font-weight:400;
+    }
+
+    /* ===== TOP BAR ===== */
+    .topbar-wrap{
+      position:fixed; top:18px; left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; pointer-events:none;
+      transition:transform .28s ease, opacity .25s ease;
+    }
+    .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
+    .topbar{
+      pointer-events:auto;
+      background:var(--bar);
+      border:1px solid var(--bar-border);
+      border-radius:16px;
+      min-height:72px; padding:12px 18px;
+      width:min(1120px, calc(100% - 60px));
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:0 8px 30px rgba(0,0,0,.28);
+    }
+    .topbar-left{display:flex; align-items:center; gap:10px;}
+    .topbar-logo{height:38px; border-radius:8px;}
+    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
+    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
+    .topbar-nav a:hover{opacity:.85}
+    .pad-top{height:120px}
+
+    /* ===== HERO HEADER ===== */
+    .hero-frame{
+      position:relative;
+      height:42vh;
+      min-height:340px;
+      width:100%;
+      overflow:hidden;
+      margin-top:-120px;
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      opacity:0;
+    }
+    .hero-bg::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
+    }
+    .hero-content{
+      position:relative; z-index:2;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
+      padding-top:calc(120px + 66px);
+    }
+    .hero-title{
+      font-size:56px;
+      line-height:1.15;
+      color:#fff9f9;
+      font-weight:400;
+      margin:0 0 6px 0;
+      text-shadow:0 4px 22px rgba(0,0,0,.55);
+    }
+    .hero-sub{
+      color:var(--muted);
+      font-size:16px;
+      font-weight:400;
+    }
+
+    .after-hero-spacer{height:0px}
+
+    /* ===== CONTENT ===== */
+    .content{max-width:960px; margin:0 auto; padding:0 24px 100px;}
+    .intro-title{
+      font-size:32px;
+      color:var(--text);
+      font-weight:400;
+      margin-bottom:20px;
+      text-align:left;
+    }
+    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
+    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
+    ul{padding-left:20px;}
+
+    /* ===== READY SECTION ===== */
+    .ready-section{
+      max-width:960px; margin:10px auto; padding:0 24px;
+      display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap;
+      text-align:left;
+    }
+    .ready-section img{
+      width:100%; max-width:520px;
+      border-radius:16px;
+      box-shadow:0 0 30px rgba(0,0,0,.5);
+    }
+    .back-btn{
+      display:inline-block;
+      padding:14px 26px;
+      background:#aafe2a;
+      color:#000;
+      font-size:18px;
+      border:none;
+      border-radius:22px;
+      text-decoration:none;
+      font-weight:400;
+      box-shadow:0 0 14px rgba(170,254,42,.65);
+      transition:box-shadow .25s ease;
+    }
+    .back-btn:hover{box-shadow:0 0 24px rgba(170,254,42,.9);}
+
+    /* ===== FOOTER ===== */
+    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
+    .site-footer{
+      background:transparent; border:none; box-shadow:none; padding:0;
+      display:grid;
+      grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
+      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
+    }
+    .footer-left{display:flex; align-items:flex-start; gap:12px;}
+    .footer-logo{width:32px; height:32px; object-fit:contain;}
+    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+    .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
+    .footer-col{display:flex; flex-direction:column; gap:10px;}
+    .footer-title{color:#fff; font-size:22px; font-weight:400;}
+    .footer-links{display:flex; flex-direction:column; gap:8px;}
+    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
+    .footer-bottom{margin-top:24px;}
+    .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
+    .footer-copy{margin-left:auto;}
+
+    /* ===== FADE-IN ===== */
+    .reveal{opacity:0; transform:translateY(10px); will-change:opacity,transform;}
+    .reveal.show{animation:fadeUp .7s ease forwards;}
+    @keyframes fadeUp{to{opacity:1; transform:none}}
+    .hero-bg.show{animation:fadeIn .9s ease .25s forwards}
+    @keyframes fadeIn{to{opacity:1}}
+  </style>
+</head>
+<body>
+  <!-- TOP BAR -->
+  <div class="topbar-wrap" id="topbarWrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
+        <a href="index.html" class="topbar-brand">SignSense</a>
+      </div>
+      <nav class="topbar-nav">
+        <a href="index.html#how-it-works">See How It Works</a>
+        <a href="index.html#features">Features</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="pad-top"></div>
+
+  <!-- HERO -->
+  <section class="hero-frame">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content" data-reveal>
+      <h1 class="hero-title">Terms & Conditions</h1>
+      <div class="hero-sub">Last Updated: 24 August 2025</div>
+    </div>
+  </section>
+
+  <div class="after-hero-spacer"></div>
+
+  <!-- CONTENT -->
+  <div class="content" data-reveal>
+    <div class="intro-title">Intro</div>
+    <p>Welcome to SignSense. By accessing or using our website and services, you agree to these Terms & Conditions. Please read them carefully.</p>
+
+    <h2>1. Acceptance of Terms</h2>
+    <p>By using SignSense, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions, as well as our Privacy Policy. If you do not agree, you must not use our services.</p>
+
+    <h2>2. Our Services</h2>
+    <p>SignSense provides AI-powered contract review tools that analyze contracts and deliver simplified insights:</p>
+    <ul>
+      <li>The service is for informational purposes only and does not constitute legal advice.</li>
+      <li>Results may assist your understanding but should not replace professional legal consultation.</li>
+    </ul>
+
+    <h2>3. User Responsibilities</h2>
+    <p>You agree to:</p>
+    <ul>
+      <li>Upload only documents you have the legal right to use and share.</li>
+      <li>Not misuse the service for unlawful, harmful, or fraudulent purposes.</li>
+      <li>Ensure the accuracy of any information you provide.</li>
+    </ul>
+
+    <h2>4. No Legal Advice</h2>
+    <p>SignSense is not a law firm. The information provided is not legally binding and should not be considered a substitute for professional legal advice.</p>
+
+    <h2>5. Data Handling</h2>
+    <p>Uploaded contracts are processed securely and not permanently stored unless explicitly stated. Optional email addresses may be collected only for delivering reports or updates.</p>
+
+    <h2>6. Intellectual Property</h2>
+    <p>All content on the SignSense website—including text, branding, logos, and design—is owned by or licensed to us. You may not copy, reproduce, or distribute it without prior consent.</p>
+
+    <h2>7. Limitation of Liability</h2>
+    <p>To the fullest extent permitted by law:</p>
+    <ul>
+      <li>SignSense is not liable for damages resulting from reliance on the service.</li>
+      <li>Use of the service is at your own risk.</li>
+    </ul>
+
+    <h2>8. Availability of Service</h2>
+    <p>We strive to keep SignSense available and reliable, but we do not guarantee uninterrupted access. We may modify or suspend the service at any time.</p>
+
+    <h2>9. Changes to These Terms</h2>
+    <p>We may update these Terms & Conditions periodically. Any changes will take effect once posted on this page. Continued use means you accept the updated terms.</p>
+
+    <h2>10. Governing Law</h2>
+    <p>These Terms & Conditions are governed by the laws of [Insert Country]. Disputes will be resolved in the courts of that jurisdiction.</p>
+
+    <h2>11. Contact Us</h2>
+    <p>If you have questions about these Terms & Conditions, please contact us:<br/>Email: [Insert Contact Email]</p>
+  </div>
+
+  <!-- READY SECTION -->
+  <section class="ready-section" data-reveal>
+    <div class="ready-img">
+      <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
+      <a href="index.html" class="back-btn">Back to Homepage</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="site-footer-wrap" data-reveal>
+    <footer class="site-footer">
+      <div class="footer-left">
+        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
+        <div class="footer-left-inner">
+          <a href="index.html" class="footer-brand">SignSense</a>
+          <div class="footer-tagline">
+            <div>No confusion, no legal jargon.</div>
+            <div>For informational use only. Not legal advice.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Quick Menu</div>
+        <nav class="footer-links">
+          <a href="index.html#how-it-works">How it Works</a>
+          <a href="index.html#review">Leave Review</a>
+        </nav>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Information</div>
+        <nav class="footer-links">
+          <a href="contact.html">Contact</a>
+          <a href="index.html#features">Features</a>
+        </nav>
+      </div>
+      <div class="footer-col">
+        <div class="footer-title">Socials</div>
+        <nav class="footer-links">
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">X</a>
+        </nav>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-links">
+        <span>Privacy Policy</span>
+        <span>Terms &amp; Conditions</span>
+        <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Topbar hide/show
+    (function(){
+      const bar=document.getElementById("topbarWrap");
+      let lastY=window.scrollY, ticking=false;
+      function onScroll(){
+        const y=window.scrollY;
+        if(y>lastY && y>80) bar.classList.add("hide");
+        else bar.classList.remove("hide");
+        lastY=y<=0?0:y; ticking=false;
+      }
+      window.addEventListener("scroll", ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true;} }, {passive:true});
+    })();
+
+    // Fade-in on load/scroll
+    (function(){
+      const toReveal = Array.from(document.querySelectorAll("[data-reveal]"));
+      toReveal.forEach(el => el.classList.add("reveal"));
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add("show");
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold:0.15});
+      toReveal.forEach(el => io.observe(el));
+      window.addEventListener("load", ()=>{
+        toReveal.forEach(el=>{
+          const r = el.getBoundingClientRect();
+          if(r.top < window.innerHeight*0.85) el.classList.add("show");
+        });
+        const bg=document.getElementById("heroBg");
+        if(bg){ bg.classList.add("show"); }
+      });
+    })();
+  </script>
+</body>
+</html>
 
