@@ -241,12 +241,52 @@
   </div>
 
   <!-- READY SECTION -->
-  <section class="ready-section" data-reveal>
-    <div class="ready-img">
-      <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
-      <a href="index.html" class="back-btn">Back to Homepage</a>
-    </div>
-  </section>
+<section class="tc-ready" data-reveal>
+  <div class="tc-ready-img">
+    <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
+    <a href="index.html" class="tc-back-btn">Back to Homepage</a>
+  </div>
+</section>
+
+<style>
+  .tc-ready{
+    max-width:960px;
+    margin:50px auto;
+    padding:0 24px;
+    text-align:center;
+  }
+  .tc-ready-img{
+    position:relative;
+    display:inline-block;
+  }
+  .tc-ready-img img{
+    width:100%;
+    max-width:720px;   /* same size as privacy page */
+    border-radius:16px;
+    box-shadow:0 0 30px rgba(0,0,0,.5);
+    display:block;
+    margin:0 auto;     /* centered */
+  }
+  .tc-back-btn{
+    position:absolute;
+    bottom:24px; left:40px; /* inside the image */
+    display:inline-block;
+    padding:14px 30px;
+    background:#aafe2a;
+    color:#000;
+    font-size:18px;
+    border:none;
+    border-radius:22px;
+    text-decoration:none;
+    font-weight:400;
+    box-shadow:0 0 14px rgba(170,254,42,.65);
+    transition:box-shadow .25s ease;
+  }
+  .tc-back-btn:hover{
+    box-shadow:0 0 24px rgba(170,254,42,.9);
+  }
+</style>
+
 
   <!-- FOOTER -->
   <div class="site-footer-wrap" data-reveal>
