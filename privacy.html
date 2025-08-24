@@ -63,6 +63,8 @@
     .hero-bg{
       position:absolute; inset:0;
       background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+      /* fade late */
+      opacity:0;
     }
     .hero-bg::after{
       content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
@@ -151,6 +153,16 @@
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
     .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
     .footer-copy{margin-left:auto;}
+
+    /* ===== FADE-IN ANIMATIONS (added) ===== */
+    .reveal{opacity:0; transform:translateY(10px); will-change:opacity,transform;}
+    .reveal.show{animation:fadeUp .7s ease forwards;}
+
+    @keyframes fadeUp{to{opacity:1; transform:none}}
+    @keyframes fadeIn{to{opacity:1}}
+
+    /* hero bg fades in last slightly after other elements */
+    .hero-bg.show{animation:fadeIn .9s ease .25s forwards}
   </style>
 </head>
 <body>
@@ -173,8 +185,8 @@
 
   <!-- HERO HEADER -->
   <section class="hero-frame">
-    <div class="hero-bg"></div>
-    <div class="hero-content">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content" data-reveal>
       <h1 class="hero-title">Privacy Policy</h1>
       <div class="hero-sub">Last Updated: 24 August 2025</div>
     </div>
@@ -183,7 +195,7 @@
   <div class="after-hero-spacer"></div>
 
   <!-- CONTENT -->
-  <div class="content">
+  <div class="content" data-reveal>
     <div class="intro-title">Intro</div>
     <p>Welcome to SignSense (“we”, “our”, or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our website and AI-powered contract review services.</p>
 
@@ -244,50 +256,49 @@
     <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:<br/>Email: [Insert Contact Email]</p>
   </div>
 
-<!-- READY SECTION -->
-<section class="ready-section">
-  <div class="ready-wrap">
-    <div class="ready-img">
-      <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
-      <a href="index.html" class="back-btn">Back to Homepage</a>
+  <!-- READY SECTION -->
+  <section class="ready-section" data-reveal>
+    <div class="ready-wrap">
+      <div class="ready-img">
+        <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
+        <a href="index.html" class="back-btn">Back to Homepage</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<style>
-  .ready-img{
-    position:relative; display:inline-block;
-  }
-  .ready-img img{
-    width:100%; max-width:720px;
-    border-radius:16px;
-    box-shadow:0 0 30px rgba(0,0,0,.5);
-    display:block;
-    margin:0 auto;
-  }
-  .ready-img .back-btn{
-    position:absolute;
-    bottom:24px; left:40px; /* aligned to left side */
-    display:inline-block;
-    padding:14px 30px;
-    background:#aafe2a; /* updated color */
-    color:#000;
-    font-size:18px;
-    border:none;
-    border-radius:22px; /* rounded corners */
-    text-decoration:none;
-    font-weight:400;
-    box-shadow:0 0 14px rgba(170,254,42,.65);
-    transition:box-shadow .25s ease;
-  }
-  .ready-img .back-btn:hover{
-    box-shadow:0 0 24px rgba(170,254,42,.9);
-  }
-</style>
-
+  <style>
+    .ready-img{
+      position:relative; display:inline-block;
+    }
+    .ready-img img{
+      width:100%; max-width:720px;
+      border-radius:16px;
+      box-shadow:0 0 30px rgba(0,0,0,.5);
+      display:block;
+      margin:0 auto;
+    }
+    .ready-img .back-btn{
+      position:absolute;
+      bottom:24px; left:40px; /* aligned to left side */
+      display:inline-block;
+      padding:14px 30px;
+      background:#aafe2a; /* updated color */
+      color:#000;
+      font-size:18px;
+      border:none;
+      border-radius:22px; /* rounded corners */
+      text-decoration:none;
+      font-weight:400;
+      box-shadow:0 0 14px rgba(170,254,42,.65);
+      transition:box-shadow .25s ease;
+    }
+    .ready-img .back-btn:hover{
+      box-shadow:0 0 24px rgba(170,254,42,.9);
+    }
+  </style>
 
   <!-- FOOTER -->
-  <div class="site-footer-wrap">
+  <div class="site-footer-wrap" data-reveal>
     <footer class="site-footer">
       <div class="footer-left">
         <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
@@ -346,6 +357,36 @@
       window.addEventListener("scroll", ()=>{
         if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }
       }, {passive:true});
+    })();
+
+    // Fade-in on load + as you scroll (minimal, non-intrusive)
+    (function(){
+      const toReveal = Array.from(document.querySelectorAll("[data-reveal]"));
+      // add base class
+      toReveal.forEach(el => el.classList.add("reveal"));
+
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add("show");
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold:0.15});
+
+      toReveal.forEach(el => io.observe(el));
+
+      // show hero content immediately after load for nice sequence
+      window.addEventListener("load", ()=>{
+        // If above-the-fold elements are already visible, ensure they show
+        toReveal.forEach(el=>{
+          const r = el.getBoundingClientRect();
+          if(r.top < window.innerHeight*0.85) el.classList.add("show");
+        });
+        // fade hero bg last
+        const bg=document.getElementById("heroBg");
+        if(bg){ bg.classList.add("show"); }
+      });
     })();
   </script>
 </body>
