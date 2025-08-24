@@ -244,12 +244,48 @@
     <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:<br/>Email: [Insert Contact Email]</p>
   </div>
 
-  <!-- READY SECTION -->
-  <section class="ready-section">
-    <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
-    <br/>
-    <a href="index.html" class="back-btn">Back to Homepage</a>
-  </section>
+<!-- READY SECTION -->
+<section class="ready-section">
+  <div class="ready-wrap">
+    <div class="ready-img">
+      <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
+      <a href="index.html" class="back-btn">Back to Homepage</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ready-section{
+    max-width:960px; margin:80px auto; padding:0 24px; text-align:center;
+  }
+  .ready-img{
+    position:relative; display:inline-block;
+  }
+  .ready-img img{
+    width:100%; max-width:720px; /* bigger image */
+    border-radius:16px;
+    box-shadow:0 0 30px rgba(0,0,0,.5);
+    display:block;
+    margin:0 auto;
+  }
+  .ready-img .back-btn{
+    position:absolute;
+    bottom:24px; left:50%; transform:translateX(-50%);
+    display:inline-block;
+    padding:14px 30px;
+    background:#adff00;
+    color:#000;
+    font-size:18px;
+    border:none;
+    border-radius:22px; /* more rounded */
+    text-decoration:none;
+    font-weight:400;
+    box-shadow:0 0 14px rgba(173,255,0,.65);
+    transition:box-shadow .25s ease;
+  }
+  .ready-img .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
+</style>
+
 
   <!-- FOOTER -->
   <div class="site-footer-wrap">
