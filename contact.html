@@ -2,29 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SignSense — Privacy Policy</title>
+  <title>SignSense — Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
 
   <style>
     :root{
       --bg:#01040b;
       --text:#fff9f9;
       --muted:#d8cccc;
+
       --bar:#04040e;
       --bar-border:#3f3f3f;
+
+      --badge-text:#c8acff;
+      --badge-bg:#1f1a34;
+
+      --panel:#0b0814;
+      --field:#1f1a28;
+      --faq-block:#191624;
+
+      --particle-color:#b28bff;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       font-family:"Inter",sans-serif;
-      background:var(--bg);
-      color:var(--text);
       font-weight:400;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
     }
 
     /* ===== TOP BAR ===== */
@@ -45,47 +58,128 @@
       box-shadow:0 8px 30px rgba(0,0,0,.28);
     }
     .topbar-left{display:flex; align-items:center; gap:10px;}
-    .topbar-logo{height:38px; border-radius:8px;}
+    .topbar-logo{height:38px; width:auto; border-radius:8px;}
     .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400;}
     .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400;}
     .topbar-nav a:hover{opacity:.85}
+
     .pad-top{height:120px}
 
-    /* ===== CONTENT ===== */
-    .content{max-width:960px; margin:0 auto; padding:0 24px 100px;}
-    h1{font-size:42px; font-weight:400; color:var(--text); margin-bottom:30px; text-align:center;}
-    h2{font-size:32px; font-weight:400; color:var(--text); margin-top:40px; margin-bottom:18px;}
-    p,li{color:var(--muted); font-size:19px; line-height:1.7; margin-bottom:16px; font-weight:400;}
-    ul{padding-left:20px;}
-
-    .intro-title{
-      font-size:32px;
-      color:var(--text);
-      font-weight:400;
-      margin-bottom:20px;
-      text-align:left;
+    /* ===== HERO ===== */
+    .hero-frame{
+      position:relative;
+      height:44vh;
+      min-height:360px;
+      width:100%;
+      overflow:hidden;
+      margin-top:-120px;
+    }
+    .hero-bg{
+      position:absolute; inset:0;
+      background:url("https://imgur.com/tyPrC9z.png") center/cover no-repeat;
+    }
+    .hero-bg::after{
+      content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
+      background:linear-gradient(to bottom, rgba(1,4,11,0) 0%, rgba(1,4,11,.72) 60%, rgba(1,4,11,1) 100%);
     }
 
-    /* ===== READY SECTION ===== */
-    .ready-section{max-width:960px; margin:80px auto; padding:0 24px; text-align:center;}
-    .ready-section img{width:100%; max-width:680px; border-radius:16px; box-shadow:0 0 30px rgba(0,0,0,.5);}
-    .back-btn{
-      margin-top:28px;
-      display:inline-block;
-      padding:14px 26px;
-      background:#adff00;
-      color:#000;
-      font-size:18px;
-      border:none;
-      border-radius:12px;
-      text-decoration:none;
-      font-weight:400;
-      box-shadow:0 0 14px rgba(173,255,0,.65);
+    .hero-particles{
+      position:absolute; inset:0;
+      pointer-events:none;
+      z-index:1;
+    }
+    .particle{
+      position:absolute;
+      background-color:var(--particle-color);
+      border-radius:50%;
+      width:3.5px; height:3.5px;
+      box-shadow:0 0 10px var(--particle-color),
+                 0 0 20px var(--particle-color),
+                 0 0 30px rgba(178,139,255,.85);
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from { transform: translateY(0); opacity:1; }
+      to   { transform: translateY(-420px); opacity:0; }
+    }
+
+    .hero-content{
+      position:relative; z-index:2;
+      max-width:1160px; margin:0 auto; padding:0 24px;
+      text-align:center;
+      padding-top:calc(120px + 66px);
+    }
+    .badge{
+      display:inline-block; padding:8px 14px; border-radius:999px;
+      background:var(--badge-bg); color:var(--badge-text); font-size:15px; font-weight:400;
+    }
+    .hero-title{
+      margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+    }
+    .hero-sub{
+      color:var(--muted); font-size:20px; font-weight:400;
+    }
+
+    .after-hero-spacer{height:72px}
+
+    /* ===== CONTACT ===== */
+    .contact-section{ background:transparent; }
+    .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
+    .contact-card{
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:28px;
+      padding:56px;
+      display:grid; grid-template-columns:1.05fr .95fr; gap:36px;
+      box-shadow:0 26px 60px rgba(0,0,0,.55);
+      min-height:560px;
+    }
+    @media (max-width:980px){ .contact-card{grid-template-columns:1fr} }
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px}
+    @media (max-width:640px){ .row{grid-template-columns:1fr} }
+    .field{
+      width:100%; background:var(--field); color:#f0f0f0;
+      border:none; border-radius:16px;
+      padding:16px; font-size:16px; outline:none; font-family:"Inter",sans-serif; font-weight:400;
+    }
+    .field::placeholder{color:#a0a0a0;}
+    input.field.email{margin-bottom:18px}
+    textarea.field{min-height:220px; resize:none; margin-bottom:20px}
+    .send-btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      width:100%;
+      background:#fefefe; color:#000; border:none; border-radius:16px;
+      padding:16px 24px; font-size:17px; cursor:pointer; font-weight:400;
       transition:box-shadow .25s ease;
     }
-    .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
+    .send-btn:hover{box-shadow:0 0 16px rgba(255,255,255,.9);}
+    .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center; font-weight:400;}
 
-    /* ===== FOOTER (from contact page) ===== */
+    aside.contact-info{padding-left:48px;}
+    .info-title{font-size:28px; margin:0 0 4px; color:#ffffff; font-weight:400;}
+    .info-sub{color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px; font-weight:400;}
+    .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
+    .info-item{display:flex; align-items:center; gap:18px}
+    .info-icon{width:48px; height:48px; display:block}
+    .info-text{display:flex; flex-direction:column; gap:4px}
+    .info-label{color:#ffffff; font-size:18px; font-weight:400;}
+    .info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400;}
+
+    /* ===== FAQ ===== */
+    .faq-section{max-width:1120px; margin:120px auto 0; padding:0 24px 110px;}
+    .faq-title{text-align:center; font-size:42px; margin-bottom:24px; color:#fff9f9; font-weight:400;}
+    .faq-list{display:flex; flex-direction:column; gap:16px}
+    .faq-item{border-radius:16px; background:transparent; overflow:hidden; cursor:pointer;}
+    .faq-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; color:#fff9f9; font-size:22px; font-weight:400;}
+    .faq-arrow{width:22px; height:22px; flex:0 0 22px; transition:transform .25s ease; opacity:.95;}
+    .faq-item.open{ background:var(--faq-block); }
+    .faq-item.open .faq-head{ padding:16px 18px; color:#fff; }
+    .faq-item.open .faq-arrow{ transform:rotate(180deg); }
+    .faq-a{background:var(--faq-block); color:#c3c3c3; font-size:19px; line-height:1.65; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .3s ease, opacity .25s ease, padding .2s ease; border-radius:0 0 16px 16px; font-weight:400;}
+    .faq-item.open .faq-a{padding:12px 18px 18px; max-height:420px; opacity:1;}
+
+    /* ===== FOOTER ===== */
     .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
     .site-footer{
       background:transparent; border:none; box-shadow:none; padding:0;
@@ -108,6 +202,7 @@
   </style>
 </head>
 <body>
+
   <!-- TOP BAR -->
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar">
@@ -125,77 +220,95 @@
 
   <div class="pad-top"></div>
 
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="intro-title">Intro</div>
-    <p>Welcome to SignSense (“we”, “our”, or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our website and AI-powered contract review services.</p>
+  <!-- HERO -->
+  <section class="hero-frame" data-aos="fade-in">
+    <div class="hero-bg">
+      <div class="hero-particles" id="heroParticles"></div>
+    </div>
+    <div class="hero-content" data-aos="fade-up">
+      <div class="badge">We’re Here For You</div>
+      <h1 class="hero-title">We’re Ready To<br/>Listen And Respond</h1>
+      <div class="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
+    </div>
+  </section>
 
-    <h2>1. Information We Collect</h2>
-    <p>We only collect the minimal information necessary to provide our services:</p>
-    <ul>
-      <li><b>Uploaded Documents:</b> When you upload a contract or document, the content is temporarily processed by our AI systems to generate an analysis. We do not permanently store your documents after processing unless explicitly stated (e.g., if you request report storage).</li>
-      <li><b>Usage Data:</b> We may collect non-identifiable usage information (e.g., page visits, clicks, or device type) to improve our website and services.</li>
-      <li><b>Email Address (Optional):</b> If you request a downloadable report or sign up for updates, we may collect your email. Providing your email is optional and will never be shared or sold.</li>
-    </ul>
+  <div class="after-hero-spacer"></div>
 
-    <h2>2. How We Use Your Information</h2>
-    <p>We use your information solely to:</p>
-    <ul>
-      <li>Process and analyze uploaded contracts with AI.</li>
-      <li>Deliver requested results or reports back to you.</li>
-      <li>Improve the performance, reliability, and security of our services.</li>
-      <li>Communicate with you only if you provide your email for reports or updates.</li>
-    </ul>
-    <p>We do not sell, rent, or share your data with third parties for advertising or marketing.</p>
+  <!-- CONTACT -->
+  <section class="contact-section" data-aos="fade-up">
+    <div class="contact-wrap" id="contact">
+      <div class="contact-card">
+        <div>
+          <div class="row">
+            <input class="field" type="text" placeholder="Name" />
+            <input class="field" type="tel" placeholder="Phone" />
+          </div>
+          <input class="field email" type="email" placeholder="Email" />
+          <textarea class="field" placeholder="Message"></textarea>
+          <button class="send-btn" type="button">Send</button>
+          <div class="sla">We will contact you within 24 hours.</div>
+        </div>
+        <aside class="contact-info">
+          <div class="info-title">Contact Information</div>
+          <div class="info-sub">Contact us. Your feedback matters. Let's build a better future together.</div>
+          <div class="info-list">
+            <div class="info-item">
+              <img class="info-icon" src="https://imgur.com/Drq6L0n.png" alt="WhatsApp icon" />
+              <div class="info-text">
+                <div class="info-label">WhatsApp:</div>
+                <div class="info-value"><a href="https://wa.me/355696902900">+355 69 690 2900</a></div>
+              </div>
+            </div>
+            <div class="info-item">
+              <img class="info-icon" src="https://imgur.com/V3ziuzH.png" alt="Email icon" />
+              <div class="info-text">
+                <div class="info-label">Email:</div>
+                <div class="info-value"><a href="mailto:support@signsense.io">support@signsense.io</a></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
 
-    <h2>3. Data Processing & Third Parties</h2>
-    <p>Our AI contract analysis may be powered by OpenAI or similar trusted providers. Documents may be transmitted to these services strictly for analysis purposes. All third-party providers are required to follow strong privacy and security practices and comply with data protection laws (such as GDPR and, where applicable, CCPA).</p>
-
-    <h2>4. Data Retention</h2>
-    <ul>
-      <li>Uploaded contracts are not stored after analysis, except for temporary caching required to process your request.</li>
-      <li>Emails (if provided) are stored securely and used only to deliver requested reports or updates.</li>
-    </ul>
-
-    <h2>5. Cookies and Analytics</h2>
-    <p>We may use cookies or privacy-focused analytics tools (e.g., Google Analytics, Plausible) to monitor performance and improve our website. These tools do not collect personal or contract data.</p>
-
-    <h2>6. Your Rights</h2>
-    <p>Depending on your location, you may have the right to:</p>
-    <ul>
-      <li>Request access to the personal data we hold about you.</li>
-      <li>Request correction or deletion of your data.</li>
-      <li>Opt out of any optional communications.</li>
-    </ul>
-    <p>To exercise your rights, contact us at: [Insert Email].</p>
-
-    <h2>7. Data Security</h2>
-    <p>We take steps to protect your information during transmission and processing, including encryption and secure connections. However, no system is 100% secure. We recommend avoiding uploads of highly sensitive or classified documents.</p>
-
-    <h2>8. Legal Basis (GDPR Notice)</h2>
-    <p>If you are located in the European Economic Area (EEA), we process your personal data under the following legal bases:</p>
-    <ul>
-      <li>To provide and operate our services (Article 6(1)(b) GDPR).</li>
-      <li>With your consent, where applicable (Article 6(1)(a) GDPR).</li>
-      <li>To comply with legal obligations (Article 6(1)(c) GDPR).</li>
-    </ul>
-
-    <h2>9. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.</p>
-
-    <h2>10. Contact Us</h2>
-    <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:<br/>Email: [Insert Contact Email]</p>
-  </div>
-
-  <!-- READY SECTION -->
-  <section class="ready-section">
-    <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
-    <br/>
-    <a href="index.html" class="back-btn">← Back to Homepage</a>
+  <!-- FAQ -->
+  <section class="faq-section" data-aos="fade-up">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What languages do you support?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is SignSense legally binding?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>What types of contracts can I upload?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head">
+          <span>Is my data secure?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+      </div>
+    </div>
   </section>
 
   <!-- FOOTER -->
-  <div class="site-footer-wrap">
+  <div class="site-footer-wrap" data-aos="fade-in">
     <footer class="site-footer">
       <div class="footer-left">
         <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
@@ -239,5 +352,56 @@
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ once:true, duration:800 });
+
+    // Topbar hide/show on scroll
+    const bar=document.getElementById("topbarWrap"); let lastY=window.scrollY;
+    window.addEventListener("scroll",()=>{const y=window.scrollY; if(y>lastY&&y>80)bar.classList.add("hide"); else bar.classList.remove("hide"); lastY=y<=0?0:y;},{passive:true});
+
+    // FAQ toggle
+    document.querySelectorAll(".faq-item").forEach(item=>{
+      item.addEventListener("click",()=>{
+        if(!item.classList.contains("open")){
+          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
+        }
+        item.classList.toggle("open");
+      });
+    });
+
+    // HERO PARTICLES
+ // HERO PARTICLES
+(function(){
+  const container=document.getElementById("heroParticles");
+  if(!container) return;
+  const NUM=35;  // half as many as before
+  const DURATION=16;
+  const H=container.getBoundingClientRect().height||360;
+
+  function sideBiasedPercent(){
+    const r=Math.random();
+    if(r<0.375){ return Math.random()*20; }
+    else if(r<0.75){ return 80 + Math.random()*20; }
+    else { return 20 + Math.random()*60; }
+  }
+
+  for(let i=0;i<NUM;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left = sideBiasedPercent()+"%";
+
+    // NEW: always start just below the hero frame
+    p.style.bottom = -20 + "px";
+
+    p.style.animationDuration = DURATION+"s";
+    // stagger their start so some are already mid-screen at load
+    p.style.animationDelay = (-Math.random()*DURATION)+"s";
+    container.appendChild(p);
+  }
+})();
+
+  </script>
 </body>
 </html>
