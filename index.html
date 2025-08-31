@@ -280,6 +280,7 @@
         transition: transform 0.8s ease;
         transform: rotateX(12deg);
          --app-raise: -20px; /* ⬅️ add this line */
+        overflow: hidden;   /* ⬅️ add this */
       }
 
       .app-preview {
@@ -291,11 +292,12 @@
  top: var(--app-raise); /* ⬅️ was -20px */
       }
       /* === APP PREVIEW GLINT LINE === */
+/* === APP PREVIEW GLINT LINE (fast, full-width sweep) === */
 .glint-line{
   position: absolute;
-  left: 0;
-  top: var(--app-raise);          /* sticks to the image’s top edge */
-  width: 120px;
+  top: var(--app-raise);     /* stays glued to image's top edge */
+  left: -160px;              /* start off-canvas to the left */
+  width: 160px;              /* size of the glow "dot" */
   height: 2px;
   background: linear-gradient(
     90deg,
@@ -303,27 +305,29 @@
     rgba(191,246,17,0.85),
     rgba(191,246,17,0)
   );
-  box-shadow: 0 0 8px rgba(191,246,17,0.4);
+  box-shadow: 0 0 24px rgba(191,246,17,0.55);
   border-radius: 2px;
   pointer-events: none;
   z-index: 2;
-  opacity: 0;
-  animation: glint-sweep 8s linear infinite, glint-fade 8s linear infinite;
+
+  /* SPEED: change 3s to whatever you like (smaller = faster) */
+  animation: glint-sweep 3s linear infinite, glint-fade 3s linear infinite;
 }
 
-/* slide from left to right across the wrapper */
+/* move by container width instead of element width */
 @keyframes glint-sweep {
-  from { transform: translateX(-10%); }
-  to   { transform: translateX(110%); }
+  from { left: -160px; }
+  to   { left: calc(100% + 40px); } /* go past the right edge */
 }
 
-/* glow fades in/out */
+/* fade in/out during the run */
 @keyframes glint-fade {
   0%   { opacity: 0; }
-  5%   { opacity: 1; }
-  70%  { opacity: 1; }
+  6%   { opacity: 1; }
+  82%  { opacity: 1; }
   100% { opacity: 0; }
 }
+
 
       /*@keyframes fadeOut {
         0% {
