@@ -37,45 +37,42 @@
         opacity: 0;
       }
 
-      .topbar {
-        pointer-events: auto;
-        background: #090922; /* CHANGE */
-        border: 1px solid #b4b4b4; /* ADD */
-        border-radius: 16px; /* requested radius */
-        min-height: 72px;
-        padding: 12px 18px;
-        width: min(1120px, calc(100% - 60px)); /* breathing room on sides */
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-      }
+     .topbar {
+  pointer-events: auto;
+  background: var(--bar); /* same as contact page */
+  border: 1px solid var(--bar-border);
+  border-radius: 16px;
+  min-height: 72px;
+  padding: 12px 18px;
+  width: min(1120px, calc(100% - 60px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 30px rgba(0,0,0,.28);
+}
 
-      .topbar-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .topbar-logo {
-        height: 38px;
-        width: auto;
-        border-radius: 8px;
-      }
-      .topbar-brand {
-        font-family: "Shoika", sans-serif;
-        font-size: 28px;
-        color: #fff;
-      }
+.topbar-logo {
+  height: 38px;
+  width: auto;
+  border-radius: 8px;
+}
 
-      .topbar-nav a {
-        text-decoration: none;
-        font-size: 20px;
-        color: #fff;
-        margin-left: 24px;
-      }
-      .topbar-nav a:hover {
-        opacity: 0.8;
-      }
+.topbar-brand {
+  font-size: 28px;
+  color: #fff9f9;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.topbar-nav a {
+  color: #d8cccc;
+  text-decoration: none;
+  font-size: 20px;
+  margin-left: 24px;
+  font-weight: 400;
+}
+.topbar-nav a:hover { opacity:.85 }
+
 
       /* push content down so bar doesn’t overlap hero */
       .hero-wrapper {
@@ -971,19 +968,19 @@
     <div class="topbar-wrap" id="topbarWrap">
       <div class="topbar">
         <div class="topbar-left">
-          <img
-            class="topbar-logo"
-            src="https://imgur.com/NgUKedh.png"
-            alt="SignSense logo"
-          />
+  <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
+  <a href="index.html" class="topbar-brand">SignSense</a>
+</div>
+
 
           <span class="topbar-brand">SignSense</span>
         </div>
-        <nav class="topbar-nav">
-  <a href="#how-it-works">See How It Works</a>
-  <a href="#features">Features</a>
-  <a href="contact.html">Contact Us</a>
+       <nav class="topbar-nav">
+  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
+  <a href="index.html">Home</a>
+  <a href="contact.html">Contact</a>
 </nav>
+
 
       </div>
     </div>
