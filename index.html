@@ -283,21 +283,30 @@
         overflow: hidden;   /* ⬅️ add this */
       }
 
-      .app-preview {
-        width: 100%;
-        border-radius: 24px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
-        display: block;
-         position: relative;
- top: var(--app-raise); /* ⬅️ was -20px */
-      }
-      /* === APP PREVIEW GLINT LINE === */
-/* === APP PREVIEW GLINT LINE (fast, full-width sweep) === */
+     /* App frame holds the image and the glint */
+.app-frame{
+  position: relative;
+  overflow: hidden;                    /* clip the glint & keep corners clean */
+  border-radius: 24px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.6);
+  margin-top: -20px;                   /* replaces your old img top:-20px */
+}
+
+/* Your image: no manual offset (we moved it to the frame) */
+.app-preview{
+  width: 100%;
+  display: block;
+  border-radius: 24px;                 /* safe to keep; also on frame for backup */
+  box-shadow: none;                    /* shadow now lives on the frame */
+  position: static;                    /* remove the old relative/top offset */
+}
+
+/* === APP PREVIEW GLINT (fast full-width sweep) === */
 .glint-line{
   position: absolute;
-  top: var(--app-raise);     /* stays glued to image's top edge */
-  left: -160px;              /* start off-canvas to the left */
-  width: 160px;              /* size of the glow "dot" */
+  top: 0;                              /* glued to the visible top edge */
+  left: -160px;                        /* start off-canvas to the left */
+  width: 160px;
   height: 2px;
   background: linear-gradient(
     90deg,
@@ -310,24 +319,21 @@
   pointer-events: none;
   z-index: 2;
 
-  /* SPEED: change 3s to whatever you like (smaller = faster) */
-  animation: glint-sweep 3s linear infinite, glint-fade 3s linear infinite;
+  /* SPEED: adjust 2.4s (smaller = faster, bigger = slower) */
+  animation: glint-sweep 2.4s linear infinite, glint-fade 2.4s linear infinite;
 }
 
-/* move by container width instead of element width */
-@keyframes glint-sweep {
+@keyframes glint-sweep{
   from { left: -160px; }
-  to   { left: calc(100% + 40px); } /* go past the right edge */
+  to   { left: calc(100% + 60px); }    /* go a bit past the right edge */
 }
 
-/* fade in/out during the run */
-@keyframes glint-fade {
+@keyframes glint-fade{
   0%   { opacity: 0; }
-  6%   { opacity: 1; }
-  82%  { opacity: 1; }
+  8%   { opacity: 1; }
+  85%  { opacity: 1; }
   100% { opacity: 0; }
 }
-
 
       /*@keyframes fadeOut {
         0% {
