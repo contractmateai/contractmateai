@@ -1604,262 +1604,68 @@
       });
     </script>
 
-    <!-- === FOOTER === -->
-    <!-- === FOOTER === -->
-    <!-- === FOOTER (updated) === -->
-    <!-- === FOOTER (FINAL CLEAN) === -->
-    <!-- === FOOTER (clean, aligned) === -->
-    <div class="site-footer-wrap">
-      <footer class="site-footer">
-        <!-- Left: logo + brand + text + button -->
-        <div class="footer-left">
-          <img
-            class="footer-logo"
-            src="https://imgur.com/BcUqgKZ.png"
-            alt="SignSense logo"
-          />
-          <div class="footer-left-inner">
-            <div class="footer-brand">SignSense</div>
-            <div class="footer-tagline">
-              <div>No confusion, no legal jargon.</div>
-              <div>For informational use only. Not legal advice.</div>
-            </div>
-            <a href="#review" class="footer-cta">Review A Contract ↗</a>
-          </div>
-        </div>
-
-        <!-- Right: 3 straight columns (titles aligned with items) -->
-        <div class="footer-col">
-          <div class="footer-title">Quick Menu</div>
-          <nav class="footer-links">
-            <a href="#how-it-works">How it Works</a>
-            <a href="#review">Leave Review</a>
-          </nav>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Information</div>
-          <nav class="footer-links">
-           <a href="contact.html">Contact</a>
-            <a href="#features">Features</a>
-          </nav>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Socials</div>
-          <nav class="footer-links">
-            <a href="#">Instagram</a>
-            <a href="#">YouTube</a>
-            <a href="#">X</a>
-          </nav>
-        </div>
-      </footer>
-
-      <div class="footer-bottom">
-        <div class="footer-divider"></div>
-        <div class="footer-bottom-links">
-         <a href="privacy.html">Privacy Policy</a>
-  <a href="terms.html">Terms &amp; Conditions</a>
-          <span class="footer-copy"
-            >© 2025 SignSense. All rights reserved.</span
-          >
+<!-- FOOTER -->
+<div class="site-footer-wrap" data-aos="fade-in">
+  <footer class="site-footer">
+    <div class="footer-left">
+      <a href="index.html">
+        <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
+      </a>
+      <div class="footer-left-inner">
+        <a href="index.html" class="footer-brand">SignSense</a>
+        <div class="footer-tagline">
+          <div>No confusion, no legal jargon.</div>
+          <div>For informational use only. Not legal advice.</div>
         </div>
       </div>
     </div>
 
-    <style>
-      /* container + smooth end */
-      .site-footer-wrap {
-        max-width: 1400px;
-        margin: 80px auto 0;
-        padding: 0 24px 56px;
-        font-family: "Inter", sans-serif;
-      }
+    <div class="footer-col">
+      <div class="footer-title">Quick Menu</div>
+      <nav class="footer-links">
+        <a href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
+        <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+      </nav>
+    </div>
 
-      /* GRID layout */
-      .site-footer {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        display: grid;
-        grid-template-columns:
-          minmax(460px, 1fr) minmax(220px, max-content) minmax(
-            220px,
-            max-content
-          )
-          minmax(220px, max-content);
-        column-gap: 88px;
-        align-items: start;
-        justify-items: start;
-        padding-left: 40px !important; /* keeps footer balanced */
-      }
+    <div class="footer-col">
+      <div class="footer-title">Information</div>
+      <nav class="footer-links">
+        <a href="contact.html">Contact</a>
+        <a href="index.html#features">Features</a>
+      </nav>
+    </div>
 
-      /* LEFT BLOCK — logo + text + button share the same left rail */
-      :root {
-        --footer-rail: 40px; /* smaller number = move left, bigger = move right */
-        --logo-gap: 12px; /* space between logo and "SignSense" */
-      }
+    <div class="footer-col">
+      <div class="footer-title">Socials</div>
+      <nav class="footer-links">
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://x.com" target="_blank" rel="noopener">X</a>
+      </nav>
+    </div>
+  </footer>
 
-      .footer-left {
-        display: flex !important;
-        align-items: flex-start !important;
-        padding-left: var(
-          --footer-rail
-        ) !important; /* pushes ONLY the left block */
-        gap: var(--logo-gap) !important;
-        background: none !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
+  <div class="footer-bottom">
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
+    </div>
+  </div>
+</div>
 
-      .footer-logo {
-        width: 26px;
-        height: 26px;
-        border-radius: 0 !important; /* ensure square corners */
-        object-fit: contain;
-        margin: 0 !important;
-        transform: translateY(-2px); /* lift slightly for better alignment */
-      }
+<style>
+  /* keep link color the same after clicking */
+  .footer-links a,
+  .footer-bottom-links a { color:#c5c5c5; text-decoration:none; }
+  .footer-links a:visited,
+  .footer-bottom-links a:visited { color:#c5c5c5; }
+  .footer-links a:hover,
+  .footer-bottom-links a:hover { opacity:.9; }
+</style>
 
-      .footer-left-inner {
-        display: flex;
-        flex-direction: column;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .footer-brand {
-        color: #e1e1e1;
-        font-size: 22px;
-        font-weight: 400;
-        line-height: 1.1;
-        margin-left: 0 !important;
-      }
-
-      .footer-tagline {
-        color: #c5c5c5;
-        margin-top: 8px;
-        font-size: 18px;
-        line-height: 1.5;
-        margin-left: 0 !important;
-      }
-
-      .footer-cta {
-        align-self: flex-start;
-        margin-top: 22px;
-        padding: 9px 18px;
-        background: #adff00;
-        color: #000;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 400;
-        border-radius: 10px;
-        box-shadow: 0 0 12px rgba(173, 255, 0, 0.55);
-        transition: box-shadow 0.25s ease;
-        margin-left: 0 !important;
-      }
-
-      .footer-cta:hover {
-        box-shadow: 0 0 20px rgba(173, 255, 0, 0.85);
-      }
-
-      /* RIGHT COLUMNS */
-      .footer-col {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        align-items: flex-start !important;
-        text-align: left !important;
-        background: none !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-
-      .footer-title {
-        color: #fff;
-        font-size: 22px;
-        font-weight: 400;
-        line-height: 1;
-        margin: 0;
-        padding: 0;
-      }
-
-      .footer-links {
-        display: flex;
-        flex-direction: column;
-        gap: 8px !important;
-      }
-
-      .footer-links a {
-        color: #c5c5c5;
-        text-decoration: none;
-        font-size: 18px;
-        font-weight: 400;
-        line-height: 1.4;
-        display: block;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .footer-links a:hover {
-        opacity: 0.9;
-      }
-
-      /* BOTTOM SECTION */
-      .footer-bottom {
-        margin-top: 24px;
-      }
-
-      .footer-divider {
-        width: 100%;
-        height: 1px;
-        background: #c5c5c5;
-        opacity: 0.28;
-        margin-bottom: 12px;
-      }
-
-      .footer-bottom-links {
-        display: flex;
-        align-items: center;
-        gap: 28px;
-        color: #c5c5c5;
-        font-size: 16px;
-        font-weight: 400;
-      }
-
-      .footer-copy {
-        margin-left: auto;
-      }
-
-      /* Responsive */
-      @media (max-width: 1000px) {
-        .site-footer {
-          grid-template-columns: 1fr;
-          padding-left: 0;
-        }
-        .footer-copy {
-          margin-left: 0;
-        }
-      }
-      /* Make logo bigger */
-      .footer-logo {
-        width: 32px; /* increase size */
-        height: 32px;
-      }
-
-      /* Make 'SignSense' bigger */
-      .footer-brand {
-        font-size: 26px; /* was 22px */
-      }
-
-      /* Move only tagline + button left, keep SignSense in place */
-      .footer-tagline,
-      .footer-cta {
-        position: relative;
-        left: -35px; /* adjust value until it aligns visually */
-      }
-    </style>
 
     <!-- === FAKE RESULTS WIRING (paste before </body>) === -->
     <input
