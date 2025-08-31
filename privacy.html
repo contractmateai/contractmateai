@@ -305,50 +305,85 @@
 
 
   <!-- FOOTER -->
-  <div class="site-footer-wrap" data-reveal>
-    <footer class="site-footer">
-      <div class="footer-left">
-        <a href="index.html"><img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" /></a>
-        <div class="footer-left-inner">
-          <a href="index.html" class="footer-brand">SignSense</a>
-          <div class="footer-tagline">
-            <div>No confusion, no legal jargon.</div>
-            <div>For informational use only. Not legal advice.</div>
-          </div>
+<!-- FOOTER -->
+<div class="site-footer-wrap" data-aos="fade-in">
+  <footer class="site-footer">
+    <div class="footer-left">
+      <a href="index.html">
+        <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
+      </a>
+      <div class="footer-left-inner">
+        <a href="index.html" class="footer-brand">SignSense</a>
+        <div class="footer-tagline">
+          <div>No confusion, no legal jargon.</div>
+          <div>For informational use only. Not legal advice.</div>
         </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-title">Quick Menu</div>
-        <nav class="footer-links">
-          <a href="index.html#how-it-works">How it Works</a>
-          <a href="index.html#review">Leave Review</a>
-        </nav>
-      </div>
-      <div class="footer-col">
-        <div class="footer-title">Information</div>
-        <nav class="footer-links">
-          <a href="contact.html">Contact</a>
-          <a href="index.html#features">Features</a>
-        </nav>
-      </div>
-      <div class="footer-col">
-        <div class="footer-title">Socials</div>
-        <nav class="footer-links">
-          <a href="#">Instagram</a>
-          <a href="#">YouTube</a>
-          <a href="#">X</a>
-        </nav>
-      </div>
-    </footer>
-    <div class="footer-bottom">
-      <div class="footer-divider"></div>
-      <div class="footer-bottom-links">
-        <span>Privacy Policy</span>
-        <span>Terms &amp; Conditions</span>
-        <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
-      </div>
+    </div>
+
+    <div class="footer-col">
+      <div class="footer-title">Quick Menu</div>
+      <nav class="footer-links">
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">How it Works</a>
+        <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave Review</a>
+      </nav>
+    </div>
+
+    <div class="footer-col">
+      <div class="footer-title">Information</div>
+      <nav class="footer-links">
+        <a href="contact.html">Contact</a>
+        <a href="index.html#features">Features</a>
+      </nav>
+    </div>
+
+    <div class="footer-col">
+      <div class="footer-title">Socials</div>
+      <nav class="footer-links">
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a href="https://x.com" target="_blank" rel="noopener noreferrer">X</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
     </div>
   </div>
+</div>
+
+<style>
+  /* exact contact-page footer styles */
+  .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
+  .site-footer{
+    background:transparent; border:none; box-shadow:none; padding:0;
+    display:grid;
+    grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
+    column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
+  }
+  .footer-left{display:flex; align-items:flex-start; gap:12px;}
+  .footer-logo{width:32px; height:32px; object-fit:contain; border-radius:0 !important;}
+  .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
+  .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
+
+  .footer-col{display:flex; flex-direction:column; gap:10px;}
+  .footer-title{color:#fff; font-size:22px; font-weight:400;}
+  .footer-links{display:flex; flex-direction:column; gap:8px;}
+  .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; margin:0;}
+  .site-footer .footer-links a{margin:0 !important;}
+
+  .footer-bottom{margin-top:24px;}
+  .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
+  .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
+  .footer-bottom-links a{color:#c5c5c5; text-decoration:none;}
+  .footer-copy{margin-left:auto;}
+</style>
+
 
   <script>
     // Topbar hide/show on scroll (down hides, up shows)
