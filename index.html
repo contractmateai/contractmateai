@@ -82,7 +82,7 @@
 
       /* push content down so bar doesn’t overlap hero */
       .hero-wrapper {
-        margin-top: 95px;
+        margin-top: 120px;
       } /* REPLACES your -40px rule */
 
      :root{
@@ -211,10 +211,12 @@
 
       .hero {
         text-align: center;
-       .hero { padding: 60px 20px 24px; 
+        padding: 80px 20px 30px;
       }
 
-    .hero-upper { margin-top: 32px; }  
+      .hero-upper {
+        margin-top: 50px;
+      }
 
       h1,
       h2 {
@@ -241,7 +243,9 @@
         font-size: 20px;
       }
 
-      .cta-wrapper { margin-top: 60px; } 
+      .cta-wrapper {
+        margin-top: 75px;
+      }
 
       .cta-btn {
         background: white;
@@ -266,7 +270,7 @@
         position: relative;
         width: 100%;
         max-width: 1050px;
-        margin: 20px auto 0;
+        margin: 30px auto 0;
         perspective: 1000px;
       }
 
@@ -282,7 +286,10 @@
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
         display: block;
       }
-
+.hero, .app-container {
+  position: relative;
+  top: 12px;   /* tweak: 8–16px if you want a hair up/down */
+}
       /*@keyframes fadeOut {
         0% {
           opacity: 0;
