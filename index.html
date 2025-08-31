@@ -303,36 +303,41 @@
 /* === APP PREVIEW GLINT (fast full-width sweep) === */
 .glint-line{
   position: absolute;
-  top: 0;                              /* glued to the visible top edge */
-  left: -160px;                        /* start off-canvas to the left */
-  width: 160px;
-  height: 2px;
+  top: 0;
+  left: -140px;
+  width: 140px;
+  height: 3px;
   background: linear-gradient(
     90deg,
-    rgba(191,246,17,0.10),
-    rgba(191,246,17,0.85),
+    rgba(191,246,17,.12),
+    rgba(191,246,17,.90),
     rgba(191,246,17,0)
   );
-  box-shadow: 0 0 24px rgba(191,246,17,0.55);
+  box-shadow: 0 0 22px rgba(191,246,17,.6);
   border-radius: 2px;
   pointer-events: none;
-  z-index: 2;
+  z-index: 3;
 
-  /* SPEED: adjust 2.4s (smaller = faster, bigger = slower) */
-  animation: glint-sweep 2.4s linear infinite, glint-fade 2.4s linear infinite;
+  /* ⬇️ SLOW IT DOWN by upping the duration (try 3.2s–4s) */
+  animation: glint-sweep 3.2s linear infinite,
+             glint-fade  3.2s linear infinite;
 }
+
 
 @keyframes glint-sweep{
-  from { left: -160px; }
-  to   { left: calc(100% + 60px); }    /* go a bit past the right edge */
+  from { left: -140px; }
+  to   { left: calc(100% + 40px); }  /* small overshoot */
 }
 
+/* ⬇️ Fades in early, stays bright, then fades OUT BEFORE the edge reset */
 @keyframes glint-fade{
   0%   { opacity: 0; }
-  8%   { opacity: 1; }
-  85%  { opacity: 1; }
+  8%   { opacity: 1; }   /* fade IN */
+  78%  { opacity: 1; }   /* stay visible most of the run */
+  95%  { opacity: 0; }   /* fade OUT near the end */
   100% { opacity: 0; }
 }
+
 
       /*@keyframes fadeOut {
         0% {
