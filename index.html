@@ -1609,7 +1609,7 @@
     <!-- REVIEWS SECTION -->
     <!-- === REVIEWS: JS === -->
 <script>
-/* === REVIEWS: JS (seamless forward loop, 3-at-a-time, 5s autoplay) === */
+/* === REVIEWS: JS — seamless wrap from the RIGHT, 3-at-a-time, 5s autoplay === */
 (() => {
   const track   = document.getElementById("reviewsTrack");
   const prevBtn = document.getElementById("revPrev");
@@ -1618,24 +1618,27 @@
 
   const AUTOPLAY_MS = 5000;
 
-  // originals
+  // 1) Take originals
   const originals = Array.from(track.querySelectorAll(".review-card"));
   const TOTAL = originals.length;
 
-  // clone all originals once and append (double-length track)
-  originals.forEach(card => track.appendChild(card.cloneNode(true)));
+  // 2) Triplicate: prefix + originals + suffix, then start in the MIDDLE copy
+  const prefixFrag = document.createDocumentFragment();
+  const suffixFrag = document.createDocumentFragment();
+  originals.forEach(c => prefixFrag.appendChild(c.cloneNode(true)));
+  originals.forEach(c => suffixFrag.appendChild(c.cloneNode(true)));
+  track.insertBefore(prefixFrag, track.firstChild);
+  track.appendChild(suffixFrag);
 
-  let perPage = 3;          // responsive
-  let index = 0;            // absolute index across the doubled list
+  let perPage = 3;
+  let index = TOTAL;      // <- start at middle copy
   let timer = null;
 
   function getGap() {
     const s = getComputedStyle(track);
-    // prefer gap; fall back to column-gap/row-gap; default 24
-    let g = parseFloat(s.gap || s.columnGap || 24);
+    const g = parseFloat(s.gap || s.columnGap || 24);
     return isNaN(g) ? 24 : g;
   }
-
   function cardFullWidth() {
     const c = track.querySelector(".review-card");
     if (!c) return 0;
@@ -1646,12 +1649,17 @@
   function setTransform(i, animate = true) {
     const x = -(i * cardFullWidth());
     if (!animate) track.style.transition = "none";
-    track.style.transform = `translateX(${x}px)`;
-    if (!animate) requestAnimationFrame(() => (track.style.transition = "transform .35s ease"));
+    // round to whole px + force GPU to avoid tiny flickers
+    track.style.transform = `translate3d(${Math.round(x)}px,0,0)`;
+    if (!animate) {
+      // force reflow then restore transition for next moves
+      track.getBoundingClientRect();
+      track.style.transition = "transform .35s ease";
+    }
   }
 
   function baseIndex() {
-    // where we are within the original set (0..TOTAL-1)
+    // position within ORIGINAL set (0..TOTAL-1)
     return ((index % TOTAL) + TOTAL) % TOTAL;
   }
 
@@ -1670,11 +1678,12 @@
       btn.type = "button";
       btn.className = "review-dot";
       btn.addEventListener("click", () => {
-        // move forward only to the block that contains this dot
+        // move FORWARD to the page that contains this dot
         const b = baseIndex();
-        const targetStart = i - (i % perPage); // start of that block
-        const forward = (targetStart - b + TOTAL) % TOTAL;
-        index += forward; // always forward movement
+        const curStart = b - (b % perPage);
+        const tgtStart = i - (i % perPage);
+        const forwardItems = (tgtStart - curStart + TOTAL) % TOTAL; // multiple of perPage
+        index += forwardItems;
         setTransform(index, true);
         restartAutoplay();
         updateDots();
@@ -1684,13 +1693,13 @@
     updateDots();
   }
 
-  function afterTransitionFix() {
-    // if we marched into the cloned half, jump back same-looking spot
-    if (index >= TOTAL) {
-      index -= TOTAL;            // wrap within originals
-      setTransform(index, false); // snap back with no animation (invisible)
+  function afterTransitionWrap() {
+    // keep us in the middle copy range [TOTAL .. 2*TOTAL)
+    if (index >= TOTAL * 2) {
+      index -= TOTAL;       // wrap forward
+      setTransform(index, false); // instant, invisible
     } else if (index < 0) {
-      index += TOTAL;
+      index += TOTAL;       // wrap backward
       setTransform(index, false);
     }
     updateDots();
@@ -1700,13 +1709,7 @@
     index += perPage;
     setTransform(index, true);
   }
-
   function prevPage() {
-    // ensure we can go backwards seamlessly
-    if (index === 0) {
-      index += TOTAL;          // teleport to cloned half (no visual change)
-      setTransform(index, false);
-    }
     index -= perPage;
     setTransform(index, true);
   }
@@ -1715,12 +1718,12 @@
     const w = window.innerWidth;
     perPage = w <= 640 ? 1 : w <= 1100 ? 2 : 3;
 
-    // keep index aligned to page boundaries relative to current base
+    // realign to a page boundary in the MIDDLE copy
     const b = baseIndex();
-    const aligned = b - (b % perPage);
-    index = index - b + aligned; // shift absolute index to aligned page start
-    renderDots();
+    const alignedBase = b - (b % perPage);
+    index = TOTAL + alignedBase; // lock to middle copy
     setTransform(index, false);
+    renderDots();
   }
 
   function restartAutoplay() {
@@ -1731,7 +1734,7 @@
   // listeners
   nextBtn.addEventListener("click", () => { nextPage(); restartAutoplay(); });
   prevBtn.addEventListener("click", () => { prevPage(); restartAutoplay(); });
-  track.addEventListener("transitionend", afterTransitionFix);
+  track.addEventListener("transitionend", afterTransitionWrap);
   window.addEventListener("resize", measure, { passive: true });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) { if (timer) clearInterval(timer); }
@@ -1739,11 +1742,13 @@
   });
 
   // init
+  track.style.willChange = "transform";
   track.style.transition = "transform .35s ease";
   measure();
   restartAutoplay();
 })();
 </script>
+
 
 
 
