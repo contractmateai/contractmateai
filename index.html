@@ -1663,35 +1663,41 @@
     return ((index % TOTAL) + TOTAL) % TOTAL;
   }
 
-  function updateDots() {
-    const b = baseIndex();
-    [...dotsEl.children].forEach((d, i) => {
-      const rel = (i - b + TOTAL) % TOTAL;
-      d.classList.toggle("active", rel < perPage);
-    });
-  }
+ function updateDots() {
+  // rotate dots so the base (left-most visible) index is shown first
+  const b = baseIndex();
+  const children = [...dotsEl.children];
 
-  function renderDots() {
-    dotsEl.innerHTML = "";
-    for (let i = 0; i < TOTAL; i++) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "review-dot";
-      btn.addEventListener("click", () => {
-        // move FORWARD to the page that contains this dot
-        const b = baseIndex();
-        const curStart = b - (b % perPage);
-        const tgtStart = i - (i % perPage);
-        const forwardItems = (tgtStart - curStart + TOTAL) % TOTAL; // multiple of perPage
-        index += forwardItems;
-        setTransform(index, true);
-        restartAutoplay();
-        updateDots();
-      });
-      dotsEl.appendChild(btn);
-    }
-    updateDots();
+  children.forEach((d, i) => {
+    // order 0..TOTAL-1 so dot with base index `b` is first
+    const order = (i - b + TOTAL) % TOTAL;
+    d.style.order = order;
+    // first `perPage` dots are active (contiguous)
+    d.classList.toggle("active", order < perPage);
+  });
+}
+
+function renderDots() {
+  dotsEl.innerHTML = "";
+  for (let i = 0; i < TOTAL; i++) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "review-dot";
+    btn.style.order = i;                // <-- add this line (initial order)
+    btn.addEventListener("click", () => {
+      const b = baseIndex();
+      const curStart = b - (b % perPage);
+      const tgtStart = i - (i % perPage);
+      const forwardItems = (tgtStart - curStart + TOTAL) % TOTAL;
+      index += forwardItems;
+      setTransform(index, true);
+      restartAutoplay();
+      updateDots();
+    });
+    dotsEl.appendChild(btn);
   }
+  updateDots();
+} 
 
   function afterTransitionWrap() {
     // keep us in the middle copy range [TOTAL .. 2*TOTAL)
