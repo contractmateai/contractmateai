@@ -27,7 +27,7 @@
       font-weight:400;
     }
 
-    /* ===== TOP BAR ===== */
+    /* ===== TOP BAR (exact as homepage) ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -111,9 +111,9 @@
       display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap;
       text-align:left;
     }
-    .ready-section br{display:none;} /* keep original markup safe but ignore the <br/> */
+    .ready-section br{display:none;}
     .ready-section img{
-      width:100%; max-width:520px; /* smaller image */
+      width:100%; max-width:520px;
       border-radius:16px;
       box-shadow:0 0 30px rgba(0,0,0,.5);
     }
@@ -129,7 +129,7 @@
       font-weight:400;
       box-shadow:0 0 14px rgba(173,255,0,.65);
       transition:box-shadow .25s ease;
-      margin-left:0; /* sits to the right of image via flex */
+      margin-left:0;
     }
     .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
 
@@ -154,14 +154,11 @@
     .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
     .footer-copy{margin-left:auto;}
 
-    /* ===== FADE-IN ANIMATIONS (added) ===== */
+    /* ===== FADE-IN ANIMATIONS ===== */
     .reveal{opacity:0; transform:translateY(10px); will-change:opacity,transform;}
     .reveal.show{animation:fadeUp .7s ease forwards;}
-
     @keyframes fadeUp{to{opacity:1; transform:none}}
     @keyframes fadeIn{to{opacity:1}}
-
-    /* hero bg fades in last slightly after other elements */
     .hero-bg.show{animation:fadeIn .9s ease .25s forwards}
   </style>
 </head>
@@ -175,8 +172,8 @@
       </div>
       <nav class="topbar-nav">
         <a href="index.html#how-it-works">See How It Works</a>
-        <a href="index.html#features">Features</a>
-        <a href="contact.html">Contact Us</a>
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
       </nav>
     </div>
   </div>
@@ -305,8 +302,7 @@
 
 
   <!-- FOOTER -->
-<!-- FOOTER -->
-<div class="site-footer-wrap" data-aos="fade-in">
+<div class="site-footer-wrap">
   <footer class="site-footer">
     <div class="footer-left">
       <a href="index.html">
@@ -357,54 +353,39 @@
   </div>
 </div>
 
-<style>
-  /* exact contact-page footer styles */
-  .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
-  .site-footer{
-    background:transparent; border:none; box-shadow:none; padding:0;
-    display:grid;
-    grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
-    column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-  }
-  .footer-left{display:flex; align-items:flex-start; gap:12px;}
-  .footer-logo{width:32px; height:32px; object-fit:contain; border-radius:0 !important;}
-  .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
-  .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
-
-  .footer-col{display:flex; flex-direction:column; gap:10px;}
-  .footer-title{color:#fff; font-size:22px; font-weight:400;}
-  .footer-links{display:flex; flex-direction:column; gap:8px;}
-  .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; margin:0;}
-  .site-footer .footer-links a{margin:0 !important;}
-
-  .footer-bottom{margin-top:24px;}
-  .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
-  .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
-  .footer-bottom-links a{color:#c5c5c5; text-decoration:none;}
-  .footer-copy{margin-left:auto;}
-</style>
-
-
   <script>
-    // Topbar hide/show on scroll (down hides, up shows)
-    (function(){
-      const bar=document.getElementById("topbarWrap");
-      let lastY=window.scrollY, ticking=false;
-      function onScroll(){
-        const y=window.scrollY;
-        if(y>lastY && y>80) bar.classList.add("hide");
-        else bar.classList.remove("hide");
-        lastY=y<=0?0:y; ticking=false;
+    // === Topbar hide/show on scroll (same behavior as homepage) ===
+    (function () {
+      const bar = document.getElementById("topbarWrap");
+      let lastY = window.scrollY;
+      let ticking = false;
+
+      function onScroll() {
+        const y = window.scrollY;
+        if (y > lastY && y > 80) {
+          bar.classList.add("hide"); // scrolling down
+        } else {
+          bar.classList.remove("hide"); // scrolling up
+        }
+        lastY = y <= 0 ? 0 : y;
+        ticking = false;
       }
-      window.addEventListener("scroll", ()=>{
-        if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }
-      }, {passive:true});
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!ticking) {
+            requestAnimationFrame(onScroll);
+            ticking = true;
+          }
+        },
+        { passive: true }
+      );
     })();
 
-    // Fade-in on load + as you scroll (minimal, non-intrusive)
+    // Fade-in on load + as you scroll (kept as-is)
     (function(){
       const toReveal = Array.from(document.querySelectorAll("[data-reveal]"));
-      // add base class
       toReveal.forEach(el => el.classList.add("reveal"));
 
       const io = new IntersectionObserver((entries)=>{
@@ -418,14 +399,11 @@
 
       toReveal.forEach(el => io.observe(el));
 
-      // show hero content immediately after load for nice sequence
       window.addEventListener("load", ()=>{
-        // If above-the-fold elements are already visible, ensure they show
         toReveal.forEach(el=>{
           const r = el.getBoundingClientRect();
           if(r.top < window.innerHeight*0.85) el.classList.add("show");
         });
-        // fade hero bg last
         const bg=document.getElementById("heroBg");
         if(bg){ bg.classList.add("show"); }
       });
