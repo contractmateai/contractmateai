@@ -653,45 +653,47 @@
       }
 /* ===== Powered-by strip (ENDLESS, single set visible) ===== */
 .logo-strip{
-  /* tweak this to control side space (total gap = this value) */
-  --side-gap: 72px;                 /* e.g. 72px ⇒ ~36px on each side */
-  width: min(1600px, calc(100vw - var(--side-gap)));
-  margin: 28px auto 10px;
+  /* ⬅️ KNOB #1: more side space by increasing this number */
+  --side-gap: 640px;                  /* total gap; ≈320px per side on desktop */
+
+  /* ⬅️ KNOB #2: push lower by increasing the top margin */
+  margin: 42px auto 6px;
+
+  width: min(1200px, calc(100vw - var(--side-gap)));
   padding: 0;
   overflow: hidden;
-  /* remove any scale so the strip is larger */
-  transform: none;
   position: relative;
+  transform: none;                    /* keep size precise for seamless loop */
 }
 
 .logo-track{
   display: flex;
   align-items: center;
-  gap: 0;                            /* no gap so the seam is invisible */
+  gap: 0;                             /* no gap so the seam is invisible */
   will-change: transform;
 }
 
-/* each copy fills the viewport width so only ONE set is visible */
+/* one full-width copy visible; second copy sits after it for seamless wrap */
 .logo-piece{
   flex: 0 0 100%;
   width: 100%;
-  height: auto;                      /* preserves your PNG aspect ratio */
+  height: auto;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* darker edge fades (no white) */
+/* dark edge fades (no white) */
 .logo-fade{
-  position: absolute; top:0; bottom:0; width:140px; z-index:2; pointer-events:none;
+  position: absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none;
 }
 .logo-fade.left{
   left:0;
   background: linear-gradient(
     to right,
-    var(--bg-dark),
-    rgba(1, 4, 11, .88),
-    rgba(1, 4, 11, .45),
+    rgba(0,0,0,0.96),
+    rgba(0,0,0,0.72),
+    rgba(0,0,0,0.42),
     transparent
   );
 }
@@ -699,16 +701,17 @@
   right:0;
   background: linear-gradient(
     to left,
-    var(--bg-dark),
-    rgba(1, 4, 11, .88),
-    rgba(1, 4, 11, .45),
+    rgba(0,0,0,0.96),
+    rgba(0,0,0,0.72),
+    rgba(0,0,0,0.42),
     transparent
   );
 }
 
-@media (max-width: 640px){
-  .logo-fade{ width:100px; }
-}
+/* responsive: reduce side gap so it still fits on small screens */
+@media (max-width: 1200px){ .logo-strip{ --side-gap: 420px; } }
+@media (max-width: 900px) { .logo-strip{ --side-gap: 260px; margin-top: 34px; } }
+@media (max-width: 640px) { .logo-strip{ --side-gap: 160px; margin-top: 28px; } .logo-fade{ width:120px; } }
 
 
       /* === REVIEWS SECTION === */
