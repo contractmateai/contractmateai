@@ -657,7 +657,7 @@
   --side-gap: 640px;                  /* total gap; ≈320px per side on desktop */
 
   /* ⬅️ KNOB #2: push lower by increasing the top margin */
-  margin: 42px auto 6px;
+  margin: 62px auto 6px;
 
   width: min(1200px, calc(100vw - var(--side-gap)));
   padding: 0;
@@ -1357,7 +1357,7 @@
     }
 
     // Loop time: ~0.3s faster than a 12.0s baseline
-    const SECONDS_PER_LOOP = 11.7; // smaller = faster, larger = slower
+    const SECONDS_PER_LOOP = 25; // smaller = faster, larger = slower
 
     function run() {
       let x = 0, pieceW = 0, last = performance.now();
