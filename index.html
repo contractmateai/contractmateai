@@ -811,7 +811,7 @@
       }
       .review-card {
         flex: 0 0 calc((100% - 48px) / 3);
-        border: 1px solid #b4b4b4;
+        border:1px solid #262626;
         border-radius: 23px;
         padding: 10px;
         background: #000;
@@ -822,25 +822,33 @@
         border-radius: 17px;
       }
 
-      /* dots */
-      .review-dots {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin: 28px 0 26px; /* space above button */
-      }
-      .review-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #666;
-        opacity: 0.8;
-        cursor: pointer;
-      }
-      .review-dot.active {
-        background: #b9f03d;
-        opacity: 1;
-      }
+     /* dots */
+.review-dots{
+  display:flex;
+  justify-content:center;
+  gap:14px;                 /* a bit more space */
+  margin:28px 0 26px;
+}
+.review-dot{
+  width:14px;               /* was 8px */
+  height:14px;
+  border-radius:50%;
+  background:#777;          /* slightly brighter base */
+  opacity:1;                /* fully opaque so it’s easy to see/tap */
+  cursor:pointer;
+  display:inline-block;
+  border:none;
+  padding:0;
+  appearance:none;
+  outline:none;
+  touch-action:manipulation;
+}
+.review-dot.active{ background:#b9f03d; }
+.review-dot:focus-visible{
+  box-shadow:0 0 0 3px rgba(185,240,61,.35);
+  outline:none;
+}
+
 
       /* button */
       .leave-review-wrap {
@@ -1600,83 +1608,114 @@
 
     <!-- REVIEWS SECTION -->
     <!-- === REVIEWS: JS === -->
-    <script>
-      /* === REVIEWS: JS (drop-in replacement) === */
-      (function () {
-        const track = document.getElementById("reviewsTrack");
-        const prev = document.getElementById("revPrev");
-        const next = document.getElementById("revNext");
-        const dotsWrap = document.getElementById("reviewDots");
-        const cards = () => Array.from(track.querySelectorAll(".review-card"));
+  <script>
+/* === REVIEWS: autoplay + infinite wrap + bigger dots === */
+(() => {
+  const track = document.getElementById("reviewsTrack");
+  const prev = document.getElementById("revPrev");
+  const next = document.getElementById("revNext");
+  const dotsWrap = document.getElementById("reviewDots");
+  const cards = () => Array.from(track.querySelectorAll(".review-card"));
 
-        let index = 0; // leftmost visible card index
-        let perPage = 3; // visible at once (auto on resize)
+  let perPage = 3;
+  let page = 0;
+  let pageIndices = [];
+  const AUTOPLAY_MS = 5000;
+  let timer = null;
 
-        function measure() {
-          const w = window.innerWidth;
-          if (w <= 640) perPage = 1;
-          else if (w <= 1100) perPage = 2;
-          else perPage = 3;
+  function cardFullWidth() {
+    const c = cards()[0];
+    if (!c) return 0;
+    const style = getComputedStyle(c);
+    const gap = 24; // matches CSS gap
+    return (
+      c.getBoundingClientRect().width +
+      parseFloat(style.marginLeft || 0) +
+      parseFloat(style.marginRight || 0) +
+      gap
+    );
+  }
 
-          // clamp index so we never show gaps on the right
-          index = Math.min(index, Math.max(0, cards().length - perPage));
-          renderDots();
-          go(index, false);
-        }
+  function buildPages() {
+    const total = cards().length;
+    const maxIndex = Math.max(0, total - perPage);
+    const pages = [0];
+    let i = 0;
+    while (i < maxIndex) {
+      i = Math.min(i + perPage, maxIndex);
+      if (!pages.includes(i)) pages.push(i);
+    }
+    return pages;
+  }
 
-        function cardFullWidth() {
-          const c = cards()[0];
-          if (!c) return 0;
-          const style = getComputedStyle(c);
-          const w = c.getBoundingClientRect().width;
-          const mr = parseFloat(style.marginRight || 0);
-          const ml = parseFloat(style.marginLeft || 0);
-          const gap = 24; // matches CSS gap
-          return w + ml + mr + gap;
-        }
+  function measure() {
+    const w = window.innerWidth;
+    if (w <= 640) perPage = 1;
+    else if (w <= 1100) perPage = 2;
+    else perPage = 3;
 
-        function go(i, animate = true) {
-          const maxIndex = Math.max(0, cards().length - perPage); // e.g., 5-3=2 on desktop
-          index = Math.max(0, Math.min(i, maxIndex));
-          const shift = -(index * cardFullWidth());
-          if (!animate) track.style.transition = "none";
-          track.style.transform = `translateX(${shift}px)`;
-          if (!animate)
-            requestAnimationFrame(
-              () => (track.style.transition = "transform .35s ease")
-            );
-          updateDots();
-        }
+    pageIndices = buildPages();
+    page = Math.min(page, pageIndices.length - 1);
+    renderDots();
+    goToPage(page, false);
+    restartAutoplay();
+  }
 
-        function renderDots() {
-          dotsWrap.innerHTML = "";
-          const total = cards().length; // 1 dot per card; active window = visible 3
-          for (let i = 0; i < total; i++) {
-            const d = document.createElement("div");
-            d.className = "review-dot";
-            d.addEventListener("click", () => {
-              const target = Math.min(i, total - perPage); // jump so clicked one becomes visible
-              go(target);
-            });
-            dotsWrap.appendChild(d);
-          }
-          updateDots();
-        }
+  function goToPage(p, animate = true) {
+    if (!pageIndices.length) return;
+    page = (p + pageIndices.length) % pageIndices.length;
+    const index = pageIndices[page];
+    const shift = -(index * cardFullWidth());
+    if (!animate) track.style.transition = "none";
+    track.style.transform = `translateX(${shift}px)`;
+    if (!animate) requestAnimationFrame(() => {
+      track.style.transition = "transform .35s ease";
+    });
+    updateDots(index);
+  }
 
-        function updateDots() {
-          const total = cards().length;
-          [...dotsWrap.children].forEach((d, i) => {
-            d.classList.toggle("active", i >= index && i < index + perPage);
-          });
-        }
+  function nextPage() { goToPage(page + 1); }
+  function prevPage() { goToPage(page - 1); }
 
-        prev.addEventListener("click", () => go(index - 1));
-        next.addEventListener("click", () => go(index + 1));
-        window.addEventListener("resize", measure, { passive: true });
+  function renderDots() {
+    const total = cards().length;
+    dotsWrap.innerHTML = "";
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement("button");
+      d.type = "button";
+      d.className = "review-dot";
+      d.addEventListener("click", () => {
+        const target = pageIndices.findIndex(start => i >= start && i < start + perPage);
+        goToPage(target === -1 ? 0 : target);
+        restartAutoplay();
+      });
+      dotsWrap.appendChild(d);
+    }
+  }
 
-        measure();
-      })();
-    </script>
+  function updateDots(index) {
+    [...dotsWrap.children].forEach((d, i) => {
+      d.classList.toggle("active", i >= index && i < index + perPage);
+    });
+  }
+
+  function restartAutoplay() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(nextPage, AUTOPLAY_MS);
+  }
+
+  prev.addEventListener("click", () => { prevPage(); restartAutoplay(); });
+  next.addEventListener("click", () => { nextPage(); restartAutoplay(); });
+  window.addEventListener("resize", measure, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { if (timer) clearInterval(timer); }
+    else restartAutoplay();
+  });
+
+  measure();
+})();
+</script>
+
 
     <!-- FAQ SECTION -->
     <section class="faq-section">
