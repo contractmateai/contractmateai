@@ -651,6 +651,48 @@
           font-size: 20px;
         }
       }
+/* ===== Powered-by strip (endless) ===== */
+.logo-strip{
+  position: relative;
+  max-width: 1360px;
+  margin: 26px auto 10px;
+  padding: 10px 0;
+  overflow: hidden;
+  transform: scale(0.98);
+}
+
+.logo-track{
+  display: flex;
+  align-items: center;
+  gap: 0;                   /* no gaps so the seam is invisible */
+  will-change: transform;
+}
+
+.logo-piece{
+  height: 42px;             /* tweak size here */
+  width: auto;
+  display: block;
+  flex: 0 0 auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* edge fades */
+.logo-fade{
+  position: absolute; top:0; bottom:0; width:110px; z-index:2; pointer-events:none;
+}
+.logo-fade.left{
+  left:0;
+  background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
+}
+.logo-fade.right{
+  right:0;
+  background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
+}
+
+@media (max-width: 640px){
+  .logo-piece{ height: 34px; }
+}
 
       /* === REVIEWS SECTION === */
       /* === REVIEWS: CSS === */
@@ -1069,6 +1111,12 @@
 
       </div>
     </div>
+<!-- POWERED BY STRIP (endless) -->
+<section class="logo-strip">
+  <div class="logo-track" id="logoTrack"></div>
+  <div class="logo-fade left"></div>
+  <div class="logo-fade right"></div>
+</section>
 
     <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
       <div class="section-badge">Instant Clarity Engine ↗</div>
@@ -1268,6 +1316,38 @@
         makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
       });
     </script>
+<script>
+  // === Powered-by strip: build + scroll ===
+  (function(){
+    // Use the direct image URL (note the i. subdomain and .png):
+    const stripURL = "https://i.imgur.com/2SUo8mv.png";
+
+    // Build two identical sets so makeTicker can loop seamlessly
+    function populateLogoStrip(row, url, perSet = 5){
+      if (!row) return;
+      const makeSet = () => {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < perSet; i++){
+          const img = document.createElement("img");
+          img.className = "logo-piece";
+          img.src = url;
+          img.alt  = "Powered by partners";
+          img.loading = "lazy";
+          frag.appendChild(img);
+        }
+        return frag;
+      };
+      row.appendChild(makeSet()); // Set A
+      row.appendChild(makeSet()); // Set B (same width => perfect wrap)
+    }
+
+    window.addEventListener("load", () => {
+      const row = document.getElementById("logoTrack");
+      populateLogoStrip(row, stripURL, 5);                 // 5 + 5 = 10 total
+      makeTicker(row, { pxPerSecond: 28, direction: "left" }); // smooth drift left
+    });
+  })();
+</script>
 
     <!-- WATCH VIDEO SECTION -->
     <section class="watch-video-section">
