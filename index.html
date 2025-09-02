@@ -651,48 +651,65 @@
           font-size: 20px;
         }
       }
-/* ===== Powered-by strip (endless) ===== */
+/* ===== Powered-by strip (ENDLESS, single set visible) ===== */
 .logo-strip{
-  position: relative;
-  max-width: 1360px;
-  margin: 26px auto 10px;
-  padding: 10px 0;
+  /* tweak this to control side space (total gap = this value) */
+  --side-gap: 72px;                 /* e.g. 72px ⇒ ~36px on each side */
+  width: min(1600px, calc(100vw - var(--side-gap)));
+  margin: 28px auto 10px;
+  padding: 0;
   overflow: hidden;
-  transform: scale(0.98);
+  /* remove any scale so the strip is larger */
+  transform: none;
+  position: relative;
 }
 
 .logo-track{
   display: flex;
   align-items: center;
-  gap: 0;                   /* no gaps so the seam is invisible */
+  gap: 0;                            /* no gap so the seam is invisible */
   will-change: transform;
 }
 
+/* each copy fills the viewport width so only ONE set is visible */
 .logo-piece{
-  height: 42px;             /* tweak size here */
-  width: auto;
+  flex: 0 0 100%;
+  width: 100%;
+  height: auto;                      /* preserves your PNG aspect ratio */
   display: block;
-  flex: 0 0 auto;
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* edge fades */
+/* darker edge fades (no white) */
 .logo-fade{
-  position: absolute; top:0; bottom:0; width:110px; z-index:2; pointer-events:none;
+  position: absolute; top:0; bottom:0; width:140px; z-index:2; pointer-events:none;
 }
 .logo-fade.left{
   left:0;
-  background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
+  background: linear-gradient(
+    to right,
+    var(--bg-dark),
+    rgba(1, 4, 11, .88),
+    rgba(1, 4, 11, .45),
+    transparent
+  );
 }
 .logo-fade.right{
   right:0;
-  background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.6), transparent);
+  background: linear-gradient(
+    to left,
+    var(--bg-dark),
+    rgba(1, 4, 11, .88),
+    rgba(1, 4, 11, .45),
+    transparent
+  );
 }
 
 @media (max-width: 640px){
-  .logo-piece{ height: 34px; }
+  .logo-fade{ width:100px; }
 }
+
 
       /* === REVIEWS SECTION === */
       /* === REVIEWS: CSS === */
@@ -1316,38 +1333,35 @@
         makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
       });
     </script>
-<script>
-  // === Powered-by strip: build + scroll ===
+
+ <script>
+  // === Powered-by strip: build + scroll (single visible set) ===
   (function(){
-    // Use the direct image URL (note the i. subdomain and .png):
     const stripURL = "https://i.imgur.com/2SUo8mv.png";
 
-    // Build two identical sets so makeTicker can loop seamlessly
-    function populateLogoStrip(row, url, perSet = 5){
+    // We only want ONE set visible; we still append two copies for seamless wrap.
+    function populateLogoStrip(row){
       if (!row) return;
-      const makeSet = () => {
-        const frag = document.createDocumentFragment();
-        for (let i = 0; i < perSet; i++){
-          const img = document.createElement("img");
-          img.className = "logo-piece";
-          img.src = url;
-          img.alt  = "Powered by partners";
-          img.loading = "lazy";
-          frag.appendChild(img);
-        }
-        return frag;
-      };
-      row.appendChild(makeSet()); // Set A
-      row.appendChild(makeSet()); // Set B (same width => perfect wrap)
+      for (let i = 0; i < 2; i++){      // exactly 2 copies: A + B
+        const img = document.createElement("img");
+        img.className = "logo-piece";
+        img.src = stripURL;
+        img.alt = "Powered by partners";
+        img.loading = "lazy";
+        row.appendChild(img);
+      }
     }
 
+    // Reuse your existing makeTicker(...) from the features section
     window.addEventListener("load", () => {
       const row = document.getElementById("logoTrack");
-      populateLogoStrip(row, stripURL, 5);                 // 5 + 5 = 10 total
-      makeTicker(row, { pxPerSecond: 28, direction: "left" }); // smooth drift left
+      populateLogoStrip(row);
+      // slower = smoother; adjust to taste
+      makeTicker(row, { pxPerSecond: 26, direction: "left" });
     });
   })();
 </script>
+
 
     <!-- WATCH VIDEO SECTION -->
     <section class="watch-video-section">
