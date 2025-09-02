@@ -714,6 +714,45 @@
 @media (max-width: 900px) { .logo-strip{ --side-gap: 260px; margin-top: 34px; } }
 @media (max-width: 640px) { .logo-strip{ --side-gap: 160px; margin-top: 28px; } .logo-fade{ width:120px; } }
 
+      /* === Arrow hover (match friend's effect) === */
+.animated-arrow-bttn { overflow: hidden; }
+
+.animated-arrow{
+  display:inline-block;
+  position:relative;
+  transition: transform .3s ease;
+}
+
+.animated-arrow::before{
+  content:"↗";
+  color:black;             /* arrow color like your friend’s */
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:50px;                /* sits bottom-left until hover */
+  left:-50px;
+  visibility:hidden;
+}
+
+/* Hover triggers for all the targets */
+.cta-btn:hover .animated-arrow.diag,
+.cta-outline:hover .animated-arrow.diag,
+.watch-btn:hover .animated-arrow.diag,
+.leave-review:hover .animated-arrow.diag,
+.section-badge:hover .animated-arrow.diag,
+.tagline-absolute:hover .animated-arrow.diag{
+  transform: translate(50px,-50px);
+}
+
+.cta-btn:hover .animated-arrow::before,
+.cta-outline:hover .animated-arrow::before,
+.watch-btn:hover .animated-arrow::before,
+.leave-review:hover .animated-arrow::before,
+.section-badge:hover .animated-arrow::before,
+.tagline-absolute:hover .animated-arrow::before{
+  visibility: visible;
+}
+
 
       /* === REVIEWS SECTION === */
       /* === REVIEWS: CSS === */
@@ -1156,9 +1195,11 @@
     <div class="hero-wrapper">
       <section class="hero">
         <div class="hero-upper">
-         <div class="tagline-absolute">
-  <span>AI</span>Legal DocReview Tool <span class="tilt-arrow small">↗</span>
+        <div class="tagline-absolute animated-arrow-bttn">
+  <span>AI</span>Legal DocReview Tool
+  <span class="animated-arrow diag" aria-hidden="true">↗</span>
 </div>
+
 
           <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
           <p class="subtext">
@@ -1166,10 +1207,12 @@
             students & more
           </p>
         </div>
-        <div class="cta-wrapper">
-         <button class="cta-btn">Review A Contract <span class="tilt-arrow">↗</span></button>
+       <div class="cta-wrapper">
+  <button class="cta-btn animated-arrow-bttn">
+    Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
+  </button>
+</div>
 
-        </div>
       </section>
 
       <div class="app-container">
@@ -1193,7 +1236,10 @@
 </section>
 
     <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
-     <div class="section-badge">Instant Clarity Engine <span class="tilt-arrow small">↗</span></div>
+    <div class="section-badge animated-arrow-bttn">
+  Instant Clarity Engine <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</div>
+
 
     </div>
 
@@ -1226,9 +1272,10 @@
             We break down complex contract language into clear, actionable
             takeaways so you can review with confidence, not confusion.
           </p>
-        <a href="#" class="cta-outline animate-arrow">
-  Review A Contract <span class="tilt-arrow">↗</span>
+       <a href="#" class="cta-outline animated-arrow-bttn">
+  Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
 </a>
+
 
         </div>
       </div>
@@ -1462,7 +1509,10 @@
             Curious how SignSense works? Watch our video for a clear,
             step-by-step look at how we simplify your contracts
           </p>
-          <button class="watch-btn">Watch Video ↗</button>
+         <button class="watch-btn animated-arrow-bttn">
+  Watch Video <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</button>
+
         </div>
         <div class="video-box">
           <div class="video-label">▶ Watch Video</div>
@@ -1619,7 +1669,10 @@
       <div class="review-dots" id="reviewDots"></div>
 
       <div class="leave-review-wrap">
-        <button class="leave-review" type="button">Leave A Review ↗</button>
+       <button class="leave-review animated-arrow-bttn" type="button">
+  Leave A Review <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</button>
+
       </div>
     </section>
 
