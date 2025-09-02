@@ -201,14 +201,16 @@
         box-shadow: 0 0 20px var(--badge-glow);
       }
 
-      .tagline-absolute span {
-        background-color: var(--badge-lime);
-        color: black;
-        padding: 6px 12px;
-        border-radius: 53px;
-        font-size: 13px;
-        font-weight: bold;
-      }
+      /* only style the AI chip, not the arrow */
+.tagline-absolute .chip {
+  background-color: var(--badge-lime);
+  color: black;
+  padding: 6px 12px;
+  border-radius: 53px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
 
       .hero {
         text-align: center;
@@ -723,16 +725,21 @@
   transition: transform .3s ease;
 }
 
+.animated-arrow,
+.animated-arrow::before{
+  color: currentColor;      /* arrow always matches the text color */
+}
+
 .animated-arrow::before{
   content:"↗";
-  color:black;             /* arrow color like your friend’s */
   width:100%;
   height:100%;
   position:absolute;
-  top:50px;                /* sits bottom-left until hover */
+  top:50px;
   left:-50px;
   visibility:hidden;
 }
+
 
 /* Hover triggers for all the targets */
 .cta-btn:hover .animated-arrow.diag,
@@ -1195,10 +1202,12 @@
     <div class="hero-wrapper">
       <section class="hero">
         <div class="hero-upper">
-        <div class="tagline-absolute animated-arrow-bttn">
-  <span>AI</span>Legal DocReview Tool
+       <div class="tagline-absolute animated-arrow-bttn">
+  <span class="chip">AI</span>
+  Legal DocReview Tool
   <span class="animated-arrow diag" aria-hidden="true">↗</span>
 </div>
+
 
 
           <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
