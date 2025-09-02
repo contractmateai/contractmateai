@@ -977,6 +977,49 @@
         opacity: 1;
         border-radius: 0 0 24px 24px; /* bottom rounding */
       }
+/* === Tilted arrow animation for CTAs + badges === */
+.tilt-arrow{
+  display:inline-block;
+  margin-left:10px;
+  transform: rotate(18deg);
+  transition: transform .25s ease, translate .25s ease;
+  will-change: transform;
+}
+.tilt-arrow.small{ margin-left:8px; font-size:.95em; }
+
+/* hover nudge on the two CTA buttons */
+.cta-btn:hover .tilt-arrow,
+.cta-outline:hover .tilt-arrow{
+  transform: rotate(24deg);
+  translate: 3px -2px; /* gentle drift up-right */
+}
+
+/* badges: subtle continuous tilt/bob */
+.tagline-absolute .tilt-arrow,
+.section-badge .tilt-arrow{
+  animation: arrow-float 1.8s ease-in-out infinite;
+}
+
+/* override the generic badge span styling inside .tagline-absolute */
+.tagline-absolute .tilt-arrow{
+  background: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+@keyframes arrow-float{
+  0%,100%{ transform: rotate(18deg) translate(0,0); }
+  50%    { transform: rotate(28deg) translate(2px,-2px); }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .tagline-absolute .tilt-arrow,
+  .section-badge .tilt-arrow{ animation: none; }
+  .cta-btn:hover .tilt-arrow,
+  .cta-outline:hover .tilt-arrow{ translate: 0 0; }
+}
 
       /* === FOOTER === */
       .site-footer-wrap {
@@ -1113,9 +1156,10 @@
     <div class="hero-wrapper">
       <section class="hero">
         <div class="hero-upper">
-          <div class="tagline-absolute">
-            <span>AI</span>Legal DocReview Tool ↗
-          </div>
+         <div class="tagline-absolute">
+  <span>AI</span>Legal DocReview Tool <span class="tilt-arrow small">↗</span>
+</div>
+
           <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
           <p class="subtext">
             SignSense instantly simplifies contracts for law firms, freelancers,
@@ -1123,7 +1167,8 @@
           </p>
         </div>
         <div class="cta-wrapper">
-          <button class="cta-btn">Review A Contract ↗</button>
+         <button class="cta-btn">Review A Contract <span class="tilt-arrow">↗</span></button>
+
         </div>
       </section>
 
@@ -1148,7 +1193,8 @@
 </section>
 
     <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
-      <div class="section-badge">Instant Clarity Engine ↗</div>
+     <div class="section-badge">Instant Clarity Engine <span class="tilt-arrow small">↗</span></div>
+
     </div>
 
     <h2 class="section-title">Understand Your<br />Contract at a Glance</h2>
@@ -1180,9 +1226,10 @@
             We break down complex contract language into clear, actionable
             takeaways so you can review with confidence, not confusion.
           </p>
-         <a href="#" class="cta-outline animate-arrow">
-  Review A Contract <span class="arrow">↗</span>
+        <a href="#" class="cta-outline animate-arrow">
+  Review A Contract <span class="tilt-arrow">↗</span>
 </a>
+
         </div>
       </div>
     </section>
