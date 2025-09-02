@@ -1609,151 +1609,189 @@
     <!-- REVIEWS SECTION -->
     <!-- === REVIEWS: JS === -->
 <script>
-/* === REVIEWS: JS — seamless wrap from the RIGHT, 3-at-a-time, 5s autoplay === */
-(() => {
-  const track   = document.getElementById("reviewsTrack");
-  const prevBtn = document.getElementById("revPrev");
-  const nextBtn = document.getElementById("revNext");
-  const dotsEl  = document.getElementById("reviewDots");
+/* === REVIEWS: JS (seamless, 3-by-3 groups, dot logic) === */
+(function () {
+  const track = document.getElementById("reviewsTrack");
+  const prev  = document.getElementById("revPrev");
+  const next  = document.getElementById("revNext");
+  const dotsEl = document.getElementById("reviewDots");
 
-  const AUTOPLAY_MS = 5000;
+  // --- capture original cards BEFORE cloning ---
+  const originals = Array.from(track.children);
+  const TOTAL = originals.length;      // 5
 
-  // 1) Take originals
-  const originals = Array.from(track.querySelectorAll(".review-card"));
-  const TOTAL = originals.length;
+  // build 3 copies to allow seamless wrap in either direction
+  track.innerHTML = "";
+  for (let k = 0; k < 3; k++) {
+    originals.forEach(n => track.appendChild(n.cloneNode(true)));
+  }
 
-  // 2) Triplicate: prefix + originals + suffix, then start in the MIDDLE copy
-  const prefixFrag = document.createDocumentFragment();
-  const suffixFrag = document.createDocumentFragment();
-  originals.forEach(c => prefixFrag.appendChild(c.cloneNode(true)));
-  originals.forEach(c => suffixFrag.appendChild(c.cloneNode(true)));
-  track.insertBefore(prefixFrag, track.firstChild);
-  track.appendChild(suffixFrag);
-
+  // responsive "per page"
   let perPage = 3;
-  let index = TOTAL;      // <- start at middle copy
-  let timer = null;
-
-  function getGap() {
-    const s = getComputedStyle(track);
-    const g = parseFloat(s.gap || s.columnGap || 24);
-    return isNaN(g) ? 24 : g;
+  function computePerPage() {
+    const w = window.innerWidth;
+    perPage = (w <= 640) ? 1 : (w <= 1100) ? 2 : 3;
   }
-  function cardFullWidth() {
+  computePerPage();
+
+  // measure one card width + gap so we can translate by item count
+  let itemW = 0;
+  function measure() {
     const c = track.querySelector(".review-card");
-    if (!c) return 0;
-    const w = c.getBoundingClientRect().width;
-    return w + getGap();
+    const gap = parseFloat(getComputedStyle(track).gap || 24);
+    itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
   }
+  measure();
 
-  function setTransform(i, animate = true) {
-    const x = -(i * cardFullWidth());
+  // index of the left-most visible card on the 3x track
+  let baseIndex = TOTAL; // start centered on the middle copy
+  function setTransform(i, animate) {
     if (!animate) track.style.transition = "none";
-    // round to whole px + force GPU to avoid tiny flickers
-    track.style.transform = `translate3d(${Math.round(x)}px,0,0)`;
-    if (!animate) {
-      // force reflow then restore transition for next moves
-      track.getBoundingClientRect();
-      track.style.transition = "transform .35s ease";
-    }
+    track.style.transform = `translateX(${-i * itemW}px)`;
+    if (!animate) { track.offsetHeight; track.style.transition = "transform .35s ease"; }
   }
+  setTransform(baseIndex, false);
 
-  function baseIndex() {
-    // position within ORIGINAL set (0..TOTAL-1)
-    return ((index % TOTAL) + TOTAL) % TOTAL;
-  }
+  // helper
+  const mod = (n,m) => ((n % m) + m) % m;
 
- function updateDots() {
-  // rotate dots so the base (left-most visible) index is shown first
-  const b = baseIndex();
-  const children = [...dotsEl.children];
+  // === Two groups only: [0,1,2] and [2,3,4] ===
+  const groupStarts = [0, 2];
+  const toggleMode = () => (perPage === 3 && TOTAL === 5);
 
-  children.forEach((d, i) => {
-    // order 0..TOTAL-1 so dot with base index `b` is first
-    const order = (i - b + TOTAL) % TOTAL;
-    d.style.order = order;
-    // first `perPage` dots are active (contiguous)
-    d.classList.toggle("active", order < perPage);
-  });
-}
-
-function renderDots() {
-  dotsEl.innerHTML = "";
-  for (let i = 0; i < TOTAL; i++) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "review-dot";
-    btn.style.order = i;                // <-- add this line (initial order)
-    btn.addEventListener("click", () => {
-      const b = baseIndex();
-      const curStart = b - (b % perPage);
-      const tgtStart = i - (i % perPage);
-      const forwardItems = (tgtStart - curStart + TOTAL) % TOTAL;
-      index += forwardItems;
-      setTransform(index, true);
-      restartAutoplay();
-      updateDots();
-    });
-    dotsEl.appendChild(btn);
-  }
-  updateDots();
-} 
-
-  function afterTransitionWrap() {
-    // keep us in the middle copy range [TOTAL .. 2*TOTAL)
-    if (index >= TOTAL * 2) {
-      index -= TOTAL;       // wrap forward
-      setTransform(index, false); // instant, invisible
-    } else if (index < 0) {
-      index += TOTAL;       // wrap backward
-      setTransform(index, false);
+  // --- DOTS ---
+  function renderDots() {
+    dotsEl.innerHTML = "";
+    for (let i = 0; i < TOTAL; i++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "review-dot";
+      b.addEventListener("click", () => {
+        if (toggleMode()) {
+          // map clicked dot to the nearest of our two groups
+          let g = (i < 2) ? 0 : (i > 2) ? 1 : (currentGroup() === 0 ? 0 : 1);
+          goGroup(g);
+        } else {
+          goToStart(i);
+        }
+        restartAutoplay();
+      });
+      dotsEl.appendChild(b);
     }
     updateDots();
   }
 
-  function nextPage() {
-    index += perPage;
-    setTransform(index, true);
-  }
-  function prevPage() {
-    index -= perPage;
-    setTransform(index, true);
+  function currentGroup() {
+    const p = mod(baseIndex, TOTAL);
+    return (p === groupStarts[1]) ? 1 : 0; // treat anything else as group 0
   }
 
-  function measure() {
-    const w = window.innerWidth;
-    perPage = w <= 640 ? 1 : w <= 1100 ? 2 : 3;
+  function updateDots() {
+    const g = toggleMode() ? currentGroup() : null;
+    const children = [...dotsEl.children];
 
-    // realign to a page boundary in the MIDDLE copy
-    const b = baseIndex();
-    const alignedBase = b - (b % perPage);
-    index = TOTAL + alignedBase; // lock to middle copy
-    setTransform(index, false);
-    renderDots();
+    if (toggleMode()) {
+      // group 0 => dots 0,1,2 active ; group 1 => dots 2,3,4 active
+      const active = g === 0 ? new Set([0,1,2]) : new Set([2,3,4]);
+      children.forEach((d, i) => d.classList.toggle("active", active.has(i)));
+    } else {
+      // fallback contiguous highlight for non-3-up layouts
+      const start = mod(baseIndex, TOTAL);
+      children.forEach((d, i) => {
+        const k = (i - start + TOTAL) % TOTAL;
+        d.classList.toggle("active", k < perPage);
+      });
+    }
   }
 
-  function restartAutoplay() {
-    if (timer) clearInterval(timer);
-    timer = setInterval(nextPage, AUTOPLAY_MS);
+  // keep us sitting on the middle copy after transitions
+  function recenterIfNeeded() {
+    if (baseIndex >= 2 * TOTAL) { baseIndex -= TOTAL; setTransform(baseIndex, false); }
+    else if (baseIndex < TOTAL) { baseIndex += TOTAL; setTransform(baseIndex, false); }
   }
 
-  // listeners
-  nextBtn.addEventListener("click", () => { nextPage(); restartAutoplay(); });
-  prevBtn.addEventListener("click", () => { prevPage(); restartAutoplay(); });
-  track.addEventListener("transitionend", afterTransitionWrap);
-  window.addEventListener("resize", measure, { passive: true });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) { if (timer) clearInterval(timer); }
-    else restartAutoplay();
+  // generic delta move by item count
+  function goDelta(delta) {
+    baseIndex += delta;
+    setTransform(baseIndex, true);
+    track.addEventListener("transitionend", () => {
+      recenterIfNeeded();
+      updateDots();
+    }, { once: true });
+  }
+
+  // move to group g (0 or 1) while always sliding "forward" (left)
+  function goGroup(g) {
+    const p = mod(baseIndex, TOTAL);
+    if (g === 0) {
+      if (p === groupStarts[0]) return;   // already 123
+      goDelta(3);                          // 345 -> (next copy of) 123
+    } else {
+      if (p === groupStarts[1]) return;   // already 345
+      goDelta(2);                          // 123 -> 345
+    }
+  }
+
+  // prev group (always slide the other way)
+  function goPrevGroup() {
+    const p = mod(baseIndex, TOTAL);
+    baseIndex += (p === groupStarts[0]) ? -3 : -2; // 123->(right)345 or 345->(right)123
+    setTransform(baseIndex, true);
+    track.addEventListener("transitionend", () => {
+      recenterIfNeeded();
+      updateDots();
+    }, { once: true });
+  }
+
+  // fallback: snap so a specific dot index becomes the left-most
+  function goToStart(dotIdx) {
+    const p = mod(baseIndex, TOTAL);
+    baseIndex = baseIndex + ((dotIdx - p + TOTAL) % TOTAL);
+    setTransform(baseIndex, true);
+    track.addEventListener("transitionend", () => {
+      recenterIfNeeded();
+      updateDots();
+    }, { once: true });
+  }
+
+  // controls
+  next.addEventListener("click", () => {
+    if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0);
+    else goDelta(perPage);
+    restartAutoplay();
+  });
+  prev.addEventListener("click", () => {
+    if (toggleMode()) goPrevGroup();
+    else goDelta(-perPage);
+    restartAutoplay();
   });
 
+  // autoplay
+  let timer = null;
+  function startAutoplay() {
+    stopAutoplay();
+    timer = setInterval(() => {
+      if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0);
+      else goDelta(perPage);
+    }, 5000);
+  }
+  function stopAutoplay() { if (timer) clearInterval(timer); timer = null; }
+  function restartAutoplay() { stopAutoplay(); startAutoplay(); }
+
   // init
-  track.style.willChange = "transform";
-  track.style.transition = "transform .35s ease";
-  measure();
-  restartAutoplay();
+  renderDots();
+  startAutoplay();
+
+  // keep sizes in sync
+  function snap() { setTransform(baseIndex, false); updateDots(); }
+  window.addEventListener("resize", () => {
+    computePerPage();
+    measure();
+    snap();
+  }, { passive: true });
 })();
 </script>
+
 
 
 
