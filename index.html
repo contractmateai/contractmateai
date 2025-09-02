@@ -683,17 +683,17 @@
   -webkit-user-drag: none;
 }
 
-/* dark edge fades (no white) */
+/* dark edge fades, but much more transparent */
 .logo-fade{
-  position: absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none;
+  position:absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none;
 }
 .logo-fade.left{
   left:0;
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.96),
-    rgba(0,0,0,0.72),
-    rgba(0,0,0,0.42),
+    rgba(0,0,0,0.50),
+    rgba(0,0,0,0.22),
+    rgba(0,0,0,0.08),
     transparent
   );
 }
@@ -701,9 +701,9 @@
   right:0;
   background: linear-gradient(
     to left,
-    rgba(0,0,0,0.96),
-    rgba(0,0,0,0.72),
-    rgba(0,0,0,0.42),
+    rgba(0,0,0,0.50),
+    rgba(0,0,0,0.22),
+    rgba(0,0,0,0.08),
     transparent
   );
 }
@@ -1337,31 +1337,57 @@
       });
     </script>
 
- <script>
-  // === Powered-by strip: build + scroll (single visible set) ===
-  (function(){
-    const stripURL = "https://i.imgur.com/2SUo8mv.png";
+<script>
+  // === POWERED-BY STRIP: much longer pass + ~0.3s faster ===
+  (function () {
+    const track = document.getElementById('logoTrack');
+    if (!track) return;
 
-    // We only want ONE set visible; we still append two copies for seamless wrap.
-    function populateLogoStrip(row){
-      if (!row) return;
-      for (let i = 0; i < 2; i++){      // exactly 2 copies: A + B
-        const img = document.createElement("img");
-        img.className = "logo-piece";
-        img.src = stripURL;
-        img.alt = "Powered by partners";
-        img.loading = "lazy";
-        row.appendChild(img);
-      }
+    const src = 'https://i.imgur.com/2SUo8mv.png';
+
+    // Longer pass: show 1 set in view but build 4 copies in the track
+    const COPIES = 4; // make 5–6 if you want an even longer run
+    for (let i = 0; i < COPIES; i++) {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Powered-by logos';
+      img.className = 'logo-piece';
+      img.decoding = 'async';
+      track.appendChild(img);
     }
 
-    // Reuse your existing makeTicker(...) from the features section
-    window.addEventListener("load", () => {
-      const row = document.getElementById("logoTrack");
-      populateLogoStrip(row);
-      // slower = smoother; adjust to taste
-      makeTicker(row, { pxPerSecond: 26, direction: "left" });
-    });
+    // Loop time: ~0.3s faster than a 12.0s baseline
+    const SECONDS_PER_LOOP = 11.7; // smaller = faster, larger = slower
+
+    function run() {
+      let x = 0, pieceW = 0, last = performance.now();
+
+      function measure() {
+        const first = track.querySelector('.logo-piece');
+        if (!first || !first.complete) {
+          setTimeout(measure, 50);
+          return;
+        }
+        // width of one strip image at current layout
+        pieceW = first.getBoundingClientRect().width || first.naturalWidth;
+      }
+
+      function tick(now) {
+        const dt = (now - last) / 1000; last = now;
+        const pxPerSecond = (pieceW * COPIES) / SECONDS_PER_LOOP;
+        x -= pxPerSecond * dt;                      // move left
+        const loop = pieceW * COPIES;               // total distance for full loop
+        if (x <= -loop) x += loop;                  // seamless wrap
+        track.style.transform = `translateX(${x}px)`;
+        requestAnimationFrame(tick);
+      }
+
+      measure();
+      requestAnimationFrame(tick);
+      window.addEventListener('resize', measure, { passive: true });
+    }
+
+    window.addEventListener('load', run);
   })();
 </script>
 
