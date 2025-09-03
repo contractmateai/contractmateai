@@ -100,6 +100,15 @@
   --bar:#04040e;
   --bar-border:#3f3f3f;
 }
+/* === staged on-load sequence (hero → bg → particles) === */
+.reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
+body.stage1 .reveal-on-load{opacity:1; transform:none;}
+
+body::before{opacity:0; transition:opacity .6s ease;}
+body.stage2::before{opacity:1;}
+
+.particle-container{opacity:0; transition:opacity .6s ease;}
+body.stage3 .particle-container{opacity:1;}
 
 
       * {
@@ -125,6 +134,9 @@
         background: url("https://imgur.com/tEj2TUl.png") no-repeat center bottom;
         background-size: 100% 1600px;
         z-index: -2;
+        opacity: 0;                 /* add */
+transition: opacity .6s ease;/* add */
+
       }
 
       .particle-container {
@@ -1200,7 +1212,8 @@
     <div class="particle-container" id="particles"></div>
 
     <div class="hero-wrapper">
-      <section class="hero">
+     <section class="hero reveal-on-load">
+
         <div class="hero-upper">
        <div class="tagline-absolute animated-arrow-bttn">
   <span class="chip">AI</span>
@@ -1258,7 +1271,7 @@
       essentials without reading every line
     </p>
 
-    <section class="insight-section">
+   <section class="insight-section" data-aos="fade-up">
       <div class="insight-content">
         <div class="insight-left moving-line-wrapper">
           <span class="yellow-line" id="yellowLine"></span>
@@ -1293,7 +1306,7 @@
     <!-- SCROLLING FEATURES SECTION -->
     <div class="scroll-full">
       <div class="scroll-wrapper">
-        <section class="scroll-section">
+        <section class="scroll-section" data-aos="fade-up">
           <h3>
             Everything you need for clarity and security in one seamless
             experience.
@@ -1311,6 +1324,22 @@
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init({ once: true });
+      // staged load: 1) hero content, 2) bg image, 3) particles
+window.addEventListener('load', () => {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.body.classList.add('stage1'); // show hero content first
+
+  if (reduce) {
+    // accessibility: show everything at once
+    document.body.classList.add('stage2','stage3');
+    return;
+  }
+
+  setTimeout(() => document.body.classList.add('stage2'), 220); // bg image fades in
+  setTimeout(() => document.body.classList.add('stage3'), 440); // particles fade in last
+});
+
 
       /* particles */
       const container = document.getElementById("particles");
@@ -1507,7 +1536,7 @@
 
 
     <!-- WATCH VIDEO SECTION -->
-    <section class="watch-video-section">
+    <section class="watch-video-section" data-aos="fade-up">
       <div class="video-content">
         <div class="video-text">
           <h2>
@@ -1627,7 +1656,7 @@
     </style>
     <!-- Reviews Section -->
     <!-- Reviews Section -->
-    <section class="reviews-section">
+    <section class="reviews-section" data-aos="fade-up">
       <div class="reviews-header">
         <div class="reviews-title">
           <h2>What <span class="green">Our Clients</span> Say</h2>
@@ -1906,7 +1935,7 @@
 
 
     <!-- FAQ SECTION -->
-    <section class="faq-section">
+    <section class="faq-section" data-aos="fade-up">
       <h2 class="faq-title">Frequently Asked Questions</h2>
       <div class="faq-list">
         <div class="faq-item">
