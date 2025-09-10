@@ -1,712 +1,492 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>SignSense — Mobile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
-  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter&display=swap" rel="stylesheet">
+
   <style>
-    :root{
-      --bg-topbot:#0d011b;
-      --bg-mid:#000000;
-      --text:#fff9f9;
-      --muted:#d8cccc;
-      --lime:#aafe2a;         /* title lime for Sense / Signing / at a Glance */
-      --lime2:#bff611;        /* used in sections that keep old brand lime */
-      --chip:#adff00;         /* AI chip background */
-      --bar-bg:#0b0b0b;       /* topbar + dropdown bg (black) */
-      --bar-br:#232323;       /* 1px border for topbar + dropdown */
+    :root {
+      --highlight-green: #aafe2a;
     }
 
-    /* ===== Base / Layout ===== */
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; }
-    body{
-      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);
-      background:
-        linear-gradient(to bottom,
-          var(--bg-topbot) 0%,
-          var(--bg-topbot) 8%,
-          var(--bg-mid) 40%,
-          var(--bg-mid) 60%,
-          var(--bg-topbot) 92%,
-          var(--bg-topbot) 100%);
-      background-attachment: fixed; /* bg does NOT move */
-      overflow-x:hidden;
-    }
-    .wrap{ max-width: 700px; margin: 0 auto; padding: 0 18px; }
-
-    /* ===== Top Bar (logo + hamburger) ===== */
-    .topbar-wrap{
-      position:sticky; top:10px; z-index:1000;
-      display:flex; justify-content:center; padding:0 12px;
-    }
-    .topbar{
-      width:100%;
-      max-width: 720px;
-      min-height:64px;
-      background:var(--bar-bg);
-      border:1px solid var(--bar-br);
-      border-radius:14px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px 14px;
-      box-shadow:0 10px 28px rgba(0,0,0,.35);
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; text-decoration:none;
-    }
-    .brand img{ width:28px; height:28px; display:block; }
-    .brand span{ color:#eaeaea; font-size:22px; font-weight:500; letter-spacing:.2px; }
-
-    .hamburger,.close-x{
-      width:44px; height:44px; border-radius:10px; border:1px solid var(--bar-br);
-      background:#121212; display:grid; place-items:center; color:#fff;
-      cursor:pointer;
-    }
-    .hamburger span,
-    .hamburger::before,
-    .hamburger::after{
-      content:"";
-      display:block; width:22px; height:2px; background:#fff; border-radius:2px;
-    }
-    .hamburger span{ transform: translateY(0); }
-    .hamburger::before{ transform: translateY(-6px); }
-    .hamburger::after{  transform: translateY(6px); }
-
-    /* ===== Dropdown extension (no visible seam) ===== */
-    .menu-shell{
-      width:100%; max-width:720px;
-      margin:0 auto; padding:0 12px;
-      position:relative; z-index:999;
-    }
-    .menu-panel{
-      background:var(--bar-bg);
-      border:1px solid var(--bar-br);
-      border-top:none;               /* attaches to topbar with no line */
-      border-radius:0 0 14px 14px;   /* extension look */
-      overflow:hidden;
-      max-height:0;
-      transition:max-height .28s ease;
-      box-shadow:0 18px 38px rgba(0,0,0,.45);
-    }
-    .menu-panel.open{ max-height:520px; }
-    .menu-inner{ padding:18px 16px 16px; }
-    .menu-item{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:16px 10px; color:#fff; text-decoration:none; font-size:18px; border-radius:12px;
-    }
-    .menu-item + .menu-item{ margin-top:6px; }
-    .menu-item .chev{ font-size:22px; opacity:.85; }
-    .menu-note{ color:#cfcfcf; opacity:.9; font-size:14px; text-align:center; margin:16px 0 6px; }
-    .menu-copy{ color:#bdbdbd; font-size:14px; text-align:center; padding-bottom:6px; }
-
-    /* ===== Hero ===== */
-    .hero{ text-align:center; padding:36px 0 18px; }
-    .badge{
-      display:inline-flex; align-items:center; gap:10px; padding:8px 14px;
-      border-radius:40px; background:#090922; color:#bbb; font-size:14px;
-      box-shadow:0 0 18px rgba(191,255,60,.55);
-    }
-    .badge .chip{
-      background:var(--chip); color:#000; padding:6px 12px; border-radius:999px; font-weight:700; font-size:13px;
-    }
-    .hero h1{
-      font-family:"Shoika", sans-serif; font-weight:800;
-      font-size:42px; line-height:1.15; margin:18px auto 10px; letter-spacing:.2px;
-    }
-    .hero .lime{ color:var(--lime); }
-    .subtext{ color:var(--muted); font-size:18px; line-height:1.6; margin:10px auto 20px; }
-
-    .cta{
-      margin: 14px 0 22px;
-    }
-    .cta .btn{
-      background:#fff; color:#000; border:2px solid #999;
-      padding:14px 18px; border-radius:14px; font-size:18px;
-      display:inline-flex; gap:8px; align-items:center; cursor:pointer;
-      box-shadow:0 0 12px rgba(255,255,255,.25);
-    }
-    .btn .arrow{ display:inline-block; transition: transform .2s ease; }
-    .btn:hover .arrow{ transform: translate(3px,-3px); }
-
-    /* YouTube embed */
-    .yt{
-      border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.1);
-      box-shadow:0 10px 30px rgba(0,0,0,.35); margin: 8px 0 14px;
-    }
-    .yt iframe{ width:100%; height:214px; display:block; }
-
-    /* ===== Powered-by strip ===== */
-    .logo-strip{
-      --side-gap: 70px;
-      width: min(100%, calc(100vw - var(--side-gap)));
-      margin: 18px auto 6px; position:relative; overflow:hidden;
-    }
-    .logo-track{ display:flex; gap:0; will-change:transform; align-items:center; }
-    .logo-piece{ flex:0 0 100%; width:100%; display:block; user-select:none; -webkit-user-drag:none; }
-    .logo-fade{ position:absolute; top:0; bottom:0; width:90px; pointer-events:none; }
-    .logo-fade.left{ left:0; background:linear-gradient(to right, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent); }
-    .logo-fade.right{ right:0; background:linear-gradient(to left, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent); }
-
-    /* ===== Section: “Instant Clarity Engine” badge ===== */
-    .center{ text-align:center; }
-    .spacer-20{ height:20px; }
-    .spacer-30{ height:30px; }
-
-    /* ===== “Understand Your Contract at a Glance” ===== */
-    .title-block{ text-align:center; padding-top:8px; }
-    .title-block h2{
-      font-family:"Shoika", sans-serif; font-weight:700; line-height:1.2;
-      font-size:34px; letter-spacing:.2px;
-    }
-    .title-block .sub{
-      color:var(--muted); font-size:18px; line-height:1.6; margin-top:10px;
-      white-space:pre-line;
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(to bottom, #0d011b 0%, #000 50%, #0d011b 100%);
+      color: white;
     }
 
-    /* ===== Insights image with moving yellow line (mobile-sized) ===== */
-    .insights-wrap{ margin: 18px auto 4px; width:100%; display:flex; justify-content:center; }
-    .moving-line-wrapper{
-      width:min(95%, 520px); border-radius:16px; position:relative; overflow:hidden; background:#000; padding:2px;
+    /* === TOP BAR === */
+    .topbar {
+      background: #000;
+      border-bottom: 1px solid #232323;
+      height: 60px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease;
     }
-    .moving-line-content{ width:100%; height:100%; border-radius:inherit; position:relative; padding:8px; background:transparent; }
-    .moving-line-content img{ width:100%; display:block; border-radius:14px; }
-    .yellow-line{
-      position:absolute; width:24px; height:24px; background: rgba(191,246,17,.8);
-      box-shadow:0 0 38px 28px rgba(191,246,17,.8); border-radius:50%;
-      animation: move-around 8s linear infinite; z-index:0;
-    }
-    @keyframes move-around{
-      0% { top:-20px; left:-20px; }
-      25%{ top:-20px; left:calc(100% - 20px); }
-      50%{ top:calc(100% - 20px); left:calc(100% - 20px); }
-      75%{ top:calc(100% - 20px); left:-20px; }
-      100%{ top:-20px; left:-20px; }
+    .topbar.hidden {
+      transform: translateY(-100%);
     }
 
-    /* ===== Scrolling features (fewer in viewport on mobile) ===== */
-    .scroll-full{ width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; }
-    .scroll-wrapper{ padding: 2px 12px 26px; }
-    .scroll-section{
-      position:relative; margin: 6px auto 0; max-width:720px; padding:18px 0 12px;
-      background:linear-gradient(to bottom, rgba(14,12,19,.85), rgba(24,21,34,.85), rgba(4,3,4,.85));
-      border:1px solid rgba(36,36,37,.78); border-radius:16px; overflow:hidden;
+    .topbar-left {
+      display: flex;
+      align-items: center;
     }
-    .scroll-section h3{
-      text-align:center; font-size:18px; font-weight:500; margin:14px 8px 12px; color:#fff;
+    .topbar-left img {
+      height: 34px;
+      width: auto;
+      border-radius: 8px;
     }
-    .scroll-strip{ display:flex; gap:18px; padding:10px 0; white-space:nowrap; will-change:transform; }
-    .scroll-item{
-      background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:40px;
-      padding:10px 14px; display:inline-flex; align-items:center; gap:12px; flex-shrink:0;
+    .topbar-left .brand {
+      color: white;
+      font-size: 20px;
+      font-weight: 400;
+      margin-left: 8px;
     }
-    .scroll-item img{ width:34px; height:34px; border-radius:50%; object-fit:cover; background:#101010; }
-    .scroll-item span{ font-size:15px; color:#fff; white-space:nowrap; }
-    .scroll-shadow-left,.scroll-shadow-right{
-      position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2;
-    }
-    .scroll-shadow-left{ left:0;  background:linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.5), transparent); }
-    .scroll-shadow-right{ right:0; background:linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.5), transparent); }
 
-    /* ===== Reviews (single card per view, 5s auto) ===== */
-    .reviews{ padding: 26px 18px 18px; max-width:720px; margin:0 auto; }
-    .reviews h3{
-      font-family:"Shoika", sans-serif; font-weight:600; text-align:center; font-size:30px;
+    /* Hamburger Menu */
+    .menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 30px;
+      height: 22px;
+      z-index: 1001;
     }
-    .reviews h3 .green{ color:var(--lime2); }
-    .reviews .sub{ text-align:center; color:#a8a8a8; margin-top:8px; }
-
-    .reviews-viewport{ overflow:hidden; margin-top:18px; }
-    .reviews-track{ display:flex; gap:18px; transition: transform .35s ease; }
-    .review-card{
-      flex: 0 0 100%;
-      border:1px solid #262626; border-radius:18px; padding:10px; background:#000;
-      box-shadow:0 10px 26px rgba(0,0,0,.35);
+    .menu-btn span {
+      display: block;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+      transition: 0.3s;
     }
-    .review-card img{ width:100%; display:block; border-radius:12px; }
-
-    .review-controls{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
-    .arrow-btn{
-      width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
-      display:grid; place-items:center; background:#ffffff; /* both NOT green */
-      box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
+    /* Hamburger → X animation */
+    .menu-btn.open span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
     }
-    .arrow-btn img{ width:18px; height:18px; }
-    .dots{ display:flex; gap:10px; justify-content:center; align-items:center; flex:1; }
-    .dot{
-      width:10px; height:10px; border-radius:50%; background:#777; border:none;
+    .menu-btn.open span:nth-child(2) {
+      opacity: 0;
     }
-    .dot.active{ background:#b9f03d; }
-
-    /* ===== FAQ ===== */
-    .faq{ padding: 24px 18px 30px; max-width:720px; margin:0 auto; }
-    .faq h3{
-      font-family:"Shoika", sans-serif; font-weight:700; text-align:center; font-size:32px; margin-bottom:12px;
+    .menu-btn.open span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
     }
-    .faq-list{ display:flex; flex-direction:column; gap:14px; }
-    .faq-item{ border-radius:16px; overflow:hidden; background:transparent; }
-    .faq-q{
-      width:100%; background:#0b0b0b; color:#fff; border:none; padding:18px 16px;
-      display:flex; justify-content:space-between; align-items:center; font-size:18px; border-radius:16px;
+
+    /* Dropdown Menu */
+    .dropdown {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: #000;
+      border-top: 1px solid #232323;
+      padding: 20px;
+      text-align: center;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      z-index: 999;
     }
-    .faq-item.open{ background:#191624; border-radius:16px; }
-    .faq-item.open .faq-q{ background:transparent; }
-    .faq-a{
-      padding:0 16px; color:#cfcbd6; font-size:16px; line-height:1.7; max-height:0; opacity:0; overflow:hidden;
-      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+    .dropdown.show {
+      transform: translateY(0);
     }
-    .faq-item.open .faq-a{ padding:12px 16px 16px; opacity:1; max-height:420px; }
+    .dropdown a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 14px 0;
+    }
+    .dropdown a:hover {
+      color: var(--highlight-green);
+    }
+    .dropdown-footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+    }
 
-    /* ===== Footer (mobile layout shown in screenshots) ===== */
-    .m-footer{ max-width:720px; margin: 22px auto 40px; padding: 0 18px; }
-    .foot-logo{ display:flex; justify-content:center; margin-bottom:8px; }
-    .foot-logo img{ width:150px; height:auto; border-radius:14px; }
+    /* === HERO === */
+    .hero {
+      text-align: center;
+      padding: 100px 20px 40px;
+    }
+    .tagline-absolute {
+      margin-bottom: 20px;
+      font-size: 13px;
+      background-color: #090922;
+      color: #bbb;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 53px;
+      box-shadow: none; /* remove glow */
+    }
+    .tagline-absolute .chip {
+      background-color: var(--highlight-green);
+      color: black;
+      padding: 4px 10px;
+      border-radius: 53px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .hero h1 {
+      font-family: "Shoika", sans-serif;
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1.3;
+      margin: 0;
+    }
+    .hero h1 span {
+      color: var(--highlight-green);
+    }
+    .subtext {
+      margin-top: 14px;
+      font-size: 15px;
+      color: #ccc;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+    .cta-btn {
+      background: white;
+      color: black;
+      border: 2px solid #999;
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .hero iframe {
+      width: 90%;
+      max-width: 320px;
+      height: 180px;
+      margin: 20px auto 0;
+      display: block;
+      border-radius: 12px;
+    }
 
-    .foot-group{ text-align:center; margin:22px 0; }
-    .foot-group h4{ font-size:28px; font-weight:800; margin-bottom:14px; }
-    .foot-link{ display:block; color:#eaeaea; text-decoration:none; font-size:22px; margin:10px 0; }
+    /* === POWERED BY STRIP === */
+    .logo-strip {
+      margin: 40px auto;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 50px;
+    }
+    .logo-track {
+      display: flex;
+      animation: scrollLogos 12s linear infinite;
+    }
+    .logo-track img {
+      height: 40px;
+      margin-right: 40px;
+    }
+    @keyframes scrollLogos {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
 
-    .foot-divider{ height:1px; background:#2a2a2a; margin: 18px 0; }
-    .legal-links{ text-align:center; display:flex; flex-direction:column; gap:14px; margin-top:10px; }
-    .legal-links a{ color:#eaeaea; }
-    .legal-note{ text-align:center; color:#eaeaea; opacity:.9; margin-top:18px; }
-    .copy{ text-align:center; color:#eaeaea; margin-top:8px; }
+    /* === SECTION TITLES === */
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-top: 40px;
+      font-family: "Shoika", sans-serif;
+    }
+    .section-title span {
+      color: var(--highlight-green);
+    }
+    .section-sub {
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
 
-    /* small helpers */
-    .center-btn{ display:flex; justify-content:center; }
+    /* === INSIGHTS === */
+    .insight-section {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .insight-img-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .insight-img-wrapper img {
+      width: 280px;
+      border-radius: 14px;
+    }
+    .yellow-line {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: rgba(191, 246, 17, 0.8);
+      box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8);
+      border-radius: 50%;
+      animation: move-around 8s linear infinite;
+    }
+    @keyframes move-around {
+      0% { top: -20px; left: -20px; }
+      25% { top: -20px; left: calc(100% - 20px); }
+      50% { top: calc(100% - 20px); left: calc(100% - 20px); }
+      75% { top: calc(100% - 20px); left: -20px; }
+      100% { top: -20px; left: -20px; }
+    }
+
+    /* === REVIEWS === */
+    .reviews-section {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .review-card {
+      display: none;
+    }
+    .review-card.active {
+      display: block;
+    }
+    .review-card img {
+      width: 280px;
+      border-radius: 14px;
+    }
+    .review-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .review-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #666;
+      cursor: pointer;
+    }
+    .review-dot.active {
+      background: var(--highlight-green);
+    }
+
+    /* === FAQ === */
+    .faq-section {
+      padding: 40px 20px;
+    }
+    .faq-item {
+      border: 1px solid #232323;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .faq-q {
+      background: #000;
+      color: white;
+      padding: 14px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .faq-a {
+      background: #111;
+      color: #ccc;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 14px;
+    }
+
+    /* === FOOTER === */
+    footer {
+      padding: 20px;
+      border-top: 1px solid #232323;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
   </style>
 </head>
+
 <body>
+  <!-- === TOP BAR === -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo">
+      <span class="brand">SignSense</span>
+    </div>
+    <button class="menu-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
 
-  <!-- ===== Top Bar ===== -->
-  <div class="topbar-wrap">
-    <div class="topbar">
-      <a class="brand" href="index.html">
-        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
-        <span>SignSense</span>
-      </a>
-      <button class="hamburger" id="openMenu" aria-label="Open menu"><span></span></button>
+  <div class="dropdown">
+    <a href="#how-it-works">See How It Works</a>
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+    <div class="dropdown-footer">
+      For informational use only. Not legal advice.<br>
+      © 2025 SignSense. All rights reserved.
     </div>
   </div>
 
-  <!-- Dropdown extension (seamless) -->
-  <div class="menu-shell">
-    <div class="menu-panel" id="menuPanel" aria-hidden="true">
-      <div class="menu-inner">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-          <a class="brand" href="index.html" style="gap:10px; text-decoration:none;">
-            <img src="https://imgur.com/t8UWYN3.png" alt="logo" />
-            <span>SignSense</span>
-          </a>
-          <button class="close-x" id="closeMenu" aria-label="Close menu" style="font-size:22px;">✕</button>
-        </div>
-
-        <a class="menu-item" href="index.html#how-it-works">
-          <span>See How It Works</span> <span class="chev">›</span>
-        </a>
-        <a class="menu-item" href="index.html">
-          <span>Home</span> <span class="chev">›</span>
-        </a>
-        <a class="menu-item" href="contact.html">
-          <span>Contact</span> <span class="chev">›</span>
-        </a>
-
-        <div class="menu-note">Not legal advice.</div>
-        <div class="menu-copy">© 2025 SignSense. All rights reserved.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== Hero ===== -->
-  <section class="wrap hero" id="top">
-    <div class="center">
-      <span class="badge"><span class="chip">AI</span> Legal DocReview Tool <span class="arrow">↗</span></span>
+  <!-- === HERO === -->
+  <section class="hero">
+    <div class="tagline-absolute">
+      <span class="chip">AI</span>
+      Legal DocReview Tool
     </div>
 
     <h1>
-      Make <span class="lime">Sense</span> Of What<br />
-      You’re <span class="lime">Signing</span>
+      Make Sense Of What<br>
+      <span>You're Signing</span>
     </h1>
-    <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students &amp; more</p>
 
-    <div class="cta">
-      <button class="btn" id="reviewBtn">Review A Contract <span class="arrow">↗</span></button>
-    </div>
+    <p class="subtext">
+      SignSense instantly simplifies<br>
+      contracts for law firms, freelancers,<br>
+      students & more
+    </p>
 
-    <!-- YouTube under CTA -->
-    <div class="yt">
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="SignSense Demo" frameborder="0" allowfullscreen></iframe>
-    </div>
+    <button class="cta-btn">Review A Contract</button>
+
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
   </section>
 
-  <!-- ===== Powered-by strip ===== -->
+  <!-- === POWERED BY === -->
   <section class="logo-strip">
-    <div class="logo-track" id="logoTrack"></div>
-    <div class="logo-fade left"></div>
-    <div class="logo-fade right"></div>
-  </section>
-
-  <!-- ===== Instant Clarity Engine badge ===== -->
-  <div class="wrap center">
-    <div class="spacer-20"></div>
-    <span class="badge">Instant Clarity Engine <span class="arrow">↗</span></span>
-  </div>
-
-  <!-- ===== “Understand Your Contract at a Glance” ===== -->
-  <section class="wrap">
-    <div class="spacer-30"></div>
-    <div class="title-block">
-      <h2>Understand Your<br/>Contract <span class="lime">at a Glance</span></h2>
-      <div class="sub">We highlight key terms, risks, &amp; clauses so you can grasp the
-essentials  without reading every line</div>
-    </div>
-
-    <div class="insights-wrap">
-      <div class="moving-line-wrapper">
-        <span class="yellow-line" id="yellowLine"></span>
-        <div class="moving-line-content">
-          <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
-        </div>
-      </div>
+    <div class="logo-track">
+      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
+      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
+      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
     </div>
   </section>
 
-  <!-- ===== Features scroll (mobile tuned) ===== -->
-  <div class="scroll-full">
-    <div class="scroll-wrapper">
-      <section class="scroll-section">
-        <h3>Everything you need for clarity and security in one seamless experience.</h3>
-        <div class="scroll-strip top-row"></div>
-        <div class="scroll-strip bottom-row"></div>
-        <div class="scroll-shadow-left"></div>
-        <div class="scroll-shadow-right"></div>
-      </section>
-    </div>
-  </div>
-
-  <!-- ===== Reviews (one at a time) ===== -->
-  <section class="reviews">
-    <h3>What <span class="green">Our Clients</span> Say</h3>
-    <div class="sub">Hear Directly From Our Satisfied Users</div>
-
-    <div class="reviews-viewport">
-      <div class="reviews-track" id="reviewsTrack">
-        <div class="review-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" /></div>
-        <div class="review-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2" /></div>
-        <div class="review-card"><img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3" /></div>
-        <div class="review-card"><img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4" /></div>
-        <div class="review-card"><img src="https://i.imgur.com/I9iQu88.png" alt="Review 5" /></div>
-      </div>
-    </div>
-
-    <div class="review-controls">
-      <button class="arrow-btn" id="revPrev" aria-label="Previous">
-        <img src="https://imgur.com/nhYxlHX.png" alt="" />
-      </button>
-      <div class="dots" id="reviewDots"></div>
-      <button class="arrow-btn" id="revNext" aria-label="Next">
-        <img src="https://imgur.com/nhYxlHX.png" alt="" style="transform: scaleX(-1);" />
-      </button>
-    </div>
-
-    <div class="center-btn" style="margin-top:16px;">
-      <button class="btn" id="reviewBtn2">Leave A Review <span class="arrow">↗</span></button>
+  <!-- === INSIGHTS === -->
+  <section class="insight-section">
+    <h2 class="section-title">Understand Your <span>Contract</span> at a Glance</h2>
+    <p class="section-sub">
+      We highlight key terms, risks, & clauses<br>
+      so you can grasp the essentials without reading every line
+    </p>
+    <div class="insight-img-wrapper">
+      <span class="yellow-line"></span>
+      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights Image">
     </div>
   </section>
 
-  <!-- ===== FAQ ===== -->
-  <section class="faq">
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-list" id="faqList">
-      <div class="faq-item">
-        <button class="faq-q" type="button">What languages do you support? <span>▾</span></button>
-        <div class="faq-a">English, German, French, Italian, Dutch, Romanian, Albanian.</div>
-      </div>
+  <!-- === REVIEWS === -->
+  <section class="reviews-section">
+    <h2 class="section-title">What <span>Our Clients</span> Say</h2>
+    <div class="review-card active">
+      <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1">
+    </div>
+    <div class="review-card">
+      <img src="https://i.imgur.com/k42nv4C.png" alt="Review 2">
+    </div>
+    <div class="review-card">
+      <img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3">
+    </div>
 
-      <div class="faq-item open">
-        <button class="faq-q" type="button">Is SignSense legally binding ? <span>▾</span></button>
-        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">What types of contracts can I upload? <span>▾</span></button>
-        <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">Is my data secure? <span>▾</span></button>
-        <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
-      </div>
+    <div class="review-dots">
+      <div class="review-dot active"></div>
+      <div class="review-dot"></div>
+      <div class="review-dot"></div>
     </div>
   </section>
 
-  <!-- ===== Footer (mobile) ===== -->
-  <footer class="m-footer">
-    <div class="foot-logo">
-      <img src="https://imgur.com/t8UWYN3.png" alt="SignSense" />
+  <!-- === FAQ === -->
+  <section class="faq-section">
+    <div class="faq-item">
+      <div class="faq-q">What languages do you support?</div>
+      <div class="faq-a">English, German, French, Italian, Dutch, Romanian, Albanian.</div>
     </div>
+    <div class="faq-item">
+      <div class="faq-q">Is SignSense legally binding?</div>
+      <div class="faq-a">No. It explains contracts but is not a replacement for legal advice.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What types of contracts can I upload?</div>
+      <div class="faq-a">Leases, NDAs, freelance contracts, job offers, and more.</div>
+    </div>
+  </section>
 
-    <div class="foot-group">
-      <h4>Quick Menu</h4>
-      <a class="foot-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">How it Works</a>
-      <a class="foot-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave Review</a>
-    </div>
-
-    <div class="foot-group">
-      <h4>Information</h4>
-      <a class="foot-link" href="contact.html">Contact</a>
-      <a class="foot-link" href="index.html">Home</a>
-    </div>
-
-    <div class="foot-group">
-      <h4>Socials</h4>
-      <a class="foot-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
-      <a class="foot-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-      <a class="foot-link" href="https://x.com" target="_blank" rel="noopener noreferrer">X</a>
-    </div>
-
-    <div class="foot-divider"></div>
-    <div class="legal-links">
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="privacy.html">Privacy Policy</a>
-    </div>
-    <div class="legal-note">For informational use only. Not legal advice.</div>
-    <div class="copy">© 2025 SignSense. All rights reserved.</div>
+  <!-- === FOOTER === -->
+  <footer>
+    For informational use only. Not legal advice.<br>
+    © 2025 SignSense. All rights reserved.
   </footer>
 
-  <!-- ===== Hidden file input for "Review A Contract" (same wiring as desktop) ===== -->
-  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
-
+  <!-- === JS === -->
   <script>
-    // Topbar dropdown open/close
-    const openMenu = document.getElementById('openMenu');
-    const closeMenu = document.getElementById('closeMenu');
-    const panel = document.getElementById('menuPanel');
-    openMenu?.addEventListener('click', () => { panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); });
-    closeMenu?.addEventListener('click', () => { panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); });
+    const menuBtn = document.querySelector('.menu-btn');
+    const dropdown = document.querySelector('.dropdown');
+    let lastScroll = 0;
+    const topbar = document.querySelector('.topbar');
 
-    // Review buttons -> file picker -> mock -> analysis.html
-    const triggers = [document.getElementById('reviewBtn'), document.getElementById('reviewBtn2')].filter(Boolean);
-    const fileInput = document.getElementById('contractFile');
-    triggers.forEach(t => t.addEventListener('click', (e)=>{ e.preventDefault(); fileInput.click(); }));
-    fileInput.addEventListener('change', () => {
-      if (!fileInput.files || !fileInput.files.length) return;
-      const mock = {
-        languageOriginal: "en",
-        summary: [
-          "This contract is generally favorable with low overall risk.",
-          "Payment schedule and termination rights are standard.",
-          "Watch late-fee compounding and define 'material breach'.",
-        ],
-        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-        clauses: [
-          "Payment Terms — Net 30 with 2% per month late fee.",
-          "Scope of Work — Deliverables listed in Schedule A.",
-          "Termination — 30-day convenience; immediate for cause.",
-          "IP & Licensing — Client owns final assets; creator keeps tools.",
-        ],
-        issues: [
-          "Late fee compounding escalates costs on long delays.",
-          "Indemnity is one-sided; consider mutual or capped liability.",
-        ],
-        suggestions: [
-          "Add a 5–7 day grace period before late fees.",
-          "Define 'material breach' + 10-day cure period.",
-          "List milestones and acceptance criteria.",
-        ],
-        meters: { confidence: 75, favorability: 80, deadline: 18 },
-        translations: { en: {} },
-      };
-      localStorage.setItem("analysisData", JSON.stringify(mock));
-      localStorage.setItem("summary", mock.summary.join("\n\n"));
-      localStorage.setItem("risk", String(mock.risk.value));
-      localStorage.setItem("clarity", String(mock.clarity.value));
-      localStorage.setItem("compliance", "90");
-      localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-      localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-      localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
-      window.location.href = "analysis.html";
+    // Toggle menu
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuBtn.classList.toggle('open');
+      dropdown.classList.toggle('show');
     });
 
-    // Powered-by strip (endless)
-    (function () {
-      const track = document.getElementById('logoTrack');
-      if (!track) return;
-      const src = 'https://i.imgur.com/2SUo8mv.png';
-      const COPIES = 8;
-      for (let i=0;i<COPIES;i++){
-        const img = document.createElement('img');
-        img.src = src; img.alt = 'Powered-by logos'; img.className='logo-piece'; img.decoding='async';
-        track.appendChild(img);
+    // Close menu on outside click
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+        menuBtn.classList.remove('open');
+        dropdown.classList.remove('show');
       }
-      const SECONDS_PER_LOOP = 120;
-      function run(){
-        let x=0, pieceW=0, last=performance.now();
-        function measure(){
-          const first = track.querySelector('.logo-piece');
-          if(!first || !first.complete){ setTimeout(measure,50); return; }
-          pieceW = first.getBoundingClientRect().width || first.naturalWidth;
-        }
-        function tick(now){
-          const dt = (now-last)/1000; last = now;
-          const pxPerSecond = (pieceW * COPIES)/SECONDS_PER_LOOP;
-          x -= pxPerSecond * dt;
-          const loop = pieceW * COPIES;
-          if (x <= -loop) x += loop;
-          track.style.transform = `translateX(${x}px)`;
-          requestAnimationFrame(tick);
-        }
-        measure(); requestAnimationFrame(tick);
-        window.addEventListener('resize', measure, {passive:true});
-      }
-      window.addEventListener('load', run);
-    })();
-
-    // Features population + endless ticker (slower, fewer in viewport naturally on mobile)
-    (function(){
-      const topRow = document.querySelector(".top-row");
-      const bottomRow = document.querySelector(".bottom-row");
-      const featuresTop = [
-        { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-        { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-        { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-        { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-        { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-        { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-      ];
-      const featuresBottom = [
-        { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-        { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-        { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-        { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-        { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-        { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" },
-      ];
-      function populate(row, list){
-        if(!row) return;
-        const make = () => {
-          const frag = document.createDocumentFragment();
-          list.forEach(f=>{
-            const el = document.createElement('div');
-            el.className = 'scroll-item';
-            el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-            frag.appendChild(el);
-          });
-          return frag;
-        };
-        row.appendChild(make());
-        row.appendChild(make());
-      }
-      populate(topRow, featuresTop);
-      populate(bottomRow, featuresBottom);
-
-      function ticker(row, {pps=26, dir='left'}={}){
-        if(!row) return;
-        const speed = dir==='left' ? -pps : pps;
-        let x=0, w=0, raf=0, last=performance.now();
-        function measure(){ w = row.scrollWidth/2 || 0; if(!w) setTimeout(measure,60); }
-        function tick(now){
-          const dt=(now-last)/1000; last=now; x += speed*dt;
-          if(x <= -w) x += w; if(x>0) x -= w;
-          row.style.transform = `translateX(${x}px)`;
-          raf = requestAnimationFrame(tick);
-        }
-        measure(); requestAnimationFrame(tick);
-        window.addEventListener('resize', measure, {passive:true});
-      }
-      window.addEventListener('load', ()=>{
-        ticker(topRow, {pps:26, dir:'right'});
-        ticker(bottomRow, {pps:26, dir:'left'});
-      });
-    })();
-
-    // Reviews: 1-per view, 5s autoplay, arrows & dots
-    (function(){
-      const track = document.getElementById('reviewsTrack');
-      const prev = document.getElementById('revPrev');
-      const next = document.getElementById('revNext');
-      const dotsEl = document.getElementById('reviewDots');
-
-      const originals = Array.from(track.children);
-      const TOTAL = originals.length;
-      track.innerHTML = "";
-      for(let k=0;k<3;k++){ originals.forEach(n=>track.appendChild(n.cloneNode(true))); }
-
-      let itemW=0;
-      function measure(){
-        const c = track.querySelector(".review-card");
-        const gap = parseFloat(getComputedStyle(track).gap || 18);
-        itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
-      }
-      measure();
-      window.addEventListener('resize', ()=>{ measure(); snap(); }, {passive:true});
-
-      let baseIndex = TOTAL; // middle copy
-      function setX(i, animate){
-        if(!animate) track.style.transition = "none";
-        track.style.transform = `translateX(${-i*itemW}px)`;
-        if(!animate){ track.offsetHeight; track.style.transition = "transform .35s ease"; }
-      }
-      function recenter(){
-        if(baseIndex >= 2*TOTAL){ baseIndex -= TOTAL; setX(baseIndex,false); }
-        else if(baseIndex < TOTAL){ baseIndex += TOTAL; setX(baseIndex,false); }
-      }
-      function go(delta){
-        baseIndex += delta;
-        setX(baseIndex, true);
-        track.addEventListener('transitionend', ()=>{ recenter(); updateDots(); }, {once:true});
-      }
-      function snap(){ setX(baseIndex,false); updateDots(); }
-
-      // dots
-      function renderDots(){
-        dotsEl.innerHTML = "";
-        for(let i=0;i<TOTAL;i++){
-          const b = document.createElement('button'); b.className='dot'; b.type='button';
-          b.addEventListener('click', ()=>{ goTo(i); restart(); });
-          dotsEl.appendChild(b);
-        }
-        updateDots();
-      }
-      function current(){ return ((baseIndex % TOTAL)+TOTAL)%TOTAL; }
-      function updateDots(){
-        [...dotsEl.children].forEach((d, i)=> d.classList.toggle('active', i===current()));
-      }
-      function goTo(i){
-        const p = current();
-        baseIndex = baseIndex + ((i - p + TOTAL) % TOTAL);
-        setX(baseIndex, true);
-        track.addEventListener('transitionend', ()=>{ recenter(); updateDots(); }, {once:true});
-      }
-
-      next.addEventListener('click', ()=>{ go(1); restart(); });
-      prev.addEventListener('click', ()=>{ go(-1); restart(); });
-
-      // autoplay 5s
-      let timer=null;
-      function start(){ stop(); timer=setInterval(()=>go(1), 5000); }
-      function stop(){ if(timer) clearInterval(timer); timer=null; }
-      function restart(){ stop(); start(); }
-
-      renderDots();
-      setX(baseIndex,false);
-      start();
-    })();
-
-    // FAQ open/close (single-open behavior like desktop)
-    document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const item = btn.parentElement;
-        if(!item.classList.contains("open")){
-          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
-        }
-        item.classList.toggle("open");
-      });
     });
+
+    // Hide topbar on scroll down, show on scroll up
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (currentScroll > lastScroll && currentScroll > 50) {
+        topbar.classList.add('hidden');
+      } else {
+        topbar.classList.remove('hidden');
+      }
+      lastScroll = currentScroll;
+    });
+
+    // Reviews auto-slide
+    const reviews = document.querySelectorAll('.review-card');
+    const dots = document.querySelectorAll('.review-dot');
+    let current = 0;
+    function showReview(index) {
+      reviews.forEach((r, i) => r.classList.toggle('active', i === index));
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      current = index;
+    }
+    setInterval(() => {
+      let next = (current + 1) % reviews.length;
+      showReview(next);
+    }, 5000);
   </script>
 </body>
 </html>
