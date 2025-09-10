@@ -1,2210 +1,712 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>SignSense</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://imgur.com/VFu8eyq.png"
-      sizes="64x64"
-    />
-    <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
-    <style>
-      /* === FLOATING TOP BAR === */
-      .topbar-wrap {
-        position: fixed;
-        top: 18px; /* not touching the very top */
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: center;
-        pointer-events: none; /* so only the bar is clickable */
-        transition: transform 0.28s ease, opacity 0.25s ease;
-      }
-      .topbar-wrap.hide {
-        transform: translateY(-140%);
-        opacity: 0;
-      }
-
-     .topbar {
-  pointer-events: auto;
-  background: var(--bar); /* same as contact page */
-  border: 1px solid var(--bar-border);
-  border-radius: 16px;
-  min-height: 72px;
-  padding: 12px 18px;
-  width: min(1120px, calc(100% - 60px));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 8px 30px rgba(0,0,0,.28);
-}
-      .topbar-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-
-.topbar-logo {
-  height: 38px;
-  width: auto;
-  border-radius: 8px;
-}
-
-.topbar-brand {
-  font-size: 28px;
-  color: #fff9f9;
-  text-decoration: none;
-  font-weight: 400;
-}
-
-.topbar-nav a {
-  color: #d8cccc;
-  text-decoration: none;
-  font-size: 20px;
-  margin-left: 24px;
-  font-weight: 400;
-}
-.topbar-nav a:hover { opacity:.85 }
-
-
-      /* push content down so bar doesn’t overlap hero */
-      .hero-wrapper {
-        margin-top: 120px;
-      } /* REPLACES your -40px rule */
-
-     :root{
-  --bg-dark:#01040b;
-  --text-light:#fff9f9;
-  --text-muted:#d8cccc;
-  --highlight-green:#bff611;
-  --badge-glow: rgba(191, 255, 60, 0.55);
-  --badge-purple:#1f1a34;
-  --badge-lime:#adff00;
-  --badge-gray:#2e2b3a;
-  --particle-color:#682fd8;
-  --purple-border:#4a2d91;
-  --purple-hover:#2a1f4a;
-  --bar:#04040e;
-  --bar-border:#3f3f3f;
-}
-/* === staged on-load sequence (hero → bg → particles) === */
-.reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
-body.stage1 .reveal-on-load{opacity:1; transform:none;}
-
-body::before{opacity:0; transition:opacity .6s ease;}
-body.stage2::before{opacity:1;}
-
-.particle-container{opacity:0; transition:opacity .6s ease;}
-body.stage3 .particle-container{opacity:1;}
-
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        color: var(--text-light);
-        background: var(--bg-dark);
-        overflow-x: hidden;
-      }
-
-      body::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1600px;
-        background: url("https://imgur.com/tEj2TUl.png") no-repeat center bottom;
-        background-size: 100% 1600px;
-        z-index: -2;
-        opacity: 0;                 /* add */
-transition: opacity .6s ease;/* add */
-
-      }
-
-      .particle-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 1600px;
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      .particle {
-        position: absolute;
-        background-color: var(--particle-color);
-        border-radius: 50%;
-        width: 3px;
-        height: 3px;
-        box-shadow: 0 0 6px var(--particle-color);
-        animation: floatUp linear infinite;
-        z-index: -1;
-      }
-
-      @keyframes floatUp {
-        from {
-          transform: translateY(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateY(-1600px);
-          opacity: 0;
-        }
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        max-width: 1200px;
-        margin: 0 auto;
-        font-size: 22px;
-        position: relative;
-        z-index: 2;
-      }
-
-      header img {
-        height: 44px;
-        margin-right: 14px;
-        border-radius: 50%;
-      }
-
-      .logo-wrap {
-        display: flex;
-        align-items: center;
-        font-size: 24px;
-        font-weight: 500;
-        color: white;
-      }
-
-      .tagline-absolute {
-        background-color: #090922;
-        color: #bbb;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 7px 12px;
-        font-size: 15px;
-        border-radius: 53px;
-        position: relative;
-        top: -17px;            /* ⬅️ moves the badge higher */
-        margin-bottom: 14px;   /* optional: keeps the badge-to-title gap similar */
-        transition: none;
-        box-shadow: 0 0 20px var(--badge-glow);
-      }
-
-      /* only style the AI chip, not the arrow */
-.tagline-absolute .chip {
-  background-color: var(--badge-lime);
-  color: black;
-  padding: 6px 12px;
-  border-radius: 53px;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-
-      .hero {
-        text-align: center;
-        padding: 80px 20px 30px;
-      }
-
-      .hero-upper {
-        margin-top: 40px;
-      }
-
-      h1,
-      h2 {
-        font-family: "Shoika", sans-serif;
-        font-weight: 400;
-      }
-
-      h1 {
-        font-size: 68px;
-        margin: 0;
-        color: var(--text-light);
-        font-weight: 400;
-        line-height: 1.1;
-      }
-
-      .hero h1 span {
-        display: block;
-        margin-top: 8px;
-      }
-
-      .subtext {
-        color: var(--text-muted);
-        margin: 18px 0 30px;
-        font-size: 20px;
-      }
-
-      .cta-wrapper {
-        margin-top: 48px;
-      }
-
-      .cta-btn {
-        background: white;
-        color: black;
-        border: 2px solid #999;
-        padding: 16px 30px;
-        border-radius: 16px;
-        font-size: 18px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        transition: box-shadow 0.3s ease;
-      }
-
-      .cta-btn:hover {
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
-      }
-
-      .app-container {
-        position: relative;
-        width: 100%;
-        max-width: 1050px;
-        margin: 30px auto 0;
-        perspective: 1000px;
-      }
-
-      .app-wrapper {
-        position: relative;
-        transition: transform 0.8s ease;
-        transform: rotateX(12deg);
-         --app-raise: -20px; /* ⬅️ add this line */
-      }
-
-     /* App frame holds the image and the glint */
-.app-frame{
-  position: relative;
-  overflow: hidden;                    /* clip the glint & keep corners clean */
-  border-radius: 24px;
-  box-shadow: 0 8px 28px rgba(0,0,0,.6);
-  margin-top: -20px;                   /* replaces your old img top:-20px */
-}
-
-/* Your image: no manual offset (we moved it to the frame) */
-.app-preview{
-  width: 100%;
-  display: block;
-  border-radius: 24px;                 /* safe to keep; also on frame for backup */
-  box-shadow: none;                    /* shadow now lives on the frame */
-  position: static;                    /* remove the old relative/top offset */
-}
-
-/* === APP PREVIEW GLINT (fast full-width sweep) === */
-.glint-line{
-  position: absolute;
-  top: 0;
-  left: -140px;
-  width: 140px;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    rgba(191,246,17,.12),
-    rgba(191,246,17,.90),
-    rgba(191,246,17,0)
-  );
-  box-shadow: 0 0 22px rgba(191,246,17,.6);
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: 3;
-
-  /* ⬇️ SLOW IT DOWN by upping the duration (try 3.2s–4s) */
-  animation: glint-sweep 4s linear infinite,
-             glint-fade  4s linear infinite;
-}
-
-
-@keyframes glint-sweep{
-  from { left: -140px; }
-  to   { left: calc(100% + 40px); }  /* small overshoot */
-}
-
-/* ⬇️ Fades in early, stays bright, then fades OUT BEFORE the edge reset */
-@keyframes glint-fade{
-  0%   { opacity: 0; }
-  8%   { opacity: 1; }   /* fade IN */
-  78%  { opacity: 1; }   /* stay visible most of the run */
-  88%  { opacity: 0; }   /* fade OUT near the end */
-  100% { opacity: 0; }
-}
-
-
-      /*@keyframes fadeOut {
-        0% {
-          opacity: 0;
-        }
-        5% {
-          opacity: 1;
-        }
-        70% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-      */
-      .section-title {
-        text-align: center;
-        font-size: 44px;
-        color: var(--text-light);
-        font-weight: 400;
-        line-height: 1.4;
-        margin-top: 14px;
-      }
-
-      .section-sub {
-        text-align: center;
-        color: var(--text-muted);
-        margin-top: 12px;
-        font-size: 21px;
-        font-weight: 400;
-        line-height: 1.4;
-      }
-
-      .section-badge {
-        background-color: #090922;
-        color: #bbb;
-        padding: 6px 14px;
-        border-radius: 53px;
-        font-size: 15px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: none;
-        box-shadow: 0 0 18px var(--badge-glow);
-      }
-
-      .section-badge:hover {
-        box-shadow: 0 0 26px var(--badge-glow);
-      }
-
-      .insight-section {
-        padding: 60px 20px 60px;
-      }
-
-      .insight-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        max-width: 1300px;
-        margin: 0 auto;
-        gap: 80px;
-      }
-
-      .insight-left {
-        position: relative;
-        margin-left: -120px;
-      }
-      .moving-line-wrapper {
-        min-width: 200px;
-        min-height: 200px;
-        position: relative;
-        overflow: hidden;
-        z-index: 1 !important;
-        background-color: black;
-        /* background-color: gray; */
-        /* background: transparent; */
-        border-radius: 10px;
-        padding: 2px;
-        /* aspect-ratio: 1/1; */
-      }
-
-      .moving-line-wrapper .moving-line-content {
-        min-width: inherit;
-        min-height: inherit;
-        padding: 10px;
-        z-index: 2 !important;
-        position: relative;
-        width: 100%;
-        height: 100%;
-        transform-origin: center;
-        background: inherit;
-        border-radius: inherit;
-        overflow: inherit;
-        /* aspect-ratio: inherit; */
-        /* background-color: green; */
-      }
-
-      @keyframes move-around {
-        0% {
-          top: -20px;
-          left: -20px;
-        }
-        25% {
-          top: -20px;
-          left: calc(100% - 20px);
-        }
-        50% {
-          top: calc(100% - 20px);
-          left: calc(100% - 20px);
-        }
-        75% {
-          top: calc(100% - 20px);
-          left: -20px;
-        }
-        100% {
-          top: -20px;
-          left: -20px;
-        }
-      }
-
-      .yellow-line {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        background: rgba(191, 246, 17, 0.8);
-        box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8);
-        border-radius: 50%;
-        animation: move-around 8s linear infinite;
-        z-index: 0 !important;
-      }
-
-      .insight-left img {
-        width: 520px;
-        border-radius: 20px;
-        display: block;
-      }
-
-      .insight-right {
-        max-width: 540px;
-        text-align: left;
-      }
-
-      .insight-icon {
-        width: 120px;
-        margin-top: 40px;
-        margin-bottom: 30px;
-        margin-left: -18px;
-      }
-
-      .insight-right h2 {
-        font-size: 44px;
-        color: #fff9f9;
-        margin-bottom: 26px;
-        font-weight: 400;
-      }
-
-      .insight-right p {
-        color: #d8cccc;
-        font-size: 22px;
-        margin-bottom: 38px;
-        font-weight: 400;
-      }
-
-      .cta-outline {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 14px 24px;
-        font-size: 20px;
-        background-color: #adff00;
-        color: black;
-        border: none;
-        border-radius: 12px;
-        text-decoration: none;
-        transition: box-shadow 0.3s ease;
-        font-weight: 500;
-      }
-
-      .cta-outline:hover {
-        box-shadow: 0 0 16px #adff00;
-      }
-
-      /* Scroll Section Styles START */
-      .scroll-section {
-        position: relative;
-        padding: 30px 0;
-        background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
-        border: 1px solid rgba(36, 36, 37, 0.78);
-        border-radius: 18px;
-        margin: 40px auto 0;
-        overflow: hidden;
-        max-width: 1360px;
-        transform: scale(0.94);
-      }
-
-      .scroll-section h3 {
-        text-align: center;
-        font-size: 25px;
-        line-height: 1.4;
-        color: #fff9f9;
-        font-family: "Inter", sans-serif;
-        font-weight: 400;
-        margin-top: 40px;
-        margin-bottom: 50px;
-      }
-
-      .scroll-wrapper {
-        max-width: 1600px;
-        margin: 0 auto;
-        padding: 0 30px;
-      }
-
-      .scroll-full {
-        width: 100vw;
-        position: relative;
-        left: 50%;
-        right: 50%;
-        margin-left: -50vw;
-        margin-right: -50vw;
-      }
-
-      /* === FEATURES STRIP (no keyframes; JS handles endless scroll) === */
-      /* === FEATURES STRIP (endless; JS drives movement) === */
-      .scroll-strip {
-        display: flex;
-        gap: 28px;
-        padding: 14px 0;
-        white-space: nowrap;
-        flex-shrink: 0;
-        will-change: transform;
-      }
-
-      /* keep hooks, no CSS animations */
-      .top-row {
-      }
-      .bottom-row {
-      }
-
-      .scroll-item {
-        background: rgba(26, 24, 34, 0.57);
-        border: 1px solid #3b3b3b;
-        border-radius: 48px;
-        padding: 16px 28px;
-        display: inline-flex;
-        align-items: center;
-        gap: 18px;
-        flex-shrink: 0;
-        transition: transform 0.2s ease;
-      }
-      .scroll-item:hover {
-        transform: scale(1.04);
-      }
-
-      .scroll-item img {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        object-fit: cover;
-        background: #101010;
-        box-shadow: 0 0 8px rgba(191, 246, 17, 0.4);
-      }
-      .scroll-item span {
-        font-family: "Inter", sans-serif;
-        font-size: 17px;
-        font-weight: 400;
-        color: #fff9f9;
-        white-space: nowrap;
-      }
-
-      .scroll-shadow-left,
-      .scroll-shadow-right {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100px;
-        z-index: 3;
-        pointer-events: none;
-      }
-      .scroll-shadow-left {
-        left: 0;
-        background: linear-gradient(
-          to right,
-          rgba(14, 12, 19, 1),
-          rgba(14, 12, 19, 0.6),
-          transparent
-        );
-      }
-      .scroll-shadow-right {
-        right: 0;
-        background: linear-gradient(
-          to left,
-          rgba(14, 12, 19, 1),
-          rgba(14, 12, 19, 0.6),
-          transparent
-        );
-      }
-
-      @media (max-width: 768px) {
-        .scroll-item {
-          padding: 14px 20px;
-        }
-        .scroll-item img {
-          width: 38px;
-          height: 38px;
-        }
-        .scroll-item span {
-          font-size: 17px;
-        }
-        .scroll-section h3 {
-          font-size: 20px;
-        }
-      }
-/* ===== Powered-by strip (ENDLESS, single set visible) ===== */
-.logo-strip{
-  /* ⬅️ KNOB #1: more side space by increasing this number */
-  --side-gap: 640px;                  /* total gap; ≈320px per side on desktop */
-
-  /* ⬅️ KNOB #2: push lower by increasing the top margin */
-  margin: 62px auto 6px;
-
-  width: min(1200px, calc(100vw - var(--side-gap)));
-  padding: 0;
-  overflow: hidden;
-  position: relative;
-  transform: none;                    /* keep size precise for seamless loop */
-}
-
-.logo-track{
-  display: flex;
-  align-items: center;
-  gap: 0;                             /* no gap so the seam is invisible */
-  will-change: transform;
-}
-
-/* one full-width copy visible; second copy sits after it for seamless wrap */
-.logo-piece{
-  flex: 0 0 100%;
-  width: 100%;
-  height: auto;
-  display: block;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-/* dark edge fades, but much more transparent */
-.logo-fade{
-  position:absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none;
-}
-.logo-fade.left{
-  left:0;
-  background: linear-gradient(
-    to right,
-    rgba(0,0,0,0.50),
-    rgba(0,0,0,0.22),
-    rgba(0,0,0,0.08),
-    transparent
-  );
-}
-.logo-fade.right{
-  right:0;
-  background: linear-gradient(
-    to left,
-    rgba(0,0,0,0.50),
-    rgba(0,0,0,0.22),
-    rgba(0,0,0,0.08),
-    transparent
-  );
-}
-
-/* responsive: reduce side gap so it still fits on small screens */
-@media (max-width: 1200px){ .logo-strip{ --side-gap: 420px; } }
-@media (max-width: 900px) { .logo-strip{ --side-gap: 260px; margin-top: 34px; } }
-@media (max-width: 640px) { .logo-strip{ --side-gap: 160px; margin-top: 28px; } .logo-fade{ width:120px; } }
-
-      /* === Arrow hover (match friend's effect) === */
-.animated-arrow-bttn { overflow: hidden; }
-
-.animated-arrow{
-  display:inline-block;
-  position:relative;
-  transition: transform .3s ease;
-}
-
-.animated-arrow,
-.animated-arrow::before{
-  color: currentColor;      /* arrow always matches the text color */
-}
-
-.animated-arrow::before{
-  content:"↗";
-  width:100%;
-  height:100%;
-  position:absolute;
-  top:50px;
-  left:-50px;
-  visibility:hidden;
-}
-
-
-/* Hover triggers for all the targets */
-.cta-btn:hover .animated-arrow.diag,
-.cta-outline:hover .animated-arrow.diag,
-.watch-btn:hover .animated-arrow.diag,
-.leave-review:hover .animated-arrow.diag,
-.section-badge:hover .animated-arrow.diag,
-.tagline-absolute:hover .animated-arrow.diag{
-  transform: translate(50px,-50px);
-}
-
-.cta-btn:hover .animated-arrow::before,
-.cta-outline:hover .animated-arrow::before,
-.watch-btn:hover .animated-arrow::before,
-.leave-review:hover .animated-arrow::before,
-.section-badge:hover .animated-arrow::before,
-.tagline-absolute:hover .animated-arrow::before{
-  visibility: visible;
-}
-
-
-      /* === REVIEWS SECTION === */
-      /* === REVIEWS: CSS === */
-      /* === REVIEWS: CSS === */
-
-      /* === REVIEWS: CSS (drop-in replacement) === */
-      .reviews-section {
-        padding: 80px 40px 120px;
-        background: transparent;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      /* header: center title/sub, arrows on the right */
-      .reviews-header {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr; /* spacer | center | arrows */
-        align-items: center;
-        gap: 24px;
-      }
-
-      .reviews-title {
-        grid-column: 2; /* exact middle */
-        text-align: center;
-      }
-
-      .reviews-title h2 {
-        font-size: 44px;
-        font-family: "Shoika", sans-serif;
-        font-weight: 400;
-        color: #fff9f9;
-      }
-      .reviews-title h2 .green {
-        color: #bff611;
-      }
-      .reviews-sub {
-        font-size: 20px;
-        color: #a8a8a8;
-        margin-top: 10px;
-      }
-
-      /* arrows (top-right) */
-      .review-nav {
-        grid-column: 3;
-        justify-self: end;
-        display: flex;
-        gap: 14px;
-      }
-      .review-nav .nav {
-        width: 52px;
-        height: 52px;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: grid;
-        place-items: center;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06) inset;
-        transition: box-shadow 0.2s ease, transform 0.05s ease;
-      }
-      .review-nav .nav.left {
-        background: #ffffff;
-      }
-      .review-nav .nav.right {
-        background: #bff611;
-      }
-      .review-nav .nav:hover {
-        box-shadow: 0 0 14px rgba(191, 246, 17, 0.6);
-      }
-      .review-nav .nav:active {
-        transform: scale(0.98);
-      }
-      .review-nav .nav img {
-        width: 22px;
-        height: 22px;
-        display: block;
-        pointer-events: none; /* click goes to button */
-        transition: transform 0.18s ease;
-      }
-      .review-nav .nav.left:hover img {
-        transform: translateX(-1px);
-      }
-      .review-nav .nav.right:hover img {
-        transform: translateX(1px);
-      }
-
-      /* carousel */
-      .reviews-viewport {
-        overflow: hidden;
-        margin-top: 28px;
-      }
-      .reviews-track {
-        display: flex;
-        gap: 24px;
-        transition: transform 0.35s ease;
-      }
-      .review-card {
-        flex: 0 0 calc((100% - 48px) / 3);
-        border:1px solid #262626;
-        border-radius: 23px;
-        padding: 10px;
-        background: #000;
-      }
-      .review-card img {
-        width: 100%;
-        display: block;
-        border-radius: 17px;
-      }
-
-     /* dots */
-.review-dots{
-  display:flex;
-  justify-content:center;
-  gap:14px;                 /* a bit more space */
-  margin:28px 0 26px;
-}
-.review-dot{
-  width:14px;               /* was 8px */
-  height:14px;
-  border-radius:50%;
-  background:#777;          /* slightly brighter base */
-  opacity:1;                /* fully opaque so it’s easy to see/tap */
-  cursor:pointer;
-  display:inline-block;
-  border:none;
-  padding:0;
-  appearance:none;
-  outline:none;
-  touch-action:manipulation;
-}
-.review-dot.active{ background:#b9f03d; }
-.review-dot:focus-visible{
-  box-shadow:0 0 0 3px rgba(185,240,61,.35);
-  outline:none;
-}
-
-
-      /* button */
-      .leave-review-wrap {
-        display: flex;
-        justify-content: center;
-      }
-      .leave-review {
-        background: #adff00;
-        color: #000;
-        font-size: 18px;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 26px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: box-shadow 0.3s ease;
-      }
-      .leave-review:hover {
-        box-shadow: 0 0 14px #adff00;
-      }
-
-      /* responsive */
-      @media (max-width: 1100px) {
-        .review-card {
-          flex-basis: calc((100% - 24px) / 2);
-        }
-      }
-      @media (max-width: 700px) {
-        .reviews-header {
-          grid-template-columns: 1fr;
-        }
-        .review-nav {
-          grid-column: auto;
-          justify-self: center;
-        }
-      }
-      @media (max-width: 640px) {
-        .review-card {
-          flex-basis: 100%;
-        }
-      }
-
-      /* === FAQ STYLES === */
-      /* === FAQ STYLES (updated) === */
-      /* === FAQ (wider, bigger, only-open-colored) === */
-      .faq-section {
-        max-width: 1200px; /* wider container */
-        margin: 0 auto;
-        padding: 80px 24px;
-        font-family: "Inter", sans-serif;
-        text-align: center; /* center title */
-      }
-      .faq-title {
-        font-size: 64px; /* bigger title */
-        line-height: 1.1;
-        color: #fff9f9;
-        margin-bottom: 34px;
-        font-weight: 400;
-      }
-
-      .faq-list {
-        max-width: 1100px; /* wider list so blocks start more left & end more right */
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        text-align: left; /* left-align the Q/A text inside */
-      }
-
-      /* each item is a unified block */
-      /* === FAQ FIX: one-piece open block, color #191624 === */
-      .faq-item {
-        border-radius: 24px;
-        overflow: hidden;
-        background: transparent; /* let states handle bg */
-      }
-
-      /* Default (closed) question look */
-      .faq-q {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 30px 34px;
-        border: none;
-        cursor: pointer;
-        background: transparent; /* closed state color */
-        color: #fff9f9;
-        font-size: 26px;
-        font-weight: 500;
-        border-radius: 24px;
-        transition: background 0.2s ease;
-      }
-
-      .faq-q:hover {
-        background: transparent;
-      }
-
-      /* Opened state: question + answer appear as one block */
-      .faq-item.open {
-        background: #191624; /* one unified bg */
-        border-radius: 24px;
-      }
-
-      .faq-item.open .faq-q {
-        background: transparent; /* inherits from parent */
-        border-radius: 24px 24px 0 0; /* rounded only on top */
-      }
-
-      .faq-a {
-        background: transparent; /* same as parent */
-        color: #cfcbd6;
-        font-size: 22px;
-        line-height: 1.7;
-        padding: 0 34px;
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.2s ease;
-      }
-
-      .faq-item.open .faq-a {
-        padding: 18px 34px 24px;
-        max-height: 480px;
-        opacity: 1;
-        border-radius: 0 0 24px 24px; /* bottom rounding */
-      }
-/* === Tilted arrow animation for CTAs + badges === */
-.tilt-arrow{
-  display:inline-block;
-  margin-left:10px;
-  transform: rotate(18deg);
-  transition: transform .25s ease, translate .25s ease;
-  will-change: transform;
-}
-.tilt-arrow.small{ margin-left:8px; font-size:.95em; }
-
-/* hover nudge on the two CTA buttons */
-.cta-btn:hover .tilt-arrow,
-.cta-outline:hover .tilt-arrow{
-  transform: rotate(24deg);
-  translate: 3px -2px; /* gentle drift up-right */
-}
-
-/* badges: subtle continuous tilt/bob */
-.tagline-absolute .tilt-arrow,
-.section-badge .tilt-arrow{
-  animation: arrow-float 1.8s ease-in-out infinite;
-}
-
-/* override the generic badge span styling inside .tagline-absolute */
-.tagline-absolute .tilt-arrow{
-  background: none !important;
-  color: inherit !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-}
-
-@keyframes arrow-float{
-  0%,100%{ transform: rotate(18deg) translate(0,0); }
-  50%    { transform: rotate(28deg) translate(2px,-2px); }
-}
-
-/* respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .tagline-absolute .tilt-arrow,
-  .section-badge .tilt-arrow{ animation: none; }
-  .cta-btn:hover .tilt-arrow,
-  .cta-outline:hover .tilt-arrow{ translate: 0 0; }
-}
-
-      /* === FOOTER === */
-      .site-footer-wrap {
-        max-width: 1400px;
-        margin: 80px auto 0; /* space above footer */
-        padding: 0 24px;
-        font-family: "Inter", sans-serif;
-      }
-      .site-footer {
-        background: #171717; /* footer panel bg */
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 18px;
-        padding: 44px 48px;
-        display: grid;
-        grid-template-columns: 1.3fr 1fr 1fr;
-        gap: 48px;
-      }
-      .footer-left {
-        display: flex;
-        align-items: flex-start;
-        gap: 18px;
-      }
-      .footer-logo {
-        width: 56px;
-        height: 56px;
-        border-radius: 100px;
-        flex: 0 0 auto;
-        object-fit: cover;
-        display: block;
-      }
-      .footer-brand {
-        color: #fff9f9;
-        font-size: 34px;
-        font-weight: 600;
-        line-height: 1;
-      }
-      .footer-tagline {
-        color: #fff9f9;
-        opacity: 0.9;
-        margin-top: 10px;
-        font-size: 18px;
-        line-height: 1.6;
-        max-width: 560px;
-      }
-      .footer-disclaimer {
-        color: #fff9f9;
-        margin-top: 28px;
-        font-size: 18px;
-      }
-
-      .footer-col h4 {
-        color: #fff9f9;
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 18px;
-      }
-      .footer-links {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .footer-links a {
-        color: #8b8b88;
-        text-decoration: none;
-        font-size: 20px;
-      }
-      .footer-links a:hover {
-        opacity: 0.9;
-      }
-
-      .footer-social {
-        grid-column: 2 / span 2;
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        margin-top: 8px;
-      }
-      .footer-social a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
-        background: #0f0f0f;
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05),
-          0 6px 18px rgba(0, 0, 0, 0.35);
-        transition: transform 0.15s ease, box-shadow 0.2s ease;
-      }
-      .footer-social a:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
-          0 10px 24px rgba(0, 0, 0, 0.45);
-      }
-      .footer-social img {
-        width: 28px;
-        height: 28px;
-        display: block;
-      }
-
-      @media (max-width: 900px) {
-        .site-footer {
-          grid-template-columns: 1fr;
-          gap: 28px;
-        }
-        .footer-social {
-          grid-column: auto;
-          margin-top: 0;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- FLOATING TOP BAR -->
-<div class="topbar-wrap" id="topbarWrap">
-  <div class="topbar">
-    <div class="topbar-left">
-      <a href="index.html">
-        <img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense — Mobile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg-topbot:#0d011b;
+      --bg-mid:#000000;
+      --text:#fff9f9;
+      --muted:#d8cccc;
+      --lime:#aafe2a;         /* title lime for Sense / Signing / at a Glance */
+      --lime2:#bff611;        /* used in sections that keep old brand lime */
+      --chip:#adff00;         /* AI chip background */
+      --bar-bg:#0b0b0b;       /* topbar + dropdown bg (black) */
+      --bar-br:#232323;       /* 1px border for topbar + dropdown */
+    }
+
+    /* ===== Base / Layout ===== */
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; }
+    body{
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(to bottom,
+          var(--bg-topbot) 0%,
+          var(--bg-topbot) 8%,
+          var(--bg-mid) 40%,
+          var(--bg-mid) 60%,
+          var(--bg-topbot) 92%,
+          var(--bg-topbot) 100%);
+      background-attachment: fixed; /* bg does NOT move */
+      overflow-x:hidden;
+    }
+    .wrap{ max-width: 700px; margin: 0 auto; padding: 0 18px; }
+
+    /* ===== Top Bar (logo + hamburger) ===== */
+    .topbar-wrap{
+      position:sticky; top:10px; z-index:1000;
+      display:flex; justify-content:center; padding:0 12px;
+    }
+    .topbar{
+      width:100%;
+      max-width: 720px;
+      min-height:64px;
+      background:var(--bar-bg);
+      border:1px solid var(--bar-br);
+      border-radius:14px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px;
+      box-shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; text-decoration:none;
+    }
+    .brand img{ width:28px; height:28px; display:block; }
+    .brand span{ color:#eaeaea; font-size:22px; font-weight:500; letter-spacing:.2px; }
+
+    .hamburger,.close-x{
+      width:44px; height:44px; border-radius:10px; border:1px solid var(--bar-br);
+      background:#121212; display:grid; place-items:center; color:#fff;
+      cursor:pointer;
+    }
+    .hamburger span,
+    .hamburger::before,
+    .hamburger::after{
+      content:"";
+      display:block; width:22px; height:2px; background:#fff; border-radius:2px;
+    }
+    .hamburger span{ transform: translateY(0); }
+    .hamburger::before{ transform: translateY(-6px); }
+    .hamburger::after{  transform: translateY(6px); }
+
+    /* ===== Dropdown extension (no visible seam) ===== */
+    .menu-shell{
+      width:100%; max-width:720px;
+      margin:0 auto; padding:0 12px;
+      position:relative; z-index:999;
+    }
+    .menu-panel{
+      background:var(--bar-bg);
+      border:1px solid var(--bar-br);
+      border-top:none;               /* attaches to topbar with no line */
+      border-radius:0 0 14px 14px;   /* extension look */
+      overflow:hidden;
+      max-height:0;
+      transition:max-height .28s ease;
+      box-shadow:0 18px 38px rgba(0,0,0,.45);
+    }
+    .menu-panel.open{ max-height:520px; }
+    .menu-inner{ padding:18px 16px 16px; }
+    .menu-item{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:16px 10px; color:#fff; text-decoration:none; font-size:18px; border-radius:12px;
+    }
+    .menu-item + .menu-item{ margin-top:6px; }
+    .menu-item .chev{ font-size:22px; opacity:.85; }
+    .menu-note{ color:#cfcfcf; opacity:.9; font-size:14px; text-align:center; margin:16px 0 6px; }
+    .menu-copy{ color:#bdbdbd; font-size:14px; text-align:center; padding-bottom:6px; }
+
+    /* ===== Hero ===== */
+    .hero{ text-align:center; padding:36px 0 18px; }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px; padding:8px 14px;
+      border-radius:40px; background:#090922; color:#bbb; font-size:14px;
+      box-shadow:0 0 18px rgba(191,255,60,.55);
+    }
+    .badge .chip{
+      background:var(--chip); color:#000; padding:6px 12px; border-radius:999px; font-weight:700; font-size:13px;
+    }
+    .hero h1{
+      font-family:"Shoika", sans-serif; font-weight:800;
+      font-size:42px; line-height:1.15; margin:18px auto 10px; letter-spacing:.2px;
+    }
+    .hero .lime{ color:var(--lime); }
+    .subtext{ color:var(--muted); font-size:18px; line-height:1.6; margin:10px auto 20px; }
+
+    .cta{
+      margin: 14px 0 22px;
+    }
+    .cta .btn{
+      background:#fff; color:#000; border:2px solid #999;
+      padding:14px 18px; border-radius:14px; font-size:18px;
+      display:inline-flex; gap:8px; align-items:center; cursor:pointer;
+      box-shadow:0 0 12px rgba(255,255,255,.25);
+    }
+    .btn .arrow{ display:inline-block; transition: transform .2s ease; }
+    .btn:hover .arrow{ transform: translate(3px,-3px); }
+
+    /* YouTube embed */
+    .yt{
+      border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.1);
+      box-shadow:0 10px 30px rgba(0,0,0,.35); margin: 8px 0 14px;
+    }
+    .yt iframe{ width:100%; height:214px; display:block; }
+
+    /* ===== Powered-by strip ===== */
+    .logo-strip{
+      --side-gap: 70px;
+      width: min(100%, calc(100vw - var(--side-gap)));
+      margin: 18px auto 6px; position:relative; overflow:hidden;
+    }
+    .logo-track{ display:flex; gap:0; will-change:transform; align-items:center; }
+    .logo-piece{ flex:0 0 100%; width:100%; display:block; user-select:none; -webkit-user-drag:none; }
+    .logo-fade{ position:absolute; top:0; bottom:0; width:90px; pointer-events:none; }
+    .logo-fade.left{ left:0; background:linear-gradient(to right, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent); }
+    .logo-fade.right{ right:0; background:linear-gradient(to left, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent); }
+
+    /* ===== Section: “Instant Clarity Engine” badge ===== */
+    .center{ text-align:center; }
+    .spacer-20{ height:20px; }
+    .spacer-30{ height:30px; }
+
+    /* ===== “Understand Your Contract at a Glance” ===== */
+    .title-block{ text-align:center; padding-top:8px; }
+    .title-block h2{
+      font-family:"Shoika", sans-serif; font-weight:700; line-height:1.2;
+      font-size:34px; letter-spacing:.2px;
+    }
+    .title-block .sub{
+      color:var(--muted); font-size:18px; line-height:1.6; margin-top:10px;
+      white-space:pre-line;
+    }
+
+    /* ===== Insights image with moving yellow line (mobile-sized) ===== */
+    .insights-wrap{ margin: 18px auto 4px; width:100%; display:flex; justify-content:center; }
+    .moving-line-wrapper{
+      width:min(95%, 520px); border-radius:16px; position:relative; overflow:hidden; background:#000; padding:2px;
+    }
+    .moving-line-content{ width:100%; height:100%; border-radius:inherit; position:relative; padding:8px; background:transparent; }
+    .moving-line-content img{ width:100%; display:block; border-radius:14px; }
+    .yellow-line{
+      position:absolute; width:24px; height:24px; background: rgba(191,246,17,.8);
+      box-shadow:0 0 38px 28px rgba(191,246,17,.8); border-radius:50%;
+      animation: move-around 8s linear infinite; z-index:0;
+    }
+    @keyframes move-around{
+      0% { top:-20px; left:-20px; }
+      25%{ top:-20px; left:calc(100% - 20px); }
+      50%{ top:calc(100% - 20px); left:calc(100% - 20px); }
+      75%{ top:calc(100% - 20px); left:-20px; }
+      100%{ top:-20px; left:-20px; }
+    }
+
+    /* ===== Scrolling features (fewer in viewport on mobile) ===== */
+    .scroll-full{ width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; }
+    .scroll-wrapper{ padding: 2px 12px 26px; }
+    .scroll-section{
+      position:relative; margin: 6px auto 0; max-width:720px; padding:18px 0 12px;
+      background:linear-gradient(to bottom, rgba(14,12,19,.85), rgba(24,21,34,.85), rgba(4,3,4,.85));
+      border:1px solid rgba(36,36,37,.78); border-radius:16px; overflow:hidden;
+    }
+    .scroll-section h3{
+      text-align:center; font-size:18px; font-weight:500; margin:14px 8px 12px; color:#fff;
+    }
+    .scroll-strip{ display:flex; gap:18px; padding:10px 0; white-space:nowrap; will-change:transform; }
+    .scroll-item{
+      background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:40px;
+      padding:10px 14px; display:inline-flex; align-items:center; gap:12px; flex-shrink:0;
+    }
+    .scroll-item img{ width:34px; height:34px; border-radius:50%; object-fit:cover; background:#101010; }
+    .scroll-item span{ font-size:15px; color:#fff; white-space:nowrap; }
+    .scroll-shadow-left,.scroll-shadow-right{
+      position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2;
+    }
+    .scroll-shadow-left{ left:0;  background:linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.5), transparent); }
+    .scroll-shadow-right{ right:0; background:linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.5), transparent); }
+
+    /* ===== Reviews (single card per view, 5s auto) ===== */
+    .reviews{ padding: 26px 18px 18px; max-width:720px; margin:0 auto; }
+    .reviews h3{
+      font-family:"Shoika", sans-serif; font-weight:600; text-align:center; font-size:30px;
+    }
+    .reviews h3 .green{ color:var(--lime2); }
+    .reviews .sub{ text-align:center; color:#a8a8a8; margin-top:8px; }
+
+    .reviews-viewport{ overflow:hidden; margin-top:18px; }
+    .reviews-track{ display:flex; gap:18px; transition: transform .35s ease; }
+    .review-card{
+      flex: 0 0 100%;
+      border:1px solid #262626; border-radius:18px; padding:10px; background:#000;
+      box-shadow:0 10px 26px rgba(0,0,0,.35);
+    }
+    .review-card img{ width:100%; display:block; border-radius:12px; }
+
+    .review-controls{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
+    .arrow-btn{
+      width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+      display:grid; place-items:center; background:#ffffff; /* both NOT green */
+      box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
+    }
+    .arrow-btn img{ width:18px; height:18px; }
+    .dots{ display:flex; gap:10px; justify-content:center; align-items:center; flex:1; }
+    .dot{
+      width:10px; height:10px; border-radius:50%; background:#777; border:none;
+    }
+    .dot.active{ background:#b9f03d; }
+
+    /* ===== FAQ ===== */
+    .faq{ padding: 24px 18px 30px; max-width:720px; margin:0 auto; }
+    .faq h3{
+      font-family:"Shoika", sans-serif; font-weight:700; text-align:center; font-size:32px; margin-bottom:12px;
+    }
+    .faq-list{ display:flex; flex-direction:column; gap:14px; }
+    .faq-item{ border-radius:16px; overflow:hidden; background:transparent; }
+    .faq-q{
+      width:100%; background:#0b0b0b; color:#fff; border:none; padding:18px 16px;
+      display:flex; justify-content:space-between; align-items:center; font-size:18px; border-radius:16px;
+    }
+    .faq-item.open{ background:#191624; border-radius:16px; }
+    .faq-item.open .faq-q{ background:transparent; }
+    .faq-a{
+      padding:0 16px; color:#cfcbd6; font-size:16px; line-height:1.7; max-height:0; opacity:0; overflow:hidden;
+      transition:max-height .3s ease, opacity .25s ease, padding .2s ease;
+    }
+    .faq-item.open .faq-a{ padding:12px 16px 16px; opacity:1; max-height:420px; }
+
+    /* ===== Footer (mobile layout shown in screenshots) ===== */
+    .m-footer{ max-width:720px; margin: 22px auto 40px; padding: 0 18px; }
+    .foot-logo{ display:flex; justify-content:center; margin-bottom:8px; }
+    .foot-logo img{ width:150px; height:auto; border-radius:14px; }
+
+    .foot-group{ text-align:center; margin:22px 0; }
+    .foot-group h4{ font-size:28px; font-weight:800; margin-bottom:14px; }
+    .foot-link{ display:block; color:#eaeaea; text-decoration:none; font-size:22px; margin:10px 0; }
+
+    .foot-divider{ height:1px; background:#2a2a2a; margin: 18px 0; }
+    .legal-links{ text-align:center; display:flex; flex-direction:column; gap:14px; margin-top:10px; }
+    .legal-links a{ color:#eaeaea; }
+    .legal-note{ text-align:center; color:#eaeaea; opacity:.9; margin-top:18px; }
+    .copy{ text-align:center; color:#eaeaea; margin-top:8px; }
+
+    /* small helpers */
+    .center-btn{ display:flex; justify-content:center; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Top Bar ===== -->
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+        <span>SignSense</span>
       </a>
-      <a href="index.html" class="topbar-brand">SignSense</a>
+      <button class="hamburger" id="openMenu" aria-label="Open menu"><span></span></button>
     </div>
-    <nav class="topbar-nav">
-      <a href="index.html#how-it-works">See How It Works</a>
-      <a href="index.html">Home</a>
-      <a href="contact.html">Contact</a>
-    </nav>
   </div>
-</div>
 
-
-    <div class="particle-container" id="particles"></div>
-
-    <div class="hero-wrapper">
-     <section class="hero reveal-on-load">
-
-        <div class="hero-upper">
-       <div class="tagline-absolute animated-arrow-bttn">
-  <span class="chip">AI</span>
-  Legal DocReview Tool
-  <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</div>
-
-
-
-          <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
-          <p class="subtext">
-            SignSense instantly simplifies contracts for law firms, freelancers,
-            students & more
-          </p>
+  <!-- Dropdown extension (seamless) -->
+  <div class="menu-shell">
+    <div class="menu-panel" id="menuPanel" aria-hidden="true">
+      <div class="menu-inner">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <a class="brand" href="index.html" style="gap:10px; text-decoration:none;">
+            <img src="https://imgur.com/t8UWYN3.png" alt="logo" />
+            <span>SignSense</span>
+          </a>
+          <button class="close-x" id="closeMenu" aria-label="Close menu" style="font-size:22px;">✕</button>
         </div>
-       <div class="cta-wrapper">
-  <button class="cta-btn animated-arrow-bttn">
-    Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-  </button>
-</div>
 
+        <a class="menu-item" href="index.html#how-it-works">
+          <span>See How It Works</span> <span class="chev">›</span>
+        </a>
+        <a class="menu-item" href="index.html">
+          <span>Home</span> <span class="chev">›</span>
+        </a>
+        <a class="menu-item" href="contact.html">
+          <span>Contact</span> <span class="chev">›</span>
+        </a>
+
+        <div class="menu-note">Not legal advice.</div>
+        <div class="menu-copy">© 2025 SignSense. All rights reserved.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <section class="wrap hero" id="top">
+    <div class="center">
+      <span class="badge"><span class="chip">AI</span> Legal DocReview Tool <span class="arrow">↗</span></span>
+    </div>
+
+    <h1>
+      Make <span class="lime">Sense</span> Of What<br />
+      You’re <span class="lime">Signing</span>
+    </h1>
+    <p class="subtext">SignSense instantly simplifies contracts for law firms, freelancers, students &amp; more</p>
+
+    <div class="cta">
+      <button class="btn" id="reviewBtn">Review A Contract <span class="arrow">↗</span></button>
+    </div>
+
+    <!-- YouTube under CTA -->
+    <div class="yt">
+      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="SignSense Demo" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- ===== Powered-by strip ===== -->
+  <section class="logo-strip">
+    <div class="logo-track" id="logoTrack"></div>
+    <div class="logo-fade left"></div>
+    <div class="logo-fade right"></div>
+  </section>
+
+  <!-- ===== Instant Clarity Engine badge ===== -->
+  <div class="wrap center">
+    <div class="spacer-20"></div>
+    <span class="badge">Instant Clarity Engine <span class="arrow">↗</span></span>
+  </div>
+
+  <!-- ===== “Understand Your Contract at a Glance” ===== -->
+  <section class="wrap">
+    <div class="spacer-30"></div>
+    <div class="title-block">
+      <h2>Understand Your<br/>Contract <span class="lime">at a Glance</span></h2>
+      <div class="sub">We highlight key terms, risks, &amp; clauses so you can grasp the
+essentials  without reading every line</div>
+    </div>
+
+    <div class="insights-wrap">
+      <div class="moving-line-wrapper">
+        <span class="yellow-line" id="yellowLine"></span>
+        <div class="moving-line-content">
+          <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Features scroll (mobile tuned) ===== -->
+  <div class="scroll-full">
+    <div class="scroll-wrapper">
+      <section class="scroll-section">
+        <h3>Everything you need for clarity and security in one seamless experience.</h3>
+        <div class="scroll-strip top-row"></div>
+        <div class="scroll-strip bottom-row"></div>
+        <div class="scroll-shadow-left"></div>
+        <div class="scroll-shadow-right"></div>
       </section>
-
-      <div class="app-container">
-     <div class="app-wrapper" id="appWrapper">
-  <div class="app-frame">
-    <div class="glint-line" aria-hidden="true"></div>
-    <img class="app-preview"
-         src="https://i.imgur.com/slsiM6i.png"
-         alt="App Preview" />
+    </div>
   </div>
-</div>
 
+  <!-- ===== Reviews (one at a time) ===== -->
+  <section class="reviews">
+    <h3>What <span class="green">Our Clients</span> Say</h3>
+    <div class="sub">Hear Directly From Our Satisfied Users</div>
 
-      </div>
-    </div>
-<!-- POWERED BY STRIP (endless) -->
-<section class="logo-strip">
-  <div class="logo-track" id="logoTrack"></div>
-  <div class="logo-fade left"></div>
-  <div class="logo-fade right"></div>
-</section>
-
-    <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
-    <div class="section-badge animated-arrow-bttn">
-  Instant Clarity Engine <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</div>
-
-
-    </div>
-
-    <h2 class="section-title">Understand Your<br />Contract at a Glance</h2>
-    <p class="section-sub">
-      We highlight key terms, risks, and clauses so you can<br />grasp the
-      essentials without reading every line
-    </p>
-
-   <section class="insight-section" data-aos="fade-up">
-      <div class="insight-content">
-        <div class="insight-left moving-line-wrapper">
-          <span class="yellow-line" id="yellowLine"></span>
-          <div class="moving-line-content">
-            <!-- Here is the content-->
-            <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
-          </div>
-        </div>
-
-        <div class="insight-right">
-        <img
-  class="insight-icon"
-  src="https://i.imgur.com/ueFIxNE.png"
-  alt="Insights Icon"
-  loading="lazy"
-/>
-
-          <h2>Clear insights for <br /><span>easy, accurate reviews.</span></h2>
-          <p>
-            We break down complex contract language into clear, actionable
-            takeaways so you can review with confidence, not confusion.
-          </p>
-       <a href="#" class="cta-outline animated-arrow-bttn">
-  Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</a>
-
-
-        </div>
-      </div>
-    </section>
-
-    <!-- SCROLLING FEATURES SECTION -->
-    <div class="scroll-full">
-      <div class="scroll-wrapper">
-        <section class="scroll-section" data-aos="fade-up">
-          <h3>
-            Everything you need for clarity and security in one seamless
-            experience.
-          </h3>
-          <div class="scroll-strip top-row"></div>
-          <div class="scroll-strip bottom-row"></div>
-          <div class="scroll-shadow-left"></div>
-          <div class="scroll-shadow-right"></div>
-        </section>
+    <div class="reviews-viewport">
+      <div class="reviews-track" id="reviewsTrack">
+        <div class="review-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" /></div>
+        <div class="review-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2" /></div>
+        <div class="review-card"><img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3" /></div>
+        <div class="review-card"><img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4" /></div>
+        <div class="review-card"><img src="https://i.imgur.com/I9iQu88.png" alt="Review 5" /></div>
       </div>
     </div>
 
-    <!-- AOS + Particle + Scroll JS -->
-    <!-- AOS + Particle + Scroll JS -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-      AOS.init({ once: true });
-      // staged load: 1) hero content, 2) bg image, 3) particles
-window.addEventListener('load', () => {
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    <div class="review-controls">
+      <button class="arrow-btn" id="revPrev" aria-label="Previous">
+        <img src="https://imgur.com/nhYxlHX.png" alt="" />
+      </button>
+      <div class="dots" id="reviewDots"></div>
+      <button class="arrow-btn" id="revNext" aria-label="Next">
+        <img src="https://imgur.com/nhYxlHX.png" alt="" style="transform: scaleX(-1);" />
+      </button>
+    </div>
 
-  document.body.classList.add('stage1'); // show hero content first
+    <div class="center-btn" style="margin-top:16px;">
+      <button class="btn" id="reviewBtn2">Leave A Review <span class="arrow">↗</span></button>
+    </div>
+  </section>
 
-  if (reduce) {
-    // accessibility: show everything at once
-    document.body.classList.add('stage2','stage3');
-    return;
-  }
+  <!-- ===== FAQ ===== -->
+  <section class="faq">
+    <h3>Frequently Asked Questions</h3>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button class="faq-q" type="button">What languages do you support? <span>▾</span></button>
+        <div class="faq-a">English, German, French, Italian, Dutch, Romanian, Albanian.</div>
+      </div>
 
-  setTimeout(() => document.body.classList.add('stage2'), 220); // bg image fades in
-  setTimeout(() => document.body.classList.add('stage3'), 440); // particles fade in last
-});
+      <div class="faq-item open">
+        <button class="faq-q" type="button">Is SignSense legally binding ? <span>▾</span></button>
+        <div class="faq-a">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+      </div>
 
+      <div class="faq-item">
+        <button class="faq-q" type="button">What types of contracts can I upload? <span>▾</span></button>
+        <div class="faq-a">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
+      </div>
 
-      /* particles */
-      const container = document.getElementById("particles");
-      if (container) {
-        const num = 50;
-        for (let i = 0; i < num; i++) {
-          const p = document.createElement("div");
-          p.className = "particle";
-          const duration = 25 + Math.random() * 15;
-          const size = 1 + Math.random() * 2.5;
-          p.style.left = `${Math.random() * window.innerWidth}px`;
-          p.style.top = `${Math.random() * 1600}px`;
-          p.style.width = `${size}px`;
-          p.style.height = `${size}px`;
-          p.style.animationDuration = `${duration}s`;
-          container.appendChild(p);
+      <div class="faq-item">
+        <button class="faq-q" type="button">Is my data secure? <span>▾</span></button>
+        <div class="faq-a">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer (mobile) ===== -->
+  <footer class="m-footer">
+    <div class="foot-logo">
+      <img src="https://imgur.com/t8UWYN3.png" alt="SignSense" />
+    </div>
+
+    <div class="foot-group">
+      <h4>Quick Menu</h4>
+      <a class="foot-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">How it Works</a>
+      <a class="foot-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave Review</a>
+    </div>
+
+    <div class="foot-group">
+      <h4>Information</h4>
+      <a class="foot-link" href="contact.html">Contact</a>
+      <a class="foot-link" href="index.html">Home</a>
+    </div>
+
+    <div class="foot-group">
+      <h4>Socials</h4>
+      <a class="foot-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a class="foot-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a class="foot-link" href="https://x.com" target="_blank" rel="noopener noreferrer">X</a>
+    </div>
+
+    <div class="foot-divider"></div>
+    <div class="legal-links">
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+    <div class="legal-note">For informational use only. Not legal advice.</div>
+    <div class="copy">© 2025 SignSense. All rights reserved.</div>
+  </footer>
+
+  <!-- ===== Hidden file input for "Review A Contract" (same wiring as desktop) ===== -->
+  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
+
+  <script>
+    // Topbar dropdown open/close
+    const openMenu = document.getElementById('openMenu');
+    const closeMenu = document.getElementById('closeMenu');
+    const panel = document.getElementById('menuPanel');
+    openMenu?.addEventListener('click', () => { panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); });
+    closeMenu?.addEventListener('click', () => { panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); });
+
+    // Review buttons -> file picker -> mock -> analysis.html
+    const triggers = [document.getElementById('reviewBtn'), document.getElementById('reviewBtn2')].filter(Boolean);
+    const fileInput = document.getElementById('contractFile');
+    triggers.forEach(t => t.addEventListener('click', (e)=>{ e.preventDefault(); fileInput.click(); }));
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files || !fileInput.files.length) return;
+      const mock = {
+        languageOriginal: "en",
+        summary: [
+          "This contract is generally favorable with low overall risk.",
+          "Payment schedule and termination rights are standard.",
+          "Watch late-fee compounding and define 'material breach'.",
+        ],
+        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+        clauses: [
+          "Payment Terms — Net 30 with 2% per month late fee.",
+          "Scope of Work — Deliverables listed in Schedule A.",
+          "Termination — 30-day convenience; immediate for cause.",
+          "IP & Licensing — Client owns final assets; creator keeps tools.",
+        ],
+        issues: [
+          "Late fee compounding escalates costs on long delays.",
+          "Indemnity is one-sided; consider mutual or capped liability.",
+        ],
+        suggestions: [
+          "Add a 5–7 day grace period before late fees.",
+          "Define 'material breach' + 10-day cure period.",
+          "List milestones and acceptance criteria.",
+        ],
+        meters: { confidence: 75, favorability: 80, deadline: 18 },
+        translations: { en: {} },
+      };
+      localStorage.setItem("analysisData", JSON.stringify(mock));
+      localStorage.setItem("summary", mock.summary.join("\n\n"));
+      localStorage.setItem("risk", String(mock.risk.value));
+      localStorage.setItem("clarity", String(mock.clarity.value));
+      localStorage.setItem("compliance", "90");
+      localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+      localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+      localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+      window.location.href = "analysis.html";
+    });
+
+    // Powered-by strip (endless)
+    (function () {
+      const track = document.getElementById('logoTrack');
+      if (!track) return;
+      const src = 'https://i.imgur.com/2SUo8mv.png';
+      const COPIES = 8;
+      for (let i=0;i<COPIES;i++){
+        const img = document.createElement('img');
+        img.src = src; img.alt = 'Powered-by logos'; img.className='logo-piece'; img.decoding='async';
+        track.appendChild(img);
+      }
+      const SECONDS_PER_LOOP = 120;
+      function run(){
+        let x=0, pieceW=0, last=performance.now();
+        function measure(){
+          const first = track.querySelector('.logo-piece');
+          if(!first || !first.complete){ setTimeout(measure,50); return; }
+          pieceW = first.getBoundingClientRect().width || first.naturalWidth;
         }
+        function tick(now){
+          const dt = (now-last)/1000; last = now;
+          const pxPerSecond = (pieceW * COPIES)/SECONDS_PER_LOOP;
+          x -= pxPerSecond * dt;
+          const loop = pieceW * COPIES;
+          if (x <= -loop) x += loop;
+          track.style.transform = `translateX(${x}px)`;
+          requestAnimationFrame(tick);
+        }
+        measure(); requestAnimationFrame(tick);
+        window.addEventListener('resize', measure, {passive:true});
       }
+      window.addEventListener('load', run);
+    })();
 
-      /* app tilt */
-      const wrapper = document.getElementById("appWrapper");
-      if (wrapper) {
-        window.addEventListener(
-          "scroll",
-          () => {
-            const st = window.scrollY;
-            wrapper.style.transform =
-              st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-          },
-          { passive: true }
-        );
-      }
-
-      /* features rows */
+    // Features population + endless ticker (slower, fewer in viewport naturally on mobile)
+    (function(){
       const topRow = document.querySelector(".top-row");
       const bottomRow = document.querySelector(".bottom-row");
-
       const featuresTop = [
-        { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-        { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-        { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
         { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-        {
-          label: "Your Data Stays Yours",
-          icon: "https://imgur.com/SaW85D2.png",
-        },
+        { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
+        { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
+        { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
         { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
         { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-        { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
       ];
       const featuresBottom = [
-        { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
         { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
         { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
+        { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
         { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
         { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-        { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-        { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
         { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" },
       ];
-
-      function populateRow(row, features) {
-        if (!row) return;
-        const makeSet = () => {
+      function populate(row, list){
+        if(!row) return;
+        const make = () => {
           const frag = document.createDocumentFragment();
-          features.forEach((f) => {
-            const el = document.createElement("div");
-            el.className = "scroll-item";
-            el.innerHTML = `<img src="${f.icon}" alt="" loading="lazy"><span>${f.label}</span>`;
+          list.forEach(f=>{
+            const el = document.createElement('div');
+            el.className = 'scroll-item';
+            el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
             frag.appendChild(el);
           });
           return frag;
         };
-        row.appendChild(makeSet()); // copy 1
-        row.appendChild(makeSet()); // copy 2 (for seamless loop)
+        row.appendChild(make());
+        row.appendChild(make());
       }
-      populateRow(topRow, featuresTop);
-      populateRow(bottomRow, featuresBottom);
+      populate(topRow, featuresTop);
+      populate(bottomRow, featuresBottom);
 
-      /* === Endless ticker (no visible reset) === */
-      function makeTicker(row, { pxPerSecond = 36, direction = "left" } = {}) {
-        if (!row) return;
-
-        const speed = direction === "left" ? -pxPerSecond : pxPerSecond;
-        let x = 0,
-          w = 0,
-          raf = 0,
-          last = performance.now();
-
-        function measure() {
-          // two copies -> one set is exactly half width; if 0, retry shortly
-          w = row.scrollWidth / 2;
-          if (!w) {
-            setTimeout(measure, 60);
-          }
-        }
-
-        function tick(now) {
-          const dt = (now - last) / 1000;
-          last = now;
-
-          x += speed * dt;
-
-          // wrap into [-w, 0) without jump
-          if (x <= -w) x += w;
-          if (x > 0) x -= w;
-
+      function ticker(row, {pps=26, dir='left'}={}){
+        if(!row) return;
+        const speed = dir==='left' ? -pps : pps;
+        let x=0, w=0, raf=0, last=performance.now();
+        function measure(){ w = row.scrollWidth/2 || 0; if(!w) setTimeout(measure,60); }
+        function tick(now){
+          const dt=(now-last)/1000; last=now; x += speed*dt;
+          if(x <= -w) x += w; if(x>0) x -= w;
           row.style.transform = `translateX(${x}px)`;
           raf = requestAnimationFrame(tick);
         }
-
-        const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-        function start() {
-          if (media.matches) {
-            row.style.transform = "none";
-            return;
-          }
-          measure();
-          last = performance.now();
-          raf = requestAnimationFrame(tick);
-        }
-        function stop() {
-          if (raf) cancelAnimationFrame(raf);
-        }
-
-        window.addEventListener("resize", measure, { passive: true });
-        media.addEventListener?.("change", () => {
-          stop();
-          start();
-        });
-        start();
+        measure(); requestAnimationFrame(tick);
+        window.addEventListener('resize', measure, {passive:true});
       }
-
-      /* start once everything is laid out */
-      window.addEventListener("load", () => {
-        makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
-        makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
+      window.addEventListener('load', ()=>{
+        ticker(topRow, {pps:26, dir:'right'});
+        ticker(bottomRow, {pps:26, dir:'left'});
       });
-    </script>
+    })();
 
-<script>
-  // === POWERED-BY STRIP: much longer pass + ~0.3s faster ===
-  (function () {
-    const track = document.getElementById('logoTrack');
-    if (!track) return;
+    // Reviews: 1-per view, 5s autoplay, arrows & dots
+    (function(){
+      const track = document.getElementById('reviewsTrack');
+      const prev = document.getElementById('revPrev');
+      const next = document.getElementById('revNext');
+      const dotsEl = document.getElementById('reviewDots');
 
-    const src = 'https://i.imgur.com/2SUo8mv.png';
+      const originals = Array.from(track.children);
+      const TOTAL = originals.length;
+      track.innerHTML = "";
+      for(let k=0;k<3;k++){ originals.forEach(n=>track.appendChild(n.cloneNode(true))); }
 
-    // Longer pass: show 1 set in view but build 4 copies in the track
-    const COPIES = 12; // make 5–6 if you want an even longer run
-    for (let i = 0; i < COPIES; i++) {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Powered-by logos';
-      img.className = 'logo-piece';
-      img.decoding = 'async';
-      track.appendChild(img);
-    }
-
-    // Loop time: ~0.3s faster than a 12.0s baseline
-    const SECONDS_PER_LOOP = 150; // smaller = faster, larger = slower
-
-    function run() {
-      let x = 0, pieceW = 0, last = performance.now();
-
-      function measure() {
-        const first = track.querySelector('.logo-piece');
-        if (!first || !first.complete) {
-          setTimeout(measure, 50);
-          return;
-        }
-        // width of one strip image at current layout
-        pieceW = first.getBoundingClientRect().width || first.naturalWidth;
+      let itemW=0;
+      function measure(){
+        const c = track.querySelector(".review-card");
+        const gap = parseFloat(getComputedStyle(track).gap || 18);
+        itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
       }
-
-      function tick(now) {
-        const dt = (now - last) / 1000; last = now;
-        const pxPerSecond = (pieceW * COPIES) / SECONDS_PER_LOOP;
-        x -= pxPerSecond * dt;                      // move left
-        const loop = pieceW * COPIES;               // total distance for full loop
-        if (x <= -loop) x += loop;                  // seamless wrap
-        track.style.transform = `translateX(${x}px)`;
-        requestAnimationFrame(tick);
-      }
-
       measure();
-      requestAnimationFrame(tick);
-      window.addEventListener('resize', measure, { passive: true });
-    }
+      window.addEventListener('resize', ()=>{ measure(); snap(); }, {passive:true});
 
-    window.addEventListener('load', run);
-  })();
-</script>
-
-
-    <!-- WATCH VIDEO SECTION -->
-    <section class="watch-video-section" data-aos="fade-up">
-      <div class="video-content">
-        <div class="video-text">
-          <h2>
-            Take a deeper look to<br />see how SignSense<br />
-            really works.
-          </h2>
-          <p>
-            Curious how SignSense works? Watch our video for a clear,
-            step-by-step look at how we simplify your contracts
-          </p>
-         <button class="watch-btn animated-arrow-bttn">
-  Watch Video <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
-
-        </div>
-        <div class="video-box">
-          <div class="video-label">▶ Watch Video</div>
-          <img
-            src="https://imgur.com/8aThMK5.png"
-            alt="Video Placeholder"
-            class="video-img"
-          />
-        </div>
-      </div>
-    </section>
-
-    <style>
-      .watch-video-section {
-        padding: 100px 40px;
-        background-color: transparent;
-        max-width: 1400px;
-        margin: 0 auto;
+      let baseIndex = TOTAL; // middle copy
+      function setX(i, animate){
+        if(!animate) track.style.transition = "none";
+        track.style.transform = `translateX(${-i*itemW}px)`;
+        if(!animate){ track.offsetHeight; track.style.transition = "transform .35s ease"; }
       }
-
-      .video-content {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 120px;
-        flex-wrap: wrap;
-        padding-left: 35px;
+      function recenter(){
+        if(baseIndex >= 2*TOTAL){ baseIndex -= TOTAL; setX(baseIndex,false); }
+        else if(baseIndex < TOTAL){ baseIndex += TOTAL; setX(baseIndex,false); }
       }
-
-      .video-text {
-        flex: 1;
-        min-width: 300px;
+      function go(delta){
+        baseIndex += delta;
+        setX(baseIndex, true);
+        track.addEventListener('transitionend', ()=>{ recenter(); updateDots(); }, {once:true});
       }
+      function snap(){ setX(baseIndex,false); updateDots(); }
 
-      .video-text h2 {
-        font-size: 44px;
-        color: #fff9f9;
-        font-family: "Inter", sans-serif;
-        font-weight: 400;
-        line-height: 1.4;
-        margin-bottom: 20px;
-      }
-
-      .video-text p {
-        color: #d8cccc;
-        font-size: 20px;
-        margin-bottom: 36px;
-        font-family: "Inter", sans-serif;
-        font-weight: 400;
-        line-height: 1.6;
-      }
-
-      .watch-btn {
-        background-color: #adff00;
-        color: black;
-        font-size: 18px;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 26px;
-        cursor: pointer;
-        font-weight: 500;
-        font-family: "Inter", sans-serif;
-        box-shadow: 0 0 18px #adff00; /* always glowing */
-        transition: box-shadow 0.25s ease;
-      }
-
-      .watch-btn:hover {
-        box-shadow: 0 0 32px #adff00; /* stronger glow on hover */
-      }
-
-      .video-box {
-        position: relative;
-        flex: 1;
-        min-width: 320px;
-        display: flex;
-        justify-content: flex-end;
-        margin-right: 40px;
-      }
-
-      .video-box img.video-img {
-        width: 420px;
-        margin-top: 36px;
-        border-radius: 34px;
-        border: 2px solid #3b3b3b;
-        display: block;
-      }
-
-      .video-label {
-        position: absolute;
-        top: 4px; /* Lowered from -16px */
-        left: 150px; /* Slightly increased for better alignment */
-        background: transparent;
-        color: rgba(191, 246, 17, 0.74);
-        font-size: 18px;
-        font-family: "Inter", sans-serif;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        z-index: 2;
-        pointer-events: none;
-      }
-    </style>
-    <!-- Reviews Section -->
-    <!-- Reviews Section -->
-    <section class="reviews-section" data-aos="fade-up">
-      <div class="reviews-header">
-        <div class="reviews-title">
-          <h2>What <span class="green">Our Clients</span> Say</h2>
-          <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
-        </div>
-
-        <!-- arrows (top-right, together) -->
-        <div class="review-nav">
-          <button
-            class="nav left"
-            type="button"
-            id="revPrev"
-            aria-label="Previous reviews"
-          >
-            <img src="https://imgur.com/nhYxlHX.png" alt="" />
-          </button>
-          <button
-            class="nav right"
-            type="button"
-            id="revNext"
-            aria-label="Next reviews"
-          >
-            <img src="https://imgur.com/sRwuJpT.png" alt="" />
-          </button>
-        </div>
-      </div>
-
-      <div class="reviews-viewport">
-        <div class="reviews-track" id="reviewsTrack">
-          <div class="review-card">
-            <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" />
-          </div>
-          <div class="review-card">
-            <img src="https://i.imgur.com/k42nv4C.png" alt="Review 2" />
-          </div>
-          <div class="review-card">
-            <img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3" />
-          </div>
-          <div class="review-card">
-            <img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4" />
-          </div>
-          <div class="review-card">
-            <img src="https://i.imgur.com/I9iQu88.png" alt="Review 5" />
-          </div>
-        </div>
-      </div>
-
-      <div class="review-dots" id="reviewDots"></div>
-
-      <div class="leave-review-wrap">
-       <button class="leave-review animated-arrow-bttn" type="button">
-  Leave A Review <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
-
-      </div>
-    </section>
-
-    <script>
-      (function () {
-        const bar = document.getElementById("topbarWrap");
-        let lastY = window.scrollY;
-        let ticking = false;
-
-        function onScroll() {
-          const y = window.scrollY;
-          if (y > lastY && y > 80) {
-            bar.classList.add("hide"); // scrolling down
-          } else {
-            bar.classList.remove("hide"); // scrolling up
-          }
-          lastY = y <= 0 ? 0 : y;
-          ticking = false;
+      // dots
+      function renderDots(){
+        dotsEl.innerHTML = "";
+        for(let i=0;i<TOTAL;i++){
+          const b = document.createElement('button'); b.className='dot'; b.type='button';
+          b.addEventListener('click', ()=>{ goTo(i); restart(); });
+          dotsEl.appendChild(b);
         }
+        updateDots();
+      }
+      function current(){ return ((baseIndex % TOTAL)+TOTAL)%TOTAL; }
+      function updateDots(){
+        [...dotsEl.children].forEach((d, i)=> d.classList.toggle('active', i===current()));
+      }
+      function goTo(i){
+        const p = current();
+        baseIndex = baseIndex + ((i - p + TOTAL) % TOTAL);
+        setX(baseIndex, true);
+        track.addEventListener('transitionend', ()=>{ recenter(); updateDots(); }, {once:true});
+      }
 
-        window.addEventListener(
-          "scroll",
-          () => {
-            if (!ticking) {
-              requestAnimationFrame(onScroll);
-              ticking = true;
-            }
-          },
-          { passive: true }
-        );
-      })();
-    </script>
+      next.addEventListener('click', ()=>{ go(1); restart(); });
+      prev.addEventListener('click', ()=>{ go(-1); restart(); });
 
-    <!-- REVIEWS SECTION -->
-    <!-- === REVIEWS: JS === -->
-<script>
-/* === REVIEWS: JS (seamless, 3-by-3 groups, dot logic) === */
-(function () {
-  const track = document.getElementById("reviewsTrack");
-  const prev  = document.getElementById("revPrev");
-  const next  = document.getElementById("revNext");
-  const dotsEl = document.getElementById("reviewDots");
+      // autoplay 5s
+      let timer=null;
+      function start(){ stop(); timer=setInterval(()=>go(1), 5000); }
+      function stop(){ if(timer) clearInterval(timer); timer=null; }
+      function restart(){ stop(); start(); }
 
-  // --- capture original cards BEFORE cloning ---
-  const originals = Array.from(track.children);
-  const TOTAL = originals.length;      // 5
+      renderDots();
+      setX(baseIndex,false);
+      start();
+    })();
 
-  // build 3 copies to allow seamless wrap in either direction
-  track.innerHTML = "";
-  for (let k = 0; k < 3; k++) {
-    originals.forEach(n => track.appendChild(n.cloneNode(true)));
-  }
-
-  // responsive "per page"
-  let perPage = 3;
-  function computePerPage() {
-    const w = window.innerWidth;
-    perPage = (w <= 640) ? 1 : (w <= 1100) ? 2 : 3;
-  }
-  computePerPage();
-
-  // measure one card width + gap so we can translate by item count
-  let itemW = 0;
-  function measure() {
-    const c = track.querySelector(".review-card");
-    const gap = parseFloat(getComputedStyle(track).gap || 24);
-    itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
-  }
-  measure();
-
-  // index of the left-most visible card on the 3x track
-  let baseIndex = TOTAL; // start centered on the middle copy
-  function setTransform(i, animate) {
-    if (!animate) track.style.transition = "none";
-    track.style.transform = `translateX(${-i * itemW}px)`;
-    if (!animate) { track.offsetHeight; track.style.transition = "transform .35s ease"; }
-  }
-  setTransform(baseIndex, false);
-
-  // helper
-  const mod = (n,m) => ((n % m) + m) % m;
-
-  // === Two groups only: [0,1,2] and [2,3,4] ===
-  const groupStarts = [0, 2];
-  const toggleMode = () => (perPage === 3 && TOTAL === 5);
-
-  // --- DOTS ---
-  function renderDots() {
-    dotsEl.innerHTML = "";
-    for (let i = 0; i < TOTAL; i++) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "review-dot";
-      b.addEventListener("click", () => {
-        if (toggleMode()) {
-          // map clicked dot to the nearest of our two groups
-          let g = (i < 2) ? 0 : (i > 2) ? 1 : (currentGroup() === 0 ? 0 : 1);
-          goGroup(g);
-        } else {
-          goToStart(i);
+    // FAQ open/close (single-open behavior like desktop)
+    document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const item = btn.parentElement;
+        if(!item.classList.contains("open")){
+          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
         }
-        restartAutoplay();
+        item.classList.toggle("open");
       });
-      dotsEl.appendChild(b);
-    }
-    updateDots();
-  }
-
-  function currentGroup() {
-    const p = mod(baseIndex, TOTAL);
-    return (p === groupStarts[1]) ? 1 : 0; // treat anything else as group 0
-  }
-
-  function updateDots() {
-    const g = toggleMode() ? currentGroup() : null;
-    const children = [...dotsEl.children];
-
-    if (toggleMode()) {
-      // group 0 => dots 0,1,2 active ; group 1 => dots 2,3,4 active
-      const active = g === 0 ? new Set([0,1,2]) : new Set([2,3,4]);
-      children.forEach((d, i) => d.classList.toggle("active", active.has(i)));
-    } else {
-      // fallback contiguous highlight for non-3-up layouts
-      const start = mod(baseIndex, TOTAL);
-      children.forEach((d, i) => {
-        const k = (i - start + TOTAL) % TOTAL;
-        d.classList.toggle("active", k < perPage);
-      });
-    }
-  }
-
-  // keep us sitting on the middle copy after transitions
-  function recenterIfNeeded() {
-    if (baseIndex >= 2 * TOTAL) { baseIndex -= TOTAL; setTransform(baseIndex, false); }
-    else if (baseIndex < TOTAL) { baseIndex += TOTAL; setTransform(baseIndex, false); }
-  }
-
-  // generic delta move by item count
-  function goDelta(delta) {
-    baseIndex += delta;
-    setTransform(baseIndex, true);
-    track.addEventListener("transitionend", () => {
-      recenterIfNeeded();
-      updateDots();
-    }, { once: true });
-  }
-
-  // move to group g (0 or 1) while always sliding "forward" (left)
-  function goGroup(g) {
-    const p = mod(baseIndex, TOTAL);
-    if (g === 0) {
-      if (p === groupStarts[0]) return;   // already 123
-      goDelta(3);                          // 345 -> (next copy of) 123
-    } else {
-      if (p === groupStarts[1]) return;   // already 345
-      goDelta(2);                          // 123 -> 345
-    }
-  }
-
-  // prev group (always slide the other way)
-  function goPrevGroup() {
-    const p = mod(baseIndex, TOTAL);
-    baseIndex += (p === groupStarts[0]) ? -3 : -2; // 123->(right)345 or 345->(right)123
-    setTransform(baseIndex, true);
-    track.addEventListener("transitionend", () => {
-      recenterIfNeeded();
-      updateDots();
-    }, { once: true });
-  }
-
-  // fallback: snap so a specific dot index becomes the left-most
-  function goToStart(dotIdx) {
-    const p = mod(baseIndex, TOTAL);
-    baseIndex = baseIndex + ((dotIdx - p + TOTAL) % TOTAL);
-    setTransform(baseIndex, true);
-    track.addEventListener("transitionend", () => {
-      recenterIfNeeded();
-      updateDots();
-    }, { once: true });
-  }
-
-  // controls
-  next.addEventListener("click", () => {
-    if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0);
-    else goDelta(perPage);
-    restartAutoplay();
-  });
-  prev.addEventListener("click", () => {
-    if (toggleMode()) goPrevGroup();
-    else goDelta(-perPage);
-    restartAutoplay();
-  });
-
-  // autoplay
-  let timer = null;
-  function startAutoplay() {
-    stopAutoplay();
-    timer = setInterval(() => {
-      if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0);
-      else goDelta(perPage);
-    }, 5000);
-  }
-  function stopAutoplay() { if (timer) clearInterval(timer); timer = null; }
-  function restartAutoplay() { stopAutoplay(); startAutoplay(); }
-
-  // init
-  renderDots();
-  startAutoplay();
-
-  // keep sizes in sync
-  function snap() { setTransform(baseIndex, false); updateDots(); }
-  window.addEventListener("resize", () => {
-    computePerPage();
-    measure();
-    snap();
-  }, { passive: true });
-})();
-</script>
-
-
-
-
-
-    <!-- FAQ SECTION -->
-    <section class="faq-section" data-aos="fade-up">
-      <h2 class="faq-title">Frequently Asked Questions</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>What languages do you support?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="faq-a">
-            We support English, Spanish, German, French, Italian, Portuguese,
-            Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More
-            coming soon!
-          </div>
-        </div>
-
-        <div class="faq-item open">
-          <!-- OPEN BY DEFAULT -->
-          <button class="faq-q" type="button">
-            <span
-              >Is SignSense legally binding or a replacement for a lawyer?</span
-            >
-            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="faq-a">
-            No. SignSense explains your contract using AI, but it isn’t legally
-            binding and doesn’t replace professional legal advice.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>What types of contracts can I upload?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="faq-a">
-            Most standard agreements—leases, NDAs, freelance/service contracts,
-            employment offers, and more.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" type="button">
-            <span>Is my data secure when I upload a contract?</span>
-            <svg class="chev" viewBox="0 0 24 24" width="26" height="26">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="faq-a">
-            Yes. Uploads are processed securely; we don’t sell your data or
-            share your files with third parties.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <script>
-      document.querySelectorAll(".faq-item .faq-q").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const item = btn.parentElement;
-          if (!item.classList.contains("open")) {
-            document
-              .querySelectorAll(".faq-item.open")
-              .forEach((i) => i.classList.remove("open"));
-          }
-          item.classList.toggle("open");
-        });
-      });
-    </script>
-
-<!-- FOOTER -->
-<!-- FOOTER -->
-<div class="site-footer-wrap" data-aos="fade-in">
-  <footer class="site-footer">
-    <div class="footer-left">
-      <a href="index.html">
-        <img class="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
-      </a>
-      <div class="footer-left-inner">
-        <a href="index.html" class="footer-brand">SignSense</a>
-        <div class="footer-tagline">
-          <div>No confusion, no legal jargon.</div>
-          <div>For informational use only. Not legal advice.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-col">
-      <div class="footer-title">Quick Menu</div>
-      <nav class="footer-links">
-        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">How it Works</a>
-        <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave Review</a>
-      </nav>
-    </div>
-
-    <div class="footer-col">
-      <div class="footer-title">Information</div>
-      <nav class="footer-links">
-        <a href="contact.html">Contact</a>
-        <a href="index.html">Home</a>
-
-      </nav>
-    </div>
-
-    <div class="footer-col">
-      <div class="footer-title">Socials</div>
-      <nav class="footer-links">
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
-        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-        <a href="https://x.com" target="_blank" rel="noopener noreferrer">X</a>
-      </nav>
-    </div>
-  </footer>
-
-  <div class="footer-bottom">
-    <div class="footer-divider"></div>
-    <div class="footer-bottom-links">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
-    </div>
-  </div>
-</div>
-
-<style>
-  /* exact contact-page footer styles */
-  .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
-  .site-footer{
-    background:transparent; border:none; box-shadow:none; padding:0;
-    display:grid;
-    grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
-    column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important;
-  }
-  .footer-left{display:flex; align-items:flex-start; gap:12px;}
-  .footer-logo{width:32px; height:32px; object-fit:contain; border-radius:0 !important;}
-  .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400;}
-  .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; font-weight:400;}
-
-  .footer-col{display:flex; flex-direction:column; gap:10px;}
-  .footer-title{color:#fff; font-size:22px; font-weight:400;}
-  .footer-links{display:flex; flex-direction:column; gap:8px;}
-  .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; margin:0;}
-  .site-footer .footer-links a{margin:0 !important;}
-
-  .footer-bottom{margin-top:24px;}
-  .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
-  .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
-  .footer-bottom-links a{color:#c5c5c5; text-decoration:none;}
-  .footer-copy{margin-left:auto;}
-  /* Keep footer links the same color even after visiting */
-.footer-bottom-links a:visited { color: #c5c5c5; }
-.site-footer .footer-links a:visited { color: #c5c5c5; }
-
-/* (optional) do the same for the top bar */
-.topbar-nav a,
-.topbar-nav a:visited { color:#d8cccc; }
-
-</style>
-
-
-
-    <!-- === FAKE RESULTS WIRING (paste before </body>) === -->
-    <input
-      id="contractFile"
-      type="file"
-      accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
-      style="display: none"
-    />
-
-    <script>
-      (() => {
-        const triggers = document.querySelectorAll(
-          ".cta-btn, .cta-outline, .footer-cta"
-        );
-        const input = document.getElementById("contractFile");
-
-        // open file picker from any "Review A Contract" button/link
-        triggers.forEach((t) =>
-          t.addEventListener("click", (e) => {
-            e.preventDefault();
-            input.click();
-          })
-        );
-
-        input.addEventListener("change", () => {
-          if (!input.files || !input.files.length) return;
-
-          // === FAKE ANALYSIS DATA (used by the new analysis.html) ===
-          const mock = {
-            languageOriginal: "en",
-            summary: [
-              "This contract is generally favorable with low overall risk.",
-              "Payment schedule and termination rights are standard.",
-              "Watch late-fee compounding and define 'material breach'.",
-            ],
-            risk: {
-              value: 25,
-              note: "Risks mainly around late fees and indemnity scope.",
-            },
-            clarity: {
-              value: 80,
-              note: "Most clauses are explicit; a few terms undefined.",
-            },
-            clauses: [
-              "Payment Terms — Net 30 with 2% per month late fee.",
-              "Scope of Work — Deliverables listed in Schedule A.",
-              "Termination — 30-day convenience; immediate for cause.",
-              "IP & Licensing — Client owns final assets; creator keeps tools.",
-            ],
-            issues: [
-              "Late fee compounding escalates costs on long delays.",
-              "Indemnity is one-sided; consider mutual or capped liability.",
-            ],
-            suggestions: [
-              "Add a 5–7 day grace period before late fees.",
-              "Define 'material breach' + 10-day cure period.",
-              "List milestones and acceptance criteria.",
-            ],
-            meters: { confidence: 75, favorability: 80, deadline: 18 },
-            translations: { en: {} },
-          };
-
-          // Save for the new analysis UI
-          localStorage.setItem("analysisData", JSON.stringify(mock));
-
-          // Also save legacy keys (so your old analysis.html still works if needed)
-          localStorage.setItem("summary", mock.summary.join("\n\n"));
-          localStorage.setItem("risk", String(mock.risk.value));
-          localStorage.setItem("clarity", String(mock.clarity.value));
-          localStorage.setItem("compliance", "90");
-          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-          localStorage.setItem(
-            "smartSuggestions",
-            JSON.stringify(mock.suggestions)
-          );
-
-          // Go to results page
-          window.location.href = "analysis.html";
-        });
-      })();
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
