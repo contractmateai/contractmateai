@@ -1,492 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SignSense — Mobile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>SignSense – Mobile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#000000">
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter&display=swap" rel="stylesheet">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64"/>
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --highlight-green: #aafe2a;
+    :root{
+      --bg-top:#0d011b;
+      --bg-mid:#000000;
+      --text:#f8f8f8;
+      --muted:#bfb9c6;
+      --lime:#aafe2a;
+      --lime2:#bff611;
+      --bar:#000;
+      --bar-br:#232323;
     }
 
-    body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(to bottom, #0d011b 0%, #000 50%, #0d011b 100%);
-      color: white;
+    /* ====== RESET ====== */
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      /* fixed, non-moving background with black center and #0d011b top/bottom */
+      background:
+        linear-gradient(#0d011b 0%, #0d011b 10%, #000 35%, #000 65%, #0d011b 90%, #0d011b 100%) fixed;
+      overscroll-behavior-y:none;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
 
-    /* === TOP BAR === */
-    .topbar {
-      background: #000;
-      border-bottom: 1px solid #232323;
-      height: 60px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      transition: transform 0.3s ease;
-    }
-    .topbar.hidden {
-      transform: translateY(-100%);
-    }
+    a{color:inherit;text-decoration:none}
 
-    .topbar-left {
-      display: flex;
-      align-items: center;
+    /* ====== TOP BAR ====== */
+    .topbar-wrap{
+      position:fixed; top:env(safe-area-inset-top, 0); left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; pointer-events:none;
+      transition:transform .25s ease, opacity .25s ease;
     }
-    .topbar-left img {
-      height: 34px;
-      width: auto;
-      border-radius: 8px;
+    .topbar-wrap.hide{ transform:translateY(-120%); opacity:0; }
+    .topbar{
+      pointer-events:auto;
+      width:min(640px, calc(100% - 24px));
+      background:var(--bar);
+      border:1px solid var(--bar-br);
+      border-radius:14px;
+      margin:10px auto;
+      min-height:56px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px;
     }
-    .topbar-left .brand {
-      color: white;
-      font-size: 20px;
-      font-weight: 400;
-      margin-left: 8px;
-    }
+    .tb-left{display:flex; align-items:center; gap:10px}
+    .logo{width:32px; height:32px; border-radius:6px}
+    .brand{font-family:Shoika,Inter,sans-serif; font-size:20px; font-weight:400; letter-spacing:.2px}
 
-    /* Hamburger Menu */
-    .menu-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-      width: 30px;
-      height: 22px;
-      z-index: 1001;
+    /* Hamburger -> X */
+    .menu-btn{
+      width:38px; height:38px; display:grid; place-items:center;
+      background:transparent; border:none; border-radius:10px; cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
     }
-    .menu-btn span {
-      display: block;
-      height: 3px;
-      background: white;
-      border-radius: 2px;
-      transition: 0.3s;
+    .menu-lines{position:relative; width:22px; height:14px}
+    .line{
+      position:absolute; left:0; right:0; height:2px; background:#e9e9e9; border-radius:2px;
+      transition:transform .25s ease, opacity .2s ease, top .25s ease;
     }
-    /* Hamburger → X animation */
-    .menu-btn.open span:nth-child(1) {
-      transform: rotate(45deg) translateY(8px);
-    }
-    .menu-btn.open span:nth-child(2) {
-      opacity: 0;
-    }
-    .menu-btn.open span:nth-child(3) {
-      transform: rotate(-45deg) translateY(-8px);
-    }
+    .line:nth-child(1){ top:0 }
+    .line:nth-child(2){ top:6px }
+    .line:nth-child(3){ top:12px }
+    .menu-btn.active .line:nth-child(1){ top:6px; transform:rotate(45deg) }
+    .menu-btn.active .line:nth-child(2){ opacity:0 }
+    .menu-btn.active .line:nth-child(3){ top:6px; transform:rotate(-45deg) }
 
-    /* Dropdown Menu */
-    .dropdown {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background: #000;
-      border-top: 1px solid #232323;
-      padding: 20px;
-      text-align: center;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 999;
+    /* ====== MENU OVERLAY (attached look) ====== */
+    .overlay{
+      position:fixed; inset:0; z-index:999; display:none;
     }
-    .dropdown.show {
-      transform: translateY(0);
+    .overlay.show{ display:block }
+    .overlay-backdrop{
+      position:absolute; inset:0; background:transparent; /* click-through area */
     }
-    .dropdown a {
-      display: block;
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-      padding: 14px 0;
+    .dropdown{
+      position:absolute; left:50%; transform:translateX(-50%);
+      top:calc(env(safe-area-inset-top, 0) + 10px); /* align exactly under the bar */
+      width:min(640px, calc(100% - 24px));
+      background:#0b0b0b;
+      border:1px solid var(--bar-br);
+      border-radius:14px;
+      padding:16px 18px 18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.45);
+      margin-top:64px; /* visually extend from the bar (no visible seam) */
     }
-    .dropdown a:hover {
-      color: var(--highlight-green);
-    }
-    .dropdown-footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #666;
-      line-height: 1.4;
-    }
+    .drop-list{display:flex; flex-direction:column; gap:22px; margin-top:6px}
+    .drop-item{display:flex; align-items:center; justify-content:space-between; font-size:22px}
+    .chev{opacity:.9}
+    .legal-note{color:#cfcfcf; opacity:.9; text-align:center; margin:22px 0 4px; font-size:16px}
+    .copy{color:#cfcfcf; opacity:.9; text-align:center; font-size:16px}
 
-    /* === HERO === */
-    .hero {
-      text-align: center;
-      padding: 100px 20px 40px;
+    /* ====== HERO ====== */
+    .hero{padding-top:96px}
+    .wrap{width:min(640px, calc(100% - 24px)); margin:0 auto}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#0e0f1a; color:#cfcfcf;
+      padding:7px 12px; border-radius:999px; font-size:13px;
+      margin:10px auto 14px; border:1px solid #1e1e1e;
     }
-    .tagline-absolute {
-      margin-bottom: 20px;
-      font-size: 13px;
-      background-color: #090922;
-      color: #bbb;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 12px;
-      border-radius: 53px;
-      box-shadow: none; /* remove glow */
-    }
-    .tagline-absolute .chip {
-      background-color: var(--highlight-green);
-      color: black;
-      padding: 4px 10px;
-      border-radius: 53px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .hero h1 {
-      font-family: "Shoika", sans-serif;
-      font-weight: 400;
-      font-size: 32px;
-      line-height: 1.3;
-      margin: 0;
-    }
-    .hero h1 span {
-      color: var(--highlight-green);
-    }
-    .subtext {
-      margin-top: 14px;
-      font-size: 15px;
-      color: #ccc;
-      line-height: 1.5;
-      white-space: pre-line;
-    }
-    .cta-btn {
-      background: white;
-      color: black;
-      border: 2px solid #999;
-      padding: 14px 24px;
-      border-radius: 14px;
-      font-size: 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 24px;
-    }
-    .hero iframe {
-      width: 90%;
-      max-width: 320px;
-      height: 180px;
-      margin: 20px auto 0;
-      display: block;
-      border-radius: 12px;
-    }
+    .badge .chip{background:#0f0f0f; color:#111; display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; color:#000; background:#adff00}
+    .badge .arrow{transform:rotate(18deg)}
 
-    /* === POWERED BY STRIP === */
-    .logo-strip {
-      margin: 40px auto;
-      overflow: hidden;
-      position: relative;
-      width: 100%;
-      height: 50px;
+    h1.hero-title{
+      font-family:Shoika,Inter,sans-serif; font-size:38px; line-height:1.12; font-weight:400; text-align:center;
+      margin:8px 0 10px;
     }
-    .logo-track {
-      display: flex;
-      animation: scrollLogos 12s linear infinite;
+    .hero-title .hl{ color:var(--lime); }
+    .sub{
+      text-align:center; color:var(--muted); font-size:18px; line-height:1.45;
+      margin:12px auto 18px;
     }
-    .logo-track img {
-      height: 40px;
-      margin-right: 40px;
+    .cta{
+      display:block; width:max-content; margin:8px auto 16px;
+      background:#fff; color:#000; border:1px solid #a0a0a0;
+      padding:14px 22px; border-radius:14px; font-size:18px; font-weight:500;
     }
-    @keyframes scrollLogos {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+    /* Video with more side space */
+    .yt-wrap{ width:100%; margin:14px auto 6px; }
+    .yt{ position:relative; width:100%; padding-top:56.25%; border-radius:18px; overflow:hidden; border:1px solid #2d2d2d }
+    .yt iframe{ position:absolute; inset:0; width:100%; height:100% }
 
-    /* === SECTION TITLES === */
-    .section-title {
-      text-align: center;
-      font-size: 28px;
-      margin-top: 40px;
-      font-family: "Shoika", sans-serif;
-    }
-    .section-title span {
-      color: var(--highlight-green);
-    }
-    .section-sub {
-      text-align: center;
-      font-size: 14px;
-      color: #ccc;
-      line-height: 1.4;
-      margin-top: 8px;
-    }
+    /* ===== POWERED BY STRIP ===== */
+    .logo-strip{ width:min(640px, calc(100% - 24px)); margin:22px auto 8px; overflow:hidden; position:relative }
+    .logo-track{ display:flex; gap:0; will-change:transform }
+    .logo-piece{ flex:0 0 100%; width:100%; height:auto; user-select:none; -webkit-user-drag:none }
+    .fade-l,.fade-r{ position:absolute; top:0; bottom:0; width:70px; pointer-events:none }
+    .fade-l{ left:0; background:linear-gradient(to right, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent) }
+    .fade-r{ right:0; background:linear-gradient(to left, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent) }
 
-    /* === INSIGHTS === */
-    .insight-section {
-      padding: 40px 20px;
-      text-align: center;
+    /* ===== SECTION: Understand Your Contract ===== */
+    .center{ text-align:center }
+    .badge2{
+      display:inline-flex; align-items:center; gap:8px; background:#0e0f1a; color:#cfcfcf;
+      padding:7px 12px; border-radius:999px; font-size:13px; border:1px solid #1e1e1e;
+      margin:22px auto 10px;
     }
-    .insight-img-wrapper {
-      position: relative;
-      display: inline-block;
-      margin-top: 20px;
+    .title2{
+      font-family:Shoika,Inter,sans-serif; font-weight:400; font-size:36px; line-height:1.2; margin-top:12px;
     }
-    .insight-img-wrapper img {
-      width: 280px;
-      border-radius: 14px;
-    }
-    .yellow-line {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: rgba(191, 246, 17, 0.8);
-      box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8);
-      border-radius: 50%;
-      animation: move-around 8s linear infinite;
-    }
-    @keyframes move-around {
-      0% { top: -20px; left: -20px; }
-      25% { top: -20px; left: calc(100% - 20px); }
-      50% { top: calc(100% - 20px); left: calc(100% - 20px); }
-      75% { top: calc(100% - 20px); left: -20px; }
-      100% { top: -20px; left: -20px; }
-    }
+    .title2 .lime{ color:var(--lime) }
+    .sub2{ color:var(--muted); font-size:18px; line-height:1.5; margin:10px auto 14px }
 
-    /* === REVIEWS === */
-    .reviews-section {
-      padding: 40px 20px;
-      text-align: center;
+    /* Insights image + moving line */
+    .insight-box{ width:min(640px, calc(100% - 24px)); margin:14px auto 0; position:relative; }
+    .moving-wrap{ position:relative; border-radius:18px; overflow:hidden; padding:2px; background:#000 }
+    .moving-wrap .img-in{ position:relative; border-radius:16px; overflow:hidden; }
+    .glow-dot{
+      position:absolute; width:28px; height:28px; border-radius:50%;
+      background:rgba(191,246,17,.85); box-shadow:0 0 34px 22px rgba(191,246,17,.8);
+      animation:orb 8s linear infinite;
     }
-    .review-card {
-      display: none;
+    @keyframes orb{
+      0%{ top:-20px; left:-20px }
+      25%{ top:-20px; left:calc(100% - 20px) }
+      50%{ top:calc(100% - 20px); left:calc(100% - 20px) }
+      75%{ top:calc(100% - 20px); left:-20px }
+      100%{ top:-20px; left:-20px }
     }
-    .review-card.active {
-      display: block;
-    }
-    .review-card img {
-      width: 280px;
-      border-radius: 14px;
-    }
-    .review-dots {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .review-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #666;
-      cursor: pointer;
-    }
-    .review-dot.active {
-      background: var(--highlight-green);
-    }
+    .ins-img{ display:block; width:100%; border-radius:16px; border:1px solid #202020 }
 
-    /* === FAQ === */
-    .faq-section {
-      padding: 40px 20px;
-    }
-    .faq-item {
-      border: 1px solid #232323;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-    .faq-q {
-      background: #000;
-      color: white;
-      padding: 14px;
-      text-align: left;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .faq-a {
-      background: #111;
-      color: #ccc;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      padding: 0 14px;
-      font-size: 14px;
-    }
-    .faq-item.open .faq-a {
-      max-height: 200px;
-      padding: 14px;
-    }
+    /* ===== Features ticker (two rows) ===== */
+    .feat-wrap{ width:min(680px, calc(100% - 16px)); margin:18px auto 0; background:linear-gradient(to bottom, #0e0c13,#181522,#040304); border:1px solid rgba(36,36,37,.78); border-radius:16px; padding:18px 0 26px; overflow:hidden }
+    .feat-title{ text-align:center; font-size:18px; color:#fff; margin-bottom:10px; font-weight:400 }
+    .strip{ display:flex; gap:18px; padding:10px 0; white-space:nowrap; will-change:transform }
+    .chip{ display:inline-flex; align-items:center; gap:12px; padding:12px 18px; border-radius:36px; background:rgba(26,24,34,.57); border:1px solid #3b3b3b }
+    .chip img{ width:36px; height:36px; border-radius:50%; background:#101010 }
+    .chip span{ font-size:16px }
 
-    /* === FOOTER === */
-    footer {
-      padding: 20px;
-      border-top: 1px solid #232323;
-      text-align: center;
-      font-size: 12px;
-      color: #666;
-    }
+    /* ===== Reviews (1 per view) ===== */
+    .rev{ width:min(680px, calc(100% - 24px)); margin:26px auto 32px }
+    .rev h3{ text-align:center; font-family:Shoika; font-size:34px; font-weight:400 }
+    .rev h3 .g{ color:var(--lime2) }
+    .rev-sub{ text-align:center; color:#a8a8a8; margin-top:8px; font-size:18px }
+    .rv-nav{ display:flex; justify-content:center; gap:16px; margin:12px 0 8px }
+    .rv-btn{ width:46px; height:46px; border:none; border-radius:50%; display:grid; place-items:center; background:#fff; box-shadow:inset 0 0 0 2px rgba(255,255,255,.06); cursor:pointer }
+    .rv-btn.r{ background:#ceced0 } /* neutral, not green */
+    .rv-view{ overflow:hidden; margin-top:12px }
+    .rv-track{ display:flex; gap:18px; transition:transform .35s ease }
+    .rv-card{ flex:0 0 100%; border:1px solid #262626; background:#000; border-radius:18px; padding:8px }
+    .rv-card img{ width:100%; border-radius:14px; display:block }
+    .dots{ display:flex; justify-content:center; gap:10px; margin:16px 0 10px }
+    .dot{ width:12px; height:12px; border-radius:50%; background:#777; border:none }
+    .dot.active{ background:#b9f03d }
+
+    /* ===== FAQ ===== */
+    .faq{ width:min(680px, calc(100% - 24px)); margin:30px auto 14px; }
+    .faq h3{ font-size:40px; text-align:center; font-family:Shoika; font-weight:400; margin-bottom:12px }
+    .q{ background:#0d0c12; border-radius:18px; margin:12px 0; overflow:hidden; border:1px solid #202020 }
+    .qbtn{ width:100%; text-align:left; background:transparent; border:none; color:#fff; padding:20px 18px; font-size:20px; display:flex; align-items:center; justify-content:space-between }
+    .ans{ color:#cfcbd6; font-size:18px; line-height:1.6; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .25s ease, opacity .22s ease, padding .2s ease }
+    .q.open .ans{ padding:8px 18px 16px; max-height:320px; opacity:1; background:#191624 }
+
+    /* ===== FOOTER ===== */
+    .footer{ width:min(680px, calc(100% - 24px)); margin:24px auto 24px; background:#111; border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:22px }
+    .fgrid{ display:grid; grid-template-columns:1fr 1fr; gap:18px }
+    .fcol h4{ font-size:22px; margin-bottom:10px }
+    .fcol a{ color:#c5c5c5; display:block; margin:6px 0; font-size:18px }
+    .fbrand{ display:flex; align-items:center; gap:10px; margin-bottom:12px }
+    .fbrand img{ width:34px; height:34px }
+    .fbrand span{ font-size:22px; font-weight:600 }
+    .fdisc{ margin-top:10px; color:#e9e9e9; font-size:16px }
+    .fbottom{ margin-top:18px; padding-top:12px; border-top:1px solid rgba(255,255,255,.15); text-align:center; color:#c5c5c5; display:grid; gap:8px; font-size:16px }
+    .fb-links{ display:flex; gap:16px; justify-content:center }
   </style>
 </head>
-
 <body>
-  <!-- === TOP BAR === -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo">
-      <span class="brand">SignSense</span>
-    </div>
-    <button class="menu-btn">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
 
-  <div class="dropdown">
-    <a href="#how-it-works">See How It Works</a>
-    <a href="index.html">Home</a>
-    <a href="contact.html">Contact</a>
-    <div class="dropdown-footer">
-      For informational use only. Not legal advice.<br>
-      © 2025 SignSense. All rights reserved.
+  <!-- ===== TOP BAR ===== -->
+  <div class="topbar-wrap" id="tbWrap">
+    <div class="topbar">
+      <div class="tb-left">
+        <a href="index.html"><img class="logo" src="https://imgur.com/t8UWYN3.png" alt=""></a>
+        <a href="index.html" class="brand">SignSense</a>
+      </div>
+
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <div class="menu-lines">
+          <span class="line"></span><span class="line"></span><span class="line"></span>
+        </div>
+      </button>
     </div>
   </div>
 
-  <!-- === HERO === -->
+  <!-- Overlay dropdown (attached) -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-backdrop" id="overlayBg"></div>
+    <div class="dropdown">
+      <div class="drop-list">
+        <a class="drop-item" href="index.html#how-it-works">See How It Works <span class="chev">›</span></a>
+        <a class="drop-item" href="index.html">Home <span class="chev">›</span></a>
+        <a class="drop-item" href="contact.html">Contact <span class="chev">›</span></a>
+      </div>
+
+      <div class="legal-note">For informational use only. Not legal advice.</div>
+      <div class="copy">© 2025 SignSense. All rights reserved.</div>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
   <section class="hero">
-    <div class="tagline-absolute">
-      <span class="chip">AI</span>
-      Legal DocReview Tool
+    <div class="wrap center">
+      <div class="badge">
+        <span class="chip">AI</span>
+        Legal DocReview Tool
+        <span class="arrow">↗</span>
+      </div>
+
+      <h1 class="hero-title">
+        Make <span class="hl">Sense</span> Of What<br>
+        You’re <span class="hl">Signing</span>
+      </h1>
+
+      <p class="sub">
+        SignSense instantly simplifies<br>
+        contracts for law firms, freelancers,<br>
+        students &amp; more
+      </p>
+
+      <a class="cta" href="#">Review A Contract ↗</a>
+
+      <!-- Video (narrower) -->
+      <div class="yt-wrap">
+        <div class="yt">
+          <iframe src="https://www.youtube.com/embed/wD4E5i2pgIY"
+                  title="SignSense Demo"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+        </div>
+      </div>
     </div>
-
-    <h1>
-      Make Sense Of What<br>
-      <span>You're Signing</span>
-    </h1>
-
-    <p class="subtext">
-      SignSense instantly simplifies<br>
-      contracts for law firms, freelancers,<br>
-      students & more
-    </p>
-
-    <button class="cta-btn">Review A Contract</button>
-
-    <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
   </section>
 
-  <!-- === POWERED BY === -->
+  <!-- ===== POWERED BY STRIP ===== -->
   <section class="logo-strip">
-    <div class="logo-track">
-      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
-      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
-      <img src="https://imgur.com/2SUo8mv.png" alt="Powered Logo">
-    </div>
+    <div class="logo-track" id="logoTrack"></div>
+    <div class="fade-l"></div><div class="fade-r"></div>
   </section>
 
-  <!-- === INSIGHTS === -->
-  <section class="insight-section">
-    <h2 class="section-title">Understand Your <span>Contract</span> at a Glance</h2>
-    <p class="section-sub">
-      We highlight key terms, risks, & clauses<br>
-      so you can grasp the essentials without reading every line
+  <!-- ===== INSTANT CLARITY BADGE & TITLE ===== -->
+  <div class="wrap center">
+    <div class="badge2">Instant Clarity Engine ↗</div>
+
+    <div class="title2">Understand Your<br>Contract <span class="lime">at a Glance</span></div>
+    <p class="sub2">
+      We highlight key terms, risks, &amp; clauses so you can grasp the<br>
+      essentials&nbsp;&nbsp;without reading every line
     </p>
-    <div class="insight-img-wrapper">
-      <span class="yellow-line"></span>
-      <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights Image">
+  </div>
+
+  <!-- ===== INSIGHTS ===== -->
+  <div class="insight-box">
+    <div class="moving-wrap">
+      <span class="glow-dot"></span>
+      <div class="img-in">
+        <img class="ins-img" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FEATURES STRIP ===== -->
+  <section class="feat-wrap">
+    <div class="feat-title">Everything you need for clarity and security in one seamless experience.</div>
+    <div class="strip" id="featTop"></div>
+    <div class="strip" id="featBot"></div>
+  </section>
+
+  <!-- ===== REVIEWS ===== -->
+  <section class="rev">
+    <h3>What <span class="g">Our Clients</span> Say</h3>
+    <div class="rev-sub">Hear Directly From Our Satisfied Users</div>
+
+    <div class="rv-view">
+      <div class="rv-track" id="rvTrack">
+        <div class="rv-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/k42nv4C.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/6M6XO2l.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/YMDEKZm.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/I9iQu88.png" alt=""></div>
+      </div>
+    </div>
+
+    <div class="rv-nav">
+      <button class="rv-btn l" id="rvPrev" aria-label="Prev">‹</button>
+      <button class="rv-btn r" id="rvNext" aria-label="Next">›</button>
+    </div>
+
+    <div class="dots" id="rvDots"></div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq">
+    <h3>Frequently Asked Questions</h3>
+
+    <div class="q open">
+      <button class="qbtn" type="button">Is SignSense legally binding ? <span>▾</span></button>
+      <div class="ans">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">What languages do you support? <span>▾</span></button>
+      <div class="ans">English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, Turkish.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">What types of contracts can I upload? <span>▾</span></button>
+      <div class="ans">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">Is my data secure? <span>▾</span></button>
+      <div class="ans">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
     </div>
   </section>
 
-  <!-- === REVIEWS === -->
-  <section class="reviews-section">
-    <h2 class="section-title">What <span>Our Clients</span> Say</h2>
-    <div class="review-card active">
-      <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1">
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="fbrand">
+      <img src="https://imgur.com/BcUqgKZ.png" alt=""><span>SignSense</span>
     </div>
-    <div class="review-card">
-      <img src="https://i.imgur.com/k42nv4C.png" alt="Review 2">
-    </div>
-    <div class="review-card">
-      <img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3">
+    <div class="fdisc">No confusion, no legal jargon.<br>For informational use only. Not legal advice.</div>
+
+    <div class="fgrid" style="margin-top:16px">
+      <div class="fcol">
+        <h4>Quick Menu</h4>
+        <a href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
+        <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+      </div>
+      <div class="fcol">
+        <h4>Information</h4>
+        <a href="contact.html">Contact</a>
+        <a href="index.html">Home</a>
+      </div>
+      <div class="fcol">
+        <h4>Socials</h4>
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://x.com" target="_blank" rel="noopener">X</a>
+      </div>
     </div>
 
-    <div class="review-dots">
-      <div class="review-dot active"></div>
-      <div class="review-dot"></div>
-      <div class="review-dot"></div>
+    <div class="fbottom">
+      <div class="fb-links">
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div>© 2025 SignSense. All rights reserved.</div>
     </div>
-  </section>
-
-  <!-- === FAQ === -->
-  <section class="faq-section">
-    <div class="faq-item">
-      <div class="faq-q">What languages do you support?</div>
-      <div class="faq-a">English, German, French, Italian, Dutch, Romanian, Albanian.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Is SignSense legally binding?</div>
-      <div class="faq-a">No. It explains contracts but is not a replacement for legal advice.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">What types of contracts can I upload?</div>
-      <div class="faq-a">Leases, NDAs, freelance contracts, job offers, and more.</div>
-    </div>
-  </section>
-
-  <!-- === FOOTER === -->
-  <footer>
-    For informational use only. Not legal advice.<br>
-    © 2025 SignSense. All rights reserved.
   </footer>
 
-  <!-- === JS === -->
   <script>
-    const menuBtn = document.querySelector('.menu-btn');
-    const dropdown = document.querySelector('.dropdown');
-    let lastScroll = 0;
-    const topbar = document.querySelector('.topbar');
+    /* ===== Top bar show/hide on scroll & menu toggle ===== */
+    (function(){
+      const wrap = document.getElementById('tbWrap');
+      let last = scrollY;
+      addEventListener('scroll', () => {
+        const y = scrollY;
+        if (y > last && y > 60) wrap.classList.add('hide'); else wrap.classList.remove('hide');
+        last = y;
+      }, {passive:true});
 
-    // Toggle menu
-    menuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuBtn.classList.toggle('open');
-      dropdown.classList.toggle('show');
-    });
+      const btn = document.getElementById('menuBtn');
+      const overlay = document.getElementById('overlay');
+      const bg = document.getElementById('overlayBg');
 
-    // Close menu on outside click
-    document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove('open');
-        dropdown.classList.remove('show');
+      function closeMenu(){ btn.classList.remove('active'); overlay.classList.remove('show'); }
+      function openMenu(){ btn.classList.add('active'); overlay.classList.add('show'); }
+
+      btn.addEventListener('click', () => {
+        overlay.classList.contains('show') ? closeMenu() : openMenu();
+      });
+      bg.addEventListener('click', closeMenu);
+      // Close on Esc
+      addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+    })();
+
+    /* ===== Powered-by strip (long seamless loop) ===== */
+    (function(){
+      const track = document.getElementById('logoTrack');
+      if(!track) return;
+      const src = 'https://i.imgur.com/2SUo8mv.png';
+      const COPIES = 10;
+      for(let i=0;i<COPIES;i++){
+        const img = document.createElement('img');
+        img.src = src; img.alt='Powered by'; img.className='logo-piece'; track.appendChild(img);
       }
-    });
-
-    // Hide topbar on scroll down, show on scroll up
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll > lastScroll && currentScroll > 50) {
-        topbar.classList.add('hidden');
-      } else {
-        topbar.classList.remove('hidden');
+      let x=0, w=0, last=performance.now();
+      function measure(){
+        const first = track.querySelector('.logo-piece');
+        if(!first || !first.complete){ setTimeout(measure,50); return; }
+        w = first.getBoundingClientRect().width || first.naturalWidth;
       }
-      lastScroll = currentScroll;
-    });
+      function tick(now){
+        const dt=(now-last)/1000; last=now;
+        const pps = (w*COPIES)/120; // 120s per loop
+        x -= pps*dt;
+        const loop = w*COPIES;
+        if(x<=-loop) x+=loop;
+        track.style.transform = `translateX(${x}px)`;
+        requestAnimationFrame(tick);
+      }
+      measure();
+      requestAnimationFrame(tick);
+      addEventListener('resize', measure, {passive:true});
+    })();
 
-    // Reviews auto-slide
-    const reviews = document.querySelectorAll('.review-card');
-    const dots = document.querySelectorAll('.review-dot');
-    let current = 0;
-    function showReview(index) {
-      reviews.forEach((r, i) => r.classList.toggle('active', i === index));
-      dots.forEach((d, i) => d.classList.toggle('active', i === index));
-      current = index;
-    }
-    setInterval(() => {
-      let next = (current + 1) % reviews.length;
-      showReview(next);
-    }, 5000);
+    /* ===== Features chips (endless) ===== */
+    (function(){
+      const top = document.getElementById('featTop');
+      const bot = document.getElementById('featBot');
+      const topData = [
+        ["No Signup","https://imgur.com/dKG0KXh.png"],
+        ["Secure Processing","https://imgur.com/Cbflaz5.png"],
+        ["PDF Export","https://imgur.com/RozMHbN.png"],
+        ["Risk Indicator","https://imgur.com/hDBmbBP.png"],
+        ["Your Data Stays Yours","https://imgur.com/SaW85D2.png"],
+        ["Smart Summary","https://imgur.com/dPCWJg7.png"],
+        ["Language Detection","https://imgur.com/Xv2u5Mz.png"],
+        ["Key Clauses","https://imgur.com/cv1DrX1.png"]
+      ];
+      const botData = [
+        ["Legal Insights","https://imgur.com/0TgzL8P.png"],
+        ["Suggestions Engine","https://imgur.com/JMV0gKS.png"],
+        ["Clause Warnings","https://imgur.com/MAZkZHs.png"],
+        ["AI Review","https://imgur.com/o8K46Sk.png"],
+        ["No legal jargon","https://imgur.com/3PU7xU0.png"],
+        ["Deadline Pressure","https://imgur.com/rlaNjHT.png"],
+        ["Modern Design","https://imgur.com/Ie8CwXO.png"],
+        ["Confidence to Sign","https://imgur.com/5DGepME.png"]
+      ];
+      function fill(row, data){
+        const frag = document.createDocumentFragment();
+        for(let k=0;k<2;k++){ // two copies for seamless wrap
+          data.forEach(([label,icon])=>{
+            const el = document.createElement('div');
+            el.className='chip';
+            el.innerHTML = `<img src="${icon}" alt=""><span>${label}</span>`;
+            frag.appendChild(el);
+          });
+        }
+        row.appendChild(frag);
+      }
+      fill(top, topData); fill(bot, botData);
+
+      function ticker(row, dir){
+        let x=0, w=0, last=performance.now();
+        function measure(){
+          w = row.scrollWidth/2;
+          if(!w){ setTimeout(measure,60); }
+        }
+        function tick(now){
+          const dt=(now-last)/1000; last=now;
+          const speed = 32 * (dir==='left'?-1:1);
+          x += speed*dt;
+          if(x<=-w) x+=w; if(x>0) x-=w;
+          row.style.transform=`translateX(${x}px)`;
+          requestAnimationFrame(tick);
+        }
+        measure(); requestAnimationFrame(tick);
+        addEventListener('resize', measure, {passive:true});
+      }
+      ticker(top,'right'); ticker(bot,'left');
+    })();
+
+    /* ===== Reviews: 1 per view, 5s autoplay, dots ===== */
+    (function(){
+      const track = document.getElementById('rvTrack');
+      const prev = document.getElementById('rvPrev');
+      const next = document.getElementById('rvNext');
+      const dots = document.getElementById('rvDots');
+
+      const total = track.children.length;
+      let idx = 0, w = 0, timer = null;
+
+      function measure(){
+        w = track.getBoundingClientRect().width; // full width since each slide 100%
+      }
+      function go(i){
+        idx = (i+total)%total;
+        track.style.transform = `translateX(${-idx*100}%)`;
+        updateDots();
+      }
+      function updateDots(){
+        dots.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active', i===idx));
+      }
+      function autoplay(){
+        clearInterval(timer);
+        timer = setInterval(()=>go(idx+1), 5000);
+      }
+
+      // dots
+      for(let i=0;i<total;i++){
+        const b=document.createElement('button'); b.className='dot'; b.addEventListener('click',()=>{go(i); autoplay();});
+        dots.appendChild(b);
+      }
+      updateDots();
+
+      prev.addEventListener('click', ()=>{go(idx-1); autoplay();});
+      next.addEventListener('click', ()=>{go(idx+1); autoplay();});
+      addEventListener('resize', measure, {passive:true});
+      measure(); go(0); autoplay();
+    })();
+
+    /* ===== FAQ toggles ===== */
+    document.querySelectorAll('.q .qbtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        btn.parentElement.classList.toggle('open');
+      });
+    });
   </script>
 </body>
 </html>
