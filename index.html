@@ -192,18 +192,51 @@
       max-width:860px; margin-left:auto; margin-right:auto;
     }
 
-    /* ===== Insights ===== */
-    .insight-section{ padding:38px 16px 40px; }
-    .insight-content{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:54px; max-width:1100px; margin:0 auto; }
-    .moving-line-wrapper{ background:#000; border-radius:12px; padding:2px; position:relative; min-width:200px; min-height:200px; overflow:hidden; }
-    .yellow-line{ position:absolute; width:26px; height:26px; background:rgba(191,246,17,.8); box-shadow:0 0 36px 26px rgba(191,246,17,.8); border-radius:50%; animation:move-around 8s linear infinite; z-index:0; }
-    @keyframes move-around{
-      0%{ top:-20px; left:-20px; } 25%{ top:-20px; left:calc(100% - 20px); }
-      50%{ top:calc(100% - 20px); left:calc(100% - 20px); }
-      75%{ top:calc(100% - 20px); left:-20px; } 100%{ top:-20px; left:-20px; }
-    }
-    .moving-line-content{ position:relative; z-index:1; padding:10px; border-radius:inherit; }
-    .moving-line-content img{ width:min(420px, 80vw); border-radius:16px; display:block; }
+   /* ===== Insights (perfectly aligned tracer) ===== */
+.insight-section{ padding:38px 16px 40px; }
+.insight-content{
+  display:flex; justify-content:center; align-items:center; flex-wrap:wrap;
+  gap:54px; max-width:1100px; margin:0 auto;
+}
+
+/* The wrapper’s padding defines the trace inset.
+   --dot controls the glowing ball size. */
+.moving-line-wrapper{
+  --offset: 12px;         /* how far inside the edge the trace runs */
+  --dot: 18px;            /* size of the glowing ball */
+  background:#000; border-radius:16px;
+  padding:var(--offset); position:relative; overflow:hidden;
+  min-width:200px; min-height:200px;
+}
+
+/* ball that skims the edge exactly */
+.moving-line-wrapper .yellow-line{
+  position:absolute; z-index:0;
+  width:var(--dot); height:var(--dot); border-radius:50%;
+  background:rgba(191,246,17,.85);
+  box-shadow:0 0 22px 12px rgba(191,246,17,.55);
+  /* start at top-left inside the inset */
+  top:calc(var(--offset) - var(--dot)/2);
+  left:calc(var(--offset) - var(--dot)/2);
+  animation:trace-rect 9s linear infinite;
+}
+
+/* parametric rectangle path that hugs the padded edge */
+@keyframes trace-rect{
+  0%   { top:calc(var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
+  25%  { top:calc(var(--offset) - var(--dot)/2); left:calc(100% - var(--offset) - var(--dot)/2); }
+  50%  { top:calc(100% - var(--offset) - var(--dot)/2); left:calc(100% - var(--offset) - var(--dot)/2); }
+  75%  { top:calc(100% - var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
+  100% { top:calc(var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
+}
+
+.moving-line-content{
+  position:relative; z-index:1; border-radius:inherit;
+}
+
+.moving-line-content img{
+  display:block; width:min(420px, 80vw); border-radius:12px;
+}
 
     /* ===== Features scroller (still no shadows) ===== */
     .scroll-full{ width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; }
@@ -375,16 +408,17 @@
     </p>
 
     <!-- ===== Insights ===== -->
-    <section class="insight-section" data-aos="fade-up">
-      <div class="insight-content">
-        <div class="moving-line-wrapper">
-          <span class="yellow-line"></span>
-          <div class="moving-line-content">
-            <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
-          </div>
-        </div>
+   <!-- ===== Insights ===== -->
+<section class="insight-section" data-aos="fade-up">
+  <div class="insight-content">
+    <div class="moving-line-wrapper">
+      <span class="yellow-line" aria-hidden="true"></span>
+      <div class="moving-line-content">
+        <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <!-- ===== Scrolling features ===== -->
     <div class="scroll-full">
