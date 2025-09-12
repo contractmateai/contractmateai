@@ -55,7 +55,15 @@
       border-radius:16px;
       display:flex; align-items:center; justify-content:space-between;
       box-shadow:0 8px 30px rgba(0,0,0,.28);
+      transition:border-radius .18s ease, border-color .18s ease;
     }
+    /* merge with dropdown when open */
+    .topbar.merged{
+      border-bottom-left-radius:0;
+      border-bottom-right-radius:0;
+      border-bottom-color:transparent;
+    }
+
     .topbar-left{ display:flex; align-items:center; gap:10px; }
     .topbar-logo{ height:34px; width:auto; border-radius:8px; }
     .topbar-brand{ color:#fff; text-decoration:none; font-size:26px; font-weight:400; }
@@ -99,9 +107,10 @@
     .menu-list{ margin-top:2px; }
     .menu-item{
       display:flex; align-items:center; justify-content:space-between;
-      padding:16px 4px; font-size:24px; color:#fff; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.06);
+      padding:16px 4px; font-size:24px; color:#fff; text-decoration:none;
+      /* removed dividers per your request */
+      border-bottom:none;
     }
-    .menu-item:last-child{ border-bottom:none; }
     .menu-item .chev{ opacity:.9; }
 
     .menu-disclaimer{
@@ -188,17 +197,16 @@
     }
     .section-title .lime{ color:var(--lime); }
     .section-sub{
-      text-align:center; color:var(--muted); margin-top:10px; font-size:19px; line-height:1.4;
+      text-align:center; color:#muted; margin-top:10px; font-size:19px; line-height:1.4;
       max-width:860px; margin-left:auto; margin-right:auto;
     }
 
-    /* ===== Insights (perfect tracer alignment) ===== */
+    /* ===== Insights (exact version you want) ===== */
     .insight-section{ padding:38px 16px 40px; }
     .insight-content{
       display:flex; justify-content:center; align-items:center; flex-wrap:wrap;
       gap:54px; max-width:1100px; margin:0 auto;
     }
-
     /* Outer frame the ball runs around */
     .moving-line-wrapper{
       position:relative; overflow:hidden; z-index:1 !important;
@@ -247,7 +255,7 @@
     .scroll-item img{ width:40px; height:40px; border-radius:50%; background:#101010; object-fit:cover; }
     .scroll-item span{ font-size:16px; }
 
-    /* ===== Reviews (add extra spacing above) ===== */
+    /* ===== Reviews ===== */
     .reviews-section{
       padding:60px 16px 92px;
       max-width:1000px; margin:64px auto 0;
@@ -528,17 +536,24 @@
       menuPanel.classList.add('open');
       menuOverlay.classList.add('show');
       menuToggle.classList.add('open');
+      topbar.classList.add('merged');           // merge topbar & panel
     }
     function closeMenu(){
       menuPanel.classList.remove('open');
       menuOverlay.classList.remove('show');
       menuToggle.classList.remove('open');
+      topbar.classList.remove('merged');        // restore topbar
     }
     menuToggle.addEventListener('click', () => {
       if(menuPanel.classList.contains('open')) closeMenu(); else openMenu();
     });
     menuOverlay.addEventListener('click', closeMenu);
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+
+    // Also close menu on scroll (your ask)
+    window.addEventListener('scroll', () => {
+      if (menuPanel.classList.contains('open')) closeMenu();
+    }, { passive:true });
 
     // ===== Hide/show bar on scroll
     (function(){
