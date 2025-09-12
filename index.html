@@ -19,9 +19,9 @@
       --muted:#d8cccc;
       --lime:#aafe2a;
       --lime2:#bff611;
-      --bar:#04040e;          /* top bar & dropdown */
+      --bar:#04040e;
       --bar-border:#232323;
-      --panel:var(--bar);     /* dropdown uses same as top bar */
+      --panel:var(--bar);
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
@@ -83,18 +83,17 @@
     .menu-panel{
       position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
       width:min(720px, calc(100% - 28px));
-      background:var(--panel);                     /* same color as top bar */
+      background:var(--panel);
       border:1px solid var(--bar-border); border-top:none;
       border-radius:0 0 16px 16px;
-      padding:12px 22px 22px;                      /* tighter top padding */
-      box-shadow:none;                             /* no extra shadow */
+      padding:12px 22px 22px;
+      box-shadow:none;
       z-index:1001; pointer-events:none;
       transition:transform .18s ease, opacity .18s ease;
     }
     .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
     .menu-overlay.show{ opacity:1; pointer-events:auto; }
 
-    /* NO panel header (to avoid duplicate logo/title) */
     .menu-list{ margin-top:4px; }
     .menu-item{
       display:flex; align-items:center; justify-content:space-between;
@@ -106,8 +105,8 @@
       text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6; font-size:16px;
     }
 
-    /* push content below bar — tightened */
-    .hero-wrapper{ margin-top:96px; }  /* was 118px */
+    /* push content below bar — tightened more */
+    .hero-wrapper{ margin-top:84px; } /* was 96px */
 
     /* ===== HERO ===== */
     .hero{ text-align:center; padding:64px 16px 18px; }
@@ -168,8 +167,10 @@
       font-size:15px;
     }
 
+    /* ===== Section title/sub ===== */
     .section-title{
-      text-align:center; font-size:clamp(28px, 5.4vw, 40px); font-weight:400; line-height:1.3; margin-top:14px;
+      text-align:center; font-size:clamp(32px, 6.4vw, 52px); /* bigger */
+      font-weight:400; line-height:1.25; margin-top:14px;
     }
     .section-title .lime{ color:var(--lime); }
     .section-sub{
@@ -177,7 +178,7 @@
       max-width:860px; margin-left:auto; margin-right:auto;
     }
 
-    /* ===== Insights block (left image only) ===== */
+    /* ===== Insights (image only) ===== */
     .insight-section{ padding:38px 16px 40px; }
     .insight-content{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:54px; max-width:1100px; margin:0 auto; }
     .moving-line-wrapper{ background:#000; border-radius:12px; padding:2px; position:relative; min-width:200px; min-height:200px; overflow:hidden; }
@@ -196,7 +197,7 @@
     .scroll-section{
       position:relative; padding:22px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304);
       border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:28px auto 0; overflow:hidden; max-width:1280px; transform:scale(.88);
-      box-shadow:none; /* ensure no box drop shadow */
+      box-shadow:none;
     }
     .scroll-section h3{ text-align:center; font-size:22px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
     .scroll-strip{ display:flex; gap:22px; padding:12px 0; white-space:nowrap; flex-shrink:0; will-change:transform; }
@@ -204,7 +205,6 @@
     .scroll-item img{ width:40px; height:40px; border-radius:50%; background:#101010; object-fit:cover; }
     .scroll-item span{ font-size:16px; }
 
-    /* remove the side fades (“shadows”) */
     .scroll-shadow-left,.scroll-shadow-right{ display:none; }
 
     /* ===== Reviews ===== */
@@ -242,7 +242,7 @@
     .faq-title{ font-size:clamp(32px, 8vw, 64px); line-height:1.1; font-weight:400; margin-bottom:28px; }
     .faq-list{
       max-width:1100px;
-      margin-left:16px;
+      margin-left:0;          /* start farther left */
       margin-right:auto;
       display:flex; flex-direction:column; gap:18px;
       text-align:left;
@@ -250,17 +250,18 @@
     .faq-item{ border-radius:24px; overflow:hidden; background:transparent; }
     .faq-q{
       width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
-      padding:26px 30px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; border-radius:24px;
+      padding:22px 18px;       /* tighter & more left */
+      border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; border-radius:24px;
       text-align:left;
     }
     .faq-item.open{ background:#191624; border-radius:24px; }
     .faq-item.open .faq-q{ background:transparent; border-radius:24px 24px 0 0; }
     .faq-a{
-      background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 30px;
+      background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 18px;
       max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;
       text-align:left;
     }
-    .faq-item.open .faq-a{ padding:16px 30px 22px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
+    .faq-item.open .faq-a{ padding:16px 18px 22px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
 
     @media (max-width: 980px){
       .topbar-nav{ display:none; }
@@ -294,7 +295,6 @@
   <!-- Overlay + attached dropdown panel -->
   <div class="menu-overlay" id="menuOverlay"></div>
   <div class="menu-panel" id="menuPanel" aria-hidden="true">
-    <!-- header removed to avoid duplicate logo/brand -->
     <nav class="menu-list">
       <a class="menu-item" href="index.html#how-it-works">See How It Works <span class="chev">›</span></a>
       <a class="menu-item" href="index.html">Home <span class="chev">›</span></a>
@@ -352,10 +352,10 @@
 
     <h2 class="section-title">Understand Your<br />Contract <span class="lime">at a Glance</span></h2>
     <p class="section-sub">
-      We highlight key terms, risks &amp; clauses so you can grasp the essentials immediately.
+      We highlight key terms, risks &amp; clauses so you can grasp the essentials
     </p>
 
-    <!-- ===== Insights (left image only) ===== -->
+    <!-- ===== Insights (image only) ===== -->
     <section class="insight-section" data-aos="fade-up">
       <div class="insight-content">
         <div class="moving-line-wrapper">
@@ -521,199 +521,4 @@
           track.style.transform = `translateX(${x}px)`;
           requestAnimationFrame(tick);
         }
-        measure();
-        requestAnimationFrame(tick);
-        window.addEventListener('resize', measure, {passive:true});
-      }
-      window.addEventListener('load', run);
-    })();
-
-    // ===== Features ticker
-    (function(){
-      const topRow = document.querySelector('.top-row');
-      const bottomRow = document.querySelector('.bottom-row');
-
-      const featuresTop = [
-        { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
-        { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
-        { label: "PDF Export", icon: "https://imgur.com/RozMHbN.png" },
-        { label: "Risk Indicator", icon: "https://imgur.com/hDBmbBP.png" },
-        { label: "Your Data Stays Yours", icon: "https://imgur.com/SaW85D2.png" },
-        { label: "Smart Summary", icon: "https://imgur.com/dPCWJg7.png" },
-        { label: "Language Detection", icon: "https://imgur.com/Xv2u5Mz.png" },
-        { label: "Key Clauses", icon: "https://imgur.com/cv1DrX1.png" },
-      ];
-      const featuresBottom = [
-        { label: "Legal Insights", icon: "https://imgur.com/0TgzL8P.png" },
-        { label: "Suggestions Engine", icon: "https://imgur.com/JMV0gKS.png" },
-        { label: "Clause Warnings", icon: "https://imgur.com/MAZkZHs.png" },
-        { label: "AI Review", icon: "https://imgur.com/o8K46Sk.png" },
-        { label: "No legal jargon", icon: "https://imgur.com/3PU7xU0.png" },
-        { label: "Deadline Pressure", icon: "https://imgur.com/rlaNjHT.png" },
-        { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
-        { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" },
-      ];
-
-      function populateRow(row, features){
-        if(!row) return;
-        const makeSet = () => {
-          const frag = document.createDocumentFragment();
-          features.forEach(f=>{
-            const el = document.createElement('div');
-            el.className = 'scroll-item';
-            el.innerHTML = `<img src="${f.icon}" alt=""><span>${f.label}</span>`;
-            frag.appendChild(el);
-          });
-          return frag;
-        }
-        row.appendChild(makeSet());
-        row.appendChild(makeSet());
-      }
-      populateRow(topRow, featuresTop);
-      populateRow(bottomRow, featuresBottom);
-
-      function makeTicker(row, { pxPerSecond=28, direction="left" } = {}){
-        if(!row) return;
-        const speed = direction === "left" ? -pxPerSecond : pxPerSecond;
-        let x=0,w=0,last=performance.now();
-        function measure(){ w = row.scrollWidth / 2; if(!w){ setTimeout(measure,60); } }
-        function tick(now){
-          const dt=(now-last)/1000; last=now; x += speed*dt;
-          if(x <= -w) x += w; if(x > 0) x -= w;
-          row.style.transform = `translateX(${x}px)`;
-          requestAnimationFrame(tick);
-        }
-        function start(){ measure(); last=performance.now(); requestAnimationFrame(tick); }
-        window.addEventListener('resize', measure, {passive:true});
-        start();
-      }
-      window.addEventListener('load', ()=>{
-        makeTicker(topRow, { pxPerSecond: 26, direction: "right" });
-        makeTicker(bottomRow, { pxPerSecond: 26, direction: "left" });
-      });
-    })();
-
-    // ===== Reviews carousel
-    (function(){
-      const track = document.getElementById('reviewsTrack');
-      const prev  = document.getElementById('revPrev');
-      const next  = document.getElementById('revNext');
-      const dotsEl= document.getElementById('reviewDots');
-
-      const cards = Array.from(track.children);
-      const TOTAL = cards.length;
-
-      const clonesBefore = cards.map(n=>n.cloneNode(true));
-      const clonesAfter  = cards.map(n=>n.cloneNode(true));
-      track.prepend(...clonesBefore);
-      track.append(...clonesAfter);
-
-      let cardW = 0, gap = 0;
-      function measure(){
-        const c = track.querySelector('.review-card');
-        gap = parseFloat(getComputedStyle(track).gap || 18);
-        cardW = (c ? c.getBoundingClientRect().width : 0) + gap;
-      }
-      measure();
-      window.addEventListener('resize', ()=>{ measure(); setTransform(index, false); }, {passive:true});
-
-      let index = TOTAL;
-      function setTransform(i, animate=true){
-        if(!animate) track.style.transition='none';
-        track.style.transform = `translateX(${-i*cardW}px)`;
-        if(!animate){ track.offsetHeight; track.style.transition='transform .32s ease'; }
-      }
-      setTransform(index, false);
-
-      function go(delta){
-        index += delta;
-        setTransform(index, true);
-        track.addEventListener('transitionend', ()=>{
-          if(index >= TOTAL*2) index -= TOTAL;
-          if(index < TOTAL)    index += TOTAL;
-          setTransform(index, false);
-          updateDots();
-        }, { once:true });
-      }
-
-      function renderDots(){
-        dotsEl.innerHTML='';
-        for(let i=0;i<TOTAL;i++){
-          const b=document.createElement('button');
-          b.className='review-dot';
-          b.addEventListener('click', ()=>{ jumpTo(i); restart(); });
-          dotsEl.appendChild(b);
-        }
-        updateDots();
-      }
-      function updateDots(){
-        const pos = (index % TOTAL + TOTAL) % TOTAL;
-        [...dotsEl.children].forEach((d,i)=> d.classList.toggle('active', i===pos));
-      }
-      function jumpTo(i){
-        const pos = (index % TOTAL + TOTAL) % TOTAL;
-        const delta = i - pos;
-        go(delta);
-      }
-      renderDots();
-
-      prev.addEventListener('click', ()=>{ go(-1); restart(); });
-      next.addEventListener('click', ()=>{ go(1);  restart(); });
-
-      let timer=null;
-      function start(){ stop(); timer=setInterval(()=>go(1), 5000); }
-      function stop(){ if(timer) clearInterval(timer); timer=null; }
-      function restart(){ stop(); start(); }
-      start();
-    })();
-
-    // ===== FAQ toggles
-    document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const item = btn.parentElement;
-        if(!item.classList.contains("open")){
-          document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
-        }
-        item.classList.toggle("open");
-      });
-    });
-
-    // ===== CTA → file picker mock
-    const triggers = [document.getElementById('ctaBtn'), document.getElementById('leaveReview')].filter(Boolean);
-    const input = document.getElementById('contractFile');
-    triggers.forEach(t => t.addEventListener('click', (e)=>{ if(t.id!=='leaveReview'){ e.preventDefault(); input.click(); } }));
-    input.addEventListener('change', ()=>{
-      if (!input.files || !input.files.length) return;
-      const mock = {
-        languageOriginal: "en",
-        summary: [
-          "This contract is generally favorable with low overall risk.",
-          "Payment schedule and termination rights are standard.",
-          "Watch late-fee compounding and define 'material breach'.",
-        ],
-        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-        clauses: [
-          "Payment Terms — Net 30 with 2% per month late fee.",
-          "Scope of Work — Deliverables listed in Schedule A.",
-          "Termination — 30-day convenience; immediate for cause.",
-          "IP & Licensing — Client owns final assets; creator keeps tools.",
-        ],
-        issues: [
-          "Late fee compounding escalates costs on long delays.",
-          "Indemnity is one-sided; consider mutual or capped liability.",
-        ],
-        suggestions: [
-          "Add a 5–7 day grace period before late fees.",
-          "Define 'material breach' + 10-day cure period.",
-          "List milestones and acceptance criteria.",
-        ],
-        meters: { confidence: 75, favorability: 80, deadline: 18 },
-        translations: { en: {} },
-      };
-      localStorage.setItem("analysisData", JSON.stringify(mock));
-      window.location.href = "analysis.html";
-    });
-  </script>
-</body>
-</html>
+        measure
