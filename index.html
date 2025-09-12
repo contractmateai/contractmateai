@@ -110,7 +110,7 @@
     }
 
     /* push content below bar — closer */
-    .hero-wrapper{ margin-top:92px; }
+    .hero-wrapper{ margin-top:82px; } /* was 92px */
 
     /* ===== HERO ===== */
     .hero{ text-align:center; padding:64px 16px 18px; }
@@ -155,14 +155,20 @@
     .yt-box{ position:relative; width:100%; aspect-ratio:16/9; }
     .yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
-    /* ===== POWERED BY STRIP (larger) ===== */
+    /* ===== POWERED BY STRIP (WAY larger) ===== */
     .logo-strip{
       margin: 46px auto 10px;
-      width:min(2000px, 98vw);   /* larger */
+      width:min(2600px, 99vw);            /* wider container */
       overflow:hidden; position:relative;
     }
     .logo-track{ display:flex; align-items:center; gap:0; will-change:transform; }
-    .logo-piece{ flex:0 0 100%; width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none; }
+    .logo-piece{
+      flex:0 0 140%;                      /* scale each strip piece up */
+      width:140%;
+      height:auto;
+      display:block;
+      user-select:none; -webkit-user-drag:none;
+    }
     .logo-fade{ position:absolute; top:0; bottom:0; width:110px; z-index:2; pointer-events:none; }
     .logo-fade.left{ left:0; background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
     .logo-fade.right{ right:0; background:linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
@@ -199,13 +205,12 @@
     .moving-line-content{ position:relative; z-index:1; padding:10px; border-radius:inherit; }
     .moving-line-content img{ width:min(420px, 80vw); border-radius:16px; display:block; }
 
-    /* ===== Features scroller (NO SHADOWS) ===== */
+    /* ===== Features scroller (no shadows) ===== */
     .scroll-full{ width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; }
     .scroll-wrapper{ max-width:1500px; margin:0 auto; padding:0 18px; }
     .scroll-section{
       position:relative; padding:22px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304);
       border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:28px auto 0; overflow:hidden; max-width:1280px; transform:scale(.88);
-      /* no box-shadow */
     }
     .scroll-section h3{ text-align:center; font-size:22px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
     .scroll-strip{ display:flex; gap:22px; padding:12px 0; white-space:nowrap; flex-shrink:0; will-change:transform; }
@@ -213,7 +218,7 @@
     .scroll-item img{ width:40px; height:40px; border-radius:50%; background:#101010; object-fit:cover; }
     .scroll-item span{ font-size:16px; }
 
-    /* remove the side “shadow” overlays entirely */
+    /* removed side shadow overlays */
     .scroll-shadow-left,.scroll-shadow-right{ display:none; }
 
     /* ===== Reviews ===== */
@@ -249,10 +254,10 @@
     /* ===== FAQ ===== */
     .faq-section{
       max-width:1200px; margin:0 auto; padding:74px 16px;
-      text-align:initial;                 /* ensure children aren’t centered */
+      text-align:initial;
     }
     .faq-title{
-      text-align:center;                  /* keep only the title centered */
+      text-align:center;
       font-size:clamp(32px, 8vw, 64px); line-height:1.1; font-weight:400; margin-bottom:28px;
     }
     .faq-list{
@@ -263,17 +268,17 @@
     .faq-item{ border-radius:24px; overflow:hidden; background:transparent; }
     .faq-q{
       width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
-      padding:22px 20px;                  /* left aligned uniformly */
+      padding:22px 20px;
       border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; border-radius:24px;
-      text-align:left;                    /* hard-left text alignment */
+      text-align:left;
     }
     .faq-item.open{ background:#191624; border-radius:24px; }
     .faq-item.open .faq-q{ background:transparent; border-radius:24px 24px 0 0; }
     .faq-a{
       background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7;
-      padding:0 20px;                     /* left aligned uniformly */
+      padding:0 20px;
       max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;
-      text-align:left;                    /* hard-left text alignment */
+      text-align:left;
     }
     .faq-item.open .faq-a{ padding:14px 20px 20px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
 
@@ -353,7 +358,7 @@
       </div>
     </section>
 
-    <!-- ===== POWERED BY STRIP (larger) ===== -->
+    <!-- ===== POWERED BY STRIP (WAY larger) ===== -->
     <section class="logo-strip">
       <div class="logo-track" id="logoTrack"></div>
       <div class="logo-fade left"></div>
@@ -435,7 +440,8 @@
           </div>
         </div>
 
-        <div class="faq-item open">
+        <!-- default CLOSED now -->
+        <div class="faq-item">
           <button class="faq-q" type="button">
             <span>Is SignSense legally binding ?</span>
             <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -518,7 +524,7 @@
       window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }}, {passive:true});
     })();
 
-    // ===== Powered-by long strip
+    // ===== Powered-by long strip (handles larger scale)
     (function () {
       const track = document.getElementById('logoTrack');
       if (!track) return;
@@ -698,7 +704,7 @@
       start();
     })();
 
-    // ===== FAQ toggles
+    // ===== FAQ toggles (all closed by default now)
     document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const item = btn.parentElement;
