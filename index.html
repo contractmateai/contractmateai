@@ -192,47 +192,46 @@
       max-width:860px; margin-left:auto; margin-right:auto;
     }
 
-    /* ===== Insights (perfectly aligned tracer) ===== */
+    /* ===== Insights (perfect tracer alignment) ===== */
     .insight-section{ padding:38px 16px 40px; }
     .insight-content{
       display:flex; justify-content:center; align-items:center; flex-wrap:wrap;
       gap:54px; max-width:1100px; margin:0 auto;
     }
+
     /* Outer frame the ball runs around */
     .moving-line-wrapper{
-      --offset: 12px;   /* how far inside the edge the trace runs */
-      --dot: 18px;      /* glowing ball size */
       position:relative; overflow:hidden; z-index:1 !important;
-      background:#000; border-radius:16px;
-      padding:var(--offset);                 /* trace inset from the outer edge */
+      background:#000; border-radius:12px;
+      padding:2px;                 /* trace inset from the outer edge */
       min-width:200px; min-height:200px;
-    }
-    /* ball that skims the edge exactly */
-    .moving-line-wrapper .yellow-line{
-      position:absolute; z-index:0;
-      width:var(--dot); height:var(--dot); border-radius:50%;
-      background:rgba(191,246,17,.85);
-      box-shadow:0 0 22px 12px rgba(191,246,17,.55);
-      top:calc(var(--offset) - var(--dot)/2);
-      left:calc(var(--offset) - var(--dot)/2);
-      animation:trace-rect 9s linear infinite;
-    }
-    /* exact rectangle path hugging the padded edge */
-    @keyframes trace-rect{
-      0%   { top:calc(var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
-      25%  { top:calc(var(--offset) - var(--dot)/2); left:calc(100% - var(--offset) - var(--dot)/2); }
-      50%  { top:calc(100% - var(--offset) - var(--dot)/2); left:calc(100% - var(--offset) - var(--dot)/2); }
-      75%  { top:calc(100% - var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
-      100% { top:calc(var(--offset) - var(--dot)/2); left:calc(var(--offset) - var(--dot)/2); }
     }
     /* Inner content keeps the image inset so the trace doesn’t overlap it */
     .moving-line-content{
-      position:relative; z-index:1;
+      min-width:inherit; min-height:inherit;
+      padding:10px;               /* distance between trace and image */
+      z-index:2 !important; position:relative;
       width:100%; height:100%;
       background:inherit; border-radius:inherit; overflow:inherit;
     }
+    /* The glowing ball + exact rectangle path */
+    .yellow-line{
+      position:absolute;
+      width:30px; height:30px; border-radius:50%;
+      background:rgba(191,246,17,.8);
+      box-shadow:0 0 40px 30px rgba(191,246,17,.8);
+      animation:move-around 8s linear infinite;
+      z-index:0 !important;
+    }
+    @keyframes move-around{
+      0%   { top:-20px;                 left:-20px; }
+      25%  { top:-20px;                 left:calc(100% - 20px); }
+      50%  { top:calc(100% - 20px);     left:calc(100% - 20px); }
+      75%  { top:calc(100% - 20px);     left:-20px; }
+      100% { top:-20px;                 left:-20px; }
+    }
     .moving-line-content img{
-      display:block; width:min(420px, 80vw); border-radius:12px;
+      display:block; width:min(420px, 80vw); border-radius:16px;
     }
 
     /* ===== Features scroller (still no shadows) ===== */
