@@ -2,684 +2,565 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SignSense</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Icons -->
+  <title>SignSense – Mobile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64"/>
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-
-  <!-- AOS -->
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
     :root{
-      /* your desktop palette + specific calls */
-      --bg-deep:#000;                  /* center black */
-      --bg-edge:#0d011b;               /* top/bottom/sides */
-      --text:#fff9f9;
-      --muted:#d8cccc;
-      --lime:#bff611;
-      --lime-2:#adff00;
-      --bar:#04040e;
-      --bar-border:#3f3f3f;
-      --chip-bg:#adff00;
-      --card:#000;
-      --card-border:#262626;
+      --bg-top:#0d011b;
+      --bg-mid:#000000;
+      --text:#f8f8f8;
+      --muted:#bfb9c6;
+      --lime:#aafe2a;
+      --lime2:#bff611;
+      --bar:#000;
+      --bar-br:#232323;
     }
 
-    *{box-sizing:border-box;margin:0;padding:0}
+    /* ====== RESET ====== */
+    *{margin:0;padding:0;box-sizing:border-box}
     html,body{height:100%}
     body{
-      font-family:"Inter",sans-serif;
+      font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
       color:var(--text);
+      /* fixed, non-moving background with black center and #0d011b top/bottom */
       background:
-        radial-gradient(60% 60% at 50% 50%, var(--bg-deep) 0 55%, transparent 56%) ,
-        linear-gradient(var(--bg-edge),var(--bg-edge)) ;
-      background-attachment: fixed,fixed; /* gradient never changes while scrolling */
-      overflow-x:hidden;
+        linear-gradient(#0d011b 0%, #0d011b 10%, #000 35%, #000 65%, #0d011b 90%, #0d011b 100%) fixed;
+      overscroll-behavior-y:none;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
 
-    /* fixed galaxy art (same as before, always visible) */
-    body::before{
-      content:"";
-      position:fixed; inset:0 0 auto 0; height:1600px;
-      background:url("https://imgur.com/tEj2TUl.png") no-repeat center bottom / 100% 1600px;
-      z-index:-2; opacity:.9;
-    }
+    a{color:inherit;text-decoration:none}
 
-    /* ===== Top bar ===== */
+    /* ====== TOP BAR ====== */
     .topbar-wrap{
-      position:fixed; top:18px; left:0; right:0; z-index:1000;
+      position:fixed; top:env(safe-area-inset-top, 0); left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
-      transition:transform .28s ease, opacity .25s ease;
+      transition:transform .25s ease, opacity .25s ease;
     }
-    .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
+    .topbar-wrap.hide{ transform:translateY(-120%); opacity:0; }
     .topbar{
       pointer-events:auto;
-      width:min(1120px, calc(100% - 32px));
+      width:min(640px, calc(100% - 24px));
       background:var(--bar);
-      border:1px solid var(--bar-border);
-      border-radius:16px; min-height:64px; padding:10px 16px;
+      border:1px solid var(--bar-br);
+      border-radius:14px;
+      margin:10px auto;
+      min-height:56px;
       display:flex; align-items:center; justify-content:space-between;
-      box-shadow:0 8px 30px rgba(0,0,0,.28);
+      padding:10px 14px;
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      text-decoration:none; color:#fff9f9; font-size:26px;
-    }
-    .brand img{height:34px;border-radius:8px}
-    .nav-desktop{display:none}
-    .burger{
-      width:44px; height:36px; display:grid; place-items:center;
-      background:transparent; border:0; color:#fff; cursor:pointer;
-    }
-    .burger svg{width:28px;height:28px}
+    .tb-left{display:flex; align-items:center; gap:10px}
+    .logo{width:32px; height:32px; border-radius:6px}
+    .brand{font-family:Shoika,Inter,sans-serif; font-size:20px; font-weight:400; letter-spacing:.2px}
 
-    /* ===== Mobile dropdown (attached, smooth) ===== */
-    .menu-panel{
-      position:fixed; left:50%; transform:translateX(-50%);
-      top:calc(18px + 64px + 10px); /* snug to bar, no gap */
-      width:min(720px, calc(100% - 32px));
-      background:var(--bar);
-      border:1px solid var(--bar-border);
-      border-radius:16px;
-      padding:20px;
-      box-shadow:0 12px 36px rgba(0,0,0,.36);
-      z-index:999; opacity:0; pointer-events:none;
-      transition:opacity .18s ease, transform .22s ease;
-      transform-origin: top center; transform: translateX(-50%) translateY(-8px);
+    /* Hamburger -> X */
+    .menu-btn{
+      width:38px; height:38px; display:grid; place-items:center;
+      background:transparent; border:none; border-radius:10px; cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
     }
-    .menu-panel.open{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) }
-    .menu-head{
-      display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
+    .menu-lines{position:relative; width:22px; height:14px}
+    .line{
+      position:absolute; left:0; right:0; height:2px; background:#e9e9e9; border-radius:2px;
+      transition:transform .25s ease, opacity .2s ease, top .25s ease;
     }
-    .menu-head .brand{font-size:28px}
-    .menu-close{background:transparent;border:0;color:#fff;cursor:pointer}
-    .menu-list{list-style:none; display:flex; flex-direction:column; gap:26px; padding:12px 6px 22px}
-    .menu-item{display:flex; align-items:center; justify-content:space-between; font-size:28px}
-    .menu-item a{color:#fff; text-decoration:none}
-    .menu-foot{border-top:1px solid rgba(255,255,255,.08); margin-top:18px; padding-top:14px; color:#cfcfcf}
+    .line:nth-child(1){ top:0 }
+    .line:nth-child(2){ top:6px }
+    .line:nth-child(3){ top:12px }
+    .menu-btn.active .line:nth-child(1){ top:6px; transform:rotate(45deg) }
+    .menu-btn.active .line:nth-child(2){ opacity:0 }
+    .menu-btn.active .line:nth-child(3){ top:6px; transform:rotate(-45deg) }
 
-    /* ===== Hero ===== */
-    .hero-wrapper{ margin-top:90px } /* tighter to bar like screenshot */
-    .hero{ text-align:center; padding:66px 20px 30px }
-    .chip{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:10px 16px; border-radius:999px; background:#0f1020; color:#aeb0b7;
-      box-shadow:0 0 24px rgba(191,255,60,.55);
+    /* ====== MENU OVERLAY (attached look) ====== */
+    .overlay{
+      position:fixed; inset:0; z-index:999; display:none;
     }
-    .chip .ai{
-      background:var(--chip-bg); color:#000; font-weight:700;
-      padding:6px 12px; border-radius:999px; font-size:13px;
+    .overlay.show{ display:block }
+    .overlay-backdrop{
+      position:absolute; inset:0; background:transparent; /* click-through area */
     }
-    h1{ font-family:"Shoika",sans-serif; font-weight:400; line-height:1.12; font-size:54px; margin:18px 0 14px }
-    h1 .em{ color:var(--lime) }
-    .subtext{ color:#a7a7a7; font-size:20px; line-height:1.5 }
-    .cta{ margin-top:28px }
-    .btn-primary{
-      background:#fff; color:#000; border:2px solid #999;
-      padding:16px 26px; border-radius:16px; font-size:18px; cursor:pointer;
-      display:inline-flex; align-items:center; gap:10px;
+    .dropdown{
+      position:absolute; left:50%; transform:translateX(-50%);
+      top:calc(env(safe-area-inset-top, 0) + 10px); /* align exactly under the bar */
+      width:min(640px, calc(100% - 24px));
+      background:#0b0b0b;
+      border:1px solid var(--bar-br);
+      border-radius:14px;
+      padding:16px 18px 18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.45);
+      margin-top:64px; /* visually extend from the bar (no visible seam) */
     }
+    .drop-list{display:flex; flex-direction:column; gap:22px; margin-top:6px}
+    .drop-item{display:flex; align-items:center; justify-content:space-between; font-size:22px}
+    .chev{opacity:.9}
+    .legal-note{color:#cfcfcf; opacity:.9; text-align:center; margin:22px 0 4px; font-size:16px}
+    .copy{color:#cfcfcf; opacity:.9; text-align:center; font-size:16px}
 
-    /* ===== Video (Rick Astley) ===== */
-    .video-outer{ display:flex; justify-content:center; padding:28px 18px 0 }
-    .video-outer .video{
-      width:min(680px, 100%); aspect-ratio:16/9; border-radius:18px; overflow:hidden;
-      box-shadow:0 8px 30px rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.08);
+    /* ====== HERO ====== */
+    .hero{padding-top:96px}
+    .wrap{width:min(640px, calc(100% - 24px)); margin:0 auto}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#0e0f1a; color:#cfcfcf;
+      padding:7px 12px; border-radius:999px; font-size:13px;
+      margin:10px auto 14px; border:1px solid #1e1e1e;
     }
-    .video iframe{ width:100%; height:100%; border:0 }
+    .badge .chip{background:#0f0f0f; color:#111; display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; color:#000; background:#adff00}
+    .badge .arrow{transform:rotate(18deg)}
 
-    /* ===== Powered-by strip (BIG) ===== */
-    .powered-wrap{ margin:50px auto 6px; width:100%; display:flex; justify-content:center }
-    .powered{
-      width:min(1200px, 92vw);
-      overflow:hidden; position:relative;
-      padding:0; /* show one huge line like screenshot */
+    h1.hero-title{
+      font-family:Shoika,Inter,sans-serif; font-size:38px; line-height:1.12; font-weight:400; text-align:center;
+      margin:8px 0 10px;
     }
-    .powered-track{display:flex; gap:0; will-change:transform}
-    .powered img{ flex:0 0 100%; width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none }
+    .hero-title .hl{ color:var(--lime); }
+    .sub{
+      text-align:center; color:var(--muted); font-size:18px; line-height:1.45;
+      margin:12px auto 18px;
+    }
+    .cta{
+      display:block; width:max-content; margin:8px auto 16px;
+      background:#fff; color:#000; border:1px solid #a0a0a0;
+      padding:14px 22px; border-radius:14px; font-size:18px; font-weight:500;
+    }
+    /* Video with more side space */
+    .yt-wrap{ width:100%; margin:14px auto 6px; }
+    .yt{ position:relative; width:100%; padding-top:56.25%; border-radius:18px; overflow:hidden; border:1px solid #2d2d2d }
+    .yt iframe{ position:absolute; inset:0; width:100%; height:100% }
 
-    /* ===== Section titles ===== */
-    .section-badge{
-      margin:28px auto 12px; display:inline-flex; align-items:center; gap:8px;
-      padding:8px 16px; border-radius:999px; background:#0f1020; color:#aeb0b7;
-      box-shadow:0 0 20px rgba(191,255,60,.55);
-    }
-    .section-title{
-      text-align:center; font-family:"Shoika",sans-serif; font-weight:400;
-      font-size:46px; line-height:1.2; margin:8px 16px 10px;
-    }
-    .section-sub{
-      text-align:center; color:#aeb0b7; font-size:22px; line-height:1.5;
-      margin:0 16px 24px;
-    }
+    /* ===== POWERED BY STRIP ===== */
+    .logo-strip{ width:min(640px, calc(100% - 24px)); margin:22px auto 8px; overflow:hidden; position:relative }
+    .logo-track{ display:flex; gap:0; will-change:transform }
+    .logo-piece{ flex:0 0 100%; width:100%; height:auto; user-select:none; -webkit-user-drag:none }
+    .fade-l,.fade-r{ position:absolute; top:0; bottom:0; width:70px; pointer-events:none }
+    .fade-l{ left:0; background:linear-gradient(to right, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent) }
+    .fade-r{ right:0; background:linear-gradient(to left, rgba(0,0,0,.55), rgba(0,0,0,.15), transparent) }
 
-    /* ===== Insights box (smaller + thin moving line) ===== */
-    .insight-wrap{display:flex; justify-content:center; padding:0 16px 8px}
-    .insight-frame{
-      position:relative; width:min(720px, 92vw); border-radius:20px; padding:2px; margin:0 auto;
-      background:#05060b;
+    /* ===== SECTION: Understand Your Contract ===== */
+    .center{ text-align:center }
+    .badge2{
+      display:inline-flex; align-items:center; gap:8px; background:#0e0f1a; color:#cfcfcf;
+      padding:7px 12px; border-radius:999px; font-size:13px; border:1px solid #1e1e1e;
+      margin:22px auto 10px;
     }
-    .insight-img{
-      width:100%; display:block; border-radius:18px; background:#0b0b0b;
-      border:1px solid rgba(255,255,255,.06);
+    .title2{
+      font-family:Shoika,Inter,sans-serif; font-weight:400; font-size:36px; line-height:1.2; margin-top:12px;
     }
-    /* ultra-thin runner */
-    .runner{
-      position:absolute; inset:-1px; border-radius:22px; pointer-events:none;
-      --c: rgba(191,246,17,.9);
-      background:
-        conic-gradient(from 0deg at 50% 50%, transparent 0 89.5%, var(--c) 90%, transparent 90.5%) ;
-      -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 1px),#000 0);
-              mask: radial-gradient(farthest-side,#0000 calc(100% - 1px),#000 0);
-      animation: sweep 3.4s linear infinite;
-      opacity:.85;
-    }
-    @keyframes sweep{ to { transform: rotate(360deg) } }
+    .title2 .lime{ color:var(--lime) }
+    .sub2{ color:var(--muted); font-size:18px; line-height:1.5; margin:10px auto 14px }
 
-    /* ===== Features marquee ===== */
-    .features{ max-width:1200px; margin:18px auto 0; padding:0 16px }
-    .features h3{
-      text-align:center; font-size:22px; color:#fff; font-weight:400; line-height:1.4;
-      margin:14px 0 22px;
+    /* Insights image + moving line */
+    .insight-box{ width:min(640px, calc(100% - 24px)); margin:14px auto 0; position:relative; }
+    .moving-wrap{ position:relative; border-radius:18px; overflow:hidden; padding:2px; background:#000 }
+    .moving-wrap .img-in{ position:relative; border-radius:16px; overflow:hidden; }
+    .glow-dot{
+      position:absolute; width:28px; height:28px; border-radius:50%;
+      background:rgba(191,246,17,.85); box-shadow:0 0 34px 22px rgba(191,246,17,.8);
+      animation:orb 8s linear infinite;
     }
-    .marquee{ position:relative; overflow:hidden; border:1px solid rgba(36,36,37,.78); border-radius:18px; background:linear-gradient(to bottom,#0e0c13,#181522,#040304); padding:18px 0; }
-    .row{ display:flex; gap:18px; white-space:nowrap; will-change:transform; padding:8px 10px }
-    .pill{
-      display:inline-flex; align-items:center; gap:12px; padding:12px 18px;
-      background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:36px; flex-shrink:0;
-      font-size:16px;
+    @keyframes orb{
+      0%{ top:-20px; left:-20px }
+      25%{ top:-20px; left:calc(100% - 20px) }
+      50%{ top:calc(100% - 20px); left:calc(100% - 20px) }
+      75%{ top:calc(100% - 20px); left:-20px }
+      100%{ top:-20px; left:-20px }
     }
-    .pill img{width:36px;height:36px;border-radius:50%;background:#101010}
+    .ins-img{ display:block; width:100%; border-radius:16px; border:1px solid #202020 }
 
-    /* ===== Reviews (exact look; one-at-a-time) ===== */
-    .reviews{ max-width:1200px; margin:34px auto 0; padding:0 18px 40px }
-    .reviews .hdr{ text-align:left; }
-    .reviews .hdr h2{
-      text-align:left; font-family:"Shoika",sans-serif; font-weight:400; font-size:46px;
-    }
-    .reviews .hdr h2 .g{ color:var(--lime) }
-    .reviews .sub{ color:#a8a8a8; font-size:20px; margin-top:8px; text-align:left }
-    .rev-viewport{ overflow:hidden; margin-top:18px }
-    .rev-track{ display:flex; gap:18px; transition:transform .35s ease }
-    .rev-card{ flex:0 0 100%; background:var(--card); border:1px solid var(--card-border); border-radius:23px; padding:10px }
-    .rev-card img{ width:100%; display:block; border-radius:17px }
-    .rev-arrows{
-      position:relative; display:flex; justify-content:space-between; align-items:center; margin:0 4px;
-    }
-    .rev-btn{
-      position:absolute; top:50%; transform:translateY(-50%);
-      width:52px;height:52px;border-radius:50%; border:none; cursor:pointer; display:grid; place-items:center;
-      box-shadow:0 0 0 2px rgba(255,255,255,.06) inset;
-    }
-    .rev-btn.left{ left:-6px; background:#fff }
-    .rev-btn.right{ right:-6px; background:var(--lime) }
-    .rev-btn img{ width:22px;height:22px; display:block }
-    .rev-dots{ display:flex; justify-content:center; gap:12px; margin:16px 0 0 }
-    .dot{ width:12px; height:12px; border-radius:50%; background:#777; border:0 }
+    /* ===== Features ticker (two rows) ===== */
+    .feat-wrap{ width:min(680px, calc(100% - 16px)); margin:18px auto 0; background:linear-gradient(to bottom, #0e0c13,#181522,#040304); border:1px solid rgba(36,36,37,.78); border-radius:16px; padding:18px 0 26px; overflow:hidden }
+    .feat-title{ text-align:center; font-size:18px; color:#fff; margin-bottom:10px; font-weight:400 }
+    .strip{ display:flex; gap:18px; padding:10px 0; white-space:nowrap; will-change:transform }
+    .chip{ display:inline-flex; align-items:center; gap:12px; padding:12px 18px; border-radius:36px; background:rgba(26,24,34,.57); border:1px solid #3b3b3b }
+    .chip img{ width:36px; height:36px; border-radius:50%; background:#101010 }
+    .chip span{ font-size:16px }
+
+    /* ===== Reviews (1 per view) ===== */
+    .rev{ width:min(680px, calc(100% - 24px)); margin:26px auto 32px }
+    .rev h3{ text-align:center; font-family:Shoika; font-size:34px; font-weight:400 }
+    .rev h3 .g{ color:var(--lime2) }
+    .rev-sub{ text-align:center; color:#a8a8a8; margin-top:8px; font-size:18px }
+    .rv-nav{ display:flex; justify-content:center; gap:16px; margin:12px 0 8px }
+    .rv-btn{ width:46px; height:46px; border:none; border-radius:50%; display:grid; place-items:center; background:#fff; box-shadow:inset 0 0 0 2px rgba(255,255,255,.06); cursor:pointer }
+    .rv-btn.r{ background:#ceced0 } /* neutral, not green */
+    .rv-view{ overflow:hidden; margin-top:12px }
+    .rv-track{ display:flex; gap:18px; transition:transform .35s ease }
+    .rv-card{ flex:0 0 100%; border:1px solid #262626; background:#000; border-radius:18px; padding:8px }
+    .rv-card img{ width:100%; border-radius:14px; display:block }
+    .dots{ display:flex; justify-content:center; gap:10px; margin:16px 0 10px }
+    .dot{ width:12px; height:12px; border-radius:50%; background:#777; border:none }
     .dot.active{ background:#b9f03d }
-    .leave-wrap{ display:flex; justify-content:center; margin-top:18px }
-    .leave{ background:#adff00; color:#000; border:0; border-radius:12px; padding:14px 24px; font-size:18px; font-weight:500; }
 
-    /* ===== FAQ (same logic, visuals per screenshot) ===== */
-    .faq{ max-width:1200px; margin:24px auto 40px; padding:0 18px }
-    .faq h2{ text-align:center; font-size:54px; font-family:"Shoika",sans-serif; font-weight:400; margin-bottom:18px }
-    .faq-list{ display:flex; flex-direction:column; gap:16px; max-width:1100px; margin:0 auto }
-    .faq-item{ border-radius:20px; overflow:hidden; background:transparent }
-    .faq-q{
-      width:100%; background:transparent; border:0; color:#fff; font-size:24px; padding:22px 18px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;
-    }
-    .faq-a{
-      background:#191624; color:#cfcbd6; font-size:20px; line-height:1.7;
-      max-height:0; opacity:0; overflow:hidden; padding:0 18px; transition:max-height .28s ease, opacity .22s ease, padding .22s ease;
-    }
-    .faq-item.open{ background:#191624 }
-    .faq-item.open .faq-a{ max-height:480px; opacity:1; padding:0 18px 20px }
+    /* ===== FAQ ===== */
+    .faq{ width:min(680px, calc(100% - 24px)); margin:30px auto 14px; }
+    .faq h3{ font-size:40px; text-align:center; font-family:Shoika; font-weight:400; margin-bottom:12px }
+    .q{ background:#0d0c12; border-radius:18px; margin:12px 0; overflow:hidden; border:1px solid #202020 }
+    .qbtn{ width:100%; text-align:left; background:transparent; border:none; color:#fff; padding:20px 18px; font-size:20px; display:flex; align-items:center; justify-content:space-between }
+    .ans{ color:#cfcbd6; font-size:18px; line-height:1.6; padding:0 18px; max-height:0; opacity:0; overflow:hidden; transition:max-height .25s ease, opacity .22s ease, padding .2s ease }
+    .q.open .ans{ padding:8px 18px 16px; max-height:320px; opacity:1; background:#191624 }
 
-    /* ===== Footer (mobile list) ===== */
-    .footer{ margin:60px auto 24px; padding:0 18px; max-width:1200px }
-    .foot-brand{ display:flex; justify-content:center; margin-bottom:12px }
-    .foot-brand img{ height:46px }
-    .foot-lists{ text-align:center }
-    .foot-lists h4{ font-size:34px; font-weight:600; margin:26px 0 10px }
-    .foot-lists a{ display:block; color:#c5c5c5; text-decoration:none; font-size:22px; margin:10px 0 }
-    .foot-divider{ height:1px; background:#c5c5c5; opacity:.28; margin:24px 0 }
-    .foot-links{ text-align:center; display:flex; flex-direction:column; gap:16px; align-items:center }
-    .foot-links a{ color:#c5c5c5; font-size:20px; text-decoration:none }
-    .foot-bottom{ text-align:center; color:#c5c5c5; font-size:18px; margin-top:16px }
-    .copyright{ margin-top:8px; font-size:18px }
-
-    /* desktop tweaks */
-    @media(min-width:900px){
-      .nav-desktop{display:flex; gap:24px}
-      .nav-desktop a{ color:#d8cccc; text-decoration:none; font-size:20px}
-      .burger{display:none}
-      .section-title{font-size:48px}
-      .reviews .hdr h2{font-size:48px}
-      .faq h2{font-size:60px}
-    }
+    /* ===== FOOTER ===== */
+    .footer{ width:min(680px, calc(100% - 24px)); margin:24px auto 24px; background:#111; border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:22px }
+    .fgrid{ display:grid; grid-template-columns:1fr 1fr; gap:18px }
+    .fcol h4{ font-size:22px; margin-bottom:10px }
+    .fcol a{ color:#c5c5c5; display:block; margin:6px 0; font-size:18px }
+    .fbrand{ display:flex; align-items:center; gap:10px; margin-bottom:12px }
+    .fbrand img{ width:34px; height:34px }
+    .fbrand span{ font-size:22px; font-weight:600 }
+    .fdisc{ margin-top:10px; color:#e9e9e9; font-size:16px }
+    .fbottom{ margin-top:18px; padding-top:12px; border-top:1px solid rgba(255,255,255,.15); text-align:center; color:#c5c5c5; display:grid; gap:8px; font-size:16px }
+    .fb-links{ display:flex; gap:16px; justify-content:center }
   </style>
 </head>
 <body>
-  <!-- Top bar -->
-  <div class="topbar-wrap" id="topbarWrap">
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="topbar-wrap" id="tbWrap">
     <div class="topbar">
-      <a class="brand" href="index.html">
-        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense"/>
-        <span>SignSense</span>
-      </a>
-
-      <nav class="nav-desktop">
-        <a href="#how-it-works">See How It Works</a>
-        <a href="index.html">Home</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-
-      <button class="burger" id="burger" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Dropdown menu (mobile) -->
-  <div class="menu-panel" id="menuPanel" aria-hidden="true">
-    <div class="menu-head">
-      <a class="brand" href="index.html">
-        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense"/>
-        <span>SignSense</span>
-      </a>
-      <button class="menu-close" id="menuClose" aria-label="Close menu">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 6l12 12M6 18L18 6"/>
-        </svg>
-      </button>
-    </div>
-    <ul class="menu-list">
-      <li class="menu-item"><a href="#how-it-works">See How It Works</a><span>➤</span></li>
-      <li class="menu-item"><a href="index.html">Home</a><span>➤</span></li>
-      <li class="menu-item"><a href="contact.html">Contact</a><span>➤</span></li>
-    </ul>
-    <div class="menu-foot">
-      <div>Not legal advice.</div>
-      <div style="margin-top:6px;">© 2025 SignSense. All rights reserved.</div>
-    </div>
-  </div>
-
-  <!-- Hero -->
-  <div class="hero-wrapper">
-    <section class="hero" data-aos="fade-up">
-      <div class="chip">
-        <span class="ai">AI</span>
-        <span>Legal DocReview Tool</span>
-        <span>↗</span>
+      <div class="tb-left">
+        <a href="index.html"><img class="logo" src="https://imgur.com/t8UWYN3.png" alt=""></a>
+        <a href="index.html" class="brand">SignSense</a>
       </div>
 
-      <h1>
-        Make <span class="em">Sense</span> Of What<br/>
-        You’re <span class="em">Signing</span>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <div class="menu-lines">
+          <span class="line"></span><span class="line"></span><span class="line"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overlay dropdown (attached) -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-backdrop" id="overlayBg"></div>
+    <div class="dropdown">
+      <div class="drop-list">
+        <a class="drop-item" href="index.html#how-it-works">See How It Works <span class="chev">›</span></a>
+        <a class="drop-item" href="index.html">Home <span class="chev">›</span></a>
+        <a class="drop-item" href="contact.html">Contact <span class="chev">›</span></a>
+      </div>
+
+      <div class="legal-note">For informational use only. Not legal advice.</div>
+      <div class="copy">© 2025 SignSense. All rights reserved.</div>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="wrap center">
+      <div class="badge">
+        <span class="chip">AI</span>
+        Legal DocReview Tool
+        <span class="arrow">↗</span>
+      </div>
+
+      <h1 class="hero-title">
+        Make <span class="hl">Sense</span> Of What<br>
+        You’re <span class="hl">Signing</span>
       </h1>
-      <p class="subtext">
-        SignSense instantly simplifies contracts for law firms, freelancers, students & more
+
+      <p class="sub">
+        SignSense instantly simplifies<br>
+        contracts for law firms, freelancers,<br>
+        students &amp; more
       </p>
 
-      <div class="cta">
-        <button class="btn-primary" id="reviewCta">Review A Contract ↗</button>
-      </div>
-    </section>
+      <a class="cta" href="#">Review A Contract ↗</a>
 
-    <!-- Rick Astley video -->
-    <div class="video-outer">
-      <div class="video">
-        <iframe
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1"
-          title="SignSense demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- Powered by (BIG) -->
-  <div class="powered-wrap">
-    <div class="powered" id="powered">
-      <div class="powered-track" id="poweredTrack">
-        <!-- images duplicated by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Understand section -->
-  <div style="text-align:center; margin-top:18px">
-    <div class="section-badge">Instant Clarity Engine ↗</div>
-  </div>
-  <h2 class="section-title">Understand Your<br/>Contract <span class="em">at a Glance</span></h2>
-  <p class="section-sub">
-    We highlight key terms, risks, & clauses so you can grasp the essentials
-  </p>
-
-  <!-- Insights image with thin runner -->
-  <div class="insight-wrap" data-aos="fade-up">
-    <div class="insight-frame">
-      <div class="runner" aria-hidden="true"></div>
-      <img class="insight-img" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights"/>
-    </div>
-  </div>
-
-  <!-- Features marquee -->
-  <section id="how-it-works" class="features" data-aos="fade-up">
-    <h3>Everything you need for clarity and security in one seamless experience.</h3>
-    <div class="marquee">
-      <div class="row" id="rowTop"></div>
-      <div class="row" id="rowBottom"></div>
-    </div>
-  </section>
-
-  <!-- Reviews -->
-  <section class="reviews" data-aos="fade-up">
-    <div class="hdr">
-      <h2>What <span class="g">Our Clients</span> Say</h2>
-      <div class="sub">Hear Directly From Our Satisfied Users</div>
-    </div>
-
-    <div class="rev-viewport">
-      <div class="rev-track" id="revTrack">
-        <div class="rev-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1"/></div>
-        <div class="rev-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2"/></div>
-        <div class="rev-card"><img src="https://i.imgur.com/6M6XO2l.png" alt="Review 3"/></div>
-        <div class="rev-card"><img src="https://i.imgur.com/YMDEKZm.png" alt="Review 4"/></div>
-        <div class="rev-card"><img src="https://i.imgur.com/I9iQu88.png" alt="Review 5"/></div>
-      </div>
-
-      <div class="rev-arrows">
-        <button class="rev-btn left" id="revPrev" aria-label="Previous">
-          <img src="https://imgur.com/nhYxlHX.png" alt="">
-        </button>
-        <button class="rev-btn right" id="revNext" aria-label="Next">
-          <img src="https://imgur.com/sRwuJpT.png" alt="">
-        </button>
-      </div>
-    </div>
-
-    <div class="rev-dots" id="revDots"></div>
-    <div class="leave-wrap">
-      <button class="leave" id="leaveReview">Leave A Review ↗</button>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" data-aos="fade-up">
-    <h2>Frequently Asked Questions</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>What languages do you support?</span>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="faq-a">
-          We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!
-        </div>
-      </div>
-
-      <div class="faq-item open">
-        <button class="faq-q" type="button">
-          <span>Is SignSense legally binding ?</span>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="faq-a">
-          No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>What types of contracts can I upload?</span>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="faq-a">
-          Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>Is my data secure?</span>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="faq-a">
-          Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
+      <!-- Video (narrower) -->
+      <div class="yt-wrap">
+        <div class="yt">
+          <iframe src="https://www.youtube.com/embed/wD4E5i2pgIY"
+                  title="SignSense Demo"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer (iphone list style) -->
+  <!-- ===== POWERED BY STRIP ===== -->
+  <section class="logo-strip">
+    <div class="logo-track" id="logoTrack"></div>
+    <div class="fade-l"></div><div class="fade-r"></div>
+  </section>
+
+  <!-- ===== INSTANT CLARITY BADGE & TITLE ===== -->
+  <div class="wrap center">
+    <div class="badge2">Instant Clarity Engine ↗</div>
+
+    <div class="title2">Understand Your<br>Contract <span class="lime">at a Glance</span></div>
+    <p class="sub2">
+      We highlight key terms, risks, &amp; clauses so you can grasp the<br>
+      essentials&nbsp;&nbsp;without reading every line
+    </p>
+  </div>
+
+  <!-- ===== INSIGHTS ===== -->
+  <div class="insight-box">
+    <div class="moving-wrap">
+      <span class="glow-dot"></span>
+      <div class="img-in">
+        <img class="ins-img" src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FEATURES STRIP ===== -->
+  <section class="feat-wrap">
+    <div class="feat-title">Everything you need for clarity and security in one seamless experience.</div>
+    <div class="strip" id="featTop"></div>
+    <div class="strip" id="featBot"></div>
+  </section>
+
+  <!-- ===== REVIEWS ===== -->
+  <section class="rev">
+    <h3>What <span class="g">Our Clients</span> Say</h3>
+    <div class="rev-sub">Hear Directly From Our Satisfied Users</div>
+
+    <div class="rv-view">
+      <div class="rv-track" id="rvTrack">
+        <div class="rv-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/k42nv4C.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/6M6XO2l.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/YMDEKZm.png" alt=""></div>
+        <div class="rv-card"><img src="https://i.imgur.com/I9iQu88.png" alt=""></div>
+      </div>
+    </div>
+
+    <div class="rv-nav">
+      <button class="rv-btn l" id="rvPrev" aria-label="Prev">‹</button>
+      <button class="rv-btn r" id="rvNext" aria-label="Next">›</button>
+    </div>
+
+    <div class="dots" id="rvDots"></div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq">
+    <h3>Frequently Asked Questions</h3>
+
+    <div class="q open">
+      <button class="qbtn" type="button">Is SignSense legally binding ? <span>▾</span></button>
+      <div class="ans">No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">What languages do you support? <span>▾</span></button>
+      <div class="ans">English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, Turkish.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">What types of contracts can I upload? <span>▾</span></button>
+      <div class="ans">Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.</div>
+    </div>
+
+    <div class="q">
+      <button class="qbtn" type="button">Is my data secure? <span>▾</span></button>
+      <div class="ans">Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.</div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    <div class="foot-brand">
-      <img src="https://imgur.com/BcUqgKZ.png" alt="SignSense"/>
+    <div class="fbrand">
+      <img src="https://imgur.com/BcUqgKZ.png" alt=""><span>SignSense</span>
+    </div>
+    <div class="fdisc">No confusion, no legal jargon.<br>For informational use only. Not legal advice.</div>
+
+    <div class="fgrid" style="margin-top:16px">
+      <div class="fcol">
+        <h4>Quick Menu</h4>
+        <a href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
+        <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+      </div>
+      <div class="fcol">
+        <h4>Information</h4>
+        <a href="contact.html">Contact</a>
+        <a href="index.html">Home</a>
+      </div>
+      <div class="fcol">
+        <h4>Socials</h4>
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://x.com" target="_blank" rel="noopener">X</a>
+      </div>
     </div>
 
-    <div class="foot-lists">
-      <h4>Quick Menu</h4>
-      <a href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
-      <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
-
-      <h4 style="margin-top:26px">Information</h4>
-      <a href="contact.html">Contact</a>
-      <a href="index.html">Home</a>
-
-      <h4 style="margin-top:26px">Socials</h4>
-      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
-      <a href="https://x.com" target="_blank" rel="noopener">X</a>
+    <div class="fbottom">
+      <div class="fb-links">
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div>© 2025 SignSense. All rights reserved.</div>
     </div>
-
-    <div class="foot-divider"></div>
-    <div class="foot-links">
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <a href="privacy.html">Privacy Policy</a>
-    </div>
-    <div class="foot-bottom">For informational use only. Not legal advice.</div>
-    <div class="copyright">© 2025 SignSense. All rights reserved.</div>
   </footer>
 
-  <!-- AOS -->
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>AOS.init({ once:true });</script>
-
   <script>
-    // Hide-on-scroll topbar
+    /* ===== Top bar show/hide on scroll & menu toggle ===== */
     (function(){
-      const bar = document.getElementById('topbarWrap');
-      let last = window.scrollY;
-      window.addEventListener('scroll', () => {
-        const y = window.scrollY;
-        if (y > last && y > 80) bar.classList.add('hide');
-        else bar.classList.remove('hide');
-        last = y <= 0 ? 0 : y;
+      const wrap = document.getElementById('tbWrap');
+      let last = scrollY;
+      addEventListener('scroll', () => {
+        const y = scrollY;
+        if (y > last && y > 60) wrap.classList.add('hide'); else wrap.classList.remove('hide');
+        last = y;
       }, {passive:true});
-    })();
 
-    // Mobile menu open/close (attached, smooth)
-    (function(){
-      const panel = document.getElementById('menuPanel');
-      const burger = document.getElementById('burger');
-      const closeBtn = document.getElementById('menuClose');
-      function open(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); }
-      function close(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); }
-      burger.addEventListener('click', open);
-      closeBtn.addEventListener('click', close);
-      document.addEventListener('keydown', e => { if(e.key==='Escape') close(); });
-      // close when clicking outside the panel
-      document.addEventListener('click', (e)=>{
-        if(!panel.classList.contains('open')) return;
-        const within = panel.contains(e.target) || burger.contains(e.target);
-        if(!within) close();
+      const btn = document.getElementById('menuBtn');
+      const overlay = document.getElementById('overlay');
+      const bg = document.getElementById('overlayBg');
+
+      function closeMenu(){ btn.classList.remove('active'); overlay.classList.remove('show'); }
+      function openMenu(){ btn.classList.add('active'); overlay.classList.add('show'); }
+
+      btn.addEventListener('click', () => {
+        overlay.classList.contains('show') ? closeMenu() : openMenu();
       });
+      bg.addEventListener('click', closeMenu);
+      // Close on Esc
+      addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
     })();
 
-    // Powered-by giant strip (seamless loop)
+    /* ===== Powered-by strip (long seamless loop) ===== */
     (function(){
-      const wrap = document.getElementById('powered');
-      const track = document.getElementById('poweredTrack');
-      if(!wrap || !track) return;
-      const src = "https://i.imgur.com/2SUo8mv.png";
-      const COPIES = 12;
+      const track = document.getElementById('logoTrack');
+      if(!track) return;
+      const src = 'https://i.imgur.com/2SUo8mv.png';
+      const COPIES = 10;
       for(let i=0;i<COPIES;i++){
-        const img = new Image(); img.src = src; img.alt="Powered by"; track.appendChild(img);
+        const img = document.createElement('img');
+        img.src = src; img.alt='Powered by'; img.className='logo-piece'; track.appendChild(img);
       }
       let x=0, w=0, last=performance.now();
       function measure(){
-        const first = track.querySelector('img');
-        if(!first || !first.complete){ setTimeout(measure,60); return; }
+        const first = track.querySelector('.logo-piece');
+        if(!first || !first.complete){ setTimeout(measure,50); return; }
         w = first.getBoundingClientRect().width || first.naturalWidth;
       }
       function tick(now){
-        const dt = (now-last)/1000; last=now;
-        const pps = (w*COPIES)/150; // 150s per full loop (big, slow)
+        const dt=(now-last)/1000; last=now;
+        const pps = (w*COPIES)/120; // 120s per loop
         x -= pps*dt;
         const loop = w*COPIES;
         if(x<=-loop) x+=loop;
         track.style.transform = `translateX(${x}px)`;
         requestAnimationFrame(tick);
       }
-      measure(); requestAnimationFrame(tick);
-      window.addEventListener('resize', measure, {passive:true});
+      measure();
+      requestAnimationFrame(tick);
+      addEventListener('resize', measure, {passive:true});
     })();
 
-    // Features rows (smaller pills, endless)
+    /* ===== Features chips (endless) ===== */
     (function(){
-      const top = document.getElementById('rowTop');
-      const bot = document.getElementById('rowBottom');
-      const FT = [
-        {label:"Risk Indicator", icon:"https://imgur.com/hDBmbBP.png"},
-        {label:"Your Data Stays Yours", icon:"https://imgur.com/SaW85D2.png"},
-        {label:"Suggestions Engine", icon:"https://imgur.com/JMV0gKS.png"},
-        {label:"Clause Warnings", icon:"https://imgur.com/MAZkZHs.png"},
-        {label:"Secure Processing", icon:"https://imgur.com/Cbflaz5.png"},
-        {label:"PDF Export", icon:"https://imgur.com/RozMHbN.png"}
+      const top = document.getElementById('featTop');
+      const bot = document.getElementById('featBot');
+      const topData = [
+        ["No Signup","https://imgur.com/dKG0KXh.png"],
+        ["Secure Processing","https://imgur.com/Cbflaz5.png"],
+        ["PDF Export","https://imgur.com/RozMHbN.png"],
+        ["Risk Indicator","https://imgur.com/hDBmbBP.png"],
+        ["Your Data Stays Yours","https://imgur.com/SaW85D2.png"],
+        ["Smart Summary","https://imgur.com/dPCWJg7.png"],
+        ["Language Detection","https://imgur.com/Xv2u5Mz.png"],
+        ["Key Clauses","https://imgur.com/cv1DrX1.png"]
       ];
-      const FB = [
-        {label:"Smart Summary", icon:"https://imgur.com/dPCWJg7.png"},
-        {label:"Language Detection", icon:"https://imgur.com/Xv2u5Mz.png"},
-        {label:"Key Clauses", icon:"https://imgur.com/cv1DrX1.png"},
-        {label:"Legal Insights", icon:"https://imgur.com/0TgzL8P.png"},
-        {label:"AI Review", icon:"https://imgur.com/o8K46Sk.png"},
-        {label:"Deadline Pressure", icon:"https://imgur.com/rlaNjHT.png"}
+      const botData = [
+        ["Legal Insights","https://imgur.com/0TgzL8P.png"],
+        ["Suggestions Engine","https://imgur.com/JMV0gKS.png"],
+        ["Clause Warnings","https://imgur.com/MAZkZHs.png"],
+        ["AI Review","https://imgur.com/o8K46Sk.png"],
+        ["No legal jargon","https://imgur.com/3PU7xU0.png"],
+        ["Deadline Pressure","https://imgur.com/rlaNjHT.png"],
+        ["Modern Design","https://imgur.com/Ie8CwXO.png"],
+        ["Confidence to Sign","https://imgur.com/5DGepME.png"]
       ];
-      function fill(row, items){
+      function fill(row, data){
         const frag = document.createDocumentFragment();
-        for(let r=0;r<2;r++){ // duplicate for seamless
-          items.forEach(i=>{
+        for(let k=0;k<2;k++){ // two copies for seamless wrap
+          data.forEach(([label,icon])=>{
             const el = document.createElement('div');
-            el.className='pill';
-            el.innerHTML = `<img src="${i.icon}" alt=""><span>${i.label}</span>`;
+            el.className='chip';
+            el.innerHTML = `<img src="${icon}" alt=""><span>${label}</span>`;
             frag.appendChild(el);
           });
         }
         row.appendChild(frag);
       }
-      fill(top, FT); fill(bot, FB);
+      fill(top, topData); fill(bot, botData);
 
-      function ticker(row, speed = 28, dir='left'){
-        let x=0, raf=0, last=performance.now();
-        function step(now){
-          const dt=(now-last)/1000; last=now;
-          x += (dir==='left'?-speed:speed)*dt;
-          const w = row.scrollWidth/2;
-          if(x<=-w) x+=w; if(x>=0) x-=w;
-          row.style.transform=`translateX(${x}px)`;
-          raf=requestAnimationFrame(step);
+      function ticker(row, dir){
+        let x=0, w=0, last=performance.now();
+        function measure(){
+          w = row.scrollWidth/2;
+          if(!w){ setTimeout(measure,60); }
         }
-        requestAnimationFrame(step);
+        function tick(now){
+          const dt=(now-last)/1000; last=now;
+          const speed = 32 * (dir==='left'?-1:1);
+          x += speed*dt;
+          if(x<=-w) x+=w; if(x>0) x-=w;
+          row.style.transform=`translateX(${x}px)`;
+          requestAnimationFrame(tick);
+        }
+        measure(); requestAnimationFrame(tick);
+        addEventListener('resize', measure, {passive:true});
       }
-      ticker(top, 28, 'right');
-      ticker(bot, 28, 'left');
+      ticker(top,'right'); ticker(bot,'left');
     })();
 
-    // Reviews: one-at-a-time + swipe + dots
+    /* ===== Reviews: 1 per view, 5s autoplay, dots ===== */
     (function(){
-      const track = document.getElementById('revTrack');
-      const prev = document.getElementById('revPrev');
-      const next = document.getElementById('revNext');
-      const dots = document.getElementById('revDots');
-      const cards = Array.from(track.children);
-      const N = cards.length;
+      const track = document.getElementById('rvTrack');
+      const prev = document.getElementById('rvPrev');
+      const next = document.getElementById('rvNext');
+      const dots = document.getElementById('rvDots');
 
-      // clone ends for seamless
-      track.insertBefore(cards[N-1].cloneNode(true), track.firstChild);
-      track.appendChild(cards[0].cloneNode(true));
+      const total = track.children.length;
+      let idx = 0, w = 0, timer = null;
 
-      let index = 1; // start at first real
-      function w(){ return track.querySelector('.rev-card').getBoundingClientRect().width + 18 /*gap*/ }
-      function set(noAnim=false){
-        if(noAnim){ track.style.transition='none'; }
-        track.style.transform = `translateX(${-index*w()}px)`;
-        if(noAnim){ track.offsetHeight; track.style.transition='transform .35s ease' }
+      function measure(){
+        w = track.getBoundingClientRect().width; // full width since each slide 100%
+      }
+      function go(i){
+        idx = (i+total)%total;
+        track.style.transform = `translateX(${-idx*100}%)`;
         updateDots();
       }
       function updateDots(){
-        dots.innerHTML='';
-        for(let i=0;i<N;i++){
-          const d=document.createElement('button'); d.className='dot';
-          if(i===((index-1+N)%N)) d.classList.add('active');
-          d.addEventListener('click',()=>{ index=i+1; set(); });
-          dots.appendChild(d);
-        }
+        dots.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active', i===idx));
       }
-      set(true);
-      window.addEventListener('resize', ()=>set(true), {passive:true});
-
-      function go(delta){
-        index+=delta; set();
-        track.addEventListener('transitionend', ()=>{
-          if(index===0){ index=N; set(true); }
-          if(index===N+1){ index=1; set(true); }
-        }, {once:true});
+      function autoplay(){
+        clearInterval(timer);
+        timer = setInterval(()=>go(idx+1), 5000);
       }
-      prev.addEventListener('click', ()=>go(-1));
-      next.addEventListener('click', ()=>go(1));
 
-      // swipe
-      let sx=0, dx=0, swiping=false;
-      track.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; dx=0; swiping=true; }, {passive:true});
-      track.addEventListener('touchmove',  e=>{ if(!swiping) return; dx=e.touches[0].clientX - sx; }, {passive:true});
-      track.addEventListener('touchend',   ()=>{
-        if(!swiping) return; swiping=false;
-        if(Math.abs(dx) > 40){ go(dx<0?1:-1); }
-      });
+      // dots
+      for(let i=0;i<total;i++){
+        const b=document.createElement('button'); b.className='dot'; b.addEventListener('click',()=>{go(i); autoplay();});
+        dots.appendChild(b);
+      }
+      updateDots();
 
-      // autoplay
-      let t=setInterval(()=>go(1), 5000);
-      [prev,next,track].forEach(el=>el.addEventListener('pointerdown', ()=>{ clearInterval(t); t=null; }, {passive:true}));
+      prev.addEventListener('click', ()=>{go(idx-1); autoplay();});
+      next.addEventListener('click', ()=>{go(idx+1); autoplay();});
+      addEventListener('resize', measure, {passive:true});
+      measure(); go(0); autoplay();
     })();
 
-    // FAQ toggle
-    document.querySelectorAll('.faq-q').forEach(btn=>{
+    /* ===== FAQ toggles ===== */
+    document.querySelectorAll('.q .qbtn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
-        const item = btn.parentElement;
-        if(!item.classList.contains('open')){
-          document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
-        }
-        item.classList.toggle('open');
+        btn.parentElement.classList.toggle('open');
       });
     });
-
-    // Review a contract → fake picker (wire like your flow)
-    (function(){
-      const input = document.createElement('input');
-      input.type='file'; input.accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"; input.style.display='none';
-      document.body.appendChild(input);
-      document.getElementById('reviewCta').addEventListener('click', ()=>input.click());
-      input.addEventListener('change', ()=>{ /* keep your existing analysis redirection here if needed */ });
-      document.getElementById('leaveReview').addEventListener('click', ()=>window.open('https://tally.so/r/3EGJpA','_blank'));
-    })();
   </script>
 </body>
 </html>
