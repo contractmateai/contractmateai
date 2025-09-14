@@ -18,9 +18,12 @@
       --text:#fff9f9;
       --muted:#d8cccc;
       --lime:#aafe2a;
+
+      /* Top bar color (and the card now matches this) */
       --bar:#04040e;
       --bar-border:#232323;
-      --panel:#0f0f16;
+
+      --panel:#0f0f16; /* kept for other sections if needed */
       --field:#1a1722;
     }
 
@@ -58,9 +61,11 @@
     .topbar-left{ display:flex; align-items:center; gap:10px; }
     .topbar-logo{ height:34px; width:auto; border-radius:8px; }
     .topbar-brand{ color:#fff; text-decoration:none; font-size:26px; font-weight:400; }
+
     .topbar-nav a{ color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400; }
     .topbar-nav a:hover{ opacity:.85; }
 
+    /* burger */
     .menu-toggle{ display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer; }
     .menu-toggle .bar{ position:absolute; left:0; right:0; height:2px; background:#fff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease; }
     .menu-toggle .b1{ top:3px; } .menu-toggle .b2{ top:11px; } .menu-toggle .b3{ top:19px; }
@@ -80,15 +85,12 @@
     }
     .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
     .menu-overlay.show{ opacity:1; pointer-events:auto; }
-    .menu-list{ margin-top:2px; }
-    .menu-item{ display:flex; align-items:center; justify-content:space-between; padding:16px 4px; font-size:24px; color:#fff; text-decoration:none; }
-    .menu-disclaimer{ text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6; font-size:16px; }
 
     @media (max-width:980px){ .topbar-nav{ display:none; } .menu-toggle{ display:block; } }
 
     .hero-wrapper{ margin-top:82px; }
 
-    /* ===== Contact Hero (matches screenshot text) ===== */
+    /* ===== Contact Hero ===== */
     .contact-hero{ text-align:center; padding:54px 16px 18px; }
     .contact-hero .badge{
       display:inline-block; padding:8px 12px; border-radius:999px;
@@ -104,11 +106,14 @@
       color:var(--muted); font-size:16px; line-height:1.5; max-width:560px; margin:0 auto;
     }
 
-    /* ===== Contact Card ===== */
-    .contact-wrap{ max-width:960px; margin:0 auto; padding:10px 16px 30px; }
+    /* ===== Layout helpers for consistent left edge ===== */
+    .container{ max-width:960px; margin:0 auto; padding:0 16px; }
+
+    /* ===== Contact Card (now same color as the top bar) ===== */
+    .contact-wrap{ padding:10px 0 30px; }
     .contact-card{
-      background:var(--panel);
-      border:1px solid rgba(255,255,255,.06);
+      background:var(--bar);             /* changed to top bar color */
+      border:1px solid var(--bar-border);/* same border as top bar */
       border-radius:22px;
       padding:18px;
       box-shadow:0 20px 44px rgba(0,0,0,.55);
@@ -130,20 +135,22 @@
     .send-btn:hover{ box-shadow:0 0 16px rgba(255,255,255,.9); }
     .sla{ color:#9a9a9a; font-size:12px; text-align:center; margin-top:8px; }
 
-    /* ===== Channels (WhatsApp + Email) ===== */
-    .contact-extra{ text-align:center; margin:26px 0 8px; color:#ddd; }
+    /* ===== "For further inquiries…" + channels, left aligned ===== */
+    .contact-extra{ color:#ddd; margin:26px 0 8px; text-align:left; }
     .channels{
-      display:flex; justify-content:center; gap:32px; flex-wrap:wrap; padding:6px 10px 2px;
-      max-width:960px; margin:0 auto 10px;
+      display:grid; grid-template-columns:1fr 1fr; gap:20px;
+      align-items:start; justify-items:start; padding-bottom:4px;
     }
+    @media (max-width:520px){ .channels{ grid-template-columns:1fr; } }
+
     .channel{
-      display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff; min-width:220px;
+      display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff;
     }
     .channel img{ width:34px; height:34px; display:block; }
     .channel .label{ font-size:16px; }
     .channel .value{ color:#d8cccc; font-size:15px; }
 
-    /* ===== FAQ (copied style from homepage) ===== */
+    /* ===== FAQ (same as homepage) ===== */
     .faq-section{ max-width:1200px; margin:12px auto 0; padding:40px 16px 74px; text-align:initial; }
     .faq-title{ text-align:center; font-size:clamp(32px, 8vw, 44px); line-height:1.1; font-weight:400; margin-bottom:18px; }
     .faq-list{ max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:18px; text-align:left; padding-left:0; }
@@ -223,7 +230,7 @@
     </section>
 
     <!-- ===== CONTACT CARD ===== -->
-    <section class="contact-wrap" data-aos="fade-up">
+    <section class="container contact-wrap" data-aos="fade-up">
       <div class="contact-card">
         <div class="row">
           <input class="field" type="text" placeholder="Name" />
@@ -236,25 +243,27 @@
       </div>
     </section>
 
-    <!-- ===== CHANNELS ===== -->
-    <p class="contact-extra" data-aos="fade-up">For further inquiries contact us here:</p>
-    <div class="channels" data-aos="fade-up">
-      <a class="channel" href="https://wa.me/355696902900" target="_blank" rel="noopener">
-        <img src="https://imgur.com/Drq6L0n.png" alt="WhatsApp" />
-        <div>
-          <div class="label">WhatsApp</div>
-          <div class="value">+355 69 690 2900</div>
-        </div>
-      </a>
+    <!-- ===== CHANNELS (left-aligned to the same container edge) ===== -->
+    <section class="container" data-aos="fade-up" style="margin-top: 6px;">
+      <p class="contact-extra">For further inquiries contact us here:</p>
+      <div class="channels">
+        <a class="channel" href="https://wa.me/355696902900" target="_blank" rel="noopener">
+          <img src="https://imgur.com/Drq6L0n.png" alt="WhatsApp" />
+          <div>
+            <div class="label">WhatsApp</div>
+            <div class="value">+355 69 690 2900</div>
+          </div>
+        </a>
 
-      <a class="channel" href="mailto:support@signsense.io">
-        <img src="https://imgur.com/V3ziuzH.png" alt="Email" />
-        <div>
-          <div class="label">Email</div>
-          <div class="value">support@signsense.io</div>
-        </div>
-      </a>
-    </div>
+        <a class="channel" href="mailto:support@signsense.io">
+          <img src="https://imgur.com/V3ziuzH.png" alt="Email" />
+          <div>
+            <div class="label">Email</div>
+            <div class="value">support@signsense.io</div>
+          </div>
+        </a>
+      </div>
+    </section>
 
     <!-- ===== FAQ (same content as homepage) ===== -->
     <section class="faq-section" data-aos="fade-up">
@@ -303,7 +312,7 @@
     </section>
   </div>
 
-  <!-- ===== FOOTER (same as homepage mobile) ===== -->
+  <!-- ===== FOOTER ===== -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
@@ -380,7 +389,7 @@
       window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }}, {passive:true});
     })();
 
-    // FAQ toggle
+    // FAQ toggles
     document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const item = btn.parentElement;
