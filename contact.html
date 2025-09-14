@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -19,11 +20,12 @@
       --muted:#d8cccc;
       --lime:#aafe2a;
 
-      /* Top bar color (card matches this) */
+      /* Top bar + panel (same as privacy page) */
       --bar:#04040e;
       --bar-border:#232323;
+      --panel:#04040e;
 
-      --panel:#0f0f16;
+      /* Contact card fields */
       --field:#1a1722;
     }
 
@@ -39,7 +41,7 @@
       background-attachment:fixed,fixed;
     }
 
-    /* ===== Floating Top Bar (same as homepage) ===== */
+    /* ===== Floating Top Bar (EXACT match with privacy page) ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -49,7 +51,8 @@
     .topbar{
       pointer-events:auto;
       width:min(1120px, calc(100% - 28px));
-      min-height:68px; padding:10px 16px;
+      min-height:68px;
+      padding:10px 16px;
       background:var(--bar);
       border:1px solid var(--bar-border);
       border-radius:16px;
@@ -57,39 +60,67 @@
       box-shadow:0 8px 30px rgba(0,0,0,.28);
       transition:border-radius .18s ease, border-color .18s ease;
     }
-    .topbar.merged{ border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
+    .topbar.merged{
+      border-bottom-left-radius:0;
+      border-bottom-right-radius:0;
+      border-bottom-color:transparent;
+    }
     .topbar-left{ display:flex; align-items:center; gap:10px; }
     .topbar-logo{ height:34px; width:auto; border-radius:8px; }
     .topbar-brand{ color:#fff; text-decoration:none; font-size:26px; font-weight:400; }
+
     .topbar-nav a{ color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400; }
     .topbar-nav a:hover{ opacity:.85; }
 
-    .menu-toggle{ display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer; }
-    .menu-toggle .bar{ position:absolute; left:0; right:0; height:2px; background:#fff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease; }
-    .menu-toggle .b1{ top:3px; } .menu-toggle .b2{ top:11px; } .menu-toggle .b3{ top:19px; }
+    /* burger */
+    .menu-toggle{
+      display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer;
+    }
+    .menu-toggle .bar{
+      position:absolute; left:0; right:0; height:2px; background:#ffffff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease;
+    }
+    .menu-toggle .b1{ top:3px; }
+    .menu-toggle .b2{ top:11px; }
+    .menu-toggle .b3{ top:19px; }
     .menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
     .menu-toggle.open .b2{ opacity:0; }
     .menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
 
-    .menu-overlay{ position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:999; }
+    /* attached dropdown */
+    .menu-overlay{
+      position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease;
+      z-index:999;
+    }
     .menu-panel{
       position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
       width:min(720px, calc(100% - 28px));
-      background:var(--bar);
+      background:var(--panel);
       border:1px solid var(--bar-border); border-top:none;
-      border-radius:0 0 16px 16px; padding:18px 22px 22px;
+      border-radius:0 0 16px 16px;
+      padding:18px 22px 22px;
       box-shadow:0 20px 34px rgba(0,0,0,.55);
-      z-index:1001; pointer-events:none; transition:transform .18s ease, opacity .18s ease;
+      z-index:1001; pointer-events:none;
+      transition:transform .18s ease, opacity .18s ease;
     }
     .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
     .menu-overlay.show{ opacity:1; pointer-events:auto; }
 
-    @media (max-width:980px){ .topbar-nav{ display:none; } .menu-toggle{ display:block; } }
+    .menu-list{ margin-top:2px; }
+    .menu-item{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 4px; font-size:24px; color:#fff; text-decoration:none;
+    }
+    .menu-item .chev{ opacity:.9; }
+
+    .menu-disclaimer{
+      text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6;
+      font-size:16px;
+    }
 
     .hero-wrapper{ margin-top:82px; }
 
     /* ===== Contact Hero ===== */
-    .contact-hero{ text-align:center; padding:54px 16px 18px; }
+    .contact-hero{ text-align:center; padding:64px 16px 18px; }
     .contact-hero .badge{
       display:inline-block; padding:8px 12px; border-radius:999px;
       background:#090922; color:#bdb7ff; font-size:13px;
@@ -104,10 +135,10 @@
       color:var(--muted); font-size:16px; line-height:1.5; max-width:560px; margin:0 auto;
     }
 
-    /* ===== Layout helpers ===== */
+    /* ===== Layout ===== */
     .container{ max-width:960px; margin:0 auto; padding:0 16px; }
 
-    /* ===== Contact Card (matches top bar color) ===== */
+    /* ===== Contact Card (same color as topbar) ===== */
     .contact-wrap{ padding:10px 0 30px; }
     .contact-card{
       background:var(--bar);
@@ -116,15 +147,20 @@
       padding:18px;
       box-shadow:0 20px 44px rgba(0,0,0,.55);
     }
+
     .row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
     @media (max-width:520px){ .row{ grid-template-columns:1fr; } }
+
     .field{
-      width:100%; background:var(--field); color:#f0f0f0;
+      width:100%; background:var(--field);
+      color:#d0d0d0;                  /* grey input text */
       border:none; border-radius:14px; padding:14px 16px; font-size:16px; outline:none;
+      caret-color:#e0e0e0;
     }
-    .field::placeholder{ color:#9aa; }
+    .field::placeholder{ color:#9a9a9a; } /* grey placeholders for Name/Phone/Email/Message */
     .email-field{ margin-bottom:10px; }
     textarea.field{ min-height:180px; resize:none; margin-bottom:12px; }
+
     .send-btn{
       width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px;
       background:#fff; color:#000; border:none; border-radius:14px; padding:14px 18px; font-size:17px; cursor:pointer;
@@ -133,22 +169,26 @@
     .send-btn:hover{ box-shadow:0 0 16px rgba(255,255,255,.9); }
     .sla{ color:#9a9a9a; font-size:12px; text-align:center; margin-top:8px; }
 
-    /* ===== Channels (centered, two lines, larger) ===== */
+    /* ===== Channels (centered, two lines, underlined links) ===== */
     .channels{
       text-align:center;
       margin:20px 0 0;
       padding-bottom:4px;
     }
     .channel-line{
-      font-size:20px; /* slightly larger */
+      font-size:20px;
       line-height:1.5;
     }
     .channel-line + .channel-line{ margin-top:8px; }
     .channel-line .label{ color:#fff; }
-    .channel-line a{ color:#d8cccc; text-decoration:none; }
-    .channel-line a:hover{ text-decoration:underline; opacity:.95; }
+    .channel-line a{
+      color:#d8cccc;
+      text-decoration:underline;       /* underline number + email */
+      text-underline-offset:2px;
+    }
+    .channel-line a:hover{ opacity:.95; }
 
-    /* ===== FAQ (same as homepage) ===== */
+    /* ===== FAQ (same style as mobile pages) ===== */
     .faq-section{ max-width:1200px; margin:12px auto 0; padding:40px 16px 74px; text-align:initial; }
     .faq-title{ text-align:center; font-size:clamp(32px, 8vw, 44px); line-height:1.1; font-weight:400; margin-bottom:18px; }
     .faq-list{ max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:18px; text-align:left; padding-left:0; }
@@ -165,8 +205,11 @@
     }
     .faq-item.open .faq-a{ padding:12px 20px 20px; max-height:420px; opacity:1; border-radius:0 0 24px 24px; }
 
-    /* ===== Footer (same as homepage mobile) ===== */
-    .site-footer{ background:#000; border-top:1px solid var(--bar-border); margin-top:10px; padding:36px 16px 34px; color:#fff; }
+    /* ===== Footer (from homepage mobile) ===== */
+    .site-footer{
+      background:#000; border-top:1px solid var(--bar-border);
+      margin-top:10px; padding:36px 16px 34px; color:#fff;
+    }
     .footer-inner{ max-width:720px; margin:0 auto; text-align:center; }
     .footer-brand{ display:inline-flex; align-items:center; gap:10px; margin-bottom:24px; }
     .footer-brand img{ width:38px; height:38px; border-radius:8px; }
@@ -180,10 +223,15 @@
     .footer-links{ display:flex; gap:26px; justify-content:center; margin-bottom:18px; }
     .footer-links a{ color:#d6d6d6; text-decoration:underline; }
     .footer-legal{ font-size:14px; color:#cfcfcf; opacity:.95; line-height:1.6; }
+
+    @media (max-width:980px){
+      .topbar-nav{ display:none; }
+      .menu-toggle{ display:block; }
+    }
   </style>
 </head>
 <body>
-  <!-- ===== Floating Top Bar ===== -->
+  <!-- ===== Floating Top Bar (exact) ===== -->
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar" id="topbar">
       <div class="topbar-left">
@@ -241,7 +289,7 @@
       </div>
     </section>
 
-    <!-- ===== CHANNELS (centered, two lines) ===== -->
+    <!-- ===== CHANNELS (centered, two lines, underlined) ===== -->
     <section class="container" data-aos="fade-up" style="margin-top: 6px;">
       <div class="channels">
         <div class="channel-line">
@@ -347,7 +395,7 @@
   <script>
     AOS.init({ once:true });
 
-    // Attach dropdown under topbar
+    // ===== Attach panel right under the bar (exact behavior)
     const topbarWrap = document.getElementById('topbarWrap');
     const topbar = document.getElementById('topbar');
     const menuToggle = document.getElementById('menuToggle');
@@ -356,18 +404,36 @@
 
     function positionPanel(){
       const r = topbar.getBoundingClientRect();
-      menuPanel.style.top = (r.top + r.height) + 'px';
+      menuPanel.style.top = (r.top + r.height + 0) + 'px';
     }
     positionPanel();
     window.addEventListener('resize', positionPanel);
 
-    function openMenu(){ positionPanel(); menuPanel.classList.add('open'); menuOverlay.classList.add('show'); menuToggle.classList.add('open'); topbar.classList.add('merged'); }
-    function closeMenu(){ menuPanel.classList.remove('open'); menuOverlay.classList.remove('show'); menuToggle.classList.remove('open'); topbar.classList.remove('merged'); }
-    menuToggle.addEventListener('click', () => { menuPanel.classList.contains('open') ? closeMenu() : openMenu(); });
+    function openMenu(){
+      positionPanel();
+      menuPanel.classList.add('open');
+      menuOverlay.classList.add('show');
+      menuToggle.classList.add('open');
+      topbar.classList.add('merged');
+    }
+    function closeMenu(){
+      menuPanel.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      menuToggle.classList.remove('open');
+      topbar.classList.remove('merged');
+    }
+    menuToggle.addEventListener('click', () => {
+      if(menuPanel.classList.contains('open')) closeMenu(); else openMenu();
+    });
     menuOverlay.addEventListener('click', closeMenu);
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
 
-    // Hide/show bar on scroll
+    // Close menu on scroll
+    window.addEventListener('scroll', () => {
+      if (menuPanel.classList.contains('open')) closeMenu();
+    }, { passive:true });
+
+    // ===== Hide/show bar on scroll (exact)
     (function(){
       let lastY = window.scrollY, ticking=false;
       function onScroll(){
@@ -379,7 +445,7 @@
       window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }}, {passive:true});
     })();
 
-    // FAQ toggles
+    // ===== FAQ toggles
     document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const item = btn.parentElement;
@@ -392,3 +458,4 @@
   </script>
 </body>
 </html>
+
