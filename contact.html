@@ -135,24 +135,23 @@
     .send-btn:hover{ box-shadow:0 0 16px rgba(255,255,255,.9); }
     .sla{ color:#9a9a9a; font-size:12px; text-align:center; margin-top:8px; }
 
-    /* ===== Inquiries + channels (CENTERED) ===== */
+    /* ===== Inquiries + channels (CENTERED, no icons) ===== */
     .contact-extra{ color:#ddd; margin:26px 0 8px; text-align:center; }
     .channels{
       display:grid;
-      grid-template-columns:repeat(2, max-content); /* content-sized columns so the pair can center */
-      gap:20px 36px;
-      justify-content:center; /* center the whole grid */
-      justify-items:center;   /* center each item within its grid cell */
+      grid-template-columns:repeat(2, max-content);
+      gap:10px 36px;
+      justify-content:center;
+      justify-items:center;
       padding-bottom:4px;
     }
     @media (max-width:520px){
       .channels{ grid-template-columns:max-content; }
     }
-
     .channel{
-      display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff;
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      text-decoration:none; color:#fff; text-align:center;
     }
-    .channel img{ width:34px; height:34px; display:block; }
     .channel .label{ font-size:16px; }
     .channel .value{ color:#d8cccc; font-size:15px; }
 
@@ -249,24 +248,18 @@
       </div>
     </section>
 
-    <!-- ===== CHANNELS (centered) ===== -->
+    <!-- ===== CHANNELS (centered, no icons) ===== -->
     <section class="container" data-aos="fade-up" style="margin-top: 6px;">
       <p class="contact-extra">For further inquiries contact us here:</p>
       <div class="channels">
         <a class="channel" href="https://wa.me/355696902900" target="_blank" rel="noopener">
-          <img src="https://imgur.com/Drq6L0n.png" alt="WhatsApp" />
-          <div>
-            <div class="label">WhatsApp</div>
-            <div class="value">+355 69 690 2900</div>
-          </div>
+          <div class="label">WhatsApp</div>
+          <div class="value">+355 69 690 2900</div>
         </a>
 
         <a class="channel" href="mailto:support@signsense.io">
-          <img src="https://imgur.com/V3ziuzH.png" alt="Email" />
-          <div>
-            <div class="label">Email</div>
-            <div class="value">support@signsense.io</div>
-          </div>
+          <div class="label">Email</div>
+          <div class="value">support@signsense.io</div>
         </a>
       </div>
     </section>
