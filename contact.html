@@ -19,11 +19,11 @@
       --muted:#d8cccc;
       --lime:#aafe2a;
 
-      /* Top bar color (and the card matches this) */
+      /* Top bar color (card matches this) */
       --bar:#04040e;
       --bar-border:#232323;
 
-      --panel:#0f0f16; /* kept for other sections if needed */
+      --panel:#0f0f16;
       --field:#1a1722;
     }
 
@@ -61,11 +61,9 @@
     .topbar-left{ display:flex; align-items:center; gap:10px; }
     .topbar-logo{ height:34px; width:auto; border-radius:8px; }
     .topbar-brand{ color:#fff; text-decoration:none; font-size:26px; font-weight:400; }
-
     .topbar-nav a{ color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400; }
     .topbar-nav a:hover{ opacity:.85; }
 
-    /* burger */
     .menu-toggle{ display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer; }
     .menu-toggle .bar{ position:absolute; left:0; right:0; height:2px; background:#fff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease; }
     .menu-toggle .b1{ top:3px; } .menu-toggle .b2{ top:11px; } .menu-toggle .b3{ top:19px; }
@@ -135,25 +133,20 @@
     .send-btn:hover{ box-shadow:0 0 16px rgba(255,255,255,.9); }
     .sla{ color:#9a9a9a; font-size:12px; text-align:center; margin-top:8px; }
 
-    /* ===== Inquiries + channels (CENTERED, no icons) ===== */
-    .contact-extra{ color:#ddd; margin:26px 0 8px; text-align:center; }
+    /* ===== Channels (centered, two lines, larger) ===== */
     .channels{
-      display:grid;
-      grid-template-columns:repeat(2, max-content);
-      gap:10px 36px;
-      justify-content:center;
-      justify-items:center;
+      text-align:center;
+      margin:20px 0 0;
       padding-bottom:4px;
     }
-    @media (max-width:520px){
-      .channels{ grid-template-columns:max-content; }
+    .channel-line{
+      font-size:20px; /* slightly larger */
+      line-height:1.5;
     }
-    .channel{
-      display:flex; flex-direction:column; align-items:center; gap:4px;
-      text-decoration:none; color:#fff; text-align:center;
-    }
-    .channel .label{ font-size:16px; }
-    .channel .value{ color:#d8cccc; font-size:15px; }
+    .channel-line + .channel-line{ margin-top:8px; }
+    .channel-line .label{ color:#fff; }
+    .channel-line a{ color:#d8cccc; text-decoration:none; }
+    .channel-line a:hover{ text-decoration:underline; opacity:.95; }
 
     /* ===== FAQ (same as homepage) ===== */
     .faq-section{ max-width:1200px; margin:12px auto 0; padding:40px 16px 74px; text-align:initial; }
@@ -248,19 +241,17 @@
       </div>
     </section>
 
-    <!-- ===== CHANNELS (centered, no icons) ===== -->
+    <!-- ===== CHANNELS (centered, two lines) ===== -->
     <section class="container" data-aos="fade-up" style="margin-top: 6px;">
-      <p class="contact-extra">For further inquiries contact us here:</p>
       <div class="channels">
-        <a class="channel" href="https://wa.me/355696902900" target="_blank" rel="noopener">
-          <div class="label">WhatsApp</div>
-          <div class="value">+355 69 690 2900</div>
-        </a>
-
-        <a class="channel" href="mailto:support@signsense.io">
-          <div class="label">Email</div>
-          <div class="value">support@signsense.io</div>
-        </a>
+        <div class="channel-line">
+          <span class="label">WhatsApp:</span>
+          <a href="https://wa.me/355696902900" target="_blank" rel="noopener">+355 69 690 2900</a>
+        </div>
+        <div class="channel-line">
+          <span class="label">Email:</span>
+          <a href="mailto:support@signsense.io">support@signsense.io</a>
+        </div>
       </div>
     </section>
 
