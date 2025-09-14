@@ -225,7 +225,7 @@
     .reviews-title .green{ color:var(--lime2); }
     .reviews-sub{ font-size:18px; color:#a8a8a8; margin-top:8px; text-align:center; }
 
-    .reviews-viewport{ overflow:hidden; margin-top:18px; position:relative; }
+    .reviews-viewport{ overflow:hidden; margin-top:18px; position:relative; touch-action:pan-y; }
     .reviews-track{ display:flex; gap:18px; transition:transform .32s ease; }
     .review-card{ flex:0 0 100%; background:#000; border:1px solid #262626; border-radius:20px; padding:10px; position:relative; }
     .review-card img{ width:100%; display:block; border-radius:16px; }
@@ -285,6 +285,8 @@
     .footer-col a{
       display:block; color:#e9e6e6; text-decoration:none; font-size:18px; margin:10px 0;
     }
+    /* Socials just a little smaller */
+    .footer-col.socials a{ font-size:16px; }
     .footer-col a:hover{ opacity:.9; text-decoration:underline; }
     .footer-sep{
       margin:26px auto 14px; height:1px; width:100%; max-width:720px; border:none; background:#2c2c2c;
@@ -420,7 +422,7 @@
         <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
       </div>
 
-      <div class="reviews-viewport">
+      <div class="reviews-viewport" id="reviewsViewport">
         <button class="side-nav left" id="revPrev" aria-label="Previous review"><span>‹</span></button>
         <button class="side-nav right" id="revNext" aria-label="Next review"><span>›</span></button>
 
@@ -499,7 +501,7 @@
         <div class="footer-col">
           <h4>Quick Menu</h4>
           <a href="#how-it-works">How it Works</a>
-          <a href="#" id="footerLeaveReview">Leave Review</a>
+          <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener" id="footerLeaveReview">Leave Review</a>
         </div>
 
         <div class="footer-col">
@@ -508,7 +510,7 @@
           <a href="index.html">Home</a>
         </div>
 
-        <div class="footer-col">
+        <div class="footer-col socials">
           <h4>Socials</h4>
           <a href="#" target="_blank" rel="noopener">Instagram</a>
           <a href="#" target="_blank" rel="noopener">YouTube</a>
@@ -689,9 +691,10 @@
       });
     })();
 
-    // ===== Reviews: single card, dots, 5s autoplay
+    // ===== Reviews: single card, dots, 5s autoplay + SWIPE
     (function(){
       const track = document.getElementById('reviewsTrack');
+      const viewport = document.getElementById('reviewsViewport');
       const prev  = document.getElementById('revPrev');
       const next  = document.getElementById('revNext');
       const dotsEl= document.getElementById('reviewDots');
@@ -699,6 +702,7 @@
       const cards = Array.from(track.children);
       const TOTAL = cards.length;
 
+      // clone for seamless loop
       const clonesBefore = cards.map(n=>n.cloneNode(true));
       const clonesAfter  = cards.map(n=>n.cloneNode(true));
       track.prepend(...clonesBefore);
@@ -721,6 +725,10 @@
       }
       setTransform(index, false);
 
+      function updateDots(){
+        const pos = (index % TOTAL + TOTAL) % TOTAL;
+        [...dotsEl.children].forEach((d,i)=> d.classList.toggle('active', i===pos));
+      }
       function go(delta){
         index += delta;
         setTransform(index, true);
@@ -731,7 +739,13 @@
           updateDots();
         }, { once:true });
       }
+      function jumpTo(i){
+        const pos = (index % TOTAL + TOTAL) % TOTAL;
+        const delta = i - pos;
+        go(delta);
+      }
 
+      // dots
       function renderDots(){
         dotsEl.innerHTML='';
         for(let i=0;i<TOTAL;i++){
@@ -742,25 +756,68 @@
         }
         updateDots();
       }
-      function updateDots(){
-        const pos = (index % TOTAL + TOTAL) % TOTAL;
-        [...dotsEl.children].forEach((d,i)=> d.classList.toggle('active', i===pos));
-      }
-      function jumpTo(i){
-        const pos = (index % TOTAL + TOTAL) % TOTAL;
-        const delta = i - pos;
-        go(delta);
-      }
       renderDots();
 
+      // arrows
       prev.addEventListener('click', ()=>{ go(-1); restart(); });
       next.addEventListener('click', ()=>{ go(1);  restart(); });
 
+      // autoplay
       let timer=null;
       function start(){ stop(); timer=setInterval(()=>go(1), 5000); }
       function stop(){ if(timer) clearInterval(timer); timer=null; }
       function restart(){ stop(); start(); }
       start();
+
+      // SWIPE / DRAG
+      let isDown=false, dragging=false;
+      let startX=0, startY=0, startOffset=0, lastDx=0;
+
+      function onPointerDown(x, y){
+        isDown=true; dragging=false; startX=x; startY=y;
+        startOffset = -index*cardW;
+        track.style.transition='none';
+      }
+      function onPointerMove(x, y, e){
+        if(!isDown) return;
+        const dx = x - startX;
+        const dy = y - startY;
+        if(!dragging){
+          if(Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) dragging=true;
+          else return;
+        }
+        lastDx = dx;
+        track.style.transform = `translateX(${startOffset + dx}px)`;
+        if(e) e.preventDefault();
+      }
+      function onPointerUp(){
+        if(!isDown) return;
+        isDown=false;
+        const threshold = Math.max(50, cardW*0.12);
+        track.style.transition='transform .32s ease';
+        if(Math.abs(lastDx) > threshold){
+          if(lastDx < 0) go(1); else go(-1);
+        } else {
+          setTransform(index, true);
+        }
+        lastDx = 0;
+        restart();
+      }
+
+      // Mouse
+      viewport.addEventListener('mousedown', (e)=>{ onPointerDown(e.clientX, e.clientY); });
+      window.addEventListener('mousemove', (e)=>{ onPointerMove(e.clientX, e.clientY, e); }, { passive:false });
+      window.addEventListener('mouseup', onPointerUp);
+
+      // Touch
+      viewport.addEventListener('touchstart', (e)=>{
+        const t=e.touches[0]; onPointerDown(t.clientX, t.clientY);
+      }, { passive:true });
+      viewport.addEventListener('touchmove', (e)=>{
+        const t=e.touches[0]; onPointerMove(t.clientX, t.clientY, e);
+      }, { passive:false });
+      viewport.addEventListener('touchend', onPointerUp, { passive:true });
+      viewport.addEventListener('touchcancel', onPointerUp, { passive:true });
     })();
 
     // ===== FAQ toggles
@@ -775,9 +832,9 @@
     });
 
     // ===== CTA → file picker mock + analysis redirect
-    const triggers = [document.getElementById('ctaBtn'), document.getElementById('leaveReview')].filter(Boolean);
+    const triggers = [document.getElementById('ctaBtn')].filter(Boolean);
     const input = document.getElementById('contractFile');
-    triggers.forEach(t => t.addEventListener('click', (e)=>{ if(t.id!=='leaveReview'){ e.preventDefault(); input.click(); } }));
+    triggers.forEach(t => t.addEventListener('click', (e)=>{ e.preventDefault(); input.click(); }));
     input.addEventListener('change', ()=>{
       if (!input.files || !input.files.length) return;
       const mock = {
@@ -811,16 +868,16 @@
       window.location.href = "analysis.html";
     });
 
-    // Footer: hook "Leave Review" link to the same button action
-    const footerLeave = document.getElementById('footerLeaveReview');
-    if (footerLeave) {
-      footerLeave.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const btn = document.getElementById('leaveReview');
-        if (btn) btn.click();
-        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+    // ===== Leave a Review → open Tally
+    const leaveBtn = document.getElementById('leaveReview');
+    if (leaveBtn){
+      leaveBtn.addEventListener('click', ()=>{
+        window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
       });
     }
+
+    // Footer: "Leave Review" already links directly to Tally via href
+    // (No JS redirect needed anymore.)
   </script>
 </body>
 </html>
