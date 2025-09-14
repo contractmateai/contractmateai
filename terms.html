@@ -105,33 +105,24 @@
     ul{padding-left:20px;}
     b,strong{color:#eaeaea;}
 
-    /* ===== READY SECTION ===== */
+    /* ===== READY SECTION (aligned like Privacy Policy) ===== */
     .ready-section{
-      max-width:960px; margin:10px auto; padding:0 24px;
-      display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap;
-      text-align:left;
+      max-width:960px; margin:50px auto; padding:0 24px; text-align:center;
     }
-    .ready-section br{display:none;}
-    .ready-section img{
-      width:100%; max-width:520px;
-      border-radius:16px;
-      box-shadow:0 0 30px rgba(0,0,0,.5);
+    .ready-img{ position:relative; display:inline-block; }
+    .ready-img img{
+      width:100%; max-width:720px;
+      border-radius:16px; box-shadow:0 0 30px rgba(0,0,0,.5);
+      display:block; margin:0 auto;
     }
-    .back-btn{
-      display:inline-block;
-      padding:14px 26px;
-      background:#adff00;
-      color:#000;
-      font-size:18px;
-      border:none;
-      border-radius:12px;
-      text-decoration:none;
-      font-weight:400;
-      box-shadow:0 0 14px rgba(173,255,0,.65);
-      transition:box-shadow .25s ease;
-      margin-left:0;
+    .ready-img .back-btn{
+      position:absolute; bottom:24px; left:40px;
+      display:inline-block; padding:14px 30px;
+      background:#aafe2a; color:#000; font-size:18px; border:none;
+      border-radius:22px; text-decoration:none; font-weight:400;
+      box-shadow:0 0 14px rgba(170,254,42,.65); transition:box-shadow .25s ease;
     }
-    .back-btn:hover{box-shadow:0 0 24px rgba(173,255,0,.9);}
+    .ready-img .back-btn:hover{ box-shadow:0 0 24px rgba(170,254,42,.9); }
 
     /* ===== FOOTER (same layout as privacy page) ===== */
     .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
@@ -266,7 +257,7 @@
     <p>If you have questions about these Terms or the Services, please contact us at: <strong>support@signsense.io</strong></p>
   </div>
 
-  <!-- READY SECTION (visual + back button) -->
+  <!-- READY SECTION (now identical layout to Privacy page) -->
   <section class="ready-section" data-reveal>
     <div class="ready-img">
       <img src="https://imgur.com/pgBZqHw.png" alt="Ready to review" />
