@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>SignSense — Analysis</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
@@ -17,83 +17,33 @@
       --orange:#df911a;
       --red:#fe0000;
       --black:#000000;
-      --radius:21px;
-      --gap:18px;
-      --rail:58px;       /* fixed mini-rail */
-      --drawerW:75vw;    /* mobile drawer width = 75% of screen */
-      --sidebarW:300px;  /* desktop sidebar width */
+      --radius:20px;
+      --gap:14px;           /* a bit more air between sections */
+      --drawerW:75vw;       /* slide-out menu covers ~75% */
+      --containerMax:428px; /* iPhone 12 Pro Max logical width */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{
+      margin:0;background:var(--bg);color:var(--white);
+      font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial;
+      overflow-x:hidden;
+    }
 
-    /* ===== MINI LEFT RAIL (always fixed) ===== */
-    .rail{
-      position:fixed; left:0; top:0; bottom:0; width:var(--rail);
-      background:#0f0e14; border-right:1px solid var(--border);
-      display:flex; flex-direction:column; align-items:center; gap:16px; padding:10px 0;
-      z-index:50;
-    }
-    .rail .brand{
-      display:flex; align-items:center; justify-content:center; height:54px; width:100%;
-    }
-    .rail .brand img{width:28px; height:28px}
-    .rail .menu-btn{
-      display:flex; align-items:center; justify-content:center;
-      width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
-      background:#14121a; cursor:pointer;
-    }
-    .rail .stack{
-      margin-top:8px; display:flex; flex-direction:column; gap:14px; align-items:center; width:100%;
-    }
-    .rail .stack a, .rail .stack button{
-      display:flex; align-items:center; justify-content:center; width:42px; height:42px;
-      background:#14121a; border:1px solid var(--border); border-radius:14px; text-decoration:none;
-      cursor:pointer;
-    }
-    .rail .stack img{width:22px; height:22px}
-
-    /* ===== DRAWER (mobile) / SIDEBAR (desktop) ===== */
-    .drawer{
-      position:fixed; left:0; top:0; bottom:0; width:var(--drawerW); max-width:420px;
-      background:#0f0e14; border-right:1px solid var(--border);
-      display:flex; flex-direction:column; padding:12px 16px 16px; gap:16px;
-      transform:translateX(calc(-1 * var(--drawerW))); transition:transform .28s ease; z-index:80;
-    }
-    .drawer.open{ transform:translateX(0) }
-    .drawer .brand-row{ display:flex; align-items:center; gap:12px; padding:4px 6px 0 6px; }
-    .drawer .brand-row img{width:34px; height:34px}
-    .drawer .brand-row span{font-size:24px; font-weight:400}
-    .drawer .nav{display:flex; flex-direction:column; gap:10px; margin-top:6px}
-    .drawer .nav a{
-      text-decoration:none; color:var(--muted); display:flex; align-items:center; gap:16px;
-      padding:16px 18px; border-radius:16px; border:1px solid transparent; font-size:19px;
-    }
-    .drawer .nav a img.icon{width:26px; height:26px}
-    .drawer .nav a img.arr{width:18px; height:18px; opacity:.9}
-    .drawer .nav a.active{background:#181620; border:1px solid var(--border); color:var(--white)}
-    .drawer .nav a:hover{background:transparent; border:1px solid var(--border); color:var(--white)}
-    .drawer .push{flex:1}
-    .drawer .end{color:var(--muted); font-size:15px; line-height:1.6}
-    .drawer .footer-sep{height:1px; background:var(--border); margin:10px 0}
-
-    /* Overlay when drawer open */
-    .scrim{
-      position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; visibility:hidden;
-      transition:opacity .25s ease, visibility .25s ease; z-index:70;
-    }
-    .scrim.show{opacity:1; visibility:visible}
-
-    /* ===== MAIN CONTENT ===== */
-    .page{
-      display:grid; grid-template-columns:1fr; min-height:100vh;
-      padding-left:var(--rail);
-    }
+    /* ===== TOPBAR ===== */
     .topbar{
       position:sticky; top:0; z-index:40; background:var(--bg);
-      display:flex; align-items:flex-end; justify-content:space-between;
-      padding:10px 12px 12px; height:64px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left));
+      height:64px; border-bottom:1px solid var(--border);
     }
+    .top-left{display:flex; align-items:center; gap:10px}
+    .menu-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:40px; height:40px; border-radius:12px; border:1px solid var(--border);
+      background:#14121a; cursor:pointer; padding:0;
+    }
+    .menu-btn img{width:20px; height:20px}
     .top-title{font-size:20px; font-weight:400}
 
     /* Language dropdown */
@@ -108,25 +58,62 @@
       border-radius:12px; min-width:240px; max-height:240px; overflow:auto; display:none; box-shadow:0 10px 30px rgba(0,0,0,.4); padding:6px;
       scrollbar-width:thin; scrollbar-color:#6a6a6a transparent;
     }
+    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
-    /* Grid/cards */
-    .main{padding:0 16px 140px}
-    .grid{display:grid; grid-template-columns:1fr; gap:var(--gap); align-items:start; margin-top:12px}
+    /* ===== DRAWER + OVERLAY ===== */
+    .drawer{
+      position:fixed; left:0; top:0; bottom:0; width:var(--drawerW); max-width:420px;
+      background:#0f0e14; border-right:1px solid var(--border);
+      display:flex; flex-direction:column; padding:12px 16px 16px; gap:16px;
+      transform:translateX(-100%); transition:transform .28s ease; z-index:80;
+    }
+    .drawer.open{ transform:translateX(0) }
+    .drawer .brand-row{ display:flex; align-items:center; gap:12px; padding-top:4px; }
+    .drawer .brand-row img{width:34px; height:34px}
+    .drawer .brand-row span{font-size:24px; font-weight:400}
+    .drawer .nav{display:flex; flex-direction:column; gap:10px; margin-top:6px}
+    .drawer .nav a{
+      text-decoration:none; color:var(--muted); display:flex; align-items:center; gap:16px;
+      padding:16px 18px; border-radius:16px; border:1px solid transparent; font-size:19px;
+    }
+    .drawer .nav a img.icon{width:26px; height:26px}
+    .drawer .nav a img.arr{width:18px; height:18px; opacity:.9}
+    .drawer .nav a.active{background:#181620; border:1px solid var(--border); color:var(--white)}
+    .drawer .nav a:hover{background:transparent; border:1px solid var(--border); color:var(--white)}
+    .drawer .push{flex:1}
+    .drawer .end{color:var(--muted); font-size:15px; line-height:1.6}
+    .drawer .footer-sep{height:1px; background:var(--border); margin:10px 0}
+    .scrim{
+      position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; visibility:hidden;
+      transition:opacity .25s ease, visibility .25s ease; z-index:70;
+    }
+    .scrim.show{opacity:1; visibility:visible}
+
+    /* ===== PAGE ===== */
+    .page{ display:block; }
+    .container{
+      width:100%;
+      max-width:var(--containerMax);
+      margin:0 auto;
+      padding:12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left));
+    }
+
+    /* Cards & animations */
     .card{
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 18px 20px;
-      opacity:0; transform:translateY(8px);
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;
+      opacity:0; transform:translateY(8px); margin-bottom:var(--gap);
     }
     @keyframes fadeIn{to{opacity:1; transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
+    .card h3{margin:0 0 12px;display:flex;align-items:center;gap:10px;font-size:18px;font-weight:400}
+    .card h3 img{width:22px;height:22px}
 
-    .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:400}
-    .card h3 img{width:24px;height:24px}
-    .list{display:flex;flex-direction:column;gap:12px}
+    /* Text blocks */
+    .list{display:flex;flex-direction:column;gap:10px}
     .list p{margin:0;color:var(--muted);font-size:16px;overflow-wrap:anywhere}
 
     .bullets{margin:0;color:var(--muted);font-size:16px;padding-left:22px;list-style:disc}
@@ -139,12 +126,12 @@
     /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:10px;font-size:18px}
-    .meter-title img{width:22px;height:22px}
+    .meter-title{display:flex;align-items:center;gap:10px;font-size:16px}
+    .meter-title img{width:20px;height:20px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* Donuts (mobile sized) */
+    /* Donuts */
     .hcard{display:flex;gap:14px;align-items:center}
     .circle{width:120px;height:120px;position:relative;display:grid;place-items:center;flex:0 0 120px}
     .circle svg{transform:rotate(-90deg)}
@@ -167,9 +154,15 @@
     .score-scale{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 
     /* Download CTA */
-    .download-wrap{position:fixed;left:var(--rail);right:0;bottom:28px;display:none;justify-content:center;z-index:60;opacity:0;transform:translateY(8px)}
-    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
-    .download:hover{filter:brightness(1.03)}
+    .download-wrap{
+      position:fixed; left:0; right:0;
+      bottom:calc(20px + env(safe-area-inset-bottom));
+      display:none; justify-content:center; z-index:60; opacity:0; transform:translateY(8px)
+    }
+    .download{
+      background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;
+      display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;box-shadow:0 6px 28px rgba(0,0,0,.28)
+    }
 
     /* Modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100}
@@ -180,41 +173,14 @@
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
 
-    /* ===== DESKTOP ===== */
-    @media (min-width:1100px){
-      .rail{ display:none; }
-      .scrim{ display:none !important; }
-      .drawer{
-        position:sticky; transform:none !important; width:var(--sidebarW); max-width:var(--sidebarW);
-        top:0; height:100vh; z-index:20;
-      }
-      .page{ grid-template-columns:var(--sidebarW) 1fr; padding-left:0; }
-      .main{ padding:0 20px 140px; }
-      .grid{ grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr); }
-      .download-wrap{ left:var(--sidebarW); }
-      .card h3{ font-size:24px }
-      .bullets, .list p{ font-size:18px }
-      .meter-title{ font-size:20px }
-      .circle{ width:160px; height:160px } .circle .val{ font-size:34px }
-      .score-remark{ font-size:20px } .score-pct{ font-size:42px }
+    /* Desktop keeps same centered narrow layout for consistency */
+    @media (min-width:900px){
+      .top-title{font-size:20px}
     }
   </style>
 </head>
 <body>
-  <!-- FIXED MINI-RAIL -->
-  <aside class="rail" aria-label="Quick navigation">
-    <div class="brand"><img src="https://imgur.com/Z5hv7K9.png" alt="SignSense"></div>
-    <button id="menuBtn" class="menu-btn" aria-label="Open menu"><img src="https://imgur.com/CHGomYz.png" alt="" width="20" height="20"></button>
-    <div class="stack">
-      <a href="#" aria-label="Overview"><img src="https://imgur.com/lnQTDuo.png" alt=""></a>
-      <a href="index.html" aria-label="Home"><img src="https://imgur.com/kE3okdE.png" alt=""></a>
-      <a href="privacy.html" aria-label="Privacy"><img src="https://imgur.com/krMnFVT.png" alt=""></a>
-      <a href="#" aria-label="Contact"><img src="https://imgur.com/6zHviT6.png" alt=""></a>
-      <a href="#" id="leaveReviewRail" aria-label="Leave Review"><img src="https://imgur.com/zwr9SOe.png" alt=""></a>
-    </div>
-  </aside>
-
-  <!-- DRAWER + OVERLAY -->
+  <!-- SCRIM + DRAWER (opens from top-left icon) -->
   <div id="scrim" class="scrim" aria-hidden="true"></div>
   <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="brand-row">
@@ -239,150 +205,151 @@
     </div>
   </aside>
 
-  <!-- PAGE (desktop also uses drawer as sidebar) -->
+  <!-- PAGE -->
   <div class="page">
-    <!-- empty column is the drawer in desktop; content is always last col -->
-    <main class="main">
-      <div class="topbar">
-        <div class="top-left"><div class="top-title">Overview</div></div>
-        <div class="lang" id="lang">
-          <button class="lang-btn" id="langBtn" type="button">
-            <span id="langNow">EN</span><span class="caret" aria-hidden="true"></span>
-          </button>
-          <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <div class="lang-item" data-lang="English">English</div>
-            <div class="lang-item" data-lang="Italiano">Italiano</div>
-            <div class="lang-item" data-lang="Deutsch">Deutsch</div>
-            <div class="lang-item" data-lang="Español">Español</div>
-            <div class="lang-item" data-lang="Français">Français</div>
-            <div class="lang-item" data-lang="Português">Português</div>
-            <div class="lang-item" data-lang="Nederlands">Nederlands</div>
-            <div class="lang-item" data-lang="Română">Română</div>
-            <div class="lang-item" data-lang="Shqip">Shqip</div>
-            <div class="lang-item" data-lang="Türkçe">Türkçe</div>
-            <div class="lang-item" data-lang="中文">中文</div>
-            <div class="lang-item" data-lang="日本語">日本語</div>
+    <div class="topbar">
+      <div class="top-left">
+        <button id="menuBtn" class="menu-btn" aria-label="Open menu">
+          <img src="https://imgur.com/CHGomYz.png" alt="">
+        </button>
+        <div class="top-title">Overview</div>
+      </div>
+      <div class="lang" id="lang">
+        <button class="lang-btn" id="langBtn" type="button">
+          <span id="langNow">EN</span><span class="caret" aria-hidden="true"></span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
+          <div class="lang-item" data-lang="English">English</div>
+          <div class="lang-item" data-lang="Italiano">Italiano</div>
+          <div class="lang-item" data-lang="Deutsch">Deutsch</div>
+          <div class="lang-item" data-lang="Español">Español</div>
+          <div class="lang-item" data-lang="Français">Français</div>
+          <div class="lang-item" data-lang="Português">Português</div>
+          <div class="lang-item" data-lang="Nederlands">Nederlands</div>
+          <div class="lang-item" data-lang="Română">Română</div>
+          <div class="lang-item" data-lang="Shqip">Shqip</div>
+          <div class="lang-item" data-lang="Türkçe">Türkçe</div>
+          <div class="lang-item" data-lang="中文">中文</div>
+          <div class="lang-item" data-lang="日本語">日本語</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- 1) RISK LEVEL -->
+      <section class="card" id="riskCard">
+        <div class="hcard">
+          <div class="circle">
+            <svg width="120" height="120" viewBox="0 0 160 160">
+              <circle class="track" cx="80" cy="80" r="74"></circle>
+              <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
+            </svg>
+            <div class="val" id="riskVal">0%</div>
+          </div>
+          <div class="htext">
+            <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt="">Risk Level</h3>
+            <div class="muted" id="riskNote"></div>
+            <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="grid">
-        <!-- LEFT COLUMN -->
-        <div class="left">
-          <section class="card" id="summaryCard">
-            <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
-            <div class="list" id="summaryText"></div>
-          </section>
+      <!-- 2) SUMMARY -->
+      <section class="card" id="summaryCard">
+        <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
+        <div class="list" id="summaryText"></div>
+      </section>
 
-          <section class="card meter-block" id="profCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""><span>Professionalism</span></div>
-              <div id="confVal">0%</div>
-            </div>
-            <div class="meter"><div id="confFill" class="fill"></div></div>
-          </section>
-
-          <section class="card meter-block" id="favCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""><span>Favorability Index</span></div>
-              <div id="favVal">0%</div>
-            </div>
-            <div class="meter"><div id="favFill" class="fill"></div></div>
-          </section>
-
-          <section class="card meter-block" id="deadCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""><span>Deadline pressure</span></div>
-              <div id="deadVal">0%</div>
-            </div>
-            <div class="meter"><div id="deadFill" class="fill"></div></div>
-          </section>
-
-          <section class="card" id="issuesCard">
-            <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
-            <ul class="bullets" id="issuesList"></ul>
-          </section>
-
-          <section class="card" id="suggestionsCard">
-            <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
-            <div class="list numbered" id="suggestionsList"></div>
-          </section>
+      <!-- 3) PROFESSIONALISM -->
+      <section class="card meter-block" id="profCard">
+        <div class="meter-head">
+          <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""><span>Professionalism</span></div>
+          <div id="confVal">0%</div>
         </div>
+        <div class="meter"><div id="confFill" class="fill"></div></div>
+      </section>
 
-        <!-- RIGHT COLUMN -->
-        <div class="right">
-          <section class="card" id="riskCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="120" height="120" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="val" id="riskVal">0%</div>
-              </div>
-              <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt="">Risk Level</h3>
-                <div class="muted" id="riskNote"></div>
-                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card" id="clarCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="120" height="120" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="val" id="clarVal">0%</div>
-              </div>
-              <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt="">Clause Clarity</h3>
-                <div class="muted" id="clarNote"></div>
-                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card" id="clausesCard">
-            <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
-            <div class="list numbered" id="clausesList"></div>
-          </section>
-
-          <section class="card" id="scoreCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="120" height="120" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="score-center">
-                  <div class="score-pct" id="scorePct">80%</div>
-                </div>
-              </div>
-              <div class="score-side">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
-                <div class="score-remark">The contract is nearly perfectly done.</div>
-                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
-                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card meter-block" id="confRightCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
-              <div id="conf2Val">0%</div>
-            </div>
-            <div class="meter"><div id="conf2Fill" class="fill"></div></div>
-          </section>
+      <!-- 4) FAVORABILITY -->
+      <section class="card meter-block" id="favCard">
+        <div class="meter-head">
+          <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""><span>Favorability Index</span></div>
+          <div id="favVal">0%</div>
         </div>
-      </div>
-    </main>
+        <div class="meter"><div id="favFill" class="fill"></div></div>
+      </section>
+
+      <!-- 5) DEADLINE -->
+      <section class="card meter-block" id="deadCard">
+        <div class="meter-head">
+          <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""><span>Deadline pressure</span></div>
+          <div id="deadVal">0%</div>
+        </div>
+        <div class="meter"><div id="deadFill" class="fill"></div></div>
+      </section>
+
+      <!-- 6) POTENTIAL ISSUES -->
+      <section class="card" id="issuesCard">
+        <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
+        <ul class="bullets" id="issuesList"></ul>
+      </section>
+
+      <!-- 7) CLAUSE CLARITY -->
+      <section class="card" id="clarCard">
+        <div class="hcard">
+          <div class="circle">
+            <svg width="120" height="120" viewBox="0 0 160 160">
+              <circle class="track" cx="80" cy="80" r="74"></circle>
+              <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
+            </svg>
+            <div class="val" id="clarVal">0%</div>
+          </div>
+          <div class="htext">
+            <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt="">Clause Clarity</h3>
+            <div class="muted" id="clarNote"></div>
+            <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8) MAIN CLAUSES -->
+      <section class="card" id="clausesCard">
+        <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
+        <div class="list numbered" id="clausesList"></div>
+      </section>
+
+      <!-- 9) SCORE CHECKER -->
+      <section class="card" id="scoreCard">
+        <div class="hcard">
+          <div class="circle">
+            <svg width="120" height="120" viewBox="0 0 160 160">
+              <circle class="track" cx="80" cy="80" r="74"></circle>
+              <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
+            </svg>
+            <div class="score-center">
+              <div class="score-pct" id="scorePct">80%</div>
+            </div>
+          </div>
+          <div class="score-side">
+            <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
+            <div class="score-remark">The contract is nearly perfectly done.</div>
+            <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
+            <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10) CONFIDENCE -->
+      <section class="card meter-block" id="confRightCard">
+        <div class="meter-head">
+          <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
+          <div id="conf2Val">0%</div>
+        </div>
+        <div class="meter"><div id="conf2Fill" class="fill"></div></div>
+      </section>
+    </div>
   </div>
 
-  <!-- Download -->
+  <!-- 11) Download -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
@@ -425,10 +392,6 @@
   scrim.addEventListener('click', closeDrawer);
   window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
 
-  /* ---------- Keep review hooks working ---------- */
-  document.getElementById('leaveReview').addEventListener('click', (e)=>{ e.preventDefault(); alert('Hook this to your reviews form URL.'); });
-  document.getElementById('leaveReviewRail').addEventListener('click', (e)=>{ e.preventDefault(); openDrawer(); });
-
   /* ---------- Language UI ---------- */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
@@ -442,7 +405,7 @@
   lang.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>lang.classList.remove("open"),150); });
   langBtn.addEventListener("click", ()=>{ lang.classList.toggle("open"); });
 
-  /* ---------- Demo content ---------- */
+  /* ---------- Demo data ---------- */
   const demo = {
     summary: [
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
@@ -467,11 +430,6 @@
       "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
       "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
     ],
-    suggestions: [
-      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
-    ],
     meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 }
   };
 
@@ -487,18 +445,17 @@
     if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
   }
 
-  /* Summary */
+  /* Summary text */
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
   function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:[""]).forEach(t=>addP(el,t)); }
   listTo("#clausesList", demo.clauses);
 
-  /* Issues */
+  /* Issues list */
   (function(){ const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
-  listTo("#suggestionsList", demo.suggestions);
 
-  /* Donuts */
+  /* Donut helper */
   function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value||0, 0, 100);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
@@ -513,7 +470,7 @@
   setArc($("#riskArc"), 'risk', demo.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), demo.risk?.note);
   setArc($("#clarArc"), 'clarity', demo.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), demo.clarity?.note);
 
-  /* Meters */
+  /* Bars */
   function setMeter(fill, label, metric, value){
     const v = between(value||0, 0, 100);
     label.textContent = v + "%";
@@ -523,8 +480,9 @@
   setMeter($("#confFill"), $("#confVal"), 'professionalism', demo.meters?.professionalism ?? 95);
   setMeter($("#favFill"), $("#favVal"), 'favorability', demo.meters?.favorability ?? 75);
   setMeter($("#deadFill"), $("#deadVal"), 'deadline',    demo.meters?.deadline ?? 0);
+  setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', demo.meters?.confidence ?? 0);
 
-  /* Score Checker (80% pointer) */
+  /* Score Checker pointer */
   (function(){
     const v = 80;
     setArc($("#scoreArc"), 'confidence', v);
@@ -532,21 +490,18 @@
     $("#scoreInd").style.left = "calc(80% - 1.5px)";
   })();
 
-  /* Right-side Confidence bar */
-  setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', demo.meters?.confidence ?? 0);
-
   /* Reveal sequencing */
   window.addEventListener('load', () => {
-    ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
-    setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
+    [
+      "#riskCard","#summaryCard","#profCard","#favCard","#deadCard",
+      "#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"
+    ].forEach((sel,i)=>{
+      const el=$(sel); if(el){ setTimeout(()=>el.classList.add('fade-in'), 80*i); }
+    });
   });
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target); }});
-  }, { threshold: 0.18 });
-  ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  /* Bottom CTA + footer reveal */
-  const dlWrap=$("#dlWrap"), showThresholdPx=300;
+  /* Bottom CTA reveal */
+  const dlWrap=$("#dlWrap"), showThresholdPx=320;
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
     const show=scrolledFromBottom<=showThresholdPx;
@@ -588,7 +543,6 @@
     y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
     y=section("Main Clauses", y); y=bullets(d.clauses, y);
     y=section("Potential Issues", y); y=bullets(d.issues, y);
-    y=section("Smart Suggestions", y); y=bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
     function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
@@ -601,6 +555,9 @@
       }); return y;
     }
   }
+
+  // Reviews hook
+  document.getElementById('leaveReview').addEventListener('click', (e)=>{ e.preventDefault(); alert('Hook this to your reviews form URL.'); });
 })();
 </script>
 </body>
