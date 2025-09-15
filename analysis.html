@@ -18,7 +18,7 @@
       --red:#fe0000;
       --black:#000000;
       --radius:20px;
-      --gap:14px;           /* a bit more air between sections */
+      --gap:16px;           /* a bit more air between sections */
       --drawerW:75vw;       /* slide-out menu covers ~75% */
       --containerMax:428px; /* iPhone 12 Pro Max logical width */
     }
@@ -43,7 +43,7 @@
       width:40px; height:40px; border-radius:12px; border:1px solid var(--border);
       background:#14121a; cursor:pointer; padding:0;
     }
-    .menu-btn img{width:20px; height:20px}
+    .menu-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
     .top-title{font-size:20px; font-weight:400}
 
     /* Language dropdown */
@@ -66,7 +66,7 @@
 
     /* ===== DRAWER + OVERLAY ===== */
     .drawer{
-      position:fixed; left:0; top:0; bottom:0; width:var(--drawerW); max-width:420px;
+      position:fixed; left:0; top:0; bottom:0; width:min(var(--drawerW),420px);
       background:#0f0e14; border-right:1px solid var(--border);
       display:flex; flex-direction:column; padding:12px 16px 16px; gap:16px;
       transform:translateX(-100%); transition:transform .28s ease; z-index:80;
@@ -75,13 +75,14 @@
     .drawer .brand-row{ display:flex; align-items:center; gap:12px; padding-top:4px; }
     .drawer .brand-row img{width:34px; height:34px}
     .drawer .brand-row span{font-size:24px; font-weight:400}
-    .drawer .nav{display:flex; flex-direction:column; gap:10px; margin-top:6px}
+    .drawer .nav{display:flex; flex-direction:column; gap:8px; margin-top:6px}
     .drawer .nav a{
-      text-decoration:none; color:var(--muted); display:flex; align-items:center; gap:16px;
-      padding:16px 18px; border-radius:16px; border:1px solid transparent; font-size:19px;
+      text-decoration:none; color:var(--muted); display:flex; align-items:center; gap:12px;
+      padding:14px 16px; border-radius:16px; border:1px solid transparent; font-size:18px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .drawer .nav a img.icon{width:26px; height:26px}
-    .drawer .nav a img.arr{width:18px; height:18px; opacity:.9}
+    .drawer .nav a img.icon{width:22px; height:22px}
+    .drawer .nav a img.arr{width:16px; height:16px; opacity:.9}
     .drawer .nav a.active{background:#181620; border:1px solid var(--border); color:var(--white)}
     .drawer .nav a:hover{background:transparent; border:1px solid var(--border); color:var(--white)}
     .drawer .push{flex:1}
@@ -104,13 +105,13 @@
 
     /* Cards & animations */
     .card{
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px;
       opacity:0; transform:translateY(8px); margin-bottom:var(--gap);
     }
     @keyframes fadeIn{to{opacity:1; transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
-    .card h3{margin:0 0 12px;display:flex;align-items:center;gap:10px;font-size:18px;font-weight:400}
-    .card h3 img{width:22px;height:22px}
+    .card h3{margin:0 0 10px;display:flex;align-items:center;gap:10px;font-size:18px;font-weight:400}
+    .card h3 img{width:20px;height:20px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:10px}
@@ -131,23 +132,27 @@
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* Donuts */
-    .hcard{display:flex;gap:14px;align-items:center}
-    .circle{width:120px;height:120px;position:relative;display:grid;place-items:center;flex:0 0 120px}
+    /* Donuts — smaller circle, thicker stroke; reduce note text */
+    .hcard{display:flex;gap:12px;align-items:center}
+    .circle{width:110px;height:110px;position:relative;display:grid;place-items:center;flex:0 0 110px}
     .circle svg{transform:rotate(-90deg)}
-    .circle .val{position:absolute;font-weight:400;font-size:28px}
-    .circle circle.track{stroke:var(--black);stroke-width:10;fill:none}
-    .circle circle.arc{stroke-width:10;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
-    .htext{flex:1;display:flex;flex-direction:column;gap:6px}
+    .circle .val{position:absolute;font-weight:400;font-size:26px}
+    .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}
+    .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
+    .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
-    .status{display:flex;align-items:center;gap:8px;margin-top:6px}
+    #riskCard .muted, #clarCard .muted{font-size:13.5px; line-height:1.5} /* smaller sentence */
+    .status{display:flex;align-items:center;gap:8px;margin-top:4px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:15px}
 
+    /* Make those two cards a bit tighter vertically */
+    #riskCard, #clarCard{padding:12px 12px}
+
     /* Score checker */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
-    #scoreCard .score-pct{font-size:32px}
-    .score-side{flex:1;display:flex;flex-direction:column;gap:12px}
+    #scoreCard .score-pct{font-size:30px}
+    .score-side{flex:1;display:flex;flex-direction:column;gap:10px}
     .score-remark{font-size:16px;color:var(--muted)}
     .score-bar{position:relative;height:20px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:30px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
@@ -172,15 +177,10 @@
     .input{flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter}
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
-
-    /* Desktop keeps same centered narrow layout for consistency */
-    @media (min-width:900px){
-      .top-title{font-size:20px}
-    }
   </style>
 </head>
 <body>
-  <!-- SCRIM + DRAWER (opens from top-left icon) -->
+  <!-- SCRIM + DRAWER -->
   <div id="scrim" class="scrim" aria-hidden="true"></div>
   <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="brand-row">
@@ -210,7 +210,10 @@
     <div class="topbar">
       <div class="top-left">
         <button id="menuBtn" class="menu-btn" aria-label="Open menu">
-          <img src="https://imgur.com/CHGomYz.png" alt="">
+          <!-- Hamburger icon -->
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6.5h18M3 12h18M3 17.5h18" />
+          </svg>
         </button>
         <div class="top-title">Overview</div>
       </div>
@@ -240,7 +243,7 @@
       <section class="card" id="riskCard">
         <div class="hcard">
           <div class="circle">
-            <svg width="120" height="120" viewBox="0 0 160 160">
+            <svg width="110" height="110" viewBox="0 0 160 160">
               <circle class="track" cx="80" cy="80" r="74"></circle>
               <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
             </svg>
@@ -297,7 +300,7 @@
       <section class="card" id="clarCard">
         <div class="hcard">
           <div class="circle">
-            <svg width="120" height="120" viewBox="0 0 160 160">
+            <svg width="110" height="110" viewBox="0 0 160 160">
               <circle class="track" cx="80" cy="80" r="74"></circle>
               <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
             </svg>
@@ -321,7 +324,7 @@
       <section class="card" id="scoreCard">
         <div class="hcard">
           <div class="circle">
-            <svg width="120" height="120" viewBox="0 0 160 160">
+            <svg width="110" height="110" viewBox="0 0 160 160">
               <circle class="track" cx="80" cy="80" r="74"></circle>
               <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
             </svg>
@@ -496,7 +499,7 @@
       "#riskCard","#summaryCard","#profCard","#favCard","#deadCard",
       "#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"
     ].forEach((sel,i)=>{
-      const el=$(sel); if(el){ setTimeout(()=>el.classList.add('fade-in'), 80*i); }
+      const el=$(sel); if(el){ setTimeout(()=>el.classList.add('fade-in'), 70*i); }
     });
   });
 
