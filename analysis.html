@@ -22,7 +22,7 @@
     .menu-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
     .top-title{font-size:20px;font-weight:400}
 
-    /* language dropdown – tight */
+    /* language dropdown – tight, no wasted right space */
     .lang{position:relative}
     .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
@@ -78,13 +78,14 @@
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* donuts */
+    /* donuts — thicker + smooth + correct % */
     .hcard{display:flex;gap:12px;align-items:center}
     .circle{width:112px;height:112px;position:relative;display:grid;place-items:center;flex:0 0 112px}
     .circle svg{transform:rotate(-90deg)}
     .circle .val{position:absolute;font-weight:400;font-size:26px}
-    .circle .track{stroke:var(--black);stroke-width:8;fill:none}
-    .circle .arc{stroke-width:8;fill:none;stroke-linecap:round}
+    .circle circle{shape-rendering:geometricPrecision;vector-effect:non-scaling-stroke}
+    .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}
+    .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round}
     .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
     #riskCard .muted, #clarCard .muted{font-size:13.5px;line-height:1.5}
@@ -176,8 +177,7 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <!-- PATH, not circle -->
-              <path id="riskArc" class="arc" d=""></path>
+              <circle id="riskArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="val" id="riskVal">0%</div>
           </div>
@@ -234,7 +234,7 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <path id="clarArc" class="arc" d=""></path>
+              <circle id="clarArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="val" id="clarVal">0%</div>
           </div>
@@ -258,7 +258,7 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <path id="scoreArc" class="arc" d=""></path>
+              <circle id="scoreArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
           </div>
@@ -309,7 +309,7 @@
   menuBtn.addEventListener('click', openDrawer); scrim.addEventListener('click', closeDrawer);
   window.addEventListener('keydown', e=>{if(e.key==='Escape') closeDrawer()});
 
-  /* language menu */
+  /* language menu: open/select/close + outside click */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
   const langMenu = document.getElementById("langMenu");
@@ -334,7 +334,10 @@
       "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
+      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
+      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period.",
+      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
+      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how and add a short grace period and a cap."
     ],
     issues:[
       "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
@@ -360,44 +363,25 @@
 
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
+
   (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* ===== Helper to draw exact-portion path arcs ===== */
-  function polarToCartesian(cx, cy, r, angleDeg){
-    const rad = (angleDeg) * Math.PI/180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-  }
-  function describeArc(cx, cy, r, startAngle, endAngle){
-    const start = polarToCartesian(cx, cy, r, endAngle);
-    const end   = polarToCartesian(cx, cy, r, startAngle);
-    const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
-    return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-  }
-  function setArcPath(pathEl, metric, value, valEl, noteEl, note){
-    const v = between(value||0,0,100);
-    const start = -90; // 12 o'clock
-    const end   = start + (360 * v / 100);
-    pathEl.setAttribute('d', describeArc(100,100,84,start,end));
-    pathEl.style.stroke = colorFor(metric, v);
-
-    // simple reveal animation
-    const len = pathEl.getTotalLength();
-    pathEl.style.transition = 'none';
-    pathEl.style.strokeDasharray = `${len} ${len}`;
-    pathEl.style.strokeDashoffset = `${len}`;
-    pathEl.getBoundingClientRect(); // reflow
-    requestAnimationFrame(()=>{
-      pathEl.style.transition = 'stroke-dashoffset 900ms ease';
-      pathEl.style.strokeDashoffset = '0';
-    });
-
-    if(valEl)  valEl.textContent = v + "%";
+  /* FIXED donut math: only v% of circumference green, rest black */
+  function setArc(arcEl,metric,value,valEl,noteEl,note){
+    const v=between(value||0,0,100);
+    const len = (arcEl.getTotalLength?arcEl.getTotalLength():2*Math.PI*(parseFloat(arcEl.getAttribute('r'))||84));
+    const dash = len * (v/100);
+    arcEl.style.stroke = colorFor(metric,v);
+    arcEl.style.transition = "stroke-dasharray 1.2s ease";
+    // start empty then grow to the exact %; no dashoffset so the fill starts at 12 o'clock
+    arcEl.style.strokeDasharray = `0 ${len}`;
+    requestAnimationFrame(()=>{ arcEl.style.strokeDasharray = `${dash} ${len - dash}`; });
+    if(valEl) valEl.textContent = v + "%";
     if(noteEl) noteEl.textContent = note || "";
   }
-
-  setArcPath($("#riskArc"), 'risk',    demo.risk?.value??0,    $("#riskVal"), $("#riskNote"), demo.risk?.note);
-  setArcPath($("#clarArc"), 'clarity', demo.clarity?.value??0, $("#clarVal"), $("#clarNote"), demo.clarity?.note);
+  setArc($("#riskArc"),'risk',demo.risk?.value??0,$("#riskVal"),$("#riskNote"),demo.risk?.note);
+  setArc($("#clarArc"),'clarity',demo.clarity?.value??0,$("#clarVal"),$("#clarNote"),demo.clarity?.note);
 
   function setMeter(fill,label,metric,value){
     const v=between(value||0,0,100);
@@ -410,17 +394,12 @@
   setMeter($("#deadFill"),$("#deadVal"),'deadline',demo.meters?.deadline??0);
   setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',demo.meters?.confidence??0);
 
-  (function(){
-    const v=80;
-    setArcPath($("#scoreArc"), 'confidence', v);
-    $("#scorePct").textContent = v + "%";
-    $("#scoreInd").style.left  = "calc(80% - 1.5px)";
-  })();
+  // Score checker donut at exactly 80%
+  (function(){const v=80; setArc($("#scoreArc"),'confidence',v); $("#scorePct").textContent=v+"%"; $("#scoreInd").style.left="calc(80% - 1.5px)";})();
 
-  window.addEventListener('load',()=>{
-    ["#riskCard","#summaryCard","#profCard","#favCard","#deadCard","#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"]
-      .forEach((sel,i)=>{const el=$(sel); if(el){setTimeout(()=>el.classList.add('fade-in'),70*i)}})
-  });
+  window.addEventListener('load',()=>[
+    "#riskCard","#summaryCard","#profCard","#favCard","#deadCard","#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"
+  ].forEach((sel,i)=>{const el=$(sel); if(el){setTimeout(()=>el.classList.add('fade-in'),70*i)}}));
 
   const dlWrap=$("#dlWrap"), showThresholdPx=320;
   function nearBottom(){
@@ -467,5 +446,3 @@
 </script>
 </body>
 </html>
-
-
