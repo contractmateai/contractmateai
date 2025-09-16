@@ -22,7 +22,7 @@
     .menu-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
     .top-title{font-size:20px;font-weight:400}
 
-    /* language dropdown – tighter, no extra right space */
+    /* language dropdown – tight */
     .lang{position:relative}
     .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
@@ -78,14 +78,13 @@
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* donuts — thin + smooth */
+    /* donuts */
     .hcard{display:flex;gap:12px;align-items:center}
     .circle{width:112px;height:112px;position:relative;display:grid;place-items:center;flex:0 0 112px}
     .circle svg{transform:rotate(-90deg)}
     .circle .val{position:absolute;font-weight:400;font-size:26px}
-    .circle circle{shape-rendering:geometricPrecision;vector-effect:non-scaling-stroke}
-    .circle circle.track{stroke:var(--black);stroke-width:8;fill:none}
-    .circle circle.arc{stroke-width:8;fill:none;stroke-linecap:round}
+    .circle .track{stroke:var(--black);stroke-width:8;fill:none}
+    .circle .arc{stroke-width:8;fill:none;stroke-linecap:round}
     .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
     #riskCard .muted, #clarCard .muted{font-size:13.5px;line-height:1.5}
@@ -94,10 +93,8 @@
     .status span{font-size:15px}
     #riskCard,#clarCard{padding:12px}
 
-    /* small title OUTSIDE the risk card */
     .doc-title-top{font-size:14px;color:#dcdcdc;margin:0 0 8px 2px;opacity:.9}
 
-    /* score checker (unchanged) */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:30px}
     .score-side{flex:1;display:flex;flex-direction:column;gap:10px}
@@ -171,7 +168,6 @@
     </div>
 
     <div class="container">
-      <!-- OUTSIDE title, above risk card -->
       <div class="doc-title-top">Title: Non-Disclosure Agreement (NDA)</div>
 
       <!-- 1) RISK LEVEL -->
@@ -180,7 +176,8 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <circle id="riskArc" class="arc" cx="100" cy="100" r="84"></circle>
+              <!-- PATH, not circle -->
+              <path id="riskArc" class="arc" d=""></path>
             </svg>
             <div class="val" id="riskVal">0%</div>
           </div>
@@ -237,7 +234,7 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <circle id="clarArc" class="arc" cx="100" cy="100" r="84"></circle>
+              <path id="clarArc" class="arc" d=""></path>
             </svg>
             <div class="val" id="clarVal">0%</div>
           </div>
@@ -261,7 +258,7 @@
           <div class="circle">
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
-              <circle id="scoreArc" class="arc" cx="100" cy="100" r="84"></circle>
+              <path id="scoreArc" class="arc" d=""></path>
             </svg>
             <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
           </div>
@@ -312,7 +309,7 @@
   menuBtn.addEventListener('click', openDrawer); scrim.addEventListener('click', closeDrawer);
   window.addEventListener('keydown', e=>{if(e.key==='Escape') closeDrawer()});
 
-  /* language menu: open/select/close + outside click */
+  /* language menu */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
   const langMenu = document.getElementById("langMenu");
@@ -363,37 +360,44 @@
 
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
-
   (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* donut helper — show EXACT percent (green part only that %). 
-     We set dasharray to "<visible> <remaining>", no offset. */
-  function setArc(arcEl, metric, value, valEl, noteEl, note){
-    const v = between(value || 0, 0, 100);
-    const r = parseFloat(arcEl.getAttribute('r')) || 84;
-    const len = (arcEl.getTotalLength ? arcEl.getTotalLength() : 2 * Math.PI * r);
-    const visible = (v / 100) * len;
-    const remaining = Math.max(0, len - visible);
+  /* ===== Helper to draw exact-portion path arcs ===== */
+  function polarToCartesian(cx, cy, r, angleDeg){
+    const rad = (angleDeg) * Math.PI/180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+  function describeArc(cx, cy, r, startAngle, endAngle){
+    const start = polarToCartesian(cx, cy, r, endAngle);
+    const end   = polarToCartesian(cx, cy, r, startAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
+    return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+  }
+  function setArcPath(pathEl, metric, value, valEl, noteEl, note){
+    const v = between(value||0,0,100);
+    const start = -90; // 12 o'clock
+    const end   = start + (360 * v / 100);
+    pathEl.setAttribute('d', describeArc(100,100,84,start,end));
+    pathEl.style.stroke = colorFor(metric, v);
 
-    arcEl.style.stroke = colorFor(metric, v);
-
-    // reset then animate to target
-    arcEl.style.transition = 'none';
-    arcEl.style.strokeDasharray = `0 ${len}`;
-    arcEl.style.strokeDashoffset = '0';
-    arcEl.getBoundingClientRect(); // force reflow
+    // simple reveal animation
+    const len = pathEl.getTotalLength();
+    pathEl.style.transition = 'none';
+    pathEl.style.strokeDasharray = `${len} ${len}`;
+    pathEl.style.strokeDashoffset = `${len}`;
+    pathEl.getBoundingClientRect(); // reflow
     requestAnimationFrame(()=>{
-      arcEl.style.transition = 'stroke-dasharray 1.0s ease';
-      arcEl.style.strokeDasharray = `${visible} ${remaining}`;
+      pathEl.style.transition = 'stroke-dashoffset 900ms ease';
+      pathEl.style.strokeDashoffset = '0';
     });
 
-    if (valEl)  valEl.textContent  = v + "%";
-    if (noteEl) noteEl.textContent = note || "";
+    if(valEl)  valEl.textContent = v + "%";
+    if(noteEl) noteEl.textContent = note || "";
   }
 
-  setArc($("#riskArc"),'risk',demo.risk?.value??0,$("#riskVal"),$("#riskNote"),demo.risk?.note);
-  setArc($("#clarArc"),'clarity',demo.clarity?.value??0,$("#clarVal"),$("#clarNote"),demo.clarity?.note);
+  setArcPath($("#riskArc"), 'risk',    demo.risk?.value??0,    $("#riskVal"), $("#riskNote"), demo.risk?.note);
+  setArcPath($("#clarArc"), 'clarity', demo.clarity?.value??0, $("#clarVal"), $("#clarNote"), demo.clarity?.note);
 
   function setMeter(fill,label,metric,value){
     const v=between(value||0,0,100);
@@ -408,9 +412,9 @@
 
   (function(){
     const v=80;
-    setArc($("#scoreArc"),'confidence',v);
-    $("#scorePct").textContent=v+"%";
-    $("#scoreInd").style.left="calc(80% - 1.5px)";
+    setArcPath($("#scoreArc"), 'confidence', v);
+    $("#scorePct").textContent = v + "%";
+    $("#scoreInd").style.left  = "calc(80% - 1.5px)";
   })();
 
   window.addEventListener('load',()=>{
