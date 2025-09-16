@@ -78,12 +78,12 @@
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* donuts — thicker + smooth + correct % */
+    /* donuts — smooth (not thicker) and exact % */
     .hcard{display:flex;gap:12px;align-items:center}
     .circle{width:112px;height:112px;position:relative;display:grid;place-items:center;flex:0 0 112px}
-    .circle svg{transform:rotate(-90deg)}
+    .circle svg{transform:rotate(-90deg);shape-rendering:geometricPrecision}
     .circle .val{position:absolute;font-weight:400;font-size:26px}
-    .circle circle{shape-rendering:geometricPrecision;vector-effect:non-scaling-stroke}
+    .circle circle{vector-effect:non-scaling-stroke}
     .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}
     .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round}
     .htext{flex:1;display:flex;flex-direction:column;gap:4px}
@@ -309,7 +309,7 @@
   menuBtn.addEventListener('click', openDrawer); scrim.addEventListener('click', closeDrawer);
   window.addEventListener('keydown', e=>{if(e.key==='Escape') closeDrawer()});
 
-  /* language menu: open/select/close + outside click */
+  /* language menu */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
   const langMenu = document.getElementById("langMenu");
@@ -334,10 +334,7 @@
       "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
-      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period.",
-      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how and add a short grace period and a cap."
+      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
     ],
     issues:[
       "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
@@ -364,17 +361,17 @@
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
-  (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
+  (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).forEach(t=>addP(el,t))})();
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* FIXED donut math: only v% of circumference green, rest black */
+  /* Donut helper – smoother + exact percentage of arc only */
   function setArc(arcEl,metric,value,valEl,noteEl,note){
     const v=between(value||0,0,100);
     const len = (arcEl.getTotalLength?arcEl.getTotalLength():2*Math.PI*(parseFloat(arcEl.getAttribute('r'))||84));
-    const dash = len * (v/100);
+    const dash = Math.max(0, Math.min(len, len * (v/100)));
     arcEl.style.stroke = colorFor(metric,v);
-    arcEl.style.transition = "stroke-dasharray 1.2s ease";
-    // start empty then grow to the exact %; no dashoffset so the fill starts at 12 o'clock
+    // animate dasharray for smooth growth, no offset (starts at 12 o'clock)
+    arcEl.style.transition = "stroke-dasharray 900ms ease";
     arcEl.style.strokeDasharray = `0 ${len}`;
     requestAnimationFrame(()=>{ arcEl.style.strokeDasharray = `${dash} ${len - dash}`; });
     if(valEl) valEl.textContent = v + "%";
@@ -431,7 +428,7 @@
     y=section("Summary",y); y=bullets(d.summary,y);
     y=section(`Risk Level: ${d.risk?.value??0}%`,y); y=paragraph(d.risk?.note||"",y);
     y=section(`Clause Clarity: ${d.clarity?.value??0}%`,y); y=paragraph(d.clarity?.note||"",y);
-    y=section("Main Clauses",y); y=bullets((d.clauses||[]).slice(0,4),y);
+    y=section("Main Clauses",y); y=bullets(d.clauses,y);
     y=section("Potential Issues",y); y=bullets(d.issues,y);
     doc.save("SignSense_Report.pdf");
     function section(t,y){if(y>780){doc.addPage();y=64;} doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t,margin,y); return y+12;}
@@ -446,3 +443,4 @@
 </script>
 </body>
 </html>
+
