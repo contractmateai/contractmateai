@@ -147,7 +147,7 @@
     .circle .val{position:absolute;font-weight:400;font-size:26px}
     .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}
     .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px)}
-    .htext{flex:1;display:flex:flex-direction:column;gap:4px}
+    .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
     #riskCard .muted, #clarCard .muted{font-size:13.5px; line-height:1.5}
     .status{display:flex;align-items:center;gap:8px;margin-top:4px}
@@ -158,7 +158,7 @@
 
     #scoreCard .score-center{position:absolute:inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:30px}
-    .score-side{flex:1;display:flex:flex-direction:column;gap:10px}
+    .score-side{flex:1;display:flex;flex-direction:column;gap:10px}
     .score-remark{font-size:16px;color:var(--muted)}
     .score-bar{position:relative;height:20px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:30px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
@@ -326,7 +326,17 @@
         </div>
       </section>
 
-      <!-- 9) SCORE CHECKER -->
+      <!-- 9) SMART SUGGESTIONS -->
+      <section class="card" id="suggestionsCard">
+        <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
+        <div class="list numbered" id="suggestionsList">
+          <p>Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.</p>
+          <p>Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.</p>
+          <p>Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.</p>
+        </div>
+      </section>
+
+      <!-- 10) SCORE CHECKER -->
       <section class="card" id="scoreCard">
         <div class="hcard">
           <div class="circle">
@@ -345,7 +355,7 @@
         </div>
       </section>
 
-      <!-- 10) CONFIDENCE -->
+      <!-- 11) CONFIDENCE -->
       <section class="card meter-block" id="confRightCard">
         <div class="meter-head">
           <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt="" style="width: 26px; height: 26px; margin-top: 0px;"> <span>Confidence to sign freely</span></div>
@@ -439,6 +449,11 @@
       "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
       "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
     ],
+    suggestions: [
+      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
+      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
+      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
+    ],
     meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 }
   };
 
@@ -460,6 +475,7 @@
 
   function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:[""]).forEach(t=>addP(el,t)); }
   listTo("#clausesList", demo.clauses);
+  listTo("#suggestionsList", demo.suggestions);
 
   /* Issues list */
   (function(){ const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li);});})();
@@ -502,7 +518,7 @@
   window.addEventListener('load', () => {
     [
       "#riskCard","#summaryCard","#profCard","#favCard","#deadCard",
-      "#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"
+      "#issuesCard","#clarCard","#clausesCard","#suggestionsCard","#scoreCard","#confRightCard"
     ].forEach((sel,i)=>{
       const el=$(sel); if(el){ setTimeout(()=>el.classList.add('fade-in'), 70*i); }
     });
@@ -551,6 +567,7 @@
     y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
     y=section("Main Clauses", y); y=bullets(d.clauses, y);
     y=section("Potential Issues", y); y=bullets(d.issues, y);
+    y=section("Smart Suggestions", y); y=bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
     function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
