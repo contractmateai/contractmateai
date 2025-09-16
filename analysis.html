@@ -18,9 +18,9 @@
       --red:#fe0000;
       --black:#000000;
       --radius:20px;
-      --gap:16px;           /* a bit more air between sections */
-      --drawerW:75vw;       /* slide-out menu covers ~75% */
-      --containerMax:428px; /* iPhone 12 Pro Max logical width */
+      --gap:16px;
+      --drawerW:75vw;
+      --containerMax:428px; /* iPhone 12 Pro Max width */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -46,7 +46,7 @@
     .menu-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
     .top-title{font-size:20px; font-weight:400}
 
-    /* Language dropdown */
+    /* Language dropdown (tighter, outside-click closes) */
     .lang{position:relative}
     .lang-btn{
       display:flex; align-items:center; gap:8px; background:transparent; border:none; color:var(--white);
@@ -55,13 +55,14 @@
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
     .lang-menu{
       position:absolute; right:0; top:calc(100% + 8px); background:var(--card); border:1px solid var(--border);
-      border-radius:12px; min-width:240px; max-height:240px; overflow:auto; display:none; box-shadow:0 10px 30px rgba(0,0,0,.4); padding:6px;
+      border-radius:12px; width:max-content; min-width:160px; max-width:calc(100vw - 24px);
+      max-height:240px; overflow:auto; display:none; box-shadow:0 10px 30px rgba(0,0,0,.4); padding:4px;
       scrollbar-width:thin; scrollbar-color:#6a6a6a transparent;
     }
-    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
+    .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-    .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
+    .lang-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:var(--white);cursor:pointer;font-size:16px;white-space:nowrap}
     .lang-item:hover{background:#17161e}
 
     /* ===== DRAWER + OVERLAY ===== */
@@ -111,7 +112,8 @@
     @keyframes fadeIn{to{opacity:1; transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
     .card h3{margin:0 0 10px;display:flex;align-items:center;gap:10px;font-size:18px;font-weight:400}
-    .card h3 img{width:20px;height:20px}
+    /* slightly larger icons */
+    .card h3 img{width:24px;height:24px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:10px}
@@ -128,26 +130,30 @@
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
     .meter-title{display:flex;align-items:center;gap:10px;font-size:16px}
-    .meter-title img{width:20px;height:20px}
+    .meter-title img{width:22px;height:22px} /* a bit larger */
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* Donuts — smaller circle, thicker stroke; reduce note text */
+    /* Donuts — thicker + smoother (hi-res viewBox + precision) */
     .hcard{display:flex;gap:12px;align-items:center}
-    .circle{width:110px;height:110px;position:relative;display:grid;place-items:center;flex:0 0 110px}
+    .circle{width:112px;height:112px;position:relative;display:grid;place-items:center;flex:0 0 112px}
     .circle svg{transform:rotate(-90deg)}
     .circle .val{position:absolute;font-weight:400;font-size:26px}
-    .circle circle.track{stroke:var(--black);stroke-width:14;fill:none}
-    .circle circle.arc{stroke-width:14;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
+    .circle circle{shape-rendering:geometricPrecision; vector-effect: non-scaling-stroke}
+    .circle circle.track{stroke:var(--black);stroke-width:16;fill:none}
+    .circle circle.arc{stroke-width:16;fill:none;stroke-linecap:round;stroke-dasharray:628;stroke-dashoffset:628}
     .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
-    #riskCard .muted, #clarCard .muted{font-size:13.5px; line-height:1.5} /* smaller sentence */
+    #riskCard .muted, #clarCard .muted{font-size:13.5px; line-height:1.5}
     .status{display:flex;align-items:center;gap:8px;margin-top:4px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:15px}
 
-    /* Make those two cards a bit tighter vertically */
-    #riskCard, #clarCard{padding:12px 12px}
+    /* tighter vertical padding for these two */
+    #riskCard, #clarCard{padding:12px}
+
+    /* Small title above risk card */
+    .doc-title{font-size:14px;color:#dcdcdc;margin:0 0 8px;opacity:.9}
 
     /* Score checker */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
@@ -211,9 +217,7 @@
       <div class="top-left">
         <button id="menuBtn" class="menu-btn" aria-label="Open menu">
           <!-- Hamburger icon -->
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 6.5h18M3 12h18M3 17.5h18" />
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18M3 12h18M3 17.5h18" /></svg>
         </button>
         <div class="top-title">Overview</div>
       </div>
@@ -241,11 +245,13 @@
     <div class="container">
       <!-- 1) RISK LEVEL -->
       <section class="card" id="riskCard">
+        <div class="doc-title">Title: Non-Disclosure Agreement (NDA)</div>
         <div class="hcard">
           <div class="circle">
-            <svg width="110" height="110" viewBox="0 0 160 160">
-              <circle class="track" cx="80" cy="80" r="74"></circle>
-              <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
+            <!-- hi-res viewBox for smoothness -->
+            <svg width="112" height="112" viewBox="0 0 200 200">
+              <circle class="track" cx="100" cy="100" r="84"></circle>
+              <circle id="riskArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="val" id="riskVal">0%</div>
           </div>
@@ -300,9 +306,9 @@
       <section class="card" id="clarCard">
         <div class="hcard">
           <div class="circle">
-            <svg width="110" height="110" viewBox="0 0 160 160">
-              <circle class="track" cx="80" cy="80" r="74"></circle>
-              <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
+            <svg width="112" height="112" viewBox="0 0 200 200">
+              <circle class="track" cx="100" cy="100" r="84"></circle>
+              <circle id="clarArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="val" id="clarVal">0%</div>
           </div>
@@ -324,9 +330,9 @@
       <section class="card" id="scoreCard">
         <div class="hcard">
           <div class="circle">
-            <svg width="110" height="110" viewBox="0 0 160 160">
-              <circle class="track" cx="80" cy="80" r="74"></circle>
-              <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
+            <svg width="112" height="112" viewBox="0 0 200 200">
+              <circle class="track" cx="100" cy="100" r="84"></circle>
+              <circle id="scoreArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
             <div class="score-center">
               <div class="score-pct" id="scorePct">80%</div>
@@ -395,18 +401,27 @@
   scrim.addEventListener('click', closeDrawer);
   window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
 
-  /* ---------- Language UI ---------- */
+  /* ---------- Language UI (click to open, select to close, click-outside to close) ---------- */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
+  const langMenu = document.getElementById("langMenu");
   const langNow = document.getElementById("langNow");
   const codeMap = {"English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES","Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO","Shqip":"SQ","Türkçe":"TR","中文":"中文","日本語":"日本語"};
-  document.getElementById("langMenu").querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", ()=>{ langNow.textContent = codeMap[li.dataset.lang] || "EN"; });
+
+  // open/close
+  langBtn.addEventListener("click", (e)=>{ e.stopPropagation(); lang.classList.toggle("open"); });
+  // select and close
+  langMenu.querySelectorAll(".lang-item").forEach(li=>{
+    li.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      langNow.textContent = codeMap[li.dataset.lang] || "EN";
+      lang.classList.remove("open");
+    });
   });
-  let hoverTimer=null;
-  lang.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); lang.classList.add("open"); });
-  lang.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>lang.classList.remove("open"),150); });
-  langBtn.addEventListener("click", ()=>{ lang.classList.toggle("open"); });
+  // click outside closes
+  document.addEventListener("click", (e)=>{
+    if (!lang.contains(e.target)) lang.classList.remove("open");
+  });
 
   /* ---------- Demo data ---------- */
   const demo = {
@@ -452,21 +467,31 @@
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:[""]).forEach(t=>addP(el,t)); }
+  /* Main clauses: show only 1–4 */
+  function listTo(id, arr){
+    const el=$(id); el.innerHTML="";
+    (arr && arr.length ? arr.slice(0,4) : [""]).forEach(t=>addP(el,t));
+  }
   listTo("#clausesList", demo.clauses);
 
   /* Issues list */
-  (function(){ const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
+  (function(){
+    const el=$("#issuesList"); el.innerHTML="";
+    (demo.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);});
+  })();
 
-  /* Donut helper */
+  /* Donut helper (works with r from SVG; smoother & thicker) */
   function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value||0, 0, 100);
-    const rr = parseFloat(arcEl.getAttribute('r')) || 74;
+    const rr = parseFloat(arcEl.getAttribute('r')) || 84;          // hi-res r
     const circ = 2*Math.PI*rr;
     arcEl.style.stroke = colorFor(metric, v);
     arcEl.style.strokeDasharray = circ;
     arcEl.style.strokeDashoffset = circ;
-    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
+    requestAnimationFrame(()=>{
+      arcEl.style.transition="stroke-dashoffset 1.6s ease";
+      arcEl.style.strokeDashoffset = circ * (1 - v/100);
+    });
     if (valEl) valEl.textContent = v + "%";
     if (noteEl) noteEl.textContent = note || "";
   }
@@ -544,7 +569,7 @@
     y=section("Summary", y); y=bullets(d.summary, y);
     y=section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
     y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
-    y=section("Main Clauses", y); y=bullets(d.clauses, y);
+    y=section("Main Clauses", y); y=bullets(d.clauses.slice(0,4), y); /* keep 1–4 in PDF too */
     y=section("Potential Issues", y); y=bullets(d.issues, y);
     doc.save("SignSense_Report.pdf");
 
