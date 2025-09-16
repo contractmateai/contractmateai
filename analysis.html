@@ -337,10 +337,7 @@
       "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
-      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period.",
-      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how and add a short grace period and a cap."
+      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
     ],
     issues:[
       "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
@@ -367,25 +364,33 @@
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
-  /* show only 1–4 clauses on page (unchanged from your last request) */
+  /* show only 1–4 clauses on page */
   (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
 
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* donut helper – exact % length using totalLength and 2-value dasharray */
-  function setArc(arcEl,metric,value,valEl,noteEl,note){
-    const v=between(value||0,0,100);
-    const len = (arcEl.getTotalLength?arcEl.getTotalLength():2*Math.PI*(parseFloat(arcEl.getAttribute('r'))||84));
-    arcEl.style.stroke = colorFor(metric,v);
-    arcEl.style.strokeDasharray = `${len} ${len}`;
-    arcEl.style.strokeDashoffset = `${len}`;
-    requestAnimationFrame(()=>{
-      arcEl.style.transition = "stroke-dashoffset 1.2s ease";
-      arcEl.style.strokeDashoffset = `${len * (1 - v/100)}`;
+  /* donut helper — EXACT % of circle using dasharray "filled remaining" */
+  function setArc(arcEl, metric, value, valEl, noteEl, note){
+    const v = between(value || 0, 0, 100);
+    const r = parseFloat(arcEl.getAttribute('r')) || 84;
+    const len = (arcEl.getTotalLength ? arcEl.getTotalLength() : 2 * Math.PI * r);
+    const filled = len * (v / 100);
+
+    arcEl.style.stroke = colorFor(metric, v);
+    // Start at 0% visible
+    arcEl.style.strokeDasharray = `0 ${len}`;
+    arcEl.style.strokeDashoffset = '0';
+
+    requestAnimationFrame(() => {
+      arcEl.style.transition = 'stroke-dasharray 1.2s ease';
+      // Reveal exactly v% of the circumference
+      arcEl.style.strokeDasharray = `${filled} ${len - filled}`;
     });
-    if(valEl) valEl.textContent = v + "%";
-    if(noteEl) noteEl.textContent = note || "";
+
+    if (valEl)  valEl.textContent  = v + "%";
+    if (noteEl) noteEl.textContent = note || "";
   }
+
   setArc($("#riskArc"),'risk',demo.risk?.value??0,$("#riskVal"),$("#riskNote"),demo.risk?.note);
   setArc($("#clarArc"),'clarity',demo.clarity?.value??0,$("#clarVal"),$("#clarNote"),demo.clarity?.note);
 
@@ -400,7 +405,12 @@
   setMeter($("#deadFill"),$("#deadVal"),'deadline',demo.meters?.deadline??0);
   setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',demo.meters?.confidence??0);
 
-  (function(){const v=80; setArc($("#scoreArc"),'confidence',v); $("#scorePct").textContent=v+"%"; $("#scoreInd").style.left="calc(80% - 1.5px)";})();
+  (function(){
+    const v=80;
+    setArc($("#scoreArc"),'confidence',v);
+    $("#scorePct").textContent=v+"%";
+    $("#scoreInd").style.left="calc(80% - 1.5px)";
+  })();
 
   window.addEventListener('load',()=>{
     ["#riskCard","#summaryCard","#profCard","#favCard","#deadCard","#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"]
@@ -452,4 +462,3 @@
 </script>
 </body>
 </html>
-
