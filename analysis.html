@@ -418,7 +418,7 @@
     li.addEventListener("click", (e) => {
       e.stopPropagation();
       langNow.textContent = codeMap[li.dataset.lang] || "EN";
-      lang.classList.remove("open"); // Automatically close dropdown after selection
+      lang.classList.remove("open"); // Closes menu after selection
     });
   });
   document.addEventListener("click", (e) => {
