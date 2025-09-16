@@ -364,27 +364,24 @@
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
-  /* show only 1–4 clauses on page */
   (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
-
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* donut helper — EXACT % of circle using dasharray "filled remaining" */
+  /* donut helper — exact %: dasharray = "<visible> <gap>" */
   function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value || 0, 0, 100);
     const r = parseFloat(arcEl.getAttribute('r')) || 84;
     const len = (arcEl.getTotalLength ? arcEl.getTotalLength() : 2 * Math.PI * r);
-    const filled = len * (v / 100);
+    const visible = (v / 100) * len;
 
     arcEl.style.stroke = colorFor(metric, v);
-    // Start at 0% visible
+
+    /* animate from 0% to v% */
     arcEl.style.strokeDasharray = `0 ${len}`;
     arcEl.style.strokeDashoffset = '0';
-
-    requestAnimationFrame(() => {
+    requestAnimationFrame(()=> {
       arcEl.style.transition = 'stroke-dasharray 1.2s ease';
-      // Reveal exactly v% of the circumference
-      arcEl.style.strokeDasharray = `${filled} ${len - filled}`;
+      arcEl.style.strokeDasharray = `${visible} ${len}`;
     });
 
     if (valEl)  valEl.textContent  = v + "%";
@@ -462,3 +459,4 @@
 </script>
 </body>
 </html>
+
