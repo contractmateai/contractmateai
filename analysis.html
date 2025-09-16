@@ -8,56 +8,29 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root{
-      --bg:#0e0c13;
-      --card:#1c1b22;
-      --border:#3b3b3b;
-      --white:#ffffff;
-      --muted:#bdbdbd;
-      --green:#00ff65;
-      --orange:#df911a;
-      --red:#fe0000;
-      --black:#000000;
-      --radius:20px;
-      --gap:16px;
-      --drawerW:75vw;
-      --containerMax:428px; /* iPhone 12 Pro Max width */
+      --bg:#0e0c13; --card:#1c1b22; --border:#3b3b3b; --white:#ffffff; --muted:#bdbdbd;
+      --green:#00ff65; --orange:#df911a; --red:#fe0000; --black:#000000;
+      --radius:20px; --gap:16px; --drawerW:75vw; --containerMax:428px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;background:var(--bg);color:var(--white);
-      font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial;
-      overflow-x:hidden;
-    }
+    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial;overflow-x:hidden}
 
-    /* ===== TOPBAR ===== */
-    .topbar{
-      position:sticky; top:0; z-index:40; background:var(--bg);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left));
-      height:64px; border-bottom:1px solid var(--border);
-    }
-    .top-left{display:flex; align-items:center; gap:10px}
-    .menu-btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      width:40px; height:40px; border-radius:12px; border:1px solid var(--border);
-      background:#14121a; cursor:pointer; padding:0;
-    }
+    .topbar{position:sticky;top:0;z-index:40;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left));height:64px;border-bottom:1px solid var(--border)}
+    .top-left{display:flex;align-items:center;gap:10px}
+    .menu-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:#14121a;cursor:pointer;padding:0}
     .menu-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
-    .top-title{font-size:20px; font-weight:400}
+    .top-title{font-size:20px;font-weight:400}
 
-    /* Language dropdown (tighter, outside-click closes) */
+    /* language dropdown – tighter, no extra right space */
     .lang{position:relative}
-    .lang-btn{
-      display:flex; align-items:center; gap:8px; background:transparent; border:none; color:var(--white);
-      font:400 20px/1 Inter; cursor:pointer; padding:6px 10px; min-width:40px; user-select:none;
-    }
+    .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
     .lang-menu{
-      position:absolute; right:0; top:calc(100% + 8px); background:var(--card); border:1px solid var(--border);
-      border-radius:12px; width:max-content; min-width:160px; max-width:calc(100vw - 24px);
-      max-height:240px; overflow:auto; display:none; box-shadow:0 10px 30px rgba(0,0,0,.4); padding:4px;
-      scrollbar-width:thin; scrollbar-color:#6a6a6a transparent;
+      position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
+      border-radius:12px;width:max-content;min-width:0;max-width:calc(100vw - 24px);
+      max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:4px 6px;
+      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent
     }
     .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
@@ -65,97 +38,66 @@
     .lang-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:var(--white);cursor:pointer;font-size:16px;white-space:nowrap}
     .lang-item:hover{background:#17161e}
 
-    /* ===== DRAWER + OVERLAY ===== */
-    .drawer{
-      position:fixed; left:0; top:0; bottom:0; width:min(var(--drawerW),420px);
-      background:#0f0e14; border-right:1px solid var(--border);
-      display:flex; flex-direction:column; padding:12px 16px 16px; gap:16px;
-      transform:translateX(-100%); transition:transform .28s ease; z-index:80;
-    }
-    .drawer.open{ transform:translateX(0) }
-    .drawer .brand-row{ display:flex; align-items:center; gap:12px; padding-top:4px; }
-    .drawer .brand-row img{width:34px; height:34px}
-    .drawer .brand-row span{font-size:24px; font-weight:400}
-    .drawer .nav{display:flex; flex-direction:column; gap:8px; margin-top:6px}
-    .drawer .nav a{
-      text-decoration:none; color:var(--muted); display:flex; align-items:center; gap:12px;
-      padding:14px 16px; border-radius:16px; border:1px solid transparent; font-size:18px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .drawer .nav a img.icon{width:22px; height:22px}
-    .drawer .nav a img.arr{width:16px; height:16px; opacity:.9}
-    .drawer .nav a.active{background:#181620; border:1px solid var(--border); color:var(--white)}
-    .drawer .nav a:hover{background:transparent; border:1px solid var(--border); color:var(--white)}
+    .drawer{position:fixed;left:0;top:0;bottom:0;width:min(var(--drawerW),420px);background:#0f0e14;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 16px 16px;gap:16px;transform:translateX(-100%);transition:transform .28s ease;z-index:80}
+    .drawer.open{transform:translateX(0)}
+    .drawer .brand-row{display:flex;align-items:center;gap:12px;padding-top:4px}
+    .drawer .brand-row img{width:34px;height:34px}
+    .drawer .brand-row span{font-size:24px;font-weight:400}
+    .drawer .nav{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .drawer .nav a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;border:1px solid transparent;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drawer .nav a img.icon{width:22px;height:22px}
+    .drawer .nav a img.arr{width:16px;height:16px;opacity:.9}
+    .drawer .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
+    .drawer .nav a:hover{background:transparent;border:1px solid var(--border);color:var(--white)}
     .drawer .push{flex:1}
-    .drawer .end{color:var(--muted); font-size:15px; line-height:1.6}
-    .drawer .footer-sep{height:1px; background:var(--border); margin:10px 0}
-    .scrim{
-      position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; visibility:hidden;
-      transition:opacity .25s ease, visibility .25s ease; z-index:70;
-    }
-    .scrim.show{opacity:1; visibility:visible}
+    .drawer .end{color:var(--muted);font-size:15px;line-height:1.6}
+    .drawer .footer-sep{height:1px;background:var(--border);margin:10px 0}
+    .scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;z-index:70}
+    .scrim.show{opacity:1;visibility:visible}
 
-    /* ===== PAGE ===== */
-    .page{ display:block; }
-    .container{
-      width:100%;
-      max-width:var(--containerMax);
-      margin:0 auto;
-      padding:12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left));
-    }
-
-    /* Cards & animations */
-    .card{
-      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px;
-      opacity:0; transform:translateY(8px); margin-bottom:var(--gap);
-    }
-    @keyframes fadeIn{to{opacity:1; transform:translateY(0)}}
+    .page{display:block}
+    .container{width:100%;max-width:var(--containerMax);margin:0 auto;padding:12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left))}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;opacity:0;transform:translateY(8px);margin-bottom:var(--gap)}
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
     .card h3{margin:0 0 10px;display:flex;align-items:center;gap:10px;font-size:18px;font-weight:400}
-    /* slightly larger icons */
     .card h3 img{width:24px;height:24px}
 
-    /* Text blocks */
     .list{display:flex;flex-direction:column;gap:10px}
     .list p{margin:0;color:var(--muted);font-size:16px;overflow-wrap:anywhere}
-
     .bullets{margin:0;color:var(--muted);font-size:16px;padding-left:22px;list-style:disc}
     .bullets li{margin:0 0 10px}
-
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px;margin:0 0 10px}
     .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
 
-    /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
     .meter-title{display:flex;align-items:center;gap:10px;font-size:16px}
-    .meter-title img{width:22px;height:22px} /* a bit larger */
+    .meter-title img{width:22px;height:22px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* Donuts — thicker + smoother (hi-res viewBox + precision) */
+    /* donuts — thin + smooth */
     .hcard{display:flex;gap:12px;align-items:center}
     .circle{width:112px;height:112px;position:relative;display:grid;place-items:center;flex:0 0 112px}
     .circle svg{transform:rotate(-90deg)}
     .circle .val{position:absolute;font-weight:400;font-size:26px}
-    .circle circle{shape-rendering:geometricPrecision; vector-effect: non-scaling-stroke}
-    .circle circle.track{stroke:var(--black);stroke-width:16;fill:none}
-    .circle circle.arc{stroke-width:16;fill:none;stroke-linecap:round;stroke-dasharray:628;stroke-dashoffset:628}
+    .circle circle{shape-rendering:geometricPrecision;vector-effect:non-scaling-stroke}
+    .circle circle.track{stroke:var(--black);stroke-width:8;fill:none}
+    .circle circle.arc{stroke-width:8;fill:none;stroke-linecap:round}
     .htext{flex:1;display:flex;flex-direction:column;gap:4px}
     .muted{color:var(--muted);font-size:15px}
-    #riskCard .muted, #clarCard .muted{font-size:13.5px; line-height:1.5}
+    #riskCard .muted, #clarCard .muted{font-size:13.5px;line-height:1.5}
     .status{display:flex;align-items:center;gap:8px;margin-top:4px}
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:15px}
+    #riskCard,#clarCard{padding:12px}
 
-    /* tighter vertical padding for these two */
-    #riskCard, #clarCard{padding:12px}
+    /* small title OUTSIDE the risk card */
+    .doc-title-top{font-size:14px;color:#dcdcdc;margin:0 0 8px 2px;opacity:.9}
 
-    /* Small title above risk card */
-    .doc-title{font-size:14px;color:#dcdcdc;margin:0 0 8px;opacity:.9}
-
-    /* Score checker */
+    /* score checker (unchanged) */
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:30px}
     .score-side{flex:1;display:flex;flex-direction:column;gap:10px}
@@ -164,18 +106,9 @@
     .score-ind{position:absolute;top:-6px;height:30px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 
-    /* Download CTA */
-    .download-wrap{
-      position:fixed; left:0; right:0;
-      bottom:calc(20px + env(safe-area-inset-bottom));
-      display:none; justify-content:center; z-index:60; opacity:0; transform:translateY(8px)
-    }
-    .download{
-      background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;
-      display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;box-shadow:0 6px 28px rgba(0,0,0,.28)
-    }
+    .download-wrap{position:fixed;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom));display:none;justify-content:center;z-index:60;opacity:0;transform:translateY(8px)}
+    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
 
-    /* Modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100}
     .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
@@ -186,14 +119,12 @@
   </style>
 </head>
 <body>
-  <!-- SCRIM + DRAWER -->
   <div id="scrim" class="scrim" aria-hidden="true"></div>
   <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="brand-row">
       <img src="https://imgur.com/Z5hv7K9.png" alt="">
       <span>SignSense</span>
     </div>
-
     <nav class="nav">
       <a class="active" href="#"><img class="arr" src="https://imgur.com/CHGomYz.png" alt=""><img class="icon" src="https://imgur.com/lnQTDuo.png" alt=""><span>Overview</span></a>
       <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
@@ -201,7 +132,6 @@
       <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
       <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Leave a Review</span></a>
     </nav>
-
     <div class="push"></div>
     <div class="end">
       <div>All rights reserved.</div>
@@ -211,12 +141,10 @@
     </div>
   </aside>
 
-  <!-- PAGE -->
   <div class="page">
     <div class="topbar">
       <div class="top-left">
         <button id="menuBtn" class="menu-btn" aria-label="Open menu">
-          <!-- Hamburger icon -->
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18M3 12h18M3 17.5h18" /></svg>
         </button>
         <div class="top-title">Overview</div>
@@ -243,12 +171,13 @@
     </div>
 
     <div class="container">
+      <!-- OUTSIDE title, above risk card -->
+      <div class="doc-title-top">Title: Non-Disclosure Agreement (NDA)</div>
+
       <!-- 1) RISK LEVEL -->
       <section class="card" id="riskCard">
-        <div class="doc-title">Title: Non-Disclosure Agreement (NDA)</div>
         <div class="hcard">
           <div class="circle">
-            <!-- hi-res viewBox for smoothness -->
             <svg width="112" height="112" viewBox="0 0 200 200">
               <circle class="track" cx="100" cy="100" r="84"></circle>
               <circle id="riskArc" class="arc" cx="100" cy="100" r="84"></circle>
@@ -334,9 +263,7 @@
               <circle class="track" cx="100" cy="100" r="84"></circle>
               <circle id="scoreArc" class="arc" cx="100" cy="100" r="84"></circle>
             </svg>
-            <div class="score-center">
-              <div class="score-pct" id="scorePct">80%</div>
-            </div>
+            <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
           </div>
           <div class="score-side">
             <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
@@ -358,12 +285,10 @@
     </div>
   </div>
 
-  <!-- 11) Download -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
 
-  <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <h4>Enter your email to download the PDF report</h4>
@@ -378,61 +303,37 @@
 
 <script>
 (() => {
-  /* ---------- Drawer interactions ---------- */
+  /* drawer */
   const drawer = document.getElementById('drawer');
   const scrim  = document.getElementById('scrim');
   const menuBtn = document.getElementById('menuBtn');
+  const openDrawer=()=>{drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');scrim.classList.add('show');scrim.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+  const closeDrawer=()=>{drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');scrim.classList.remove('show');scrim.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  menuBtn.addEventListener('click', openDrawer); scrim.addEventListener('click', closeDrawer);
+  window.addEventListener('keydown', e=>{if(e.key==='Escape') closeDrawer()});
 
-  function openDrawer(){
-    drawer.classList.add('open');
-    drawer.setAttribute('aria-hidden','false');
-    scrim.classList.add('show');
-    scrim.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden'; // scroll lock
-  }
-  function closeDrawer(){
-    drawer.classList.remove('open');
-    drawer.setAttribute('aria-hidden','true');
-    scrim.classList.remove('show');
-    scrim.setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-  }
-  menuBtn.addEventListener('click', openDrawer);
-  scrim.addEventListener('click', closeDrawer);
-  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
-
-  /* ---------- Language UI (click to open, select to close, click-outside to close) ---------- */
+  /* language menu: open/select/close + outside click */
   const lang = document.getElementById("lang");
   const langBtn = document.getElementById("langBtn");
   const langMenu = document.getElementById("langMenu");
   const langNow = document.getElementById("langNow");
   const codeMap = {"English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES","Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO","Shqip":"SQ","Türkçe":"TR","中文":"中文","日本語":"日本語"};
-
-  // open/close
-  langBtn.addEventListener("click", (e)=>{ e.stopPropagation(); lang.classList.toggle("open"); });
-  // select and close
+  langBtn.addEventListener("click",(e)=>{e.stopPropagation();lang.classList.toggle("open")});
   langMenu.querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      langNow.textContent = codeMap[li.dataset.lang] || "EN";
-      lang.classList.remove("open");
-    });
+    li.addEventListener("click",(e)=>{e.stopPropagation();langNow.textContent=codeMap[li.dataset.lang]||"EN";lang.classList.remove("open")});
   });
-  // click outside closes
-  document.addEventListener("click", (e)=>{
-    if (!lang.contains(e.target)) lang.classList.remove("open");
-  });
+  document.addEventListener("click",e=>{if(!lang.contains(e.target)) lang.classList.remove("open")});
 
-  /* ---------- Demo data ---------- */
+  /* demo data */
   const demo = {
-    summary: [
+    summary:[
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
       "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
       "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
     ],
-    risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
-    clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
-    clauses: [
+    risk:{value:25,note:"Termination, dispute handling and scope changes need to be tightened a bit better."},
+    clarity:{value:80,note:"Some provisions are thin on definitions which reduces predictability in changes."},
+    clauses:[
       "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
@@ -441,152 +342,114 @@
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how and add a short grace period and a cap."
     ],
-    issues: [
+    issues:[
       "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
       "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
       "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
       "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
       "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
     ],
-    meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 }
+    meters:{professionalism:95,confidence:75,favorability:75,deadline:18}
   };
 
-  const $ = s => document.querySelector(s);
-  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const between = (v,min,max)=>Math.max(min,Math.min(v,max));
-  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
+  const $=s=>document.querySelector(s);
+  const cssVar=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const between=(v,min,max)=>Math.max(min,Math.min(v,max));
+  const addP=(el,t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p)};
 
-  function colorFor(metric, v){
-    if (metric === 'risk') { if (v<=25) return cssVar('--green'); if (v<=55) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'clarity') { if (v>=80) return cssVar('--green'); if (v>=45) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'deadline') { if (v<=25) return cssVar('--green'); if (v<=75) return cssVar('--orange'); return cssVar('--red'); }
-    if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
+  function colorFor(metric,v){
+    if(metric==='risk'){if(v<=25)return cssVar('--green'); if(v<=55)return cssVar('--orange'); return cssVar('--red')}
+    if(metric==='clarity'){if(v>=80)return cssVar('--green'); if(v>=45)return cssVar('--orange'); return cssVar('--red')}
+    if(metric==='deadline'){if(v<=25)return cssVar('--green'); if(v<=75)return cssVar('--orange'); return cssVar('--red')}
+    if(v>=76)return cssVar('--green'); if(v>=50)return cssVar('--orange'); return cssVar('--red')
   }
 
-  /* Summary text */
   const sBox=$("#summaryText"); sBox.innerHTML="";
   (Array.isArray(demo.summary)?demo.summary:[String(demo.summary)]).forEach(t=>addP(sBox,t));
 
-  /* Main clauses: show only 1–4 */
-  function listTo(id, arr){
-    const el=$(id); el.innerHTML="";
-    (arr && arr.length ? arr.slice(0,4) : [""]).forEach(t=>addP(el,t));
-  }
-  listTo("#clausesList", demo.clauses);
+  /* show only 1–4 clauses on page (unchanged from your last request) */
+  (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
 
-  /* Issues list */
-  (function(){
-    const el=$("#issuesList"); el.innerHTML="";
-    (demo.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);});
-  })();
+  (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* Donut helper (works with r from SVG; smoother & thicker) */
-  function setArc(arcEl, metric, value, valEl, noteEl, note){
-    const v = between(value||0, 0, 100);
-    const rr = parseFloat(arcEl.getAttribute('r')) || 84;          // hi-res r
-    const circ = 2*Math.PI*rr;
-    arcEl.style.stroke = colorFor(metric, v);
-    arcEl.style.strokeDasharray = circ;
-    arcEl.style.strokeDashoffset = circ;
+  /* donut helper – exact % length using totalLength and 2-value dasharray */
+  function setArc(arcEl,metric,value,valEl,noteEl,note){
+    const v=between(value||0,0,100);
+    const len = (arcEl.getTotalLength?arcEl.getTotalLength():2*Math.PI*(parseFloat(arcEl.getAttribute('r'))||84));
+    arcEl.style.stroke = colorFor(metric,v);
+    arcEl.style.strokeDasharray = `${len} ${len}`;
+    arcEl.style.strokeDashoffset = `${len}`;
     requestAnimationFrame(()=>{
-      arcEl.style.transition="stroke-dashoffset 1.6s ease";
-      arcEl.style.strokeDashoffset = circ * (1 - v/100);
+      arcEl.style.transition = "stroke-dashoffset 1.2s ease";
+      arcEl.style.strokeDashoffset = `${len * (1 - v/100)}`;
     });
-    if (valEl) valEl.textContent = v + "%";
-    if (noteEl) noteEl.textContent = note || "";
+    if(valEl) valEl.textContent = v + "%";
+    if(noteEl) noteEl.textContent = note || "";
   }
-  setArc($("#riskArc"), 'risk', demo.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), demo.risk?.note);
-  setArc($("#clarArc"), 'clarity', demo.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), demo.clarity?.note);
+  setArc($("#riskArc"),'risk',demo.risk?.value??0,$("#riskVal"),$("#riskNote"),demo.risk?.note);
+  setArc($("#clarArc"),'clarity',demo.clarity?.value??0,$("#clarVal"),$("#clarNote"),demo.clarity?.note);
 
-  /* Bars */
-  function setMeter(fill, label, metric, value){
-    const v = between(value||0, 0, 100);
-    label.textContent = v + "%";
-    fill.style.background = colorFor(metric, v);
-    requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
+  function setMeter(fill,label,metric,value){
+    const v=between(value||0,0,100);
+    label.textContent=v+"%";
+    fill.style.background=colorFor(metric,v);
+    requestAnimationFrame(()=>{fill.style.width=v+"%"});
   }
-  setMeter($("#confFill"), $("#confVal"), 'professionalism', demo.meters?.professionalism ?? 95);
-  setMeter($("#favFill"), $("#favVal"), 'favorability', demo.meters?.favorability ?? 75);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    demo.meters?.deadline ?? 0);
-  setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', demo.meters?.confidence ?? 0);
+  setMeter($("#confFill"),$("#confVal"),'professionalism',demo.meters?.professionalism??95);
+  setMeter($("#favFill"),$("#favVal"),'favorability',demo.meters?.favorability??75);
+  setMeter($("#deadFill"),$("#deadVal"),'deadline',demo.meters?.deadline??0);
+  setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',demo.meters?.confidence??0);
 
-  /* Score Checker pointer */
-  (function(){
-    const v = 80;
-    setArc($("#scoreArc"), 'confidence', v);
-    $("#scorePct").textContent = v + "%";
-    $("#scoreInd").style.left = "calc(80% - 1.5px)";
-  })();
+  (function(){const v=80; setArc($("#scoreArc"),'confidence',v); $("#scorePct").textContent=v+"%"; $("#scoreInd").style.left="calc(80% - 1.5px)";})();
 
-  /* Reveal sequencing */
-  window.addEventListener('load', () => {
-    [
-      "#riskCard","#summaryCard","#profCard","#favCard","#deadCard",
-      "#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"
-    ].forEach((sel,i)=>{
-      const el=$(sel); if(el){ setTimeout(()=>el.classList.add('fade-in'), 70*i); }
-    });
+  window.addEventListener('load',()=>{
+    ["#riskCard","#summaryCard","#profCard","#favCard","#deadCard","#issuesCard","#clarCard","#clausesCard","#scoreCard","#confRightCard"]
+      .forEach((sel,i)=>{const el=$(sel); if(el){setTimeout(()=>el.classList.add('fade-in'),70*i)}})
   });
 
-  /* Bottom CTA reveal */
   const dlWrap=$("#dlWrap"), showThresholdPx=320;
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
     const show=scrolledFromBottom<=showThresholdPx;
-    dlWrap.style.display=show?"flex":"none";
-    if(show) dlWrap.classList.add('fade-in');
+    dlWrap.style.display=show?"flex":"none"; if(show) dlWrap.classList.add('fade-in');
   }
-  window.addEventListener("scroll", nearBottom, {passive:true});
-  window.addEventListener("load", nearBottom);
+  window.addEventListener("scroll",nearBottom,{passive:true});
+  window.addEventListener("load",nearBottom);
 
-  /* Modal + PDF */
   const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
-  $("#downloadBtn").addEventListener("click", openModal);
-  $("#emailCancel").addEventListener("click", closeModal);
-  function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
-  $("#emailSubmit").addEventListener("click", async ()=>{
+  $("#downloadBtn").addEventListener("click",openModal);
+  $("#emailCancel").addEventListener("click",closeModal);
+  function validEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim())}
+  $("#emailSubmit").addEventListener("click",async()=>{
     const email=$("#emailInput").value||"", err=$("#emailErr");
-    if(!validEmail(email)){ err.style.display="block"; return; }
-    err.style.display="none";
-    await generatePDF("Report", demo);
-    closeModal();
+    if(!validEmail(email)){err.style.display="block";return;}
+    err.style.display="none"; await generatePDF("Report",demo); closeModal();
   });
 
-  async function generatePDF(title, d){
-    const { jsPDF } = window.jspdf;
-    const doc=new jsPDF({ unit:"pt", format:"a4" });
-    const pageW=doc.internal.pageSize.getWidth();
-    const margin=48, width=pageW-margin*2, lh=18;
-
+  async function generatePDF(title,d){
+    const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"pt",format:"a4"});
+    const pageW=doc.internal.pageSize.getWidth(); const margin=48, width=pageW-margin*2, lh=18;
     doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
     doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
-    doc.text("SignSense — Contract Analysis Report", margin, 48);
-
-    let y=100;
-    const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
-    doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
-
-    y=section("Summary", y); y=bullets(d.summary, y);
-    y=section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
-    y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
-    y=section("Main Clauses", y); y=bullets(d.clauses.slice(0,4), y); /* keep 1–4 in PDF too */
-    y=section("Potential Issues", y); y=bullets(d.issues, y);
+    doc.text("SignSense — Contract Analysis Report",margin,48);
+    let y=100; const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
+    doc.text(`Generated: ${date}`,margin,y); y+=lh*1.6;
+    y=section("Summary",y); y=bullets(d.summary,y);
+    y=section(`Risk Level: ${d.risk?.value??0}%`,y); y=paragraph(d.risk?.note||"",y);
+    y=section(`Clause Clarity: ${d.clarity?.value??0}%`,y); y=paragraph(d.clarity?.note||"",y);
+    y=section("Main Clauses",y); y=bullets((d.clauses||[]).slice(0,4),y);
+    y=section("Potential Issues",y); y=bullets(d.issues,y);
     doc.save("SignSense_Report.pdf");
-
-    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
-    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
-    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
-        if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
-        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} });
-        y+=lh;
-      }); return y;
-    }
+    function section(t,y){if(y>780){doc.addPage();y=64;} doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t,margin,y); return y+12;}
+    function paragraph(text,y){if(!text)return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{if(y>780){doc.addPage();y=64;} doc.text(line,margin,y); y+=lh;}); return y;}
+    function bullets(arr,y){const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      list.forEach(t=>{const lines=doc.splitTextToSize(String(t),width-12); if(y>780){doc.addPage();y=64;} doc.text("•",margin,y);
+        lines.forEach((line,i)=>{if(i===0){doc.text(line,margin+12,y);} else {y+=lh; doc.text(line,margin+12,y);}}); y+=lh;}); return y;}
   }
 
-  // Reviews hook
-  document.getElementById('leaveReview').addEventListener('click', (e)=>{ e.preventDefault(); alert('Hook this to your reviews form URL.'); });
+  document.getElementById('leaveReview').addEventListener('click',(e)=>{e.preventDefault();alert('Hook this to your reviews form URL.')});
 })();
 </script>
 </body>
 </html>
+
