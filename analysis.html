@@ -367,21 +367,25 @@
   (function(){const el=$("#clausesList"); el.innerHTML=""; (demo.clauses||[]).slice(0,4).forEach(t=>addP(el,t))})();
   (function(){const el=$("#issuesList"); el.innerHTML=""; (demo.issues||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;el.appendChild(li)})})();
 
-  /* donut helper — exact %: dasharray = "<visible> <gap>" */
+  /* donut helper — show EXACT percent (green part only that %). 
+     We set dasharray to "<visible> <remaining>", no offset. */
   function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value || 0, 0, 100);
     const r = parseFloat(arcEl.getAttribute('r')) || 84;
     const len = (arcEl.getTotalLength ? arcEl.getTotalLength() : 2 * Math.PI * r);
     const visible = (v / 100) * len;
+    const remaining = Math.max(0, len - visible);
 
     arcEl.style.stroke = colorFor(metric, v);
 
-    /* animate from 0% to v% */
+    // reset then animate to target
+    arcEl.style.transition = 'none';
     arcEl.style.strokeDasharray = `0 ${len}`;
     arcEl.style.strokeDashoffset = '0';
-    requestAnimationFrame(()=> {
-      arcEl.style.transition = 'stroke-dasharray 1.2s ease';
-      arcEl.style.strokeDasharray = `${visible} ${len}`;
+    arcEl.getBoundingClientRect(); // force reflow
+    requestAnimationFrame(()=>{
+      arcEl.style.transition = 'stroke-dasharray 1.0s ease';
+      arcEl.style.strokeDasharray = `${visible} ${remaining}`;
     });
 
     if (valEl)  valEl.textContent  = v + "%";
@@ -459,4 +463,5 @@
 </script>
 </body>
 </html>
+
 
