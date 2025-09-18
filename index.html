@@ -1583,44 +1583,31 @@ window.addEventListener('load', () => {
 
 
     <!-- WATCH VIDEO SECTION -->
-    <section class="watch-video-section" data-aos="fade-up">
-      <div class="video-content">
-        <div class="video-text">
-          <h2>
-            Take a deeper look to<br />see how SignSense<br />
-            really works.
-          </h2>
-          <p>
-            Curious how SignSense works? Watch our video for a clear,
-            step-by-step look at how we simplify your contracts
-          </p>
-        <button id="watchBtn" class="watch-btn animated-arrow-bttn">
+  <!-- WATCH VIDEO SECTION -->
+<section class="watch-video-section" data-aos="fade-up">
+  <div class="video-content">
+    <div class="video-text">
+      <h2>Take a deeper look to<br />see how SignSense<br />really works.</h2>
+      <p>Curious how SignSense works? Watch our video for a clear,
+         step-by-step look at how we simplify your contracts</p>
+      <!-- (Optional) remove the button if you don't need it -->
+      <!-- <button class="watch-btn">Watch Video ↗</button> -->
+    </div>
 
-  Watch Video <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
-
-        </div>
+    <!-- ✅ Only the YouTube player on the right -->
     <div class="video-box">
-  <iframe
-    class="video-embed"
-    src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
-    title="SignSense Video"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen>
-  </iframe>
-</div>
-   <div id="videoBox" class="video-box" data-video="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0">
+      <iframe
+        class="video-embed"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+        title="SignSense Video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section>
 
-          <div class="video-label">▶ Watch Video</div>
-          <img
-            src="https://imgur.com/8aThMK5.png"
-            alt="Video Placeholder"
-            class="video-img"
-          />
-        </div>
-      </div>
-    </section>
 
     <style>
       .watch-video-section {
@@ -1689,13 +1676,7 @@ window.addEventListener('load', () => {
         margin-right: 40px;
       }
 
-      .video-box img.video-img {
-        width: 420px;
-        margin-top: 36px;
-        border-radius: 34px;
-        border: 2px solid #3b3b3b;
-        display: block;
-      }
+    
       .video-box .video-embed {
   width: 420px;
   height: 236px; /* 16:9 ratio */
@@ -1706,21 +1687,18 @@ window.addEventListener('load', () => {
 }
 
 
-      .video-label {
-        position: absolute;
-        top: 4px; /* Lowered from -16px */
-        left: 150px; /* Slightly increased for better alignment */
-        background: transparent;
-        color: rgba(191, 246, 17, 0.74);
-        font-size: 18px;
-        font-family: "Inter", sans-serif;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        z-index: 2;
-        pointer-events: none;
-      }
+  .video-embed {
+  width: 100%;
+  max-width: 560px;       /* Adjust this width to control video size */
+  aspect-ratio: 16 / 9;   /* Keeps correct YouTube proportions */
+  height: auto;
+  margin-top: 36px;
+  border: none;           /* Removes any borders */
+  border-radius: 0;       /* No rounded corners */
+  display: block;
+}
+
+
     </style>
     
    
