@@ -305,6 +305,11 @@ transition: opacity .6s ease;/* add */
 .role-btn.active { 
   border-color: #fff;     /* clicked → white 2px border */
 }
+      /* Role picker stays completely invisible until JS unhides it */
+.role-picker[hidden] {
+  display: none !important;
+}
+
 
 
       .cta-btn:hover {
@@ -318,6 +323,7 @@ transition: opacity .6s ease;/* add */
         margin: 30px auto 0;
         perspective: 1000px;
       }
+      
 
       .app-wrapper {
         position: relative;
@@ -325,6 +331,7 @@ transition: opacity .6s ease;/* add */
         transform: rotateX(12deg);
          --app-raise: -20px; /* ⬅️ add this line */
       }
+      
 
      /* App frame holds the image and the glint */
 .app-frame{
@@ -1258,12 +1265,12 @@ transition: opacity .6s ease;/* add */
             Free contract reviewing and no need at all for any account creation or sign up.
           </p>
         </div>
-       <div class="cta-wrapper">
-<button id="reviewBtn" class="cta-btn animated-arrow-bttn">
-  Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
-
+     <div id="ctaWrap" class="cta-wrapper">
+  <button id="reviewBtn" class="cta-btn animated-arrow-bttn">
+    Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
+  </button>
 </div>
+
        <!-- ROLE PICKER (hidden by default) -->
 <div id="rolePicker" class="role-picker" hidden>
   <span class="role-title">You are:</span>
@@ -2188,16 +2195,18 @@ window.addEventListener('load', () => {
   }));
 
   // choose role AFTER a file is picked
-  input.addEventListener("change", () => {
-    if (!input.files || !input.files.length) {
-      // ❌ User canceled, do nothing
-      return;
-    }
+input.addEventListener("change", () => {
+  if (!input.files || !input.files.length) {
+    // ❌ User canceled upload: stay on "Review A Contract"
+    return;
+  }
 
-    // ✅ Hide button and show role picker
-    reviewBtn.style.display = "none";
-    roleUI.hidden = false;
-  });
+  // ✅ File was uploaded → hide CTA button and show role picker
+  const ctaWrap = document.getElementById("ctaWrap");
+  if (ctaWrap) ctaWrap.style.display = "none";
+  roleUI.hidden = false;
+});
+
 
   // handle role click
   roleUI?.querySelectorAll(".role-btn").forEach(btn => {
