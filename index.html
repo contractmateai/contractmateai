@@ -1600,7 +1600,17 @@ window.addEventListener('load', () => {
 </button>
 
         </div>
-       <div id="videoBox" class="video-box" data-video="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0">
+    <div class="video-box">
+  <iframe
+    class="video-embed"
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+    title="SignSense Video"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+   <div id="videoBox" class="video-box" data-video="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0">
 
           <div class="video-label">▶ Watch Video</div>
           <img
@@ -1686,6 +1696,15 @@ window.addEventListener('load', () => {
         border: 2px solid #3b3b3b;
         display: block;
       }
+      .video-box .video-embed {
+  width: 420px;
+  height: 236px; /* 16:9 ratio */
+  margin-top: 36px;
+  border-radius: 34px;
+  border: 2px solid #3b3b3b;
+  display: block;
+}
+
 
       .video-label {
         position: absolute;
@@ -1704,33 +1723,7 @@ window.addEventListener('load', () => {
       }
     </style>
     
-    <script>
-(() => {
-  const btn = document.getElementById('watchBtn');
-  const box = document.getElementById('videoBox');
-  if (!btn || !box) return;
-
-  function play() {
-    if (box.querySelector('iframe')) return; // already playing
-    const url = box.dataset.video;
-    const iframe = document.createElement('iframe');
-    iframe.className = 'video-embed';
-    iframe.width = '560';
-    iframe.height = '315';
-    iframe.src = url;
-    iframe.title = 'SignSense video';
-    iframe.frameBorder = '0';
-    iframe.allow =
-      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    iframe.allowFullscreen = true;
-    box.innerHTML = '';
-    box.appendChild(iframe);
-  }
-
-  btn.addEventListener('click', play);
-  box.addEventListener('click', play);
-})();
-</script>
+   
 
     <!-- Reviews Section -->
     <!-- Reviews Section -->
