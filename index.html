@@ -1259,9 +1259,10 @@ transition: opacity .6s ease;/* add */
           </p>
         </div>
        <div class="cta-wrapper">
-  <button class="cta-btn animated-arrow-bttn">
-    Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-  </button>
+<button id="reviewBtn" class="cta-btn animated-arrow-bttn">
+  Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</button>
+
 </div>
        <!-- ROLE PICKER (hidden by default) -->
 <div id="rolePicker" class="role-picker" hidden>
@@ -2176,32 +2177,35 @@ window.addEventListener('load', () => {
   const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta");
   const input = document.getElementById("contractFile");
   const roleUI = document.getElementById("rolePicker");
+  const reviewBtn = document.getElementById("reviewBtn"); // 👈 NEW
   let chosenRole = null;
 
   // open file picker from any "Review A Contract" trigger
   triggers.forEach(t => t.addEventListener("click", (e) => {
     e.preventDefault();
-    input.value = "";     // reset so 'cancel' doesn't keep old file
+    input.value = ""; // reset so 'cancel' doesn't keep old file
     input.click();
   }));
 
   // choose role AFTER a file is picked
   input.addEventListener("change", () => {
     if (!input.files || !input.files.length) {
-      // user canceled the picker → nothing to do; they remain on the section
+      // ❌ User canceled, do nothing
       return;
     }
-    roleUI.hidden = false;  // show "You are: [Signer] [Writer]"
+
+    // ✅ Hide button and show role picker
+    reviewBtn.style.display = "none";
+    roleUI.hidden = false;
   });
 
   // handle role click
   roleUI?.querySelectorAll(".role-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      // visual active border
       roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
-      chosenRole = btn.dataset.role; // 'signer' | 'writer'
+      chosenRole = btn.dataset.role;
 
       // === FAKE ANALYSIS DATA (same as before) ===
       const mock = {
@@ -2232,15 +2236,13 @@ window.addEventListener('load', () => {
         translations: { en: {} },
       };
 
-      // Save role + flags for analysis.html to use
       localStorage.setItem("role", chosenRole);
       if (chosenRole === "writer") {
-        localStorage.setItem("hideConfidence", "1"); // analysis page will hide the bar
+        localStorage.setItem("hideConfidence", "1");
       } else {
         localStorage.removeItem("hideConfidence");
       }
 
-      // Save analysis payload (same keys you already had)
       localStorage.setItem("analysisData", JSON.stringify(mock));
       localStorage.setItem("summary", mock.summary.join("\n\n"));
       localStorage.setItem("risk", String(mock.risk.value));
@@ -2255,6 +2257,7 @@ window.addEventListener('load', () => {
     });
   });
 })();
+
 </script>
 
   </body>
