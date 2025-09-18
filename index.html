@@ -1340,9 +1340,10 @@ transition: opacity .6s ease;/* add */
             We break down complex contract language into clear, actionable
             takeaways so you can review with confidence, not confusion.
           </p>
-       <a href="#" class="cta-outline animated-arrow-bttn">
+      <button id="insightReviewBtn" class="cta-outline animated-arrow-bttn" type="button">
   Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</a>
+</button>
+
 
 
         </div>
@@ -1593,12 +1594,14 @@ window.addEventListener('load', () => {
             Curious how SignSense works? Watch our video for a clear,
             step-by-step look at how we simplify your contracts
           </p>
-         <button class="watch-btn animated-arrow-bttn">
+        <button id="watchBtn" class="watch-btn animated-arrow-bttn">
+
   Watch Video <span class="animated-arrow diag" aria-hidden="true">↗</span>
 </button>
 
         </div>
-        <div class="video-box">
+       <div id="videoBox" class="video-box" data-video="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0">
+
           <div class="video-label">▶ Watch Video</div>
           <img
             src="https://imgur.com/8aThMK5.png"
@@ -1700,6 +1703,35 @@ window.addEventListener('load', () => {
         pointer-events: none;
       }
     </style>
+    
+    <script>
+(() => {
+  const btn = document.getElementById('watchBtn');
+  const box = document.getElementById('videoBox');
+  if (!btn || !box) return;
+
+  function play() {
+    if (box.querySelector('iframe')) return; // already playing
+    const url = box.dataset.video;
+    const iframe = document.createElement('iframe');
+    iframe.className = 'video-embed';
+    iframe.width = '560';
+    iframe.height = '315';
+    iframe.src = url;
+    iframe.title = 'SignSense video';
+    iframe.frameBorder = '0';
+    iframe.allow =
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    box.innerHTML = '';
+    box.appendChild(iframe);
+  }
+
+  btn.addEventListener('click', play);
+  box.addEventListener('click', play);
+})();
+</script>
+
     <!-- Reviews Section -->
     <!-- Reviews Section -->
     <section class="reviews-section" data-aos="fade-up">
@@ -1976,6 +2008,68 @@ window.addEventListener('load', () => {
 })();
 </script>
 
+<script>
+/* === REVIEWS: mouse/touch drag-to-scroll === */
+(() => {
+  const viewport = document.querySelector('.reviews-viewport');
+  const track = document.getElementById('reviewsTrack');
+  if (!viewport || !track) return;
+
+  viewport.style.cursor = 'grab';
+
+  let isDown = false, startX = 0, startTx = 0, moved = false;
+
+  function getTx() {
+    const m = getComputedStyle(track).transform;
+    if (m && m !== 'none') {
+      const p = m.replace('matrix(', '').replace(')', '').split(',');
+      return parseFloat(p[4] || 0);
+    }
+    return 0;
+  }
+
+  function setTx(x) {
+    track.style.transition = 'none';
+    track.style.transform = `translateX(${x}px)`;
+  }
+
+  function end() {
+    isDown = false;
+    viewport.style.cursor = 'grab';
+    track.offsetHeight; // reflow
+    track.style.transition = 'transform .35s ease';
+    setTimeout(() => (moved = false), 0); // allow clicks again
+  }
+
+  function start(clientX) {
+    isDown = true;
+    moved = false;
+    startX = clientX;
+    startTx = getTx();
+    viewport.style.cursor = 'grabbing';
+  }
+
+  function move(clientX) {
+    if (!isDown) return;
+    const dx = clientX - startX;
+    if (Math.abs(dx) > 3) moved = true;
+    setTx(startTx + dx);
+  }
+
+  // Mouse
+  viewport.addEventListener('mousedown', e => { e.preventDefault(); start(e.clientX); });
+  window.addEventListener('mousemove', e => move(e.clientX), { passive: true });
+  window.addEventListener('mouseup', end);
+
+  // Touch
+  viewport.addEventListener('touchstart', e => start(e.touches[0].clientX), { passive: true });
+  viewport.addEventListener('touchmove',  e => move(e.touches[0].clientX),   { passive: true });
+  window.addEventListener('touchend', end);
+
+  // Prevent accidental click on images while dragging
+  viewport.addEventListener('click', e => { if (moved) e.preventDefault(); }, true);
+})();
+</script>
 
 
 
@@ -2181,31 +2275,45 @@ window.addEventListener('load', () => {
 
    <script>
 (() => {
-  const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta");
+ const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta, #insightReviewBtn");
+
   const input = document.getElementById("contractFile");
   const roleUI = document.getElementById("rolePicker");
-  const reviewBtn = document.getElementById("reviewBtn"); // 👈 NEW
-  let chosenRole = null;
+ const reviewBtn = document.getElementById("reviewBtn"); // 👈 NEW
+let chosenRole = null;
+let lastTrigger = null; // 👈 track which button triggered upload
+
 
   // open file picker from any "Review A Contract" trigger
-  triggers.forEach(t => t.addEventListener("click", (e) => {
-    e.preventDefault();
-    input.value = ""; // reset so 'cancel' doesn't keep old file
-    input.click();
-  }));
+ triggers.forEach(t => t.addEventListener("click", (e) => {
+  e.preventDefault();
+  lastTrigger = t; // 👈 added
+  input.value = ""; // reset so 'cancel' doesn't keep old file
+  input.click();
+}));
+
 
   // choose role AFTER a file is picked
 input.addEventListener("change", () => {
   if (!input.files || !input.files.length) {
-    // ❌ User canceled upload: stay on "Review A Contract"
+    // ❌ canceled: stay where we are
+    lastTrigger = null;
     return;
   }
 
-  // ✅ File was uploaded → hide CTA button and show role picker
+  // ✅ uploaded: hide top CTA and show role picker (replaces the button)
   const ctaWrap = document.getElementById("ctaWrap");
   if (ctaWrap) ctaWrap.style.display = "none";
   roleUI.hidden = false;
+
+  // If this was triggered from the Insights section, scroll to top
+  if (lastTrigger && lastTrigger.id === "insightReviewBtn") {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  lastTrigger = null;
 });
+
 
 
   // handle role click
