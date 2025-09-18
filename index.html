@@ -1597,17 +1597,19 @@ window.addEventListener('load', () => {
     </div>
 
     <!-- ✅ Only the YouTube player on the right -->
-    <div class="video-box">
-      <iframe
-        class="video-embed"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
-        title="SignSense Video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-      </iframe>
-    </div>
+ <div class="video-box">
+  <div class="video-frame">
+    <iframe
+      class="video-embed"
+      src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+      title="SignSense Video"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
   </div>
+</div>
+
 </section>
 
 
@@ -1683,16 +1685,42 @@ window.addEventListener('load', () => {
 
 
 
-.video-embed {
+/* The dark-grey frame wrapper */
+.video-frame {
+  margin-top: 12px;           /* ⬅️ brings the video UP (was 36px on the iframe) */
+  background: #1a1a1a;        /* dark grey frame */
+  border: 1px solid #3b3b3b;  /* subtle outline */
+  border-radius: 18px;        /* rounded frame */
+  padding: 10px;              /* frame thickness */
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
+/* The video itself (bigger, no border) */
+.video-frame .video-embed {
   width: 100%;
-  max-width: 900px;       /* ⬅️ bump this up or down to taste (e.g., 800–1000px) */
-  aspect-ratio: 16 / 9;   /* responsive, keeps shape */
+  max-width: 900px;           /* ⬅️ make bigger (try 960px or 1000px if you want more) */
+  aspect-ratio: 16 / 9;
   height: auto;
-  margin-top: 36px;
-  border: none;           /* no frame */
-  border-radius: 0;       /* square corners */
+  margin-top: 0;              /* moved to the frame */
+  border: none;               /* no inner border */
+  border-radius: 12px;        /* soft corners on the video */
   display: block;
 }
+
+/* keep it right-aligned */
+.video-box {
+  position: relative;
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 40px;
+}
+
+@media (max-width: 900px){
+  .video-frame .video-embed { max-width: 100%; }
+}
+
 
 
 
