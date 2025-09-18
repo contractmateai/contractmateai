@@ -276,6 +276,36 @@ transition: opacity .6s ease;/* add */
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         transition: box-shadow 0.3s ease;
       }
+      /* === ROLE PICKER === */
+.role-picker {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.role-title {
+  color: #fff;            /* "You are:" in white */
+  font-size: 22px;
+  margin-right: 6px;
+}
+.role-buttons { 
+  display: inline-flex; 
+  gap: 14px; 
+}
+.role-btn {
+  background: #a7fd3c;    /* lime field */
+  color: #000;            /* black text */
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;  /* same site font */
+}
+.role-btn.active { 
+  border-color: #fff;     /* clicked → white 2px border */
+}
+
 
       .cta-btn:hover {
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
@@ -1233,6 +1263,15 @@ transition: opacity .6s ease;/* add */
     Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
   </button>
 </div>
+       <!-- ROLE PICKER (hidden by default) -->
+<div id="rolePicker" class="role-picker" hidden>
+  <span class="role-title">You are:</span>
+  <div class="role-buttons">
+    <button type="button" class="role-btn" data-role="signer">The Signer</button>
+    <button type="button" class="role-btn" data-role="writer">The Writer</button>
+  </div>
+</div>
+
 
       </section>
 
@@ -2132,78 +2171,91 @@ window.addEventListener('load', () => {
       style="display: none"
     />
 
-    <script>
-      (() => {
-        const triggers = document.querySelectorAll(
-          ".cta-btn, .cta-outline, .footer-cta"
-        );
-        const input = document.getElementById("contractFile");
+   <script>
+(() => {
+  const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta");
+  const input = document.getElementById("contractFile");
+  const roleUI = document.getElementById("rolePicker");
+  let chosenRole = null;
 
-        // open file picker from any "Review A Contract" button/link
-        triggers.forEach((t) =>
-          t.addEventListener("click", (e) => {
-            e.preventDefault();
-            input.click();
-          })
-        );
+  // open file picker from any "Review A Contract" trigger
+  triggers.forEach(t => t.addEventListener("click", (e) => {
+    e.preventDefault();
+    input.value = "";     // reset so 'cancel' doesn't keep old file
+    input.click();
+  }));
 
-        input.addEventListener("change", () => {
-          if (!input.files || !input.files.length) return;
+  // choose role AFTER a file is picked
+  input.addEventListener("change", () => {
+    if (!input.files || !input.files.length) {
+      // user canceled the picker → nothing to do; they remain on the section
+      return;
+    }
+    roleUI.hidden = false;  // show "You are: [Signer] [Writer]"
+  });
 
-          // === FAKE ANALYSIS DATA (used by the new analysis.html) ===
-          const mock = {
-            languageOriginal: "en",
-            summary: [
-              "This contract is generally favorable with low overall risk.",
-              "Payment schedule and termination rights are standard.",
-              "Watch late-fee compounding and define 'material breach'.",
-            ],
-            risk: {
-              value: 25,
-              note: "Risks mainly around late fees and indemnity scope.",
-            },
-            clarity: {
-              value: 80,
-              note: "Most clauses are explicit; a few terms undefined.",
-            },
-            clauses: [
-              "Payment Terms — Net 30 with 2% per month late fee.",
-              "Scope of Work — Deliverables listed in Schedule A.",
-              "Termination — 30-day convenience; immediate for cause.",
-              "IP & Licensing — Client owns final assets; creator keeps tools.",
-            ],
-            issues: [
-              "Late fee compounding escalates costs on long delays.",
-              "Indemnity is one-sided; consider mutual or capped liability.",
-            ],
-            suggestions: [
-              "Add a 5–7 day grace period before late fees.",
-              "Define 'material breach' + 10-day cure period.",
-              "List milestones and acceptance criteria.",
-            ],
-            meters: { confidence: 75, favorability: 80, deadline: 18 },
-            translations: { en: {} },
-          };
+  // handle role click
+  roleUI?.querySelectorAll(".role-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      // visual active border
+      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-          // Save for the new analysis UI
-          localStorage.setItem("analysisData", JSON.stringify(mock));
+      chosenRole = btn.dataset.role; // 'signer' | 'writer'
 
-          // Also save legacy keys (so your old analysis.html still works if needed)
-          localStorage.setItem("summary", mock.summary.join("\n\n"));
-          localStorage.setItem("risk", String(mock.risk.value));
-          localStorage.setItem("clarity", String(mock.clarity.value));
-          localStorage.setItem("compliance", "90");
-          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-          localStorage.setItem(
-            "smartSuggestions",
-            JSON.stringify(mock.suggestions)
-          );
+      // === FAKE ANALYSIS DATA (same as before) ===
+      const mock = {
+        languageOriginal: "en",
+        summary: [
+          "This contract is generally favorable with low overall risk.",
+          "Payment schedule and termination rights are standard.",
+          "Watch late-fee compounding and define 'material breach'.",
+        ],
+        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+        clauses: [
+          "Payment Terms — Net 30 with 2% per month late fee.",
+          "Scope of Work — Deliverables listed in Schedule A.",
+          "Termination — 30-day convenience; immediate for cause.",
+          "IP & Licensing — Client owns final assets; creator keeps tools.",
+        ],
+        issues: [
+          "Late fee compounding escalates costs on long delays.",
+          "Indemnity is one-sided; consider mutual or capped liability.",
+        ],
+        suggestions: [
+          "Add a 5–7 day grace period before late fees.",
+          "Define 'material breach' + 10-day cure period.",
+          "List milestones and acceptance criteria.",
+        ],
+        meters: { confidence: 75, favorability: 80, deadline: 18 },
+        translations: { en: {} },
+      };
 
-          // Go to results page
-          window.location.href = "analysis.html";
-        });
-      })();
-    </script>
+      // Save role + flags for analysis.html to use
+      localStorage.setItem("role", chosenRole);
+      if (chosenRole === "writer") {
+        localStorage.setItem("hideConfidence", "1"); // analysis page will hide the bar
+      } else {
+        localStorage.removeItem("hideConfidence");
+      }
+
+      // Save analysis payload (same keys you already had)
+      localStorage.setItem("analysisData", JSON.stringify(mock));
+      localStorage.setItem("summary", mock.summary.join("\n\n"));
+      localStorage.setItem("risk", String(mock.risk.value));
+      localStorage.setItem("clarity", String(mock.clarity.value));
+      localStorage.setItem("compliance", "90");
+      localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+      localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+      localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+
+      // Go to results
+      window.location.href = "analysis.html";
+    });
+  });
+})();
+</script>
+
   </body>
 </html>
