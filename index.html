@@ -1598,20 +1598,14 @@ window.addEventListener('load', () => {
 
     <!-- ✅ Only the YouTube player on the right -->
 <div class="video-box">
-  <!-- outer white border -->
-  <div class="video-outline">
-    <!-- dark grey inner frame -->
-    <div class="video-frame">
-      <iframe
-        class="video-embed"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
-        title="SignSense Video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-      </iframe>
-    </div>
-  </div>
+  <iframe
+    class="video-embed"
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+    title="SignSense Video"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
 </div>
 
 
@@ -1676,50 +1670,30 @@ window.addEventListener('load', () => {
         box-shadow: 0 0 32px #adff00; /* stronger glow on hover */
       }
 
-      .video-box {
-        position: relative;
-        flex: 1;
-        min-width: 320px;
-        display: flex;
-        justify-content: flex-end;
-        margin-right: 40px;
-      }
-
-    
- 
-
-
-
-/* The dark-grey frame wrapper */
-.video-outline {
-  border: 3px solid #ffffff;
-  border-radius: 26px;
-  padding: 22px;
-  margin-top: -6px;           /* tweak to nudge up/down */
-  display: inline-block;
+   /* Right-aligned container (you already have this) */
+.video-box {
+  position: relative;
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 40px;
 }
 
-.video-frame {
-  background: #15151a;
-  border: 1px solid #2e2e2e;
-  border-radius: 18px;
-  padding: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.35);
-}
-
+/* The YouTube iframe: bigger + rounded corners */
 .video-embed {
-  width: 100%;
-  max-width: 960px;           /* make bigger here */
+  width: min(100%, 1100px);   /* ⬅️ make it bigger here; change 1100px if you want */
   aspect-ratio: 16 / 9;
   height: auto;
-  border: none;
-  border-radius: 12px;
   display: block;
+  border: 0;
+  border-radius: 16px;        /* ⬅️ rounded corners */
 }
 
 @media (max-width: 900px){
-  .video-embed { max-width: 100%; }
+  .video-embed { width: 100%; }
 }
+
 
 
 
