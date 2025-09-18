@@ -1590,8 +1590,10 @@ window.addEventListener('load', () => {
       <h2>Take a deeper look to<br />see how SignSense<br />really works.</h2>
       <p>Curious how SignSense works? Watch our video for a clear,
          step-by-step look at how we simplify your contracts</p>
-      <!-- (Optional) remove the button if you don't need it -->
-      <!-- <button class="watch-btn">Watch Video ↗</button> -->
+      <button id="watchBtn" class="watch-btn animated-arrow-bttn">
+  Watch Video <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</button>
+
     </div>
 
     <!-- ✅ Only the YouTube player on the right -->
@@ -1677,26 +1679,21 @@ window.addEventListener('load', () => {
       }
 
     
-      .video-box .video-embed {
-  width: 420px;
-  height: 236px; /* 16:9 ratio */
-  margin-top: 36px;
-  border-radius: 34px;
-  border: 2px solid #3b3b3b;
-  display: block;
-}
+ 
 
 
-  .video-embed {
+
+.video-embed {
   width: 100%;
-  max-width: 560px;       /* Adjust this width to control video size */
-  aspect-ratio: 16 / 9;   /* Keeps correct YouTube proportions */
+  max-width: 900px;       /* ⬅️ bump this up or down to taste (e.g., 800–1000px) */
+  aspect-ratio: 16 / 9;   /* responsive, keeps shape */
   height: auto;
   margin-top: 36px;
-  border: none;           /* Removes any borders */
-  border-radius: 0;       /* No rounded corners */
+  border: none;           /* no frame */
+  border-radius: 0;       /* square corners */
   display: block;
 }
+
 
 
     </style>
