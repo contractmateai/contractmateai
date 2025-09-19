@@ -2243,109 +2243,149 @@ window.addEventListener('load', () => {
       style="display: none"
     />
 
-   <script>
+<script>
 (() => {
- const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta, #insightReviewBtn");
-
+  const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta, #insightReviewBtn");
   const input = document.getElementById("contractFile");
   const roleUI = document.getElementById("rolePicker");
- const reviewBtn = document.getElementById("reviewBtn"); // 👈 NEW
-let chosenRole = null;
-let lastTrigger = null; // 👈 track which button triggered upload
+  const reviewBtn = document.getElementById("reviewBtn");
 
+  let chosenRole = null;
+  let lastTrigger = null;
+  let pickedFile = null; // ← we’ll remember the selected file
 
-  // open file picker from any "Review A Contract" trigger
- triggers.forEach(t => t.addEventListener("click", (e) => {
-  e.preventDefault();
-  lastTrigger = t; // 👈 added
-  input.value = ""; // reset so 'cancel' doesn't keep old file
-  input.click();
-}));
+  // Open file picker from any “Review A Contract” trigger
+  triggers.forEach((t) =>
+    t.addEventListener("click", (e) => {
+      e.preventDefault();
+      lastTrigger = t;
+      input.value = "";        // reset
+      input.click();
+    })
+  );
 
+  // After file picked, show role buttons
+  input.addEventListener("change", () => {
+    if (!input.files || !input.files.length) {
+      lastTrigger = null; // canceled
+      return;
+    }
 
-  // choose role AFTER a file is picked
-input.addEventListener("change", () => {
-  if (!input.files || !input.files.length) {
-    // ❌ canceled: stay where we are
+    pickedFile = input.files[0]; // ← STORE THE FILE
+
+    const ctaWrap = document.getElementById("ctaWrap");
+    if (ctaWrap) ctaWrap.style.display = "none";
+    roleUI.hidden = false;
+
+    if (lastTrigger && lastTrigger.id === "insightReviewBtn") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     lastTrigger = null;
-    return;
-  }
+  });
 
-  // ✅ uploaded: hide top CTA and show role picker (replaces the button)
-  const ctaWrap = document.getElementById("ctaWrap");
-  if (ctaWrap) ctaWrap.style.display = "none";
-  roleUI.hidden = false;
-
-  // If this was triggered from the Insights section, scroll to top
-  if (lastTrigger && lastTrigger.id === "insightReviewBtn") {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  lastTrigger = null;
-});
-
-
-
-  // handle role click
-  roleUI?.querySelectorAll(".role-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+  // When user picks a role, send file to backend and go to analysis.html
+  roleUI?.querySelectorAll(".role-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      roleUI.querySelectorAll(".role-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-
       chosenRole = btn.dataset.role;
 
-      // === FAKE ANALYSIS DATA (same as before) ===
-      const mock = {
-        languageOriginal: "en",
-        summary: [
-          "This contract is generally favorable with low overall risk.",
-          "Payment schedule and termination rights are standard.",
-          "Watch late-fee compounding and define 'material breach'.",
-        ],
-        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-        clauses: [
-          "Payment Terms — Net 30 with 2% per month late fee.",
-          "Scope of Work — Deliverables listed in Schedule A.",
-          "Termination — 30-day convenience; immediate for cause.",
-          "IP & Licensing — Client owns final assets; creator keeps tools.",
-        ],
-        issues: [
-          "Late fee compounding escalates costs on long delays.",
-          "Indemnity is one-sided; consider mutual or capped liability.",
-        ],
-        suggestions: [
-          "Add a 5–7 day grace period before late fees.",
-          "Define 'material breach' + 10-day cure period.",
-          "List milestones and acceptance criteria.",
-        ],
-        meters: { confidence: 75, favorability: 80, deadline: 18 },
-        translations: { en: {} },
-      };
+      if (!pickedFile) {
+        alert("Please choose a contract file first.");
+        return;
+      }
 
-      localStorage.setItem("role", chosenRole);
-      if (chosenRole === "writer") {
-        localStorage.setItem("hideConfidence", "1");
+      // === REAL ANALYSIS CALL ===
+      let payload;
+      try {
+        const fd = new FormData();
+        fd.append("file", pickedFile);                  // ← your file
+        fd.append("role", chosenRole || "signer");      // ← who they are
+
+        // Hit your API route (you’ll create /api/analyze on the backend)
+        const resp = await fetch("/api/analyze", { method: "POST", body: fd });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err?.error || "Analysis failed");
+        }
+        payload = await resp.json();
+      } catch (e) {
+        console.error(e);
+        alert("Could not analyze this file. Try again or use another file.");
+        return;
+      }
+
+      // Expected payload shape (adjust here if your API differs):
+      // {
+      //   contractName: string,
+      //   detectedLang: "en" | "es" | ...,
+      //   analysis: {
+      //     summary: string[] | string,
+      //     risk: number,
+      //     clarity: number,
+      //     compliance: number,
+      //     keyClauses: string[],
+      //     potentialIssues: string[],
+      //     smartSuggestions: string[]
+      //   },
+      //   translations?: { [lang]: {...} }
+      // }
+
+      const { contractName, detectedLang, analysis, translations = {} } = payload || {};
+      if (!analysis) {
+        alert("Analysis came back empty. Please try again with a different file.");
+        return;
+      }
+
+      // Normalize summary
+      const summaryArr = Array.isArray(analysis.summary)
+        ? analysis.summary
+        : analysis.summary ? [analysis.summary] : [];
+      const summaryStr = summaryArr.join("\n\n");
+
+      // Persist for analysis.html (matches your current usage)
+      localStorage.setItem("contractName", contractName || pickedFile.name || "Contract");
+      localStorage.setItem("detectedLang", detectedLang || "en");
+      localStorage.setItem("role", chosenRole || "signer");
+
+      if ((chosenRole || "signer") === "writer") {
+        localStorage.setItem("hideConfidence", "1"); // your existing behavior
       } else {
         localStorage.removeItem("hideConfidence");
       }
 
-      localStorage.setItem("analysisData", JSON.stringify(mock));
-      localStorage.setItem("summary", mock.summary.join("\n\n"));
-      localStorage.setItem("risk", String(mock.risk.value));
-      localStorage.setItem("clarity", String(mock.clarity.value));
-      localStorage.setItem("compliance", "90");
-      localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-      localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-      localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+      localStorage.setItem("summary", summaryStr);
+      localStorage.setItem("risk", String(analysis.risk ?? 0));
+      localStorage.setItem("clarity", String(analysis.clarity ?? 0));
+      localStorage.setItem("compliance", String(analysis.compliance ?? 0));
+      localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
+      localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
+      localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
+
+      // Keep full object for later features (translations dropdown, etc.)
+      localStorage.setItem(
+        "analysisData",
+        JSON.stringify({
+          languageOriginal: detectedLang || "en",
+          summary: summaryArr,
+          risk: { value: analysis.risk ?? 0, note: "" },
+          clarity: { value: analysis.clarity ?? 0, note: "" },
+          clauses: analysis.keyClauses || [],
+          issues: analysis.potentialIssues || [],
+          suggestions: analysis.smartSuggestions || [],
+          meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 },
+          translations
+        })
+      );
+      localStorage.setItem("translations", JSON.stringify(translations));
 
       // Go to results
       window.location.href = "analysis.html";
     });
   });
 })();
-
 </script>
+
 
   </body>
 </html>
