@@ -1,135 +1,121 @@
-// /api/analyze.js  (ESM; requires "type":"module" in package.json)
-import { promises as fsp, readFileSync } from "fs";
-import { formidable as makeForm } from "formidable";
-import pdfParse from "pdf-parse";
-import mammoth from "mammoth";
-import OpenAI from "openai";
+// api/analyze.js — Vercel Node serverless (NOT Edge)
+// Supports PDF (pdf-parse), DOCX (mammoth), TXT, and images (OpenAI Vision)
 
-export const config = {
-  api: {
-    bodyParser: false, // required for Formidable
-  },
-};
+const { IncomingForm } = require("formidable");
+const fs = require("fs");
+const path = require("path");
+const pdfParse = require("pdf-parse");
+const mammoth = require("mammoth");
+const OpenAI = require("openai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const TMP_DIR = "/tmp";
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Safely pull the first {...} JSON block
-function extractJSON(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) {
-    throw new Error("AI did not return JSON");
-  }
-  return JSON.parse(text.slice(start, end + 1));
-}
-
-async function parseUpload(req) {
-  const form = makeForm({ multiples: false, keepExtensions: true });
+function parseForm(req) {
   return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) return reject(err);
-      resolve({ fields, files });
+    const form = new IncomingForm({
+      multiples: false,
+      uploadDir: TMP_DIR,
+      keepExtensions: true,
+      maxFileSize: 25 * 1024 * 1024
     });
+    form.parse(req, (err, fields, files) => (err ? reject(err) : resolve({ fields, files })));
   });
 }
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+async function extractText(filePath, mime, originalFilename) {
+  const ext = (originalFilename || "").toLowerCase();
+  const buf = fs.readFileSync(filePath);
+
+  if (mime === "text/plain" || ext.endsWith(".txt")) return buf.toString("utf8");
+
+  if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+    const data = await pdfParse(buf);
+    return data.text || "";
   }
+
+  if (
+    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    ext.endsWith(".docx")
+  ) {
+    const result = await mammoth.extractRawText({ buffer: buf });
+    return result.value || "";
+  }
+
+  if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+    const b64 = buf.toString("base64");
+    return { __imageDataURI: `data:${mime};base64,${b64}` };
+  }
+
+  throw new Error("Unsupported file type");
+}
+
+async function analyzeWithOpenAI(content) {
+  const system = `You analyze contracts. Return JSON with:
+- summary (string)
+- scores: { risk: 0-100, clarity: 0-100, compliance: 0-100 }
+- keyClauses: string[]
+- potentialIssues: string[]
+- smartSuggestions: string[]
+Ensure valid JSON.`;
+
+  const messages =
+    typeof content === "object" && content.__imageDataURI
+      ? [
+          { role: "system", content: system },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Analyze this contract image." },
+              { type: "image_url", image_url: { url: content.__imageDataURI } }
+            ]
+          }
+        ]
+      : [
+          { role: "system", content: system },
+          {
+            role: "user",
+            content: [{ type: "text", text: "Analyze this contract text:\n\n" + (content || "").slice(0, 200000) }]
+          }
+        ];
+
+  const r = await client.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages,
+    temperature: 0.2,
+    response_format: { type: "json_object" }
+  });
+
+  let out = r.choices?.[0]?.message?.content || "{}";
+  try { return JSON.parse(out); } catch {
+    return { summary: "", scores: { risk: 0, clarity: 0, compliance: 0 }, keyClauses: [], potentialIssues: [], smartSuggestions: [], _raw: out };
+  }
+}
+
+function send(res, code, data) {
+  res.statusCode = code;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+}
+
+module.exports = async (req, res) => {
+  if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: "OPENAI_API_KEY is missing" });
-    }
+    const { files } = await parseForm(req);
+    const file = files?.file || files?.upload || Object.values(files || {})[0];
+    if (!file) return send(res, 400, { error: "No file uploaded" });
 
-    // 1) get the uploaded file
-    const { files, fields } = await parseUpload(req);
-    const role = (fields?.role && String(fields.role)) || "signer";
+    const filePath = file.filepath || file.path || path.join(TMP_DIR, file.originalFilename);
+    const mime = file.mimetype || "application/octet-stream";
+    const name = file.originalFilename || file.newFilename || "";
 
-    const fileAny = files?.file;
-    const fileObj = Array.isArray(fileAny) ? fileAny[0] : fileAny;
-    if (!fileObj?.filepath) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
+    const extracted = await extractText(filePath, mime, name);
+    const data = await analyzeWithOpenAI(extracted);
 
-    const filePath = fileObj.filepath;
-    const original = (fileObj.originalFilename || "contract").toLowerCase();
-
-    // 2) extract text
-    let fileText = "";
-    if (original.endsWith(".pdf")) {
-      const buf = readFileSync(filePath);
-      const pdf = await pdfParse(buf);
-      fileText = pdf.text || "";
-    } else if (original.endsWith(".docx")) {
-      const buf = readFileSync(filePath);
-      const doc = await mammoth.extractRawText({ buffer: buf });
-      fileText = doc.value || "";
-    } else if (original.endsWith(".txt")) {
-      fileText = readFileSync(filePath, "utf8");
-    } else {
-      return res
-        .status(400)
-        .json({ error: "Unsupported file type. Use PDF, DOCX, or TXT." });
-    }
-
-    // cleanup temp file if present
-    try { await fsp.unlink(filePath); } catch {}
-
-    if (!fileText.trim()) {
-      return res.status(400).json({ error: "No readable text found in file" });
-    }
-
-    // 3) call OpenAI
-    const prompt = `
-Analyze this contract and return ONLY valid JSON with these fields:
-{
-  "summary": ["3 short bullets"],
-  "risk": 0-100,
-  "clarity": 0-100,
-  "compliance": 0-100,
-  "keyClauses": ["..."],
-  "potentialIssues": ["..."],
-  "smartSuggestions": ["..."]
-}
-
-Contract:
-"""${fileText.slice(0, 8000)}"""
-(assume the user is the "${role}")
-`;
-
-    const ai = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.2,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a legal contract analyzer. Respond ONLY with valid JSON. No prose, no code fences.",
-        },
-        { role: "user", content: prompt },
-      ],
-    });
-
-    const raw = ai.choices?.[0]?.message?.content?.trim() || "";
-    let analysis;
-    try {
-      analysis = extractJSON(raw);
-    } catch (e) {
-      return res.status(500).json({ error: "Invalid JSON from AI", raw });
-    }
-
-    // 4) return to the frontend
-    return res.status(200).json({
-      contractName: fileObj.originalFilename || "Contract",
-      detectedLang: "en",
-      analysis,
-    });
-  } catch (err) {
-    console.error("api/analyze error:", err);
-    return res.status(500).json({ error: "Failed to analyze file", details: String(err.message || err) });
+    return send(res, 200, { ok: true, data });
+  } catch (e) {
+    console.error("Analyze error:", e);
+    return send(res, 500, { ok: false, error: "Could not analyze this file. Try again or use another file." });
   }
-}
+};
