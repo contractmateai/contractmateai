@@ -1,7 +1,4 @@
-// api/analyze.js  — NO external deps, works without package.json
-// Accepts JSON { text?: string, imageDataURI?: string, originalName?: string, mime?: string }
-// Returns JSON analysis.
-
+// api/analyze.js — ZERO dependencies; expects JSON { text?, imageDataURI?, originalName?, mime? }
 const SECRET = process.env.OPENAI_API_KEY;
 
 function send(res, code, obj) {
@@ -73,3 +70,4 @@ module.exports = async (req, res) => {
     return send(res, 500, { ok: false, error: "Could not analyze this file. Try again or use another file." });
   }
 };
+
