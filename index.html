@@ -20,6 +20,14 @@
       href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
       rel="stylesheet"
     />
+    <!-- ⬇️ ADD THESE TWO LINES HERE ⬇️ -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.3.136/build/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.3.136/build/pdf.worker.min.js";
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <!-- ⬆️ ADD THESE TWO LINES HERE ⬆️ -->
     <style>
       /* === FLOATING TOP BAR === */
       .topbar-wrap {
