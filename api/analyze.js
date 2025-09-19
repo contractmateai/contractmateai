@@ -1,115 +1,128 @@
 import formidable from "formidable";
 import fs from "fs";
-import OpenAI from "openai";
+import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
-import pdf from "pdf-parse";
+import OpenAI from "openai";
 
-export const config = { api: { bodyParser: false } };
+export const config = {
+  api: {
+    bodyParser: false, // Required for formidable
+  },
+};
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// Extract safe JSON
-function extractJSON(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("Invalid JSON in model output");
-  return JSON.parse(text.slice(start, end + 1));
-}
-
-// Parse DOCX using Mammoth
-async function extractDocxText(filePath) {
-  const result = await mammoth.extractRawText({ path: filePath });
-  return result.value || "";
-}
-
-// Parse PDF using pdf-parse
-async function extractPdfText(filePath) {
-  const buffer = fs.readFileSync(filePath);
-  const data = await pdf(buffer);
-  return data.text || "";
-}
-
-// Plain text fallback
-function extractPlainText(filePath) {
-  return fs.readFileSync(filePath, "utf8");
-}
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    const form = new formidable.IncomingForm({ keepExtensions: true });
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, flds, fls) => (err ? reject(err) : resolve({ fields: flds, files: fls })));
+    console.log("🔹 Request received at /api/analyze");
+
+    // Parse the incoming form
+    const form = new formidable.IncomingForm();
+    const { files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
+      });
     });
 
-    const uploadedFile = Array.isArray(files.file) ? files.file[0] : files.file;
-    if (!uploadedFile) return res.status(400).json({ error: "No file uploaded" });
+    if (!files.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
 
-    const filePath = uploadedFile.filepath;
-    const originalName = uploadedFile.originalFilename.toLowerCase();
+    const file = Array.isArray(files.file) ? files.file[0] : files.file;
+    const filePath = file.filepath;
+    const fileType = file.mimetype || file.originalFilename.split(".").pop();
+    console.log("📂 Uploaded file type:", fileType);
 
+    // --- Extract text based on file type ---
     let fileText = "";
-    if (originalName.endsWith(".pdf")) {
-      fileText = await extractPdfText(filePath);
-    } else if (originalName.endsWith(".docx")) {
-      fileText = await extractDocxText(filePath);
-    } else if (originalName.endsWith(".txt")) {
-      fileText = extractPlainText(filePath);
+    if (fileType.includes("pdf")) {
+      console.log("🔹 Parsing PDF...");
+      const pdfBuffer = fs.readFileSync(filePath);
+      const pdfData = await pdfParse(pdfBuffer);
+      fileText = pdfData.text;
+    } else if (
+      fileType.includes("docx") ||
+      fileType.includes("wordprocessingml")
+    ) {
+      console.log("🔹 Parsing DOCX...");
+      const docBuffer = fs.readFileSync(filePath);
+      const docResult = await mammoth.extractRawText({ buffer: docBuffer });
+      fileText = docResult.value;
+    } else if (
+      fileType.includes("txt") ||
+      fileType === "text/plain" ||
+      file.originalFilename.endsWith(".txt")
+    ) {
+      console.log("🔹 Parsing TXT...");
+      fileText = fs.readFileSync(filePath, "utf-8");
     } else {
       return res.status(400).json({ error: "Unsupported file type" });
     }
 
-    if (!fileText || fileText.trim().length < 20) {
-      return res.status(400).json({ error: "Empty or unreadable file" });
+    if (!fileText.trim()) {
+      console.error("❌ Extracted text is empty!");
+      return res.status(400).json({ error: "Could not extract text from file" });
     }
 
-    // === OpenAI analysis ===
+    console.log("✅ File text extracted, length:", fileText.length);
+
+    // --- Build the prompt for OpenAI ---
     const prompt = `
-Analyze the following contract text and return only valid JSON:
+You are an AI contract reviewer. Analyze the following contract text and return ONLY valid JSON with these fields:
 {
-  "summary": string[],
-  "risk": number,
-  "clarity": number,
-  "compliance": number,
-  "keyClauses": string[],
-  "potentialIssues": string[],
-  "smartSuggestions": string[],
-  "detectedLang": string
+  "summary": ["3 bullet point summary"],
+  "risk": 0-100,
+  "clarity": 0-100,
+  "compliance": 0-100,
+  "keyClauses": ["important clause 1", "important clause 2"],
+  "potentialIssues": ["issue 1", "issue 2"],
+  "smartSuggestions": ["suggestion 1", "suggestion 2"]
 }
 
-Contract:
-"""${fileText.slice(0, 12000)}"""
+Contract text:
+"""${fileText.slice(0, 4000)}"""  // truncated to avoid token limit
 `;
 
-    const completion = await openai.chat.completions.create({
+    // --- Call OpenAI ---
+    console.log("🔹 Sending text to OpenAI...");
+    const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      temperature: 0.3,
       messages: [
-        { role: "system", content: "You are a legal contract analysis assistant. Respond ONLY in JSON." },
+        {
+          role: "system",
+          content: "You are a legal assistant. Respond ONLY with valid JSON.",
+        },
         { role: "user", content: prompt },
       ],
+      temperature: 0.2,
     });
 
-    const analysis = extractJSON(completion.choices[0].message.content);
+    const resultText = response.choices[0].message.content.trim();
+    console.log("🔹 OpenAI raw response:", resultText);
 
+    let parsedResult;
+    try {
+      parsedResult = JSON.parse(resultText);
+    } catch (err) {
+      console.error("❌ Failed to parse OpenAI response as JSON:", err.message);
+      return res.status(500).json({ error: "Invalid JSON from AI", raw: resultText });
+    }
+
+    // --- Return the parsed analysis ---
     return res.status(200).json({
-      contractName: uploadedFile.originalFilename || "Contract",
-      detectedLang: analysis.detectedLang || "en",
-      analysis: {
-        summary: analysis.summary || [],
-        risk: analysis.risk || 0,
-        clarity: analysis.clarity || 0,
-        compliance: analysis.compliance || 0,
-        keyClauses: analysis.keyClauses || [],
-        potentialIssues: analysis.potentialIssues || [],
-        smartSuggestions: analysis.smartSuggestions || [],
-      },
-      translations: {},
-      role: fields.role || "signer",
+      contractName: file.originalFilename,
+      detectedLang: "en",
+      analysis: parsedResult,
     });
   } catch (err) {
-    console.error("Analyze error:", err);
-    return res.status(500).json({ error: err.message || "Failed to analyze file" });
+    console.error("🔥 Server error in /api/analyze:", err);
+    return res.status(500).json({ error: "Failed to analyze file", details: err.message });
   }
 }
