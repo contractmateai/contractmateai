@@ -2250,6 +2250,53 @@ window.addEventListener('load', () => {
       accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
       style="display: none"
     />
+    <script>
+async function fileToPayload(file) {
+  const name = file.name || "file";
+  const mime = file.type || "application/octet-stream";
+  const ext = name.toLowerCase();
+
+  // TXT
+  if (mime === "text/plain" || ext.endsWith(".txt")) {
+    const text = await file.text();
+    return { text, originalName: name, mime };
+  }
+
+  // PDF → text (PDF.js)
+  if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let full = "";
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      const strings = content.items.map(i => i.str).join(" ");
+      full += strings + "\n";
+    }
+    return { text: full, originalName: name, mime };
+  }
+
+  // DOCX → text (Mammoth)
+  if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+    const buf = await file.arrayBuffer();
+    const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+    return { text: res.value || "", originalName: name, mime };
+  }
+
+  // Images → Vision (send data URL)
+  if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+    const dataUrl = await new Promise((resolve) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.readAsDataURL(file);
+    });
+    return { imageDataURI: dataUrl, originalName: name, mime };
+  }
+
+  throw new Error("Unsupported file type");
+}
+</script>
+
 
 <script>
 (() => {
@@ -2302,26 +2349,29 @@ window.addEventListener('load', () => {
         alert("Please choose a contract file first.");
         return;
       }
+// === REAL ANALYSIS CALL (JSON) ===
+let payload;
+try {
+  const payloadObj = await fileToPayload(pickedFile);
+  payloadObj.role = chosenRole || "signer";
 
-      // === REAL ANALYSIS CALL ===
-      let payload;
-      try {
-        const fd = new FormData();
-        fd.append("file", pickedFile);                  // ← your file
-        fd.append("role", chosenRole || "signer");      // ← who they are
+  const resp = await fetch("/api/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payloadObj)
+  });
 
-        // Hit your API route (you’ll create /api/analyze on the backend)
-        const resp = await fetch("/api/analyze", { method: "POST", body: fd });
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          throw new Error(err?.error || "Analysis failed");
-        }
-        payload = await resp.json();
-      } catch (e) {
-        console.error(e);
-        alert("Could not analyze this file. Try again or use another file.");
-        return;
-      }
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err?.error || "Analysis failed");
+  }
+  payload = await resp.json();
+} catch (e) {
+  console.error(e);
+  alert("Could not analyze this file. Try again or use another file.");
+  return;
+}
+
 
       // Expected payload shape (adjust here if your API differs):
       // {
