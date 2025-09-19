@@ -1,25 +1,38 @@
-import formidable from "formidable";
-import fs from "fs";
+// /api/analyze.js  (ESM; requires "type":"module" in package.json)
+import { promises as fsp, readFileSync } from "fs";
+import { formidable as makeForm } from "formidable";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
 import OpenAI from "openai";
 
 export const config = {
   api: {
-    bodyParser: false, // Required for formidable to handle file uploads
+    bodyParser: false, // required for Formidable
   },
 };
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // API key is securely stored in Vercel
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Helper to safely parse JSON from AI response
+// Safely pull the first {...} JSON block
 function extractJSON(text) {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("Invalid JSON response from AI");
+  if (start === -1 || end === -1) {
+    throw new Error("AI did not return JSON");
+  }
   return JSON.parse(text.slice(start, end + 1));
+}
+
+async function parseUpload(req) {
+  const form = makeForm({ multiples: false, keepExtensions: true });
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) return reject(err);
+      resolve({ fields, files });
+    });
+  });
 }
 
 export default async function handler(req, res) {
@@ -28,105 +41,95 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log("🔹 API request received");
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: "OPENAI_API_KEY is missing" });
+    }
 
-    // Parse uploaded file using formidable
-    const form = new formidable.IncomingForm();
-    const { files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve({ fields, files });
-      });
-    });
+    // 1) get the uploaded file
+    const { files, fields } = await parseUpload(req);
+    const role = (fields?.role && String(fields.role)) || "signer";
 
-    if (!files.file) {
+    const fileAny = files?.file;
+    const fileObj = Array.isArray(fileAny) ? fileAny[0] : fileAny;
+    if (!fileObj?.filepath) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const file = Array.isArray(files.file) ? files.file[0] : files.file;
-    const filePath = file.filepath;
-    const fileName = file.originalFilename.toLowerCase();
+    const filePath = fileObj.filepath;
+    const original = (fileObj.originalFilename || "contract").toLowerCase();
 
-    console.log("📂 Uploaded file:", fileName);
-
-    // Step 1: Extract text from supported file types
+    // 2) extract text
     let fileText = "";
-    if (fileName.endsWith(".pdf")) {
-      console.log("🔹 Parsing PDF...");
-      const pdfBuffer = fs.readFileSync(filePath);
-      const pdfData = await pdfParse(pdfBuffer);
-      fileText = pdfData.text;
-    } else if (fileName.endsWith(".docx")) {
-      console.log("🔹 Parsing DOCX...");
-      const docBuffer = fs.readFileSync(filePath);
-      const docResult = await mammoth.extractRawText({ buffer: docBuffer });
-      fileText = docResult.value;
-    } else if (fileName.endsWith(".txt")) {
-      console.log("🔹 Parsing TXT...");
-      fileText = fs.readFileSync(filePath, "utf-8");
+    if (original.endsWith(".pdf")) {
+      const buf = readFileSync(filePath);
+      const pdf = await pdfParse(buf);
+      fileText = pdf.text || "";
+    } else if (original.endsWith(".docx")) {
+      const buf = readFileSync(filePath);
+      const doc = await mammoth.extractRawText({ buffer: buf });
+      fileText = doc.value || "";
+    } else if (original.endsWith(".txt")) {
+      fileText = readFileSync(filePath, "utf8");
     } else {
-      return res.status(400).json({ error: "Unsupported file type. Please upload PDF, DOCX, or TXT." });
+      return res
+        .status(400)
+        .json({ error: "Unsupported file type. Use PDF, DOCX, or TXT." });
     }
+
+    // cleanup temp file if present
+    try { await fsp.unlink(filePath); } catch {}
 
     if (!fileText.trim()) {
-      console.error("❌ Extracted text is empty!");
-      return res.status(400).json({ error: "No readable text found in this file" });
+      return res.status(400).json({ error: "No readable text found in file" });
     }
 
-    console.log("✅ Extracted text length:", fileText.length);
-
-    // Step 2: Create prompt for OpenAI
+    // 3) call OpenAI
     const prompt = `
-Analyze the following contract text and return ONLY JSON in this exact format:
+Analyze this contract and return ONLY valid JSON with these fields:
 {
-  "summary": ["3 short bullet points"],
+  "summary": ["3 short bullets"],
   "risk": 0-100,
   "clarity": 0-100,
   "compliance": 0-100,
-  "keyClauses": ["important clause 1", "important clause 2"],
-  "potentialIssues": ["issue 1", "issue 2"],
-  "smartSuggestions": ["suggestion 1", "suggestion 2"]
+  "keyClauses": ["..."],
+  "potentialIssues": ["..."],
+  "smartSuggestions": ["..."]
 }
 
 Contract:
 """${fileText.slice(0, 8000)}"""
+(assume the user is the "${role}")
 `;
 
-    // Step 3: Send to OpenAI
-    console.log("🔹 Sending text to OpenAI...");
-    const response = await openai.chat.completions.create({
+    const ai = await openai.chat.completions.create({
       model: "gpt-4o-mini",
+      temperature: 0.2,
       messages: [
         {
           role: "system",
-          content: "You are a legal contract analyzer. Respond ONLY with valid JSON, no extra text.",
+          content:
+            "You are a legal contract analyzer. Respond ONLY with valid JSON. No prose, no code fences.",
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.2,
     });
 
-    const resultText = response.choices[0].message.content.trim();
-    console.log("🔹 OpenAI response:", resultText);
-
-    // Step 4: Parse the JSON
-    let parsedResult;
+    const raw = ai.choices?.[0]?.message?.content?.trim() || "";
+    let analysis;
     try {
-      parsedResult = extractJSON(resultText);
-    } catch (err) {
-      console.error("❌ JSON parsing error:", err.message);
-      return res.status(500).json({ error: "Invalid JSON from AI", raw: resultText });
+      analysis = extractJSON(raw);
+    } catch (e) {
+      return res.status(500).json({ error: "Invalid JSON from AI", raw });
     }
 
-    // Step 5: Return final response to frontend
+    // 4) return to the frontend
     return res.status(200).json({
-      contractName: file.originalFilename,
+      contractName: fileObj.originalFilename || "Contract",
       detectedLang: "en",
-      analysis: parsedResult,
+      analysis,
     });
   } catch (err) {
-    console.error("🔥 Server error:", err);
-    return res.status(500).json({ error: "Failed to analyze file", details: err.message });
+    console.error("api/analyze error:", err);
+    return res.status(500).json({ error: "Failed to analyze file", details: String(err.message || err) });
   }
 }
-
