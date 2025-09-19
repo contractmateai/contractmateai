@@ -1,121 +1,75 @@
-// api/analyze.js — Vercel Node serverless (NOT Edge)
-// Supports PDF (pdf-parse), DOCX (mammoth), TXT, and images (OpenAI Vision)
+// api/analyze.js  — NO external deps, works without package.json
+// Accepts JSON { text?: string, imageDataURI?: string, originalName?: string, mime?: string }
+// Returns JSON analysis.
 
-const { IncomingForm } = require("formidable");
-const fs = require("fs");
-const path = require("path");
-const pdfParse = require("pdf-parse");
-const mammoth = require("mammoth");
-const OpenAI = require("openai");
+const SECRET = process.env.OPENAI_API_KEY;
 
-const TMP_DIR = "/tmp";
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-function parseForm(req) {
-  return new Promise((resolve, reject) => {
-    const form = new IncomingForm({
-      multiples: false,
-      uploadDir: TMP_DIR,
-      keepExtensions: true,
-      maxFileSize: 25 * 1024 * 1024
-    });
-    form.parse(req, (err, fields, files) => (err ? reject(err) : resolve({ fields, files })));
-  });
-}
-
-async function extractText(filePath, mime, originalFilename) {
-  const ext = (originalFilename || "").toLowerCase();
-  const buf = fs.readFileSync(filePath);
-
-  if (mime === "text/plain" || ext.endsWith(".txt")) return buf.toString("utf8");
-
-  if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-    const data = await pdfParse(buf);
-    return data.text || "";
-  }
-
-  if (
-    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    ext.endsWith(".docx")
-  ) {
-    const result = await mammoth.extractRawText({ buffer: buf });
-    return result.value || "";
-  }
-
-  if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-    const b64 = buf.toString("base64");
-    return { __imageDataURI: `data:${mime};base64,${b64}` };
-  }
-
-  throw new Error("Unsupported file type");
-}
-
-async function analyzeWithOpenAI(content) {
-  const system = `You analyze contracts. Return JSON with:
-- summary (string)
-- scores: { risk: 0-100, clarity: 0-100, compliance: 0-100 }
-- keyClauses: string[]
-- potentialIssues: string[]
-- smartSuggestions: string[]
-Ensure valid JSON.`;
-
-  const messages =
-    typeof content === "object" && content.__imageDataURI
-      ? [
-          { role: "system", content: system },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: "Analyze this contract image." },
-              { type: "image_url", image_url: { url: content.__imageDataURI } }
-            ]
-          }
-        ]
-      : [
-          { role: "system", content: system },
-          {
-            role: "user",
-            content: [{ type: "text", text: "Analyze this contract text:\n\n" + (content || "").slice(0, 200000) }]
-          }
-        ];
-
-  const r = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages,
-    temperature: 0.2,
-    response_format: { type: "json_object" }
-  });
-
-  let out = r.choices?.[0]?.message?.content || "{}";
-  try { return JSON.parse(out); } catch {
-    return { summary: "", scores: { risk: 0, clarity: 0, compliance: 0 }, keyClauses: [], potentialIssues: [], smartSuggestions: [], _raw: out };
-  }
-}
-
-function send(res, code, data) {
+function send(res, code, obj) {
   res.statusCode = code;
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(data));
+  res.end(JSON.stringify(obj));
 }
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
+  if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
-    const { files } = await parseForm(req);
-    const file = files?.file || files?.upload || Object.values(files || {})[0];
-    if (!file) return send(res, 400, { error: "No file uploaded" });
+    // read raw body
+    let raw = "";
+    await new Promise((resolve) => {
+      req.on("data", (c) => (raw += c));
+      req.on("end", resolve);
+    });
 
-    const filePath = file.filepath || file.path || path.join(TMP_DIR, file.originalFilename);
-    const mime = file.mimetype || "application/octet-stream";
-    const name = file.originalFilename || file.newFilename || "";
+    const body = raw ? JSON.parse(raw) : {};
+    const { text, imageDataURI, originalName, mime } = body || {};
 
-    const extracted = await extractText(filePath, mime, name);
-    const data = await analyzeWithOpenAI(extracted);
+    const system = `You analyze contracts. Return strictly valid JSON with:
+{
+  "summary": string,
+  "scores": { "risk": 0-100, "clarity": 0-100, "compliance": 0-100 },
+  "keyClauses": string[],
+  "potentialIssues": string[],
+  "smartSuggestions": string[]
+}`;
 
-    return send(res, 200, { ok: true, data });
+    const userContent = imageDataURI
+      ? [
+          { type: "text", text: `Analyze this contract image (${originalName || ""}).` },
+          { type: "image_url", image_url: { url: imageDataURI } }
+        ]
+      : [
+          { type: "text", text: `Analyze this contract text (${originalName || ""}, ${mime || ""}):\n\n${(text || "").slice(0, 200000)}` }
+        ];
+
+    const openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${SECRET}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: userContent }
+        ]
+      })
+    });
+
+    const data = await openaiResp.json();
+    const content = data?.choices?.[0]?.message?.content || "{}";
+
+    let parsed;
+    try { parsed = JSON.parse(content); }
+    catch { parsed = { summary: "", scores: { risk: 0, clarity: 0, compliance: 0 }, keyClauses: [], potentialIssues: [], smartSuggestions: [], _raw: content }; }
+
+    return send(res, 200, { ok: true, data: parsed });
   } catch (e) {
-    console.error("Analyze error:", e);
+    console.error("analyze error", e);
     return send(res, 500, { ok: false, error: "Could not analyze this file. Try again or use another file." });
   }
 };
