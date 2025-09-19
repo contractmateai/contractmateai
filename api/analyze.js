@@ -6,13 +6,21 @@ import OpenAI from "openai";
 
 export const config = {
   api: {
-    bodyParser: false, // Required for formidable
+    bodyParser: false, // required for formidable
   },
 };
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, // <-- make sure this is set in Vercel
 });
+
+// Helper to extract JSON safely
+function extractJSON(text) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("Invalid JSON response");
+  return JSON.parse(text.slice(start, end + 1));
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -20,9 +28,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log("🔹 Request received at /api/analyze");
+    console.log("🔹 API request received");
 
-    // Parse the incoming form
+    // Parse uploaded file
     const form = new formidable.IncomingForm();
     const { files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
@@ -37,47 +45,41 @@ export default async function handler(req, res) {
 
     const file = Array.isArray(files.file) ? files.file[0] : files.file;
     const filePath = file.filepath;
-    const fileType = file.mimetype || file.originalFilename.split(".").pop();
-    console.log("📂 Uploaded file type:", fileType);
+    const fileName = file.originalFilename.toLowerCase();
 
-    // --- Extract text based on file type ---
+    console.log("📂 Uploaded file:", fileName);
+
+    // --- Step 1: Extract text from file ---
     let fileText = "";
-    if (fileType.includes("pdf")) {
+    if (fileName.endsWith(".pdf")) {
       console.log("🔹 Parsing PDF...");
       const pdfBuffer = fs.readFileSync(filePath);
       const pdfData = await pdfParse(pdfBuffer);
       fileText = pdfData.text;
-    } else if (
-      fileType.includes("docx") ||
-      fileType.includes("wordprocessingml")
-    ) {
+    } else if (fileName.endsWith(".docx")) {
       console.log("🔹 Parsing DOCX...");
       const docBuffer = fs.readFileSync(filePath);
       const docResult = await mammoth.extractRawText({ buffer: docBuffer });
       fileText = docResult.value;
-    } else if (
-      fileType.includes("txt") ||
-      fileType === "text/plain" ||
-      file.originalFilename.endsWith(".txt")
-    ) {
+    } else if (fileName.endsWith(".txt")) {
       console.log("🔹 Parsing TXT...");
       fileText = fs.readFileSync(filePath, "utf-8");
     } else {
-      return res.status(400).json({ error: "Unsupported file type" });
+      return res.status(400).json({ error: "Unsupported file type. Please upload PDF, DOCX, or TXT." });
     }
 
     if (!fileText.trim()) {
       console.error("❌ Extracted text is empty!");
-      return res.status(400).json({ error: "Could not extract text from file" });
+      return res.status(400).json({ error: "No readable text found in this file" });
     }
 
-    console.log("✅ File text extracted, length:", fileText.length);
+    console.log("✅ Extracted text length:", fileText.length);
 
-    // --- Build the prompt for OpenAI ---
+    // --- Step 2: Build prompt for OpenAI ---
     const prompt = `
-You are an AI contract reviewer. Analyze the following contract text and return ONLY valid JSON with these fields:
+Analyze the following contract text and return ONLY JSON with these fields:
 {
-  "summary": ["3 bullet point summary"],
+  "summary": ["3 short bullet points"],
   "risk": 0-100,
   "clarity": 0-100,
   "compliance": 0-100,
@@ -86,18 +88,18 @@ You are an AI contract reviewer. Analyze the following contract text and return 
   "smartSuggestions": ["suggestion 1", "suggestion 2"]
 }
 
-Contract text:
-"""${fileText.slice(0, 4000)}"""  // truncated to avoid token limit
+Contract:
+"""${fileText.slice(0, 8000)}"""
 `;
 
-    // --- Call OpenAI ---
-    console.log("🔹 Sending text to OpenAI...");
+    // --- Step 3: Send to OpenAI ---
+    console.log("🔹 Sending to OpenAI...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a legal assistant. Respond ONLY with valid JSON.",
+          content: "You are a legal contract analyzer. Respond ONLY with JSON.",
         },
         { role: "user", content: prompt },
       ],
@@ -105,24 +107,24 @@ Contract text:
     });
 
     const resultText = response.choices[0].message.content.trim();
-    console.log("🔹 OpenAI raw response:", resultText);
+    console.log("🔹 OpenAI response:", resultText);
 
     let parsedResult;
     try {
-      parsedResult = JSON.parse(resultText);
+      parsedResult = extractJSON(resultText);
     } catch (err) {
-      console.error("❌ Failed to parse OpenAI response as JSON:", err.message);
+      console.error("❌ JSON parse error:", err.message);
       return res.status(500).json({ error: "Invalid JSON from AI", raw: resultText });
     }
 
-    // --- Return the parsed analysis ---
+    // --- Step 4: Return data to frontend ---
     return res.status(200).json({
       contractName: file.originalFilename,
       detectedLang: "en",
       analysis: parsedResult,
     });
   } catch (err) {
-    console.error("🔥 Server error in /api/analyze:", err);
+    console.error("🔥 Server error:", err);
     return res.status(500).json({ error: "Failed to analyze file", details: err.message });
   }
 }
