@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
-    // read body
+    // body
     let raw = "";
     await new Promise((resolve) => { req.on("data", c => raw += c); req.on("end", resolve); });
     const ct = (req.headers["content-type"] || "").toLowerCase();
@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     const { text = "", imageDataURI = "", originalName = "Contract", mime = "", role = "signer" } = body || {};
     if (!text && !imageDataURI) return send(res, 400, { error: "Provide either text or imageDataURI" });
 
-    // === SYSTEM PROMPT (compact, includes full translations + title) ===
+    // ===== SYSTEM (compact, requires full per-language blocks incl. title) =====
     const system = `You are a contract analyst. Return STRICT JSON only (no prose) with this exact shape:
 
 {
@@ -49,30 +49,29 @@ module.exports = async (req, res) => {
    "scoreChecker":{"value":0-100,"band":"red|orange|green","verdict":"unsafe|safe|very safe","line":"string"}
  },
  "translations":{
-   // Provide ALL languages below with these fields present:
-   // title, summary[], mainClauses[], potentialIssues[], smartSuggestions[], riskNote, clarityNote
-   "en":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "it":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "de":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "es":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "fr":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "pt":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "nl":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "ro":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "sq":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "tr":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "ja":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
-   "zh":{"title":"", "summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""}
+   // Provide ALL languages with: title, summary[], mainClauses[], potentialIssues[], smartSuggestions[], riskNote, clarityNote
+   "en":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "it":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "de":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "es":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "fr":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "pt":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "nl":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "ro":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "sq":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "tr":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "ja":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""},
+   "zh":{"title":"","summary":[],"mainClauses":[],"potentialIssues":[],"smartSuggestions":[],"riskNote":"","clarityNote":""}
  }
 }
 
 Rules:
 - Echo role.
-- Contract title: infer clean name (e.g., "Non-Disclosure Agreement") or derive from filename.
+- Contract title: infer a clean title (e.g., "Non-Disclosure Agreement") or derive from filename.
 - Summary: 3–4 sentences TOTAL (array len 3–4).
-- Thresholds: risk 0–25 green/26–58 orange/59–100 red; clarity 0–48 red/49–77 orange/78–100 green.
+- Thresholds: risk 0–25 green / 26–58 orange / 59–100 red; clarity 0–48 red / 49–77 orange / 78–100 green.
 - Potential issues: up to 5, each 1–3 sentences.
-- Smart suggestions: exactly 3 and each must end with "e.g., …" then a concrete example.
+- Smart suggestions: exactly 3 and each ends with "e.g., …" and a concrete example.
 - Bars thresholds: prof/favor/conf 0–48 red,49–74 orange,75–100 green; deadline 0–35 green,36–68 orange,69–100 red.
 - Score checker thresholds: 0–48 red,49–77 orange,78–100 green; verdict red="unsafe", orange="safe", green="very safe"; line red="The contract isnt done well", orange="The contract is done well", green="The contract is nearly perfectly done".
 - Output VALID JSON only.`;
@@ -94,8 +93,7 @@ Rules:
         temperature: 0.2,
         response_format: { type: "json_object" },
         messages: [{ role: "system", content: system }, { role: "user", content: userContent }],
-        // small token cap to keep latency down
-        max_tokens: 1800
+        max_tokens: 1800 // keep latency down
       })
     });
 
@@ -108,7 +106,7 @@ Rules:
     const data = await resp.json().catch(() => ({}));
     const content = data?.choices?.[0]?.message?.content || "{}";
 
-    // === normalize ===
+    // ===== normalize =====
     let parsed = {};
     try { parsed = JSON.parse(content); } catch { parsed = {}; }
 
@@ -123,11 +121,9 @@ Rules:
     const title = parsed.contractTitle || parsed.contractName || originalName || "Contract";
     const lang  = parsed.detectedLang || "en";
 
-    // Summary
-    let summaryArr = Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [];
-    summaryArr = summaryArr.filter(Boolean).map((s) => s.trim()).slice(0,4);
+    const summaryArr = (Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [])
+      .filter(Boolean).map(s => s.trim()).slice(0,4);
 
-    // Risk/Clarity
     const rVal  = clamp(parsed?.analysis?.risk?.value ?? parsed?.analysis?.risk);
     const rBand = parsed?.analysis?.risk?.band || bandRisk(rVal);
     const rNote = capStr(parsed?.analysis?.risk?.note || "", 280);
@@ -136,7 +132,6 @@ Rules:
     const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
     const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
 
-    // Arrays
     const mainClauses = (parsed?.analysis?.mainClauses || []).filter(Boolean).map(s => stripLead(capStr(s, 900))).slice(0,5);
     const potentialIssues = (parsed?.analysis?.potentialIssues || []).filter(Boolean).map(s => stripLead(capStr(s, 1000))).slice(0,5);
     let smartSuggestions = (parsed?.analysis?.smartSuggestions || []).filter(Boolean).map(s => {
@@ -146,7 +141,6 @@ Rules:
     }).slice(0,3);
     while (smartSuggestions.length < 3) smartSuggestions.push("");
 
-    // Bars
     const barsIn = parsed?.analysis?.bars || {};
     const bars = {
       professionalism:  clamp(barsIn.professionalism),
@@ -155,7 +149,6 @@ Rules:
       confidenceToSign: clamp(barsIn.confidenceToSign)
     };
 
-    // Score
     const scVal = clamp(parsed?.analysis?.scoreChecker?.value);
     const scBand = parsed?.analysis?.scoreChecker?.band || scoreBand(scVal);
     const scLine = parsed?.analysis?.scoreChecker?.line ||
@@ -164,7 +157,6 @@ Rules:
     const scVerdict = parsed?.analysis?.scoreChecker?.verdict ||
       (scBand === "green" ? "very safe" : scBand === "orange" ? "safe" : "unsafe");
 
-    // Translations (ensure title included)
     const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
     const trIn = (parsed.translations && typeof parsed.translations === "object") ? parsed.translations : {};
     const normTr = {};
