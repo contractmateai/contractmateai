@@ -24,96 +24,63 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
-
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
-    /* ===== SIDEBAR ===== */
-    .sidebar{
-      background:#0f0e14;border-right:1px solid var(--border);
-      padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
-    }
+    /* Sidebar */
+    .sidebar{background:#0f0e14;border-right:1px solid var(--border);padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px}
     .brand{padding:0 2px 0 18px}
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
     .brand span{font-size:24px;color:var(--white);font-weight:400}
-
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-    .nav a{
-      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
-      padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px;
-    }
+    .nav a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;font-size:19px}
     .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)}
-
     .push{flex:1}
     .end-only{display:none;opacity:0;transform:translateY(8px)}
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
 
-    /* ===== MAIN ===== */
-    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
-    .topbar{
-      position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;
-      height:64px;border-bottom:1px solid var(--border);
-    }
+    /* Main */
+    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap)}
+    .topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;height:64px;border-bottom:1px solid var(--border)}
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
+    /* Title strip */
+    .title-strip{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin:8px 6px 0}
+    .title-strip b{color:#fff}
+    .title-strip span{color:var(--muted)}
+
     /* Language control */
     .lang{position:relative}
-    .lang-btn{
-      display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
-      font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none
-    }
+    .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
-
-    .lang-menu{
-      position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
-      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
-    }
+    .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-
-    /* Hover-open by default; JS adds .open to keep it stable between button/menu */
     .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
-
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
     /* Grid */
-    .grid{
-      display:grid;
-      grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
-      gap:var(--gap);
-      align-items:start;
-      margin-top:18px;
-    }
+    .grid{display:grid;grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);gap:var(--gap);align-items:start;margin-top:18px}
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Fade-in base */
+    /* Anim + cards */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
-
-    .card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;
-      opacity:0;transform:translateY(8px);
-    }
-
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
     .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
 
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
-
-    /* SAFE HEIGHTS */
     #summaryText:empty{min-height:72px}
     #issuesList:empty{min-height:72px}
     #suggestionsList:empty{min-height:72px}
@@ -121,24 +88,20 @@
     #riskNote:empty,#clarNote:empty{min-height:24px}
     #scoreCard .score-remark:empty{min-height:40px}
 
-    /* Bullets (Potential Issues) */
+    /* Bullets / numbered */
     .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
     .bullets li{margin:0 0 12px}
-
-    /* Numbered (Main Clauses / Suggestions) */
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px}
     .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
 
-    /* Meters */
+    /* Meters + donuts */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
     .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
     .meter-title img{width:32px;height:32px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
-
-    /* Donuts */
     .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
     .circle svg{transform:rotate(-90deg)}
@@ -154,9 +117,7 @@
     /* Score Checker */
     #scoreCard{margin-top:12px;}
     #confRightCard{margin-top:12px;}
-    #summaryCard,#riskCard,#clarCard,
-    #profCard,#favCard,#deadCard,#issuesCard,#clausesCard,
-    #suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+    #summaryCard,#riskCard,#clarCard,#profCard,#favCard,#deadCard,#issuesCard,#clausesCard,#suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
@@ -164,14 +125,12 @@
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
-
     .scroll-y{max-height:none !important;overflow:visible !important}
 
-    /* Download button */
+    /* Download + modal */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
     .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
-
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
     .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
@@ -237,14 +196,18 @@
             <div class="lang-item" data-code="ro">Română</div>
             <div class="lang-item" data-code="sq">Shqip</div>
             <div class="lang-item" data-code="tr">Türkçe</div>
-            <div class="lang-item" data-code="zh">中文</div>
             <div class="lang-item" data-code="ja">日本語</div>
+            <div class="lang-item" data-code="zh">中文</div>
           </div>
         </div>
       </div>
 
+      <!-- Title strip -->
+      <div class="title-strip">
+        <b>Title:</b> <span id="docTitle">Contract</span>
+      </div>
+
       <div class="grid">
-        <!-- LEFT -->
         <div class="left">
           <section class="card" id="summaryCard">
             <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
@@ -286,9 +249,7 @@
           </section>
         </div>
 
-        <!-- RIGHT -->
         <div class="right">
-          <!-- Risk -->
           <section class="card" id="riskCard">
             <div class="hcard">
               <div class="circle">
@@ -306,7 +267,6 @@
             </div>
           </section>
 
-          <!-- Clarity -->
           <section class="card" id="clarCard">
             <div class="hcard">
               <div class="circle">
@@ -324,13 +284,11 @@
             </div>
           </section>
 
-          <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <div class="hcard">
               <div class="circle">
@@ -338,11 +296,8 @@
                   <circle class="track" cx="80" cy="80" r="74"></circle>
                   <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
-                <div class="score-center">
-                  <div class="score-pct" id="scorePct">80%</div>
-                </div>
+                <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
               </div>
-
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
                 <div class="score-remark">The contract is nearly perfectly done.</div>
@@ -352,7 +307,6 @@
             </div>
           </section>
 
-          <!-- Confidence to sign freely -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
@@ -383,12 +337,13 @@
 
 <script>
 (() => {
-  // ---------- Helpers ----------
+  // ---------- helpers ----------
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const clamp = (v,min=0,max=100)=>Math.max(min,Math.min(Number(v)||0,max));
   const addP = (el, t)=>{const p=document.createElement('p');p.textContent=String(t||'');el.appendChild(p);};
   const toArr = (v)=> Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
+  const supported = new Set(["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"]);
   const bandFor = (metric, v) => {
     v = clamp(v);
     if (metric==='risk')     return v<=25?'green':v<=58?'orange':'red';
@@ -400,54 +355,20 @@
     const b = bandFor(metric, v);
     return b==='green'?cssVar('--green'):b==='orange'?cssVar('--orange'):cssVar('--red');
   };
-  const labelFor = (metric, v) => { // both boxes use same copy rule
-    const b = bandFor(metric, v);
-    return b==='green' ? 'Totally safe' : b==='orange' ? 'Generally safe' : 'Not safe';
-  };
+  const labelFor = (metric, v) => (bandFor(metric,v)==='green'?'Totally safe':bandFor(metric,v)==='orange'?'Generally safe':'Not safe');
+  const codeToShort = { en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT", nl:"NL", ro:"RO", sq:"SQ", tr:"TR", ja:"日本語", zh:"中文" };
 
-  // ---------- Load data ----------
-  const fallbackDemo = {
-    summary: [
-      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
-      "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
-      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
-    ],
-    risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
-    clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
-    clauses: [
-      "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
-      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
-      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period."
-    ],
-    issues: [
-      "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
-      "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
-      "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
-      "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-    ],
-    suggestions: [
-      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick. For example: 3-day UAT window with pass/fail list.",
-      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap. For example: simple 1%/mo capped at 10% of invoice.",
-      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations. For example: exclude administrative delays."
-    ],
-    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 },
-    detectedLang: "en",
-    translations: {}
-  };
-
-  const mode = localStorage.getItem("analysisMode");
+  // ---------- load data ----------
   let payload = {};
+  const mode = localStorage.getItem("analysisMode");
   if (mode === "live") {
     try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
   }
-  if (!payload || !payload.analysis) payload = fallbackDemo;
+  if (!payload || !payload.analysis) payload = {}; // show empty-safe UI; demo removed for clarity
 
-  // normalize accessors
   const A = payload.analysis || {};
   const base = {
+    title: payload.contractTitle || payload.contractName || "Contract",
     summary: toArr(A.summary).slice(0,4),
     risk: { value: Number(A.risk?.value ?? 0), note: A.risk?.note || "" },
     clarity: { value: Number(A.clarity?.value ?? 0), note: A.clarity?.note || "" },
@@ -461,28 +382,26 @@
       confidence:      Number(A.bars?.confidenceToSign ?? 0),
     },
     translations: payload.translations || {},
-    detectedLang: payload.detectedLang || "en"
+    detectedLang: (payload.detectedLang || "en").toLowerCase()
   };
 
-  // ---------- Language menu (hover-open + switch content) ----------
+  // Title strip
+  $("#docTitle").textContent = base.title || "Contract";
+
+  // ---------- language menu (hover-open + initial selection) ----------
   const langEl = $("#lang");
   const langMenu = $("#langMenu");
   const langBtn  = $("#langBtn");
   const langNow  = $("#langNow");
-  const codeToShort = {
-    en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT",
-    nl:"NL", ro:"RO", sq:"SQ", tr:"TR", ja:"日本語", zh:"中文"
-  };
   let hoverTimer = null;
   langEl.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); langEl.classList.add("open"); });
   langEl.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>langEl.classList.remove("open"), 120); });
-  // touch/click toggle for mobile
   langBtn.addEventListener("click", (e)=>{ e.stopPropagation(); langEl.classList.toggle("open"); });
   document.addEventListener("click", ()=> langEl.classList.remove("open"));
 
-  let currentLang = (base.detectedLang || "en").toLowerCase();
-  if (!codeToShort[currentLang]) currentLang = "en";
-  langNow.textContent = codeToShort[currentLang];
+  // Initial language: detected if supported, else EN.
+  let currentLang = supported.has(base.detectedLang) ? base.detectedLang : "en";
+  langNow.textContent = codeToShort[currentLang] || "EN";
 
   langMenu.querySelectorAll(".lang-item").forEach(item=>{
     item.addEventListener("click", ()=>{
@@ -494,7 +413,7 @@
     });
   });
 
-  // ---------- UI painters ----------
+  // ---------- painters ----------
   function setArc(arcEl, metric, value, valEl){
     const v = clamp(value);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
@@ -513,34 +432,34 @@
   }
 
   function render() {
-    // choose translated content if available
+    // Pull translated content if present; fall back to base
     const T = base.translations[currentLang] || {};
     const summary     = (T.summary && T.summary.length) ? T.summary.slice(0,4) : base.summary;
     const clauses     = (T.mainClauses && T.mainClauses.length) ? T.mainClauses.slice(0,5) : base.clauses;
     const issues      = (T.potentialIssues && T.potentialIssues.length) ? T.potentialIssues.slice(0,5) : base.issues;
     const suggestions = (T.smartSuggestions && T.smartSuggestions.length) ? T.smartSuggestions.slice(0,3) : base.suggestions;
+    const riskNote    = (typeof T.riskNote === "string" && T.riskNote) ? T.riskNote : base.risk.note;
+    const clarNote    = (typeof T.clarityNote === "string" && T.clarityNote) ? T.clarityNote : base.clarity.note;
 
     // Summary
     const sBox=$("#summaryText"); sBox.innerHTML="";
-    summary.forEach(t=>addP(sBox,t));
+    (summary||[]).forEach(t=>addP(sBox,t));
 
     // Clauses / Issues / Suggestions
     (function(){ const el=$("#clausesList"); el.innerHTML=""; (clauses||[]).forEach(t=>addP(el,t)); })();
     (function(){ const el=$("#issuesList");  el.innerHTML=""; (issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
     (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (suggestions||[]).forEach(t=>addP(el,t)); })();
 
-    // Risk donut + badge + note
+    // Risk donut + badge + translated note
     setArc($("#riskArc"), 'risk', base.risk.value, $("#riskVal"));
-    const riskBandColor = colorFor('risk', base.risk.value);
-    $("#riskNote").textContent = base.risk.note || "";
-    $("#riskDot").style.background = riskBandColor;
+    $("#riskNote").textContent = riskNote || "";
+    $("#riskDot").style.background = colorFor('risk', base.risk.value);
     $("#riskBadge").textContent = labelFor('risk', base.risk.value);
 
-    // Clarity donut + badge + note
+    // Clarity donut + badge + translated note
     setArc($("#clarArc"), 'clarity', base.clarity.value, $("#clarVal"));
-    const clarBandColor = colorFor('clarity', base.clarity.value);
-    $("#clarNote").textContent = base.clarity.note || "";
-    $("#clarDot").style.background = clarBandColor;
+    $("#clarNote").textContent = clarNote || "";
+    $("#clarDot").style.background = colorFor('clarity', base.clarity.value);
     $("#clarBadge").textContent = labelFor('clarity', base.clarity.value);
 
     // Bars
@@ -548,26 +467,24 @@
     setMeter($("#favFill"),  $("#favVal"),  'favorability',    base.meters.favorability);
     setMeter($("#deadFill"), $("#deadVal"), 'deadline',        base.meters.deadline);
 
-    // Score Checker (mirror clarity)
-    (function scoreChecker(){
-      const v = clamp(base.clarity.value);
-      setArc($("#scoreArc"), 'clarity', v);
-      $("#scorePct").textContent = v + "%";
-      $("#scoreInd").style.left = `calc(${v}% - 1.5px)`;
-      const remark = document.querySelector("#scoreCard .score-remark");
-      remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
-                      : (v>=49) ? "The contract is done well."
-                                : "The contract isn’t done well.";
-    })();
+    // Score Checker mirrors clarity
+    const v = clamp(base.clarity.value);
+    setArc($("#scoreArc"), 'clarity', v);
+    $("#scorePct").textContent = v + "%";
+    $("#scoreInd").style.left = `calc(${v}% - 1.5px)`;
+    const remark = document.querySelector("#scoreCard .score-remark");
+    remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
+                    : (v>=49) ? "The contract is done well."
+                              : "The contract isn’t done well.";
 
-    // Right-side Confidence bar
+    // Confidence to sign
     setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', base.meters.confidence);
   }
 
   // initial paint
   render();
 
-  // ---------- reveal animations / modal / PDF ----------
+  // reveal animations / bottom CTA
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
@@ -586,6 +503,7 @@
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
 
+  // modal + PDF
   const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
@@ -616,6 +534,7 @@
     const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
     doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
 
+    y=section("Title", y); y=paragraph($("#docTitle").textContent || "—", y);
     y=section("Summary", y); y=bullets(d.summary, y);
     y=section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
     y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
@@ -625,7 +544,7 @@
     doc.save("SignSense_Report.pdf");
 
     function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
-    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
+    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); for(const line of lines){ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh; } return y; }
     function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
       list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
         if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
@@ -641,3 +560,4 @@
 
 </body>
 </html>
+
