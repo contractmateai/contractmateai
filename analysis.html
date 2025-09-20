@@ -41,18 +41,18 @@
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Contract Title row — smaller + muted (per your ask) */
+    /* Title row – muted, same color & size as Summary label (you asked smaller) */
     .doc-title{display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px}
-    .doc-title .label{font-size:18px;color:var(--muted);font-weight:400}
-    .doc-title .value{font-size:18px;color:var(--muted);font-weight:400}
+    .doc-title .label{font-size:22px;color:var(--muted);font-weight:400}
+    .doc-title .value{font-size:22px;color:var(--muted);font-weight:400}
 
-    /* Language control */
-    .lang{position:relative;padding:6px 4px} /* bigger hover hitbox */
+    /* Language control (hover to open, sticky hitbox) */
+    .lang{position:relative;padding:6px 4px}
     .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
     .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
-    .lang.open .lang-menu{display:block}  /* JS-controlled stay-open */
+    .lang.open .lang-menu{display:block}    /* JS keeps it open while hovered */
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
@@ -98,7 +98,7 @@
     .htext{flex:1;display:flex;flex-direction:column;gap:8px}
     .muted{color:var(--muted);font-size:18px}
     .status{display:flex;align-items:center;gap:8px;margin-top:8px}
-    .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
+    .status .dot{width:10px;height:10px;border-radius:2px}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
     #scoreCard{margin-top:12px}
@@ -386,46 +386,22 @@
         band:{green:"完全安全",orange:"总体安全",red:"不安全"}}
   };
 
-  /* ============== DATA: live (localStorage) -> fallback demo ============== */
+  /* ============== DATA: live (localStorage) -> fallback ============== */
   const fallbackDemo = {
-    meta:{ title:"Sample Agreement", detectedLang:"en" },
-    summary:["…"],
-    risk:{ value:45, note:"…" },
-    clarity:{ value:70, note:"…" },
-    clauses:["1. …"],
-    issues:["…"],
-    suggestions:["1. …"],
-    meters:{ professionalism:65, favorability:50, deadline:40, confidence:70 },
-    translations:{} // demo shows default english content
+    contractTitle:"Sample Agreement",
+    detectedLang:"en",
+    analysis:{
+      summary:["…"], risk:{value:45,note:"…"}, clarity:{value:70,note:"…"},
+      mainClauses:["…"], potentialIssues:["…"], smartSuggestions:["…"],
+      bars:{professionalism:65,favorabilityIndex:50,deadlinePressure:40,confidenceToSign:70},
+      scoreChecker:{value:70}
+    },
+    translations:{}
   };
 
   const mode = localStorage.getItem("analysisMode");
-  let payload = {};
+  let payload = fallbackDemo;
   if (mode === "live") { try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {} }
-
-  const normalized = (() => {
-    if (!payload || !payload.analysis) return fallbackDemo;
-    const a = payload.analysis;
-    const supported = Object.keys(UI);
-    const detected = (payload.detectedLang || "en").toLowerCase();
-    const baseLang = supported.includes(detected) ? detected : "en";
-    return {
-      meta: { title: payload.contractTitle || payload.contractName || "Contract", detectedLang: baseLang },
-      summary: Array.isArray(a.summary) ? a.summary.slice(0,4) : [],
-      risk: { value: Number(a.risk?.value ?? 0), note: a.risk?.note || "" },
-      clarity: { value: Number(a.clarity?.value ?? 0), note: a.clarity?.note || "" },
-      clauses: (a.mainClauses || []).slice(0,5),
-      issues: (a.potentialIssues || []).slice(0,5),
-      suggestions: (a.smartSuggestions || []).slice(0,3),
-      meters: {
-        professionalism: Number(a.bars?.professionalism ?? 0),
-        confidence: Number(a.bars?.confidenceToSign ?? 0),
-        favorability: Number(a.bars?.favorabilityIndex ?? 0),
-        deadline: Number(a.bars?.deadlinePressure ?? 0)
-      },
-      translations: payload.translations || {}
-    };
-  })();
 
   /* ================== Helpers ================== */
   const $ = s => document.querySelector(s);
@@ -443,11 +419,11 @@
     if(metric==='clarity')  return v>=78?'green':v>=49?'orange':'red';
     return v>=75?'green':v>=49?'orange':'red';
   };
+  const sanitizeNote=s=>{const v=(s||"").trim(); return (v==="string"||v==="…")?"":v;};
 
-  /* ============== Language & content selection ============== */
+  /* ============== Language selection ============== */
   const supported = Object.keys(UI);
-  const detectedLang = normalized.meta.detectedLang;
-  let currentLang = supported.includes(detectedLang) ? detectedLang : "en";
+  let currentLang = supported.includes((payload.detectedLang||"en").toLowerCase()) ? (payload.detectedLang||"en").toLowerCase() : "en";
 
   function renderUILabels(lang){
     const t = UI[lang] || UI.en;
@@ -468,19 +444,25 @@
     $("#uiVerySafe").textContent = t.verysafe;
   }
 
-  function sanitizeNote(s){ const v=(s||"").trim(); return (v==="string"||v==="…") ? "" : v; }
-
   function getLocalizedContent(lang){
-    const tr = normalized.translations || {};
+    const a = payload.analysis || {};
+    const tr = payload.translations || {};
     const seg = tr[lang] || {};
     return {
-      title: normalized.meta.title,
-      summary: Array.isArray(seg.summary)&&seg.summary.length ? seg.summary : normalized.summary,
-      clauses: Array.isArray(seg.mainClauses)&&seg.mainClauses.length ? seg.mainClauses : normalized.clauses,
-      issues: Array.isArray(seg.potentialIssues)&&seg.potentialIssues.length ? seg.potentialIssues : normalized.issues,
-      suggestions: Array.isArray(seg.smartSuggestions)&&seg.smartSuggestions.length ? seg.smartSuggestions : normalized.suggestions,
-      risk: { value: normalized.risk.value, note: sanitizeNote(typeof seg.riskNote==="string"?seg.riskNote:normalized.risk.note) },
-      clarity: { value: normalized.clarity.value, note: sanitizeNote(typeof seg.clarityNote==="string"?seg.clarityNote:normalized.clarity.note) }
+      title: seg.title || payload.contractTitle || payload.contractName || "—",
+      summary: Array.isArray(seg.summary)&&seg.summary.length ? seg.summary : (a.summary||[]),
+      clauses: Array.isArray(seg.mainClauses)&&seg.mainClauses.length ? seg.mainClauses : (a.mainClauses||[]),
+      issues: Array.isArray(seg.potentialIssues)&&seg.potentialIssues.length ? seg.potentialIssues : (a.potentialIssues||[]),
+      suggestions: Array.isArray(seg.smartSuggestions)&&seg.smartSuggestions.length ? seg.smartSuggestions : (a.smartSuggestions||[]),
+      risk: { value: Number(a.risk?.value||0), note: sanitizeNote(seg.riskNote ?? a.risk?.note) },
+      clarity: { value: Number(a.clarity?.value||0), note: sanitizeNote(seg.clarityNote ?? a.clarity?.note) },
+      bars: {
+        professionalism: Number(a.bars?.professionalism||0),
+        favorability: Number(a.bars?.favorabilityIndex||0),
+        deadline: Number(a.bars?.deadlinePressure||0),
+        confidence: Number(a.bars?.confidenceToSign||0)
+      },
+      scoreVal: Number(a.scoreChecker?.value||0)
     };
   }
 
@@ -499,69 +481,66 @@
   }
 
   function renderAll(lang){
+    const t = UI[lang] || UI.en;
     renderUILabels(lang);
     $("#langNow").textContent = lang.toUpperCase();
 
-    const data = getLocalizedContent(lang);
+    const d = getLocalizedContent(lang);
 
-    $("#uiTitleValue").textContent = data.title || "—";
+    $("#uiTitleValue").textContent = d.title || "—";
 
-    const sBox=$("#summaryText"); sBox.innerHTML="";
-    (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+    const sBox=$("#summaryText"); sBox.innerHTML=""; (d.summary||[]).forEach(t=>addP(sBox,t));
+    const cl=$("#clausesList"); cl.innerHTML=""; (d.clauses||[]).forEach(t=>addP(cl,t));
+    const il=$("#issuesList");  il.innerHTML=""; (d.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
+    const sl=$("#suggestionsList"); sl.innerHTML=""; (d.suggestions||[]).forEach(t=>addP(sl,t));
 
-    const cl=$("#clausesList"); cl.innerHTML=""; (data.clauses||[]).forEach(t=>addP(cl,t));
-    const il=$("#issuesList");  il.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
-    const sl=$("#suggestionsList"); sl.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(sl,t));
+    setArc($("#riskArc"), 'risk', d.risk.value, $("#riskVal"));
+    setArc($("#clarArc"), 'clarity', d.clarity.value, $("#clarVal"));
+    $("#riskNote").textContent = d.risk.note || "";
+    $("#clarNote").textContent = d.clarity.note || "";
 
-    const riskVal = clamp01(data.risk.value), clarVal = clamp01(data.clarity.value);
-    setArc($("#riskArc"), 'risk', riskVal, $("#riskVal"));
-    setArc($("#clarArc"), 'clarity', clarVal, $("#clarVal"));
-    $("#riskNote").textContent = data.risk.note || "";
-    $("#clarNote").textContent = data.clarity.note || "";
-
-    const rBand = bandFor('risk', riskVal), cBand = bandFor('clarity', clarVal);
-    $("#riskDot").style.background = colorFor('risk', riskVal);
-    $("#clarDot").style.background = colorFor('clarity', clarVal);
-    const t = UI[lang] || UI.en;
+    const rBand = bandFor('risk', d.risk.value), cBand = bandFor('clarity', d.clarity.value);
+    $("#riskDot").style.background = colorFor('risk', d.risk.value);
+    $("#clarDot").style.background = colorFor('clarity', d.clarity.value);
     $("#riskBadge").textContent = t.band[rBand];
     $("#clarBadge").textContent = t.band[cBand];
 
-    setArc($("#scoreArc"), 'clarity', clarVal);
-    $("#scorePct").textContent = clarVal + "%";
-    $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
-    $("#scoreRemark").textContent = (clarVal>=78) ? t.remark.green : (clarVal>=49) ? t.remark.orange : t.remark.red;
+    setArc($("#scoreArc"), 'clarity', d.clarity.value);
+    $("#scorePct").textContent = clamp01(d.clarity.value) + "%";
+    $("#scoreInd").style.left = `calc(${clamp01(d.clarity.value)}% - 1.5px)`;
+    $("#scoreRemark").textContent = (d.clarity.value>=78) ? t.remark.green : (d.clarity.value>=49) ? t.remark.orange : t.remark.red;
 
-    setMeter($("#confFill"), $("#confVal"), 'professionalism', normalized.meters.professionalism);
-    setMeter($("#favFill"),  $("#favVal"),  'favorability',    normalized.meters.favorability);
-    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        normalized.meters.deadline);
-    setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      normalized.meters.confidence);
+    setMeter($("#confFill"), $("#confVal"), 'professionalism', d.bars.professionalism);
+    setMeter($("#favFill"),  $("#favVal"),  'favorability',    d.bars.favorability);
+    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        d.bars.deadline);
+    setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      d.bars.confidence);
   }
 
   /* ======= Init render ======= */
   renderAll(currentLang);
 
-  /* ======= HOVER STAY-OPEN DROPDOWN (no click needed) ======= */
+  /* ======= HOVER STAY-OPEN DROPDOWN ======= */
   const langBox = document.getElementById("lang");
   let closeTimer=null;
   const openMenu = ()=>{ clearTimeout(closeTimer); langBox.classList.add("open"); };
-  const scheduleClose = ()=>{ clearTimeout(closeTimer); closeTimer=setTimeout(()=>langBox.classList.remove("open"), 140); };
+  const scheduleClose = ()=>{ clearTimeout(closeTimer); closeTimer=setTimeout(()=>langBox.classList.remove("open"), 160); };
   ["mouseenter","mousemove"].forEach(ev=>langBox.addEventListener(ev, openMenu));
   langBox.addEventListener("mouseleave", scheduleClose);
   document.querySelectorAll(".lang-item").forEach(item=>{
     item.addEventListener("click", ()=>{
       const code=item.getAttribute("data-code"); if(!code) return;
-      currentLang = code; renderAll(currentLang);
-      scheduleClose();
+      currentLang = code; renderAll(currentLang); scheduleClose();
     });
   });
 
   /* ======= Reveal animations ======= */
+  const $q = s => document.querySelector(s);
   window.addEventListener('load', () => {
-    ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
-    setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
+    ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$q(sel); if(el){el.classList.add('fade-in');}});
+    setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$q(sel); if(el){el.classList.add('fade-in');}}), 180);
   });
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
-  ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
+  ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$q(sel); if(el){ io.observe(el); } });
 
   /* ======= Download modal & PDF ======= */
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
@@ -577,12 +556,13 @@
   $("#emailSubmit").addEventListener("click", async ()=>{
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
-    err.style.display="none"; const lang=currentLang; const data = getLocalizedContent(lang);
-    await generatePDF("Report", data, lang); closeModal();
+    err.style.display="none";
+    await generatePDF(currentLang);
+    closeModal();
   });
 
-  async function generatePDF(title, d, lang){
-    const t = UI[lang] || UI.en;
+  async function generatePDF(lang){
+    const d = getLocalizedContent(lang); const t = UI[lang] || UI.en;
     const { jsPDF } = window.jspdf;
     const doc=new jsPDF({ unit:"pt", format:"a4" });
     const pageW=doc.internal.pageSize.getWidth();
@@ -598,8 +578,8 @@
 
     y=section((t.title||"Title:") + " " + (d.title||"—"), y);
     y=section(t.summary||"Summary", y); y=bullets(d.summary, y);
-    y=section(`${t.risk||"Risk Level"}: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
-    y=section(`${t.clarity||"Clause Clarity"}: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
+    y=section(`${t.risk||"Risk Level"}: ${clamp01(d.risk.value)}%`, y); y=paragraph(d.risk.note||"", y);
+    y=section(`${t.clarity||"Clause Clarity"}: ${clamp01(d.clarity.value)}%`, y); y=paragraph(d.clarity.note||"", y);
     y=section(t.clauses||"Main Clauses", y); y=bullets(d.clauses, y);
     y=section(t.issues||"Potential Issues", y); y=bullets(d.issues, y);
     y=section(t.suggestions||"Smart Suggestions", y); y=bullets(d.suggestions, y);
