@@ -17,7 +17,6 @@
     body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
-    /* ===== SIDEBAR ===== */
     .sidebar{background:#0f0e14;border-right:1px solid var(--border);padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px}
     .brand{padding:0 2px 0 18px}
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
@@ -35,34 +34,29 @@
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
 
-    /* ===== MAIN ===== */
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:12px}
     .topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;height:64px;border-bottom:1px solid var(--border)}
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Title row – muted, same color & size as Summary label (you asked smaller) */
     .doc-title{display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px}
     .doc-title .label{font-size:22px;color:var(--muted);font-weight:400}
     .doc-title .value{font-size:22px;color:var(--muted);font-weight:400}
 
-    /* Language control (hover to open, sticky hitbox) */
     .lang{position:relative;padding:6px 4px}
     .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
     .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
-    .lang.open .lang-menu{display:block}    /* JS keeps it open while hovered */
+    .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
-    /* Grid */
     .grid{display:grid;grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);gap:var(--gap);align-items:start;margin-top:6px}
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Fade-in */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
@@ -133,7 +127,6 @@
 </head>
 <body>
   <div class="layout">
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
       <div class="brand">
         <a href="index.html" aria-label="Go to homepage">
@@ -159,7 +152,6 @@
       </div>
     </aside>
 
-    <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
         <div class="top-left"><div class="top-title" id="uiOverview">Overview</div></div>
@@ -184,14 +176,12 @@
         </div>
       </div>
 
-      <!-- Contract title row -->
       <div class="doc-title">
         <span class="label" id="uiTitleLabel">Title:</span>
         <span class="value" id="uiTitleValue">—</span>
       </div>
 
       <div class="grid">
-        <!-- LEFT -->
         <div class="left">
           <section class="card" id="summaryCard">
             <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="uiSummary">Summary</span></h3>
@@ -233,7 +223,6 @@
           </section>
         </div>
 
-        <!-- RIGHT -->
         <div class="right">
           <section class="card" id="riskCard">
             <div class="hcard">
@@ -326,67 +315,66 @@
   const UI = {
     en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
         issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",
-        score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",
+        score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",confidence:"Confidence to sign freely",
         remark:{green:"The contract is nearly perfectly done.",orange:"The contract is done well.",red:"The contract isn’t done well."},
         band:{green:"Totally safe",orange:"Generally safe",red:"Not safe"}},
     it:{overview:"Panoramica",title:"Titolo:",summary:"Sintesi",prof:"Professionalità",fav:"Indice di favorevolezza",deadline:"Pressione delle scadenze",
         issues:"Problemi potenziali",suggestions:"Suggerimenti intelligenti",risk:"Livello di rischio",clarity:"Chiarezza delle clausole",clauses:"Clausole principali",
-        score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",
+        score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",confidence:"Fiducia nel firmare liberamente",
         remark:{green:"Il contratto è quasi perfetto.",orange:"Il contratto è fatto bene.",red:"Il contratto non è fatto bene."},
         band:{green:"Completamente sicuro",orange:"Generalmente sicuro",red:"Non sicuro"}},
     de:{overview:"Übersicht",title:"Titel:",summary:"Zusammenfassung",prof:"Professionalität",fav:"Günstigkeitsindex",deadline:"Termindruck",
         issues:"Mögliche Probleme",suggestions:"Smarte Vorschläge",risk:"Risikostufe",clarity:"Klausel-Klarheit",clauses:"Wesentliche Klauseln",
-        score:"Score-Prüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",
+        score:"Score-Prüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",confidence:"Zuversicht, frei zu unterschreiben",
         remark:{green:"Der Vertrag ist nahezu perfekt.",orange:"Der Vertrag ist gut gemacht.",red:"Der Vertrag ist nicht gut gemacht."},
         band:{green:"Völlig sicher",orange:"Im Allgemeinen sicher",red:"Nicht sicher"}},
     es:{overview:"Resumen",title:"Título:",summary:"Síntesis",prof:"Profesionalidad",fav:"Índice de favorabilidad",deadline:"Presión de plazos",
         issues:"Problemas potenciales",suggestions:"Sugerencias inteligentes",risk:"Nivel de riesgo",clarity:"Claridad de cláusulas",clauses:"Cláusulas principales",
-        score:"Comprobador de puntuación",unsafe:"Inseguro",safe:"Seguro",verysafe:"Muy seguro",
+        score:"Comprobador de puntuación",unsafe:"Inseguro",safe:"Seguro",verysafe:"Muy seguro",confidence:"Confianza para firmar libremente",
         remark:{green:"El contrato está casi perfecto.",orange:"El contrato está bien hecho.",red:"El contrato no está bien hecho."},
         band:{green:"Totalmente seguro",orange:"Generalmente seguro",red:"No seguro"}},
     fr:{overview:"Aperçu",title:"Titre :",summary:"Résumé",prof:"Professionnalisme",fav:"Indice de favorabilité",deadline:"Pression des délais",
         issues:"Problèmes potentiels",suggestions:"Suggestions intelligentes",risk:"Niveau de risque",clarity:"Clarté des clauses",clauses:"Clauses principales",
-        score:"Contrôle du score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",
+        score:"Contrôle du score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",confidence:"Confiance pour signer librement",
         remark:{green:"Le contrat est presque parfait.",orange:"Le contrat est bien fait.",red:"Le contrat n’est pas bien fait."},
         band:{green:"Totalement sûr",orange:"Généralement sûr",red:"Pas sûr"}},
     pt:{overview:"Visão geral",title:"Título:",summary:"Resumo",prof:"Profissionalismo",fav:"Índice de favorabilidade",deadline:"Pressão de prazo",
         issues:"Problemas potenciais",suggestions:"Sugestões inteligentes",risk:"Nível de risco",clarity:"Clareza das cláusulas",clauses:"Cláusulas principais",
-        score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",
+        score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",confidence:"Confiança para assinar livremente",
         remark:{green:"O contrato está quase perfeito.",orange:"O contrato está bem elaborado.",red:"O contrato não está bem elaborado."},
         band:{green:"Totalmente seguro",orange:"Geralmente seguro",red:"Não seguro"}},
     nl:{overview:"Overzicht",title:"Titel:",summary:"Samenvatting",prof:"Professionaliteit",fav:"Voordeligheidsindex",deadline:"Deadline-druk",
         issues:"Potentiële problemen",suggestions:"Slimme suggesties",risk:"Risiconiveau",clarity:"Duidelijkheid van clausules",clauses:"Belangrijkste clausules",
-        score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",
+        score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",confidence:"Zelfvertrouwen om vrij te tekenen",
         remark:{green:"Het contract is bijna perfect.",orange:"Het contract is goed opgesteld.",red:"Het contract is niet goed opgesteld."},
         band:{green:"Helemaal veilig",orange:"Over het algemeen veilig",red:"Niet veilig"}},
     ro:{overview:"Prezentare",title:"Titlu:",summary:"Rezumat",prof:"Profesionalism",fav:"Indice de favorabilitate",deadline:"Presiunea termenelor",
         issues:"Probleme potențiale",suggestions:"Sugestii inteligente",risk:"Nivel de risc",clarity:"Claritatea clauzelor",clauses:"Clauze principale",
-        score:"Verificator de scor",unsafe:"Nesigur",safe:"Sigur",verysafe:"Foarte sigur",
+        score:"Verificator de scor",unsafe:"Nesigur",safe:"Sigur",verysafe:"Foarte sigur",confidence:"Încredere de a semna liber",
         remark:{green:"Contractul este aproape perfect.",orange:"Contractul este bine realizat.",red:"Contractul nu este bine realizat."},
         band:{green:"Complet sigur",orange:"În general sigur",red:"Nesigur"}},
     sq:{overview:"Përmbledhje",title:"Titulli:",summary:"Përmbledhje",prof:"Profesionalizmi",fav:"Indeksi i favorshmërisë",deadline:"Presioni i afateve",
         issues:"Çështje të mundshme",suggestions:"Sugjerime të zgjuara",risk:"Niveli i rrezikut",clarity:"Qartësia e klauzolave",clauses:"Klauzolat kryesore",
-        score:"Kontrolluesi i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",
+        score:"Kontrolluesi i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",confidence:"Besimi për të nënshkruar lirshëm",
         remark:{green:"Kontrata është pothuajse perfekte.",orange:"Kontrata është bërë mirë.",red:"Kontrata nuk është bërë mirë."},
         band:{green:"Plotësisht e sigurt",orange:"Në përgjithësi e sigurt",red:"Jo e sigurt"}},
     tr:{overview:"Genel bakış",title:"Başlık:",summary:"Özet",prof:"Profesyonellik",fav:"Elverişlilik Endeksi",deadline:"Zaman baskısı",
         issues:"Olası sorunlar",suggestions:"Akıllı öneriler",risk:"Risk seviyesi",clarity:"Hüküm açıklığı",clauses:"Ana hükümler",
-        score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",
+        score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",confidence:"Özgürce imzalama güveni",
         remark:{green:"Sözleşme neredeyse kusursuz.",orange:"Sözleşme iyi hazırlanmış.",red:"Sözleşme iyi hazırlanmış değil."},
         band:{green:"Tamamen güvenli",orange:"Genel olarak güvenli",red:"Güvenli değil"}},
     ja:{overview:"概要",title:"タイトル：",summary:"要約",prof:"プロ意識",fav:"有利性指数",deadline:"締切プレッシャー",
         issues:"潜在的な問題",suggestions:"スマート提案",risk:"リスク水準",clarity:"条項の明確さ",clauses:"主要条項",
-        score:"スコア確認",unsafe:"危険",safe:"安全",verysafe:"非常に安全",
+        score:"スコア確認",unsafe:"危険",safe:"安全",verysafe:"非常に安全",confidence:"自由に署名する自信",
         remark:{green:"契約はほぼ完璧です。",orange:"契約は良くできています。",red:"契約は十分ではありません。"},
         band:{green:"完全に安全",orange:"概ね安全",red:"安全ではない"}},
     zh:{overview:"概览",title:"标题：",summary:"摘要",prof:"专业性",fav:"有利指数",deadline:"期限压力",
         issues:"潜在问题",suggestions:"智能建议",risk:"风险等级",clarity:"条款清晰度",clauses:"主要条款",
-        score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",
+        score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",confidence:"放心自由签署的信心",
         remark:{green:"合同几乎完美。",orange:"合同完成得很好。",red:"合同完成得不好。"},
         band:{green:"完全安全",orange:"总体安全",red:"不安全"}}
   };
 
-  /* ============== DATA: live (localStorage) -> fallback ============== */
   const fallbackDemo = {
     contractTitle:"Sample Agreement",
     detectedLang:"en",
@@ -403,7 +391,6 @@
   let payload = fallbackDemo;
   if (mode === "live") { try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {} }
 
-  /* ================== Helpers ================== */
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const clamp01 = v => Math.max(0,Math.min(100,Number(v||0)));
@@ -421,7 +408,6 @@
   };
   const sanitizeNote=s=>{const v=(s||"").trim(); return (v==="string"||v==="…")?"":v;};
 
-  /* ============== Language selection ============== */
   const supported = Object.keys(UI);
   let currentLang = supported.includes((payload.detectedLang||"en").toLowerCase()) ? (payload.detectedLang||"en").toLowerCase() : "en";
 
@@ -442,6 +428,8 @@
     $("#uiUnsafe").textContent = t.unsafe;
     $("#uiSafe").textContent = t.safe;
     $("#uiVerySafe").textContent = t.verysafe;
+    const conf = document.getElementById("uiConfidence");
+    if (conf) conf.textContent = t.confidence; // <-- translate confidence label
   }
 
   function getLocalizedContent(lang){
@@ -449,7 +437,7 @@
     const tr = payload.translations || {};
     const seg = tr[lang] || {};
     return {
-      title: seg.title || payload.contractTitle || payload.contractName || "—",
+      title: typeof seg.title === "string" ? seg.title : (payload.contractTitle || payload.contractName || "—"),
       summary: Array.isArray(seg.summary)&&seg.summary.length ? seg.summary : (a.summary||[]),
       clauses: Array.isArray(seg.mainClauses)&&seg.mainClauses.length ? seg.mainClauses : (a.mainClauses||[]),
       issues: Array.isArray(seg.potentialIssues)&&seg.potentialIssues.length ? seg.potentialIssues : (a.potentialIssues||[]),
@@ -483,43 +471,41 @@
   function renderAll(lang){
     const t = UI[lang] || UI.en;
     renderUILabels(lang);
-    $("#langNow").textContent = lang.toUpperCase();
+    document.getElementById("langNow").textContent = lang.toUpperCase();
 
     const d = getLocalizedContent(lang);
 
-    $("#uiTitleValue").textContent = d.title || "—";
+    document.getElementById("uiTitleValue").textContent = d.title || "—";
 
-    const sBox=$("#summaryText"); sBox.innerHTML=""; (d.summary||[]).forEach(t=>addP(sBox,t));
-    const cl=$("#clausesList"); cl.innerHTML=""; (d.clauses||[]).forEach(t=>addP(cl,t));
-    const il=$("#issuesList");  il.innerHTML=""; (d.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
-    const sl=$("#suggestionsList"); sl.innerHTML=""; (d.suggestions||[]).forEach(t=>addP(sl,t));
+    const sBox=document.getElementById("summaryText"); sBox.innerHTML=""; (d.summary||[]).forEach(t=>addP(sBox,t));
+    const cl=document.getElementById("clausesList"); cl.innerHTML=""; (d.clauses||[]).forEach(t=>addP(cl,t));
+    const il=document.getElementById("issuesList");  il.innerHTML=""; (d.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
+    const sl=document.getElementById("suggestionsList"); sl.innerHTML=""; (d.suggestions||[]).forEach(t=>addP(sl,t));
 
-    setArc($("#riskArc"), 'risk', d.risk.value, $("#riskVal"));
-    setArc($("#clarArc"), 'clarity', d.clarity.value, $("#clarVal"));
-    $("#riskNote").textContent = d.risk.note || "";
-    $("#clarNote").textContent = d.clarity.note || "";
+    setArc(document.getElementById("riskArc"), 'risk', d.risk.value, document.getElementById("riskVal"));
+    setArc(document.getElementById("clarArc"), 'clarity', d.clarity.value, document.getElementById("clarVal"));
+    document.getElementById("riskNote").textContent = d.risk.note || "";
+    document.getElementById("clarNote").textContent = d.clarity.note || "";
 
     const rBand = bandFor('risk', d.risk.value), cBand = bandFor('clarity', d.clarity.value);
-    $("#riskDot").style.background = colorFor('risk', d.risk.value);
-    $("#clarDot").style.background = colorFor('clarity', d.clarity.value);
-    $("#riskBadge").textContent = t.band[rBand];
-    $("#clarBadge").textContent = t.band[cBand];
+    document.getElementById("riskDot").style.background = colorFor('risk', d.risk.value);
+    document.getElementById("clarDot").style.background = colorFor('clarity', d.clarity.value);
+    document.getElementById("riskBadge").textContent = t.band[rBand];
+    document.getElementById("clarBadge").textContent = t.band[cBand];
 
-    setArc($("#scoreArc"), 'clarity', d.clarity.value);
-    $("#scorePct").textContent = clamp01(d.clarity.value) + "%";
-    $("#scoreInd").style.left = `calc(${clamp01(d.clarity.value)}% - 1.5px)`;
-    $("#scoreRemark").textContent = (d.clarity.value>=78) ? t.remark.green : (d.clarity.value>=49) ? t.remark.orange : t.remark.red;
+    setArc(document.getElementById("scoreArc"), 'clarity', d.clarity.value);
+    document.getElementById("scorePct").textContent = clamp01(d.clarity.value) + "%";
+    document.getElementById("scoreInd").style.left = `calc(${clamp01(d.clarity.value)}% - 1.5px)`;
+    document.getElementById("scoreRemark").textContent = (d.clarity.value>=78) ? t.remark.green : (d.clarity.value>=49) ? t.remark.orange : t.remark.red;
 
-    setMeter($("#confFill"), $("#confVal"), 'professionalism', d.bars.professionalism);
-    setMeter($("#favFill"),  $("#favVal"),  'favorability',    d.bars.favorability);
-    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        d.bars.deadline);
-    setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      d.bars.confidence);
+    setMeter(document.getElementById("confFill"), document.getElementById("confVal"), 'professionalism', d.bars.professionalism);
+    setMeter(document.getElementById("favFill"),  document.getElementById("favVal"),  'favorability',    d.bars.favorability);
+    setMeter(document.getElementById("deadFill"), document.getElementById("deadVal"), 'deadline',        d.bars.deadline);
+    setMeter(document.getElementById("conf2Fill"),document.getElementById("conf2Val"),'confidence',      d.bars.confidence);
   }
 
-  /* ======= Init render ======= */
   renderAll(currentLang);
 
-  /* ======= HOVER STAY-OPEN DROPDOWN ======= */
   const langBox = document.getElementById("lang");
   let closeTimer=null;
   const openMenu = ()=>{ clearTimeout(closeTimer); langBox.classList.add("open"); };
@@ -533,7 +519,6 @@
     });
   });
 
-  /* ======= Reveal animations ======= */
   const $q = s => document.querySelector(s);
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$q(sel); if(el){el.classList.add('fade-in');}});
@@ -542,19 +527,18 @@
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$q(sel); if(el){ io.observe(el); } });
 
-  /* ======= Download modal & PDF ======= */
-  const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
+  const dlWrap=document.getElementById("dlWrap"), endBox=document.getElementById("sidebarEnd");
   function nearBottom(){ const s=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight); const show=s<=300;
     dlWrap.style.display=show?"flex":"none"; endBox.style.display=show?"block":"none";
     if(show){ dlWrap.classList.add('fade-in'); endBox.classList.add('fade-in'); } }
   window.addEventListener("scroll", nearBottom, {passive:true}); window.addEventListener("load", nearBottom);
 
-  const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
-  $("#downloadBtn").addEventListener("click", openModal);
-  $("#emailCancel").addEventListener("click", closeModal);
+  const modal=document.getElementById("emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
+  document.getElementById("downloadBtn").addEventListener("click", openModal);
+  document.getElementById("emailCancel").addEventListener("click", closeModal);
   const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim());
-  $("#emailSubmit").addEventListener("click", async ()=>{
-    const email=$("#emailInput").value||"", err=$("#emailErr");
+  document.getElementById("emailSubmit").addEventListener("click", async ()=>{
+    const email=document.getElementById("emailInput").value||"", err=document.getElementById("emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
     await generatePDF(currentLang);
@@ -601,4 +585,3 @@
 </script>
 </body>
 </html>
-
