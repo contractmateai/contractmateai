@@ -26,52 +26,89 @@
     body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
-    /* Sidebar */
-    .sidebar{background:#0f0e14;border-right:1px solid var(--border);padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px}
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+      background:#0f0e14;border-right:1px solid var(--border);
+      padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
+    }
     .brand{padding:0 2px 0 18px}
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
     .brand span{font-size:24px;color:var(--white);font-weight:400}
+
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-    .nav a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;font-size:19px}
+    .nav a{
+      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
+      padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
+      font-size:19px;
+    }
     .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)}
+
     .push{flex:1}
     .end-only{display:none;opacity:0;transform:translateY(8px)}
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
 
-    /* Main */
+    /* ===== MAIN ===== */
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap)}
-    .topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;height:64px;border-bottom:1px solid var(--border)}
+    .topbar{
+      position:sticky;top:0;z-index:5;background:var(--bg);
+      display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;
+      height:64px;border-bottom:1px solid var(--border);
+    }
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Title strip */
-    .title-strip{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin:8px 6px 0}
-    .title-strip b{color:#fff}
-    .title-strip span{color:var(--muted)}
+    /* Doc title row (under topbar) */
+    .doc-title{
+      padding:6px 6px 0 6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    }
+    .doc-title .label{color:var(--white);opacity:.9;font-weight:400;letter-spacing:.2px}
+    .doc-title .name{color:var(--white);font-weight:400}
+    @media (min-width:700px){
+      .doc-title .label{font-size:24px}
+      .doc-title .name{font-size:28px}
+    }
+    @media (max-width:699px){
+      .doc-title .label{font-size:20px}
+      .doc-title .name{font-size:24px}
+    }
 
     /* Language control */
     .lang{position:relative}
-    .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
+    .lang-btn{
+      display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
+      font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none
+    }
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
-    .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
+    .lang-menu{
+      position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
+      border-radius:12px;min-width:240px;max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
+    }
+    /* keep open on hover OR when .open is set (mobile click toggles) */
+    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
     /* Grid */
-    .grid{display:grid;grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);gap:var(--gap);align-items:start;margin-top:18px}
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
+      gap:var(--gap);
+      align-items:start;
+      margin-top:6px;
+    }
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Anim + cards */
+    /* Fade-in */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
@@ -81,6 +118,8 @@
     /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
+
+    /* Heights when empty */
     #summaryText:empty{min-height:72px}
     #issuesList:empty{min-height:72px}
     #suggestionsList:empty{min-height:72px}
@@ -88,20 +127,24 @@
     #riskNote:empty,#clarNote:empty{min-height:24px}
     #scoreCard .score-remark:empty{min-height:40px}
 
-    /* Bullets / numbered */
+    /* Bullets (Issues) */
     .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
     .bullets li{margin:0 0 12px}
+
+    /* Numbered lists (Main Clauses / Suggestions) -> 1. 2. 3. 4. 5. */
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px}
     .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
 
-    /* Meters + donuts */
+    /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
     .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
     .meter-title img{width:32px;height:32px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
+
+    /* Donuts */
     .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
     .circle svg{transform:rotate(-90deg)}
@@ -125,9 +168,8 @@
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
-    .scroll-y{max-height:none !important;overflow:visible !important}
 
-    /* Download + modal */
+    .scroll-y{max-height:none !important;overflow:visible !important}
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
     .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
@@ -148,6 +190,7 @@
 </head>
 <body>
   <div class="layout">
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
       <div class="brand">
         <a href="index.html" aria-label="Go to homepage">
@@ -177,15 +220,17 @@
       </div>
     </aside>
 
+    <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
-        <div class="top-left"><div class="top-title">Overview</div></div>
+        <div class="top-left"><div class="top-title" id="overviewLabel">Overview</div></div>
         <div class="lang" id="lang">
           <button class="lang-btn" id="langBtn" type="button">
             <span id="langNow">EN</span>
             <span class="caret" aria-hidden="true"></span>
           </button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
+            <!-- Use data-code for switching; label is native -->
             <div class="lang-item" data-code="en">English</div>
             <div class="lang-item" data-code="it">Italiano</div>
             <div class="lang-item" data-code="de">Deutsch</div>
@@ -196,27 +241,29 @@
             <div class="lang-item" data-code="ro">Română</div>
             <div class="lang-item" data-code="sq">Shqip</div>
             <div class="lang-item" data-code="tr">Türkçe</div>
-            <div class="lang-item" data-code="ja">日本語</div>
             <div class="lang-item" data-code="zh">中文</div>
+            <div class="lang-item" data-code="ja">日本語</div>
           </div>
         </div>
       </div>
 
-      <!-- Title strip -->
-      <div class="title-strip">
-        <b>Title:</b> <span id="docTitle">Contract</span>
+      <!-- Contract Title Row -->
+      <div class="doc-title">
+        <span class="label" id="titleWord">Title:</span>
+        <span class="name" id="contractTitle">—</span>
       </div>
 
       <div class="grid">
+        <!-- LEFT -->
         <div class="left">
           <section class="card" id="summaryCard">
-            <h3><img src="https://imgur.com/CuQFbD7.png" alt="">Summary</h3>
+            <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="hSummary">Summary</span></h3>
             <div class="list" id="summaryText"></div>
           </section>
 
           <section class="card meter-block" id="profCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span>Professionalism</span></div>
+              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span id="hProfessionalism">Professionalism</span></div>
               <div id="confVal">0%</div>
             </div>
             <div class="meter"><div id="confFill" class="fill"></div></div>
@@ -224,7 +271,7 @@
 
           <section class="card meter-block" id="favCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span>Favorability Index</span></div>
+              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span id="hFavorability">Favorability Index</span></div>
               <div id="favVal">0%</div>
             </div>
             <div class="meter"><div id="favFill" class="fill"></div></div>
@@ -232,24 +279,26 @@
 
           <section class="card meter-block" id="deadCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span>Deadline pressure</span></div>
+              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span id="hDeadline">Deadline pressure</span></div>
               <div id="deadVal">0%</div>
             </div>
             <div class="meter"><div id="deadFill" class="fill"></div></div>
           </section>
 
           <section class="card" id="issuesCard">
-            <h3><img src="https://imgur.com/ppLDtiq.png" alt="">Potential Issues</h3>
+            <h3><img src="https://imgur.com/ppLDtiq.png" alt=""><span id="hIssues">Potential Issues</span></h3>
             <ul class="bullets" id="issuesList"></ul>
           </section>
 
           <section class="card" id="suggestionsCard">
-            <h3><img src="https://imgur.com/EoVDfd5.png" alt="">Smart Suggestions</h3>
+            <h3><img src="https://imgur.com/EoVDfd5.png" alt=""><span id="hSuggestions">Smart Suggestions</span></h3>
             <div class="list numbered" id="suggestionsList"></div>
           </section>
         </div>
 
+        <!-- RIGHT -->
         <div class="right">
+          <!-- Risk -->
           <section class="card" id="riskCard">
             <div class="hcard">
               <div class="circle">
@@ -260,13 +309,14 @@
                 <div class="val" id="riskVal">0%</div>
               </div>
               <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt="">Risk Level</h3>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt=""><span id="hRisk">Risk Level</span></h3>
                 <div class="muted" id="riskNote"></div>
-                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
+                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">—</span></div>
               </div>
             </div>
           </section>
 
+          <!-- Clarity -->
           <section class="card" id="clarCard">
             <div class="hcard">
               <div class="circle">
@@ -277,18 +327,20 @@
                 <div class="val" id="clarVal">0%</div>
               </div>
               <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt="">Clause Clarity</h3>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt=""><span id="hClarity">Clause Clarity</span></h3>
                 <div class="muted" id="clarNote"></div>
-                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
+                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">—</span></div>
               </div>
             </div>
           </section>
 
+          <!-- Clauses -->
           <section class="card" id="clausesCard">
-            <h3><img src="https://imgur.com/K04axKU.png" alt="">Main Clauses</h3>
+            <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="hClauses">Main Clauses</span></h3>
             <div class="list numbered" id="clausesList"></div>
           </section>
 
+          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <div class="hcard">
               <div class="circle">
@@ -296,20 +348,32 @@
                   <circle class="track" cx="80" cy="80" r="74"></circle>
                   <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
-                <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
+                <div class="score-center">
+                  <div class="score-pct" id="scorePct">0%</div>
+                </div>
               </div>
+
               <div class="score-side">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
-                <div class="score-remark">The contract is nearly perfectly done.</div>
-                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
-                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="hScore">Score Checker</span></h3>
+
+                <div class="score-remark" id="scoreRemark"></div>
+
+                <div class="score-bar">
+                  <span class="score-ind" id="scoreInd"></span>
+                </div>
+                <div class="score-scale">
+                  <span id="scaleUnsafe">Unsafe</span>
+                  <span id="scaleSafe">Safe</span>
+                  <span id="scaleVerySafe">Very Safe</span>
+                </div>
               </div>
             </div>
           </section>
 
+          <!-- Confidence to sign freely -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span id="hConfidence">Confidence to sign freely</span></div>
               <div id="conf2Val">0%</div>
             </div>
             <div class="meter"><div id="conf2Fill" class="fill"></div></div>
@@ -319,13 +383,15 @@
     </main>
   </div>
 
+  <!-- Download -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
 
+  <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
-      <h4>Enter your email to download the PDF report</h4>
+      <h4 id="emailPrompt">Enter your email to download the PDF report</h4>
       <div class="modal-row">
         <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
         <button class="btn primary" id="emailSubmit">Download</button>
@@ -337,154 +403,333 @@
 
 <script>
 (() => {
-  // ---------- helpers ----------
+  // ------- Supported UI languages
+  const SUP = ["en","it","de","es","fr","pt","nl","ro","sq","tr","zh","ja"];
+  const SHORT = { en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT", nl:"NL", ro:"RO", sq:"SQ", tr:"TR", zh:"ZH", ja:"JA" };
+
+  // ------- UI translations (labels, remarks, badges)
+  const I18N = {
+    en:{ overview:"Overview", titleWord:"Title:", summary:"Summary",
+         professionalism:"Professionalism", favorability:"Favorability Index", deadline:"Deadline pressure",
+         issues:"Potential Issues", suggestions:"Smart Suggestions", risk:"Risk Level", clarity:"Clause Clarity",
+         clauses:"Main Clauses", score:"Score Checker", confidence:"Confidence to sign freely",
+         scaleUnsafe:"Unsafe", scaleSafe:"Safe", scaleVerySafe:"Very Safe",
+         remarkGreen:"The contract is nearly perfectly done.",
+         remarkOrange:"The contract is done well.",
+         remarkRed:"The contract isn’t done well.",
+         safeTot:"Totally safe", safeGen:"Generally safe", safeNot:"Not safe",
+         emailPrompt:"Enter your email to download the PDF report",
+         emailErr:"Please enter a valid email address.",
+         download:"Download", cancel:"Cancel" },
+    it:{ overview:"Panoramica", titleWord:"Titolo:", summary:"Sommario",
+         professionalism:"Professionalità", favorability:"Indice di favorevolezza", deadline:"Pressione delle scadenze",
+         issues:"Problemi potenziali", suggestions:"Suggerimenti intelligenti", risk:"Livello di rischio", clarity:"Chiarezza delle clausole",
+         clauses:"Clausole principali", score:"Verifica punteggio", confidence:"Fiducia nel firmare liberamente",
+         scaleUnsafe:"Rischioso", scaleSafe:"Sicuro", scaleVerySafe:"Molto sicuro",
+         remarkGreen:"Il contratto è quasi perfetto.",
+         remarkOrange:"Il contratto è fatto bene.",
+         remarkRed:"Il contratto non è fatto bene.",
+         safeTot:"Completamente sicuro", safeGen:"Generalmente sicuro", safeNot:"Non sicuro",
+         emailPrompt:"Inserisci l’email per scaricare il PDF",
+         emailErr:"Inserisci un indirizzo email valido.",
+         download:"Scarica", cancel:"Annulla" },
+    de:{ overview:"Übersicht", titleWord:"Titel:", summary:"Zusammenfassung",
+         professionalism:"Professionalität", favorability:"Günstigkeitsindex", deadline:"Termindruck",
+         issues:"Mögliche Probleme", suggestions:"Smarte Vorschläge", risk:"Risikostufe", clarity:"Klarheit der Klauseln",
+         clauses:"Hauptklauseln", score:"Score-Prüfer", confidence:"Zuversicht frei zu unterschreiben",
+         scaleUnsafe:"Riskant", scaleSafe:"Sicher", scaleVerySafe:"Sehr sicher",
+         remarkGreen:"Der Vertrag ist nahezu perfekt.",
+         remarkOrange:"Der Vertrag ist gut gemacht.",
+         remarkRed:"Der Vertrag ist nicht gut gemacht.",
+         safeTot:"Völlig sicher", safeGen:"Generell sicher", safeNot:"Nicht sicher",
+         emailPrompt:"E-Mail eingeben, um den PDF-Bericht zu laden",
+         emailErr:"Bitte eine gültige E-Mail eingeben.",
+         download:"Herunterladen", cancel:"Abbrechen" },
+    es:{ overview:"Resumen", titleWord:"Título:", summary:"Resumen",
+         professionalism:"Profesionalidad", favorability:"Índice de favorabilidad", deadline:"Presión de plazos",
+         issues:"Problemas potenciales", suggestions:"Sugerencias inteligentes", risk:"Nivel de riesgo", clarity:"Claridad de las cláusulas",
+         clauses:"Cláusulas principales", score:"Comprobador de puntuación", confidence:"Confianza para firmar libremente",
+         scaleUnsafe:"Riesgoso", scaleSafe:"Seguro", scaleVerySafe:"Muy seguro",
+         remarkGreen:"El contrato está casi perfecto.",
+         remarkOrange:"El contrato está bien hecho.",
+         remarkRed:"El contrato no está bien hecho.",
+         safeTot:"Totalmente seguro", safeGen:"Generalmente seguro", safeNot:"No seguro",
+         emailPrompt:"Escribe tu email para descargar el PDF",
+         emailErr:"Introduce un email válido.",
+         download:"Descargar", cancel:"Cancelar" },
+    fr:{ overview:"Aperçu", titleWord:"Titre :", summary:"Résumé",
+         professionalism:"Professionnalisme", favorability:"Indice de favorabilité", deadline:"Pression des délais",
+         issues:"Problèmes potentiels", suggestions:"Suggestions intelligentes", risk:"Niveau de risque", clarity:"Clarté des clauses",
+         clauses:"Clauses principales", score:"Vérificateur de score", confidence:"Confiance pour signer librement",
+         scaleUnsafe:"Risque", scaleSafe:"Sûr", scaleVerySafe:"Très sûr",
+         remarkGreen:"Le contrat est presque parfait.",
+         remarkOrange:"Le contrat est bien réalisé.",
+         remarkRed:"Le contrat n’est pas bien réalisé.",
+         safeTot:"Totalement sûr", safeGen:"Généralement sûr", safeNot:"Pas sûr",
+         emailPrompt:"Entrez votre e-mail pour télécharger le PDF",
+         emailErr:"Veuillez entrer une adresse e-mail valide.",
+         download:"Télécharger", cancel:"Annuler" },
+    pt:{ overview:"Visão geral", titleWord:"Título:", summary:"Resumo",
+         professionalism:"Profissionalismo", favorability:"Índice de favorabilidade", deadline:"Pressão de prazo",
+         issues:"Problemas potenciais", suggestions:"Sugestões inteligentes", risk:"Nível de risco", clarity:"Clareza das cláusulas",
+         clauses:"Cláusulas principais", score:"Verificador de pontuação", confidence:"Confiança para assinar livremente",
+         scaleUnsafe:"Arriscado", scaleSafe:"Seguro", scaleVerySafe:"Muito seguro",
+         remarkGreen:"O contrato está quase perfeito.",
+         remarkOrange:"O contrato está bem feito.",
+         remarkRed:"O contrato não está bem feito.",
+         safeTot:"Totalmente seguro", safeGen:"Geralmente seguro", safeNot:"Não seguro",
+         emailPrompt:"Digite seu e-mail para baixar o PDF",
+         emailErr:"Insira um e-mail válido.",
+         download:"Baixar", cancel:"Cancelar" },
+    nl:{ overview:"Overzicht", titleWord:"Titel:", summary:"Samenvatting",
+         professionalism:"Professionaliteit", favorability:"Voordeligheidsindex", deadline:"Deadline-druk",
+         issues:"Mogelijke problemen", suggestions:"Slimme suggesties", risk:"Risiconiveau", clarity:"Duidelijkheid van clausules",
+         clauses:"Belangrijkste clausules", score:"Score-controle", confidence:"Vertrouwen om vrij te tekenen",
+         scaleUnsafe:"Onveilig", scaleSafe:"Veilig", scaleVerySafe:"Zeer veilig",
+         remarkGreen:"Het contract is bijna perfect.",
+         remarkOrange:"Het contract is goed gedaan.",
+         remarkRed:"Het contract is niet goed gedaan.",
+         safeTot:"Volledig veilig", safeGen:"Over het algemeen veilig", safeNot:"Onveilig",
+         emailPrompt:"Voer je e-mail in om de PDF te downloaden",
+         emailErr:"Voer een geldig e-mailadres in.",
+         download:"Downloaden", cancel:"Annuleren" },
+    ro:{ overview:"Prezentare", titleWord:"Titlu:", summary:"Rezumat",
+         professionalism:"Profesionalism", favorability:"Indice de favorabilitate", deadline:"Presiune pe termen",
+         issues:"Probleme potențiale", suggestions:"Sugestii inteligente", risk:"Nivel de risc", clarity:"Claritatea clauzelor",
+         clauses:"Clauze principale", score:"Verificator scor", confidence:"Încredere pentru a semna liber",
+         scaleUnsafe:"Riscant", scaleSafe:"Sigur", scaleVerySafe:"Foarte sigur",
+         remarkGreen:"Contractul este aproape perfect.",
+         remarkOrange:"Contractul este bine făcut.",
+         remarkRed:"Contractul nu este bine făcut.",
+         safeTot:"Total sigur", safeGen:"În general sigur", safeNot:"Nesigur",
+         emailPrompt:"Introduceți emailul pentru a descărca PDF-ul",
+         emailErr:"Introduceți un email valid.",
+         download:"Descarcă", cancel:"Anulează" },
+    sq:{ overview:"Përmbledhje", titleWord:"Titulli:", summary:"Rezumé",
+         professionalism:"Profesionalizëm", favorability:"Indeksi i favorshmërisë", deadline:"Presioni i afateve",
+         issues:"Çështje potenciale", suggestions:"Sugjerime të zgjuara", risk:"Niveli i rrezikut", clarity:"Qartësia e klauzolave",
+         clauses:"Klauzolat kryesore", score:"Kontrolli i pikëve", confidence:"Besimi për të firmosur lirshëm",
+         scaleUnsafe:"E pasigurt", scaleSafe:"E sigurt", scaleVerySafe:"Shumë e sigurt",
+         remarkGreen:"Kontrata është pothuajse perfekte.",
+         remarkOrange:"Kontrata është bërë mirë.",
+         remarkRed:"Kontrata nuk është bërë mirë.",
+         safeTot:"Tërësisht e sigurt", safeGen:"Në përgjithësi e sigurt", safeNot:"Jo e sigurt",
+         emailPrompt:"Shkruaj emailin për të shkarkuar PDF-në",
+         emailErr:"Shkruaj një email të vlefshëm.",
+         download:"Shkarko", cancel:"Anulo" },
+    tr:{ overview:"Genel bakış", titleWord:"Başlık:", summary:"Özet",
+         professionalism:"Profesyonellik", favorability:"Lehterlik endeksi", deadline:"Zaman baskısı",
+         issues:"Olası sorunlar", suggestions:"Akıllı öneriler", risk:"Risk düzeyi", clarity:"Madde açıklığı",
+         clauses:"Ana maddeler", score:"Skor denetleyici", confidence:"Özgürce imzalama güveni",
+         scaleUnsafe:"Riskli", scaleSafe:"Güvenli", scaleVerySafe:"Çok güvenli",
+         remarkGreen:"Sözleşme neredeyse kusursuz.",
+         remarkOrange:"Sözleşme iyi hazırlanmış.",
+         remarkRed:"Sözleşme iyi hazırlanmış değil.",
+         safeTot:"Tamamen güvenli", safeGen:"Genel olarak güvenli", safeNot:"Güvenli değil",
+         emailPrompt:"PDF indirmek için e-posta girin",
+         emailErr:"Geçerli bir e-posta girin.",
+         download:"İndir", cancel:"İptal" },
+    zh:{ overview:"概览", titleWord:"标题：", summary:"摘要",
+         professionalism:"专业度", favorability:"有利指数", deadline:"截止压力",
+         issues:"潜在问题", suggestions:"智能建议", risk:"风险等级", clarity:"条款清晰度",
+         clauses:"主要条款", score:"评分检查", confidence:"自由签署的信心",
+         scaleUnsafe:"不安全", scaleSafe:"安全", scaleVerySafe:"非常安全",
+         remarkGreen:"合同几乎完美。",
+         remarkOrange:"合同完成得很好。",
+         remarkRed:"合同完成得不佳。",
+         safeTot:"完全安全", safeGen:"总体安全", safeNot:"不安全",
+         emailPrompt:"输入邮箱以下载PDF报告",
+         emailErr:"请输入有效的邮箱地址。",
+         download:"下载", cancel:"取消" },
+    ja:{ overview:"概要", titleWord:"タイトル：", summary:"要約",
+         professionalism:"プロフェッショナリズム", favorability:"有利性指数", deadline:"期限プレッシャー",
+         issues:"潜在的な問題", suggestions:"スマート提案", risk:"リスクレベル", clarity:"条項の明確さ",
+         clauses:"主要条項", score:"スコアチェッカー", confidence:"自由に署名できる自信",
+         scaleUnsafe:"危険", scaleSafe:"安全", scaleVerySafe:"非常に安全",
+         remarkGreen:"契約はほぼ完璧です。",
+         remarkOrange:"契約はよく仕上がっています。",
+         remarkRed:"契約はうまく仕上がっていません。",
+         safeTot:"完全に安全", safeGen:"概ね安全", safeNot:"安全ではない",
+         emailPrompt:"PDFレポートをダウンロードするにはメールを入力",
+         emailErr:"有効なメールアドレスを入力してください。",
+         download:"ダウンロード", cancel:"キャンセル" },
+  };
+
+  // ------- Helpers
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const clamp = (v,min=0,max=100)=>Math.max(min,Math.min(Number(v)||0,max));
-  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=String(t||'');el.appendChild(p);};
-  const toArr = (v)=> Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
-  const supported = new Set(["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"]);
-  const bandFor = (metric, v) => {
-    v = clamp(v);
-    if (metric==='risk')     return v<=25?'green':v<=58?'orange':'red';
-    if (metric==='clarity')  return v>=78?'green':v>=49?'orange':'red';
-    if (metric==='deadline') return v<=35?'green':v<=68?'orange':'red';
-    return v>=75?'green':v>=49?'orange':'red';
-  };
-  const colorFor = (metric, v) => {
-    const b = bandFor(metric, v);
-    return b==='green'?cssVar('--green'):b==='orange'?cssVar('--orange'):cssVar('--red');
-  };
-  const labelFor = (metric, v) => (bandFor(metric,v)==='green'?'Totally safe':bandFor(metric,v)==='orange'?'Generally safe':'Not safe');
-  const codeToShort = { en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT", nl:"NL", ro:"RO", sq:"SQ", tr:"TR", ja:"日本語", zh:"中文" };
-
-  // ---------- load data ----------
-  let payload = {};
-  const mode = localStorage.getItem("analysisMode");
-  if (mode === "live") {
-    try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
+  const between = (v,min,max)=>Math.max(min,Math.min(Number(v)||0,max));
+  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=String(t||"");el.appendChild(p);};
+  function colorFor(metric, v){
+    if (metric === 'risk')     { if (v<=25) return cssVar('--green'); if (v<=58) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'clarity')  { if (v>=78) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'deadline') { if (v<=35) return cssVar('--green'); if (v<=68) return cssVar('--orange'); return cssVar('--red'); }
+    if (v>=75) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red');
   }
-  if (!payload || !payload.analysis) payload = {}; // show empty-safe UI; demo removed for clarity
-
-  const A = payload.analysis || {};
-  const base = {
-    title: payload.contractTitle || payload.contractName || "Contract",
-    summary: toArr(A.summary).slice(0,4),
-    risk: { value: Number(A.risk?.value ?? 0), note: A.risk?.note || "" },
-    clarity: { value: Number(A.clarity?.value ?? 0), note: A.clarity?.note || "" },
-    clauses: (A.mainClauses || []).slice(0,5),
-    issues: (A.potentialIssues || []).slice(0,5),
-    suggestions: (A.smartSuggestions || []).slice(0,3),
-    meters: {
-      professionalism: Number(A.bars?.professionalism ?? 0),
-      favorability:    Number(A.bars?.favorabilityIndex ?? 0),
-      deadline:        Number(A.bars?.deadlinePressure ?? 0),
-      confidence:      Number(A.bars?.confidenceToSign ?? 0),
-    },
-    translations: payload.translations || {},
-    detectedLang: (payload.detectedLang || "en").toLowerCase()
-  };
-
-  // Title strip
-  $("#docTitle").textContent = base.title || "Contract";
-
-  // ---------- language menu (hover-open + initial selection) ----------
-  const langEl = $("#lang");
-  const langMenu = $("#langMenu");
-  const langBtn  = $("#langBtn");
-  const langNow  = $("#langNow");
-  let hoverTimer = null;
-  langEl.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); langEl.classList.add("open"); });
-  langEl.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>langEl.classList.remove("open"), 120); });
-  langBtn.addEventListener("click", (e)=>{ e.stopPropagation(); langEl.classList.toggle("open"); });
-  document.addEventListener("click", ()=> langEl.classList.remove("open"));
-
-  // Initial language: detected if supported, else EN.
-  let currentLang = supported.has(base.detectedLang) ? base.detectedLang : "en";
-  langNow.textContent = codeToShort[currentLang] || "EN";
-
-  langMenu.querySelectorAll(".lang-item").forEach(item=>{
-    item.addEventListener("click", ()=>{
-      const code = item.getAttribute("data-code") || "en";
-      currentLang = code;
-      langNow.textContent = codeToShort[code] || "EN";
-      render();
-      langEl.classList.remove("open");
-    });
-  });
-
-  // ---------- painters ----------
-  function setArc(arcEl, metric, value, valEl){
-    const v = clamp(value);
+  function bandFor(metric, v){
+    if (metric==='risk')     return (v<=25) ? 'green' : (v<=58) ? 'orange' : 'red';
+    if (metric==='clarity')  return (v>=78) ? 'green' : (v>=49) ? 'orange' : 'red';
+    return 'green';
+  }
+  function setArc(arcEl, metric, value, valEl, noteEl, note){
+    const v = between(value||0, 0, 100);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2*Math.PI*rr;
     arcEl.style.stroke = colorFor(metric, v);
-    arcEl.style.strokeDasharray = circ;
-    arcEl.style.strokeDashoffset = circ;
-    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
+    arcEl.style.strokeDasharray = String(circ);
+    arcEl.style.strokeDashoffset = String(circ);
+    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.6s ease"; arcEl.style.strokeDashoffset = String(circ * (1 - v/100)); });
     if (valEl) valEl.textContent = v + "%";
+    if (noteEl) noteEl.textContent = note || "";
   }
   function setMeter(fill, label, metric, value){
-    const v = clamp(value);
+    const v = between(value||0, 0, 100);
     label.textContent = v + "%";
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
 
-  function render() {
-    // Pull translated content if present; fall back to base
-    const T = base.translations[currentLang] || {};
-    const summary     = (T.summary && T.summary.length) ? T.summary.slice(0,4) : base.summary;
-    const clauses     = (T.mainClauses && T.mainClauses.length) ? T.mainClauses.slice(0,5) : base.clauses;
-    const issues      = (T.potentialIssues && T.potentialIssues.length) ? T.potentialIssues.slice(0,5) : base.issues;
-    const suggestions = (T.smartSuggestions && T.smartSuggestions.length) ? T.smartSuggestions.slice(0,3) : base.suggestions;
-    const riskNote    = (typeof T.riskNote === "string" && T.riskNote) ? T.riskNote : base.risk.note;
-    const clarNote    = (typeof T.clarityNote === "string" && T.clarityNote) ? T.clarityNote : base.clarity.note;
+  // ------- Load payload from analyze step (live) or fallback
+  const mode = localStorage.getItem("analysisMode");
+  let payload = {};
+  if (mode === "live") {
+    try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
+  }
+  // graceful defaults
+  const analysis = payload.analysis || {};
+  const toArr = (v) => Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
+
+  // Base report (original language)
+  const base = {
+    contractTitle: payload.contractTitle || payload.contractName || "Contract",
+    detectedLang: (payload.detectedLang || "en").toLowerCase(),
+    summary: toArr(analysis.summary).slice(0,4),
+    risk: { value: Number(analysis?.risk?.value ?? 0), note: analysis?.risk?.note || "" },
+    clarity: { value: Number(analysis?.clarity?.value ?? 0), note: analysis?.clarity?.note || "" },
+    clauses: (analysis.mainClauses || []).slice(0,5),
+    issues: (analysis.potentialIssues || []).slice(0,5),
+    suggestions: (analysis.smartSuggestions || []).slice(0,3),
+    bars: {
+      professionalism: Number(analysis?.bars?.professionalism ?? 0),
+      favorability:    Number(analysis?.bars?.favorabilityIndex ?? 0),
+      deadline:        Number(analysis?.bars?.deadlinePressure ?? 0),
+      confidence:      Number(analysis?.bars?.confidenceToSign ?? 0),
+    },
+    score: {
+      value: Number(analysis?.scoreChecker?.value ?? 0),
+      band: analysis?.scoreChecker?.band || null
+    },
+    translations: payload.translations || {}
+  };
+
+  // Decide initial UI language
+  const storedLang = (localStorage.getItem("uiLang")||"").toLowerCase();
+  let currentLang = SUP.includes(storedLang) ? storedLang : (SUP.includes(base.detectedLang) ? base.detectedLang : "en");
+
+  // Build the report content for a target UI lang
+  function reportFor(lang){
+    const t = base.translations?.[lang] || {};
+    return {
+      title: base.contractTitle,
+      summary: toArr(t.summary).length ? toArr(t.summary).slice(0,4) : base.summary,
+      clauses: Array.isArray(t.mainClauses) && t.mainClauses.length ? t.mainClauses.slice(0,5) : base.clauses,
+      issues: Array.isArray(t.potentialIssues) && t.potentialIssues.length ? t.potentialIssues.slice(0,5) : base.issues,
+      suggestions: Array.isArray(t.smartSuggestions) && t.smartSuggestions.length ? t.smartSuggestions.slice(0,3) : base.suggestions,
+      // risk/clarity notes: use translated note if present; else original
+      riskNote: (t.riskNote || base.risk.note || ""),
+      clarityNote: (t.clarityNote || base.clarity.note || ""),
+      riskVal: base.risk.value,
+      clarityVal: base.clarity.value,
+      bars: base.bars,
+      scoreVal: base.score.value
+    };
+  }
+
+  // UI text swap
+  function setUIStrings(lang){
+    const L = I18N[lang] || I18N.en;
+    $("#overviewLabel").textContent = L.overview;
+    $("#titleWord").textContent = L.titleWord;
+    $("#hSummary").textContent = L.summary;
+    $("#hProfessionalism").textContent = L.professionalism;
+    $("#hFavorability").textContent = L.favorability;
+    $("#hDeadline").textContent = L.deadline;
+    $("#hIssues").textContent = L.issues;
+    $("#hSuggestions").textContent = L.suggestions;
+    $("#hRisk").textContent = L.risk;
+    $("#hClarity").textContent = L.clarity;
+    $("#hClauses").textContent = L.clauses;
+    $("#hScore").textContent = L.score;
+    $("#hConfidence").textContent = L.confidence;
+    $("#scaleUnsafe").textContent = L.scaleUnsafe;
+    $("#scaleSafe").textContent = L.scaleSafe;
+    $("#scaleVerySafe").textContent = L.scaleVerySafe;
+    $("#emailPrompt").textContent = L.emailPrompt;
+    $("#emailErr").textContent = L.emailErr;
+    $("#emailSubmit").textContent = L.download;
+    $("#emailCancel").textContent = L.cancel;
+  }
+
+  // Badges per band with translation
+  function badgeText(lang, band, domain){ // domain risk|clarity (same wording)
+    const L = I18N[lang] || I18N.en;
+    if (band==='green') return L.safeTot;
+    if (band==='orange') return L.safeGen;
+    return L.safeNot;
+  }
+
+  // Render the whole page for a given lang
+  function render(lang){
+    currentLang = SUP.includes(lang) ? lang : "en";
+    localStorage.setItem("uiLang", currentLang);
+    $("#langNow").textContent = SHORT[currentLang] || "EN";
+    setUIStrings(currentLang);
+
+    const d = reportFor(currentLang);
+    $("#contractTitle").textContent = d.title || "—";
 
     // Summary
     const sBox=$("#summaryText"); sBox.innerHTML="";
-    (summary||[]).forEach(t=>addP(sBox,t));
+    (d.summary||[]).forEach(t=>addP(sBox,t));
 
-    // Clauses / Issues / Suggestions
-    (function(){ const el=$("#clausesList"); el.innerHTML=""; (clauses||[]).forEach(t=>addP(el,t)); })();
-    (function(){ const el=$("#issuesList");  el.innerHTML=""; (issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
-    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (suggestions||[]).forEach(t=>addP(el,t)); })();
+    // Main Clauses
+    (function(){ const el=$("#clausesList"); el.innerHTML=""; (d.clauses||[]).forEach(t=>addP(el,t)); })();
 
-    // Risk donut + badge + translated note
-    setArc($("#riskArc"), 'risk', base.risk.value, $("#riskVal"));
-    $("#riskNote").textContent = riskNote || "";
-    $("#riskDot").style.background = colorFor('risk', base.risk.value);
-    $("#riskBadge").textContent = labelFor('risk', base.risk.value);
+    // Issues
+    (function(){ const el=$("#issuesList"); el.innerHTML=""; (d.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
 
-    // Clarity donut + badge + translated note
-    setArc($("#clarArc"), 'clarity', base.clarity.value, $("#clarVal"));
-    $("#clarNote").textContent = clarNote || "";
-    $("#clarDot").style.background = colorFor('clarity', base.clarity.value);
-    $("#clarBadge").textContent = labelFor('clarity', base.clarity.value);
+    // Suggestions
+    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (d.suggestions||[]).forEach(t=>addP(el,t)); })();
+
+    // Donuts + notes + badges
+    setArc($("#riskArc"), 'risk', d.riskVal, $("#riskVal"), $("#riskNote"), d.riskNote);
+    setArc($("#clarArc"), 'clarity', d.clarityVal, $("#clarVal"), $("#clarNote"), d.clarityNote);
+
+    // Badge colors and text based on band
+    const rBand = bandFor('risk', d.riskVal);
+    const cBand = bandFor('clarity', d.clarityVal);
+    $("#riskDot").style.background = (rBand==='green')?cssVar('--green'):(rBand==='orange')?cssVar('--orange'):cssVar('--red');
+    $("#clarDot").style.background = (cBand==='green')?cssVar('--green'):(cBand==='orange')?cssVar('--orange'):cssVar('--red');
+    $("#riskBadge").textContent = badgeText(currentLang, rBand, 'risk');
+    $("#clarBadge").textContent = badgeText(currentLang, cBand, 'clarity');
 
     // Bars
-    setMeter($("#confFill"), $("#confVal"), 'professionalism', base.meters.professionalism);
-    setMeter($("#favFill"),  $("#favVal"),  'favorability',    base.meters.favorability);
-    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        base.meters.deadline);
+    setMeter($("#confFill"), $("#confVal"), 'professionalism', d.bars.professionalism);
+    setMeter($("#favFill"),  $("#favVal"),  'favorability',    d.bars.favorability);
+    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        d.bars.deadline);
+    setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence',    d.bars.confidence);
 
-    // Score Checker mirrors clarity
-    const v = clamp(base.clarity.value);
+    // Score checker (use clarity scale for color/remark)
+    const v = between(d.scoreVal,0,100);
     setArc($("#scoreArc"), 'clarity', v);
     $("#scorePct").textContent = v + "%";
     $("#scoreInd").style.left = `calc(${v}% - 1.5px)`;
-    const remark = document.querySelector("#scoreCard .score-remark");
-    remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
-                    : (v>=49) ? "The contract is done well."
-                              : "The contract isn’t done well.";
-
-    // Confidence to sign
-    setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', base.meters.confidence);
+    const L = I18N[currentLang] || I18N.en;
+    const remark = (v>=78) ? L.remarkGreen : (v>=49) ? L.remarkOrange : L.remarkRed;
+    $("#scoreRemark").textContent = remark;
   }
 
-  // initial paint
-  render();
-
-  // reveal animations / bottom CTA
+  // ----- Initial reveal animations
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
@@ -492,6 +737,7 @@
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
+  // ----- Download button visibility & modal
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
@@ -503,8 +749,8 @@
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
 
-  // modal + PDF
-  const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
+  const modal=$("#emailModal");
+  const openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
   function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
@@ -512,11 +758,7 @@
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    await generatePDF("Report", {
-      summary: toArr($("#summaryText").innerText.split("\n")),
-      risk: base.risk, clarity: base.clarity,
-      clauses: base.clauses, issues: base.issues, suggestions: base.suggestions
-    });
+    await generatePDF("Report", reportFor(currentLang)); // use current language content
     closeModal();
   });
 
@@ -526,38 +768,60 @@
     const pageW=doc.internal.pageSize.getWidth();
     const margin=48, width=pageW-margin*2, lh=18;
 
+    // Header bar
     doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
     doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
     doc.text("SignSense — Contract Analysis Report", margin, 48);
 
+    // Title
+    const L = I18N[currentLang] || I18N.en;
     let y=100;
-    const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
-    doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
+    doc.setFontSize(10); doc.setTextColor(189,189,189);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y); y+=lh*1.6;
+    doc.setTextColor(255,255,255); doc.setFontSize(12);
+    doc.text(`${L.titleWord} ${String(d.title||"")}`, margin, y); y+=lh*1.4;
 
-    y=section("Title", y); y=paragraph($("#docTitle").textContent || "—", y);
-    y=section("Summary", y); y=bullets(d.summary, y);
-    y=section(`Risk Level: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
-    y=section(`Clause Clarity: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
-    y=section("Main Clauses", y); y=bullets(d.clauses, y);
-    y=section("Potential Issues", y); y=bullets(d.issues, y);
-    y=section("Smart Suggestions", y); y=bullets(d.suggestions, y);
+    y=section(L.summary, y); y=bullets(d.summary, y);
+    y=section(`${L.risk}: ${d.riskVal ?? 0}%`, y); y=paragraph(String(d.riskNote||""), y);
+    y=section(`${L.clarity}: ${d.clarityVal ?? 0}%`, y); y=paragraph(String(d.clarityNote||""), y);
+    y=section(L.clauses, y); y=bullets(d.clauses, y, true);
+    y=section(L.issues, y); y=bullets(d.issues, y);
+    y=section(L.suggestions, y); y=bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
-    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
-    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); for(const line of lines){ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh; } return y; }
-    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
-        if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
-        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} });
-        y+=lh;
-      }); return y;
+    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(String(t), margin, y); return y+12; }
+    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(String(text),width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
+    function bullets(arr,y,numbered=false){
+      const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      let idx=1;
+      list.forEach(t=>{
+        const prefix = numbered ? (idx++ + ". ") : "• ";
+        const lines=doc.splitTextToSize(prefix+String(t), width);
+        lines.forEach((line,j)=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;});
+      });
+      return y;
     }
   }
 
-  $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
+  // ----- Language menu behavior: hover show; click toggles for mobile; persist choice
+  const lang = $("#lang");
+  // keep open while hovering (CSS does most); add click toggle for touch
+  $("#langBtn").addEventListener("click", ()=>{ lang.classList.toggle("open"); });
+  $("#langMenu").addEventListener("click", (e)=>{
+    const item = e.target.closest(".lang-item");
+    if(!item) return;
+    const code = (item.getAttribute("data-code")||"en").toLowerCase();
+    render(code);
+    lang.classList.remove("open");
+  });
+  // close on outside click (mobile)
+  document.addEventListener("click", (e)=>{
+    if(!lang.contains(e.target)) lang.classList.remove("open");
+  });
+
+  // ----- Initial render
+  render(currentLang);
 })();
 </script>
-
 </body>
 </html>
-
