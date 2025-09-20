@@ -401,8 +401,8 @@
 
 <script>
 (() => {
-  /* ---------- Static content ---------- */
-  const demo = {
+  // ---- 1) Build DATA (live -> fallback to demo) ----
+  const fallbackDemo = {
     summary: [
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
       "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
@@ -415,70 +415,56 @@
       "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
       "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
       "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination.",
-      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period.",
-      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how and add a short grace period and a cap."
+      "Confidentiality: Standard carve-outs (public information, independently developed) and reasonable survival period."
     ],
     issues: [
       "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
       "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
       "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
       "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured.",
+      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
     ],
     suggestions: [
       "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
       "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
       "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
     ],
-    meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 } // Favorability 75 (orange)
+    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 }
   };
 
-  const data = demo;
+  const mode = localStorage.getItem("analysisMode");
+  let payload = {};
+  if (mode === "live") {
+    try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
+  }
+  const a = payload.analysis || {};
+  const toArr = (v) => Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
+  const data = (mode === "live") ? {
+    summary: toArr(a.summary).slice(0,4),
+    risk: { value: Number(a.risk ?? 0), note: a.riskNote || "Termination, dispute handling and scope changes need to be tightened a bit better." },
+    clarity:{ value: Number(a.clarity ?? 0), note: a.clarityNote || "Some provisions are thin on definitions which reduces predictability in changes." },
+    clauses: (a.keyClauses || []).slice(0,5),
+    issues: (a.potentialIssues || []).slice(0,5),
+    suggestions: (a.smartSuggestions || []).slice(0,3),
+    meters: {
+      professionalism: Number(a.professionalism ?? a.compliance ?? 0),
+      favorability:    Number(a.favorability ?? a.favorabilityIndex ?? a.clarity ?? 0),
+      deadline:        Number(a.deadlinePressure ?? 0),
+      confidence:      Number(a.confidence ?? a.compliance ?? 0),
+    }
+  } : fallbackDemo;
+
+  // ---- 2) UI helpers (unchanged) ----
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const between = (v,min,max)=>Math.max(min,Math.min(v,max));
   const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
-
   function colorFor(metric, v){
-    if (metric === 'risk') { if (v<=25) return cssVar('--green'); if (v<=55) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'clarity') { if (v>=80) return cssVar('--green'); if (v>=45) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'deadline') { if (v<=25) return cssVar('--green'); if (v<=75) return cssVar('--orange'); return cssVar('--red'); }
-    if (v>=76) return cssVar('--green'); if (v>=50) return cssVar('--orange'); return cssVar('--red');
+    if (metric === 'risk')     { if (v<=25) return cssVar('--green'); if (v<=58) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'clarity')  { if (v>=78) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red'); }
+    if (metric === 'deadline') { if (v<=35) return cssVar('--green'); if (v<=68) return cssVar('--orange'); return cssVar('--red'); }
+    if (v>=75) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red');
   }
-
-  /* Language UI: sticky hover + click toggle + codes */
-  const lang = $("#lang");
-  const langBtn = $("#langBtn");
-  const langMenu = $("#langMenu");
-  const langNow = $("#langNow");
-  const codeMap = {
-    "English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES",
-    "Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO",
-    "Shqip":"SQ","Türkçe":"TR","中文":"中文","日本語":"日本語"
-  };
-  $("#langMenu").querySelectorAll(".lang-item").forEach(li=>{
-    li.addEventListener("click", ()=>{ langNow.textContent = codeMap[li.dataset.lang] || "EN"; });
-  });
-  // Keep menu open while hovering; small delay on leave to prevent flicker.
-  let hoverTimer=null;
-  lang.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); lang.classList.add("open"); });
-  lang.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>lang.classList.remove("open"),150); });
-  langBtn.addEventListener("click", ()=>{ lang.classList.toggle("open"); });
-
-  /* Summary text */
-  const sBox=$("#summaryText"); sBox.innerHTML="";
-  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
-
-  function listTo(id, arr){ const el=$(id); el.innerHTML=""; (arr&&arr.length?arr:[""]).forEach(t=>addP(el,t)); }
-  listTo("#clausesList", data.clauses);
-
-  /* Issues */
-  (function(){ const el=$("#issuesList"); el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
-
-  listTo("#suggestionsList", data.suggestions);
-
-  /* Donut helper (slower) */
   function setArc(arcEl, metric, value, valEl, noteEl, note){
     const v = between(value||0, 0, 100);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
@@ -490,69 +476,66 @@
     if (valEl) valEl.textContent = v + "%";
     if (noteEl) noteEl.textContent = note || "";
   }
-
-  /* Right-column donuts */
-  setArc($("#riskArc"), 'risk', data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
-  setArc($("#clarArc"), 'clarity', data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
-
-  /* Bars */
   function setMeter(fill, label, metric, value){
     const v = between(value||0, 0, 100);
     label.textContent = v + "%";
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
-  setMeter($("#confFill"), $("#confVal"), 'professionalism', data.meters?.professionalism ?? 95);
-  setMeter($("#favFill"), $("#favVal"), 'favorability', data.meters?.favorability ?? 75);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',    data.meters?.deadline ?? 0);
 
-  /* Score Checker (80% + pointer at 80%) */
+  // ---- 3) Populate UI with DATA ----
+  // Summary
+  const sBox=$("#summaryText"); sBox.innerHTML="";
+  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+
+  // Clauses / Issues / Suggestions
+  (function(){ const el=$("#clausesList"); el.innerHTML=""; (data.clauses||[]).forEach(t=>addP(el,t)); })();
+  (function(){ const el=$("#issuesList");  el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
+  (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(el,t)); })();
+
+  // Donuts
+  setArc($("#riskArc"), 'risk',     data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
+  setArc($("#clarArc"), 'clarity',  data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
+
+  // Bars
+  setMeter($("#confFill"), $("#confVal"), 'professionalism', data.meters?.professionalism ?? 0);
+  setMeter($("#favFill"),  $("#favVal"),  'favorability',    data.meters?.favorability ?? 0);
+  setMeter($("#deadFill"), $("#deadVal"), 'deadline',        data.meters?.deadline ?? 0);
+
+  // Score Checker (mirrors clarity color bands 0–48 red, 49–77 orange, 78–100 green)
   (function scoreChecker(){
-    const v = 80;
-    setArc($("#scoreArc"), 'confidence', v);
+    const v = Number(data.clarity?.value ?? 0);
+    setArc($("#scoreArc"), 'clarity', v);
     $("#scorePct").textContent = v + "%";
-    $("#scoreInd").style.left = "calc(80% - 1.5px)";
+    $("#scoreInd").style.left = `calc(${between(v,0,100)}% - 1.5px)`;
+    const remark = document.querySelector("#scoreCard .score-remark");
+    remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
+                     : (v>=49) ? "The contract is done well."
+                               : "The contract isn’t done well.";
   })();
 
-  /* Right-side Confidence bar */
+  // Right-side Confidence bar (use meters.confidence)
   setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', data.meters?.confidence ?? 0);
 
-  /* ====== REVEAL LOGIC ======
-     Group 1: summary + risk + clarity (all at once)
-     Group 2: professionalism/favorability/deadline + issues + main clauses
-     Group 3 (lazy): suggestions + score checker + right-side confidence on scroll
-  */
+  // ---- 4) Reveal animations / download modal (unchanged) ----
   window.addEventListener('load', () => {
-    // Group 1 together
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
-    // Group 2 after a short beat
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
   });
-
-  // Group 3: lazy on scroll
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.18 });
+  const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  /* Bottom reveals (download + footer) with fade-in */
-  const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd"), showThresholdPx=300;
+  const dlWrap=document.getElementById("dlWrap"), endBox=document.getElementById("sidebarEnd");
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
-    const show=scrolledFromBottom<=showThresholdPx;
+    const show=scrolledFromBottom<=300;
     dlWrap.style.display=show?"flex":"none";
     endBox.style.display=show?"block":"none";
-    if(show){
-      dlWrap.classList.add('fade-in');
-      endBox.classList.add('fade-in');
-    }
+    if(show){ dlWrap.classList.add('fade-in'); endBox.classList.add('fade-in'); }
   }
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
 
-  /* Email modal + PDF (unchanged) */
   const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
@@ -561,7 +544,7 @@
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    await generatePDF("Report", demo);
+    await generatePDF("Report", data);
     closeModal();
   });
 
@@ -598,8 +581,9 @@
     }
   }
 
-  $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
+  document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
+
 </body>
 </html>
