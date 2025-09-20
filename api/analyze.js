@@ -2,9 +2,6 @@
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
 
-// Supported UI languages (codes must match the menu in analysis.html)
-const SUPPORTED = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
-
 function send(res, code, obj) {
   res.statusCode = code;
   res.setHeader("Content-Type", "application/json");
@@ -21,14 +18,12 @@ module.exports = async (req, res) => {
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
-    // Read raw body
     let raw = "";
     await new Promise((resolve) => {
       req.on("data", (c) => (raw += c));
       req.on("end", resolve);
     });
 
-    // Enforce JSON
     const ct = (req.headers["content-type"] || "").toLowerCase();
     if (!ct.includes("application/json")) {
       return send(res, 415, { error: `Send application/json. Got: ${ct || "unknown"}` });
@@ -43,17 +38,15 @@ module.exports = async (req, res) => {
       imageDataURI = "",
       originalName = "Contract",
       mime = "",
-      role = "signer",
-      // If you need 3–8s latency, send { fast: true } from the client.
-      fast = false
+      role = "signer"
     } = body || {};
 
     if (!text && !imageDataURI) {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT (schema + constraints synced with UI) ===
-    const system = `You are a contract analyst. Return STRICT JSON only — no prose — matching EXACTLY this schema and constraints:
+    // === SYSTEM PROMPT (schema + constraints tuned for UI + translations for notes) ===
+    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
 Schema:
 {
@@ -62,32 +55,31 @@ Schema:
   "role": "signer|writer",
   "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
   "analysis": {
-    "summary": ["string","string","string"],                      // 3–4 sentences (array)
-    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "totally safe|generally safe|not safe" },
-    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "totally safe|generally safe|not safe" },
-    "mainClauses": ["string","string","string","string","string"], // up to 5; full sentences; DO NOT prefix with numbers
-    "potentialIssues": ["string","string","string","string","string"], // up to 5; each 1–3 sentences
-    "smartSuggestions": ["string","string","string"],              // exactly 3; may include a short example: "For example: …"
+    "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
+    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
+    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
+    "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
+    "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
+    "smartSuggestions": ["string","string","string"],              // exactly 3; each ends with a short 'For example: …' concrete illustration
     "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
-    // replicate summary/mainClauses/potentialIssues/smartSuggestions in the following codes if asked:
-    // en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh
+    // For each supported UI language, include localized arrays AND localized short notes for risk/clarity.
+    "en"?: { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "it"?: { ... }, "de"?: { ... }, "es"?: { ... }, "fr"?: { ... }, "pt"?: { ... }, "nl"?: { ... }, "ro"?: { ... }, "sq"?: { ... }, "tr"?: { ... }, "ja"?: { ... }, "zh"?: { ... }
   }
 }
 
 Hard constraints:
 - Echo user role in "role".
-- "contractTitle": infer a clean title (e.g., "Non-Disclosure Agreement") or derive from filename.
-- SUMMARY: 3–4 sentences total in the contract's original language; array form.
-- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Note ≤ 280 chars.
-  Safety labels: green="totally safe", orange="generally safe", red="not safe".
-- CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Note ≤ 280 chars.
-  Safety labels: green="totally safe", orange="generally safe", red="not safe".
-- MAIN CLAUSES: up to 5; full sentences (longer ok); do not start with numbers/bullets.
-- POTENTIAL ISSUES: up to 5; 1–3 sentences each; longer allowed.
-- SMART SUGGESTIONS: exactly 3; longer allowed; include a brief example when useful.
+- "contractTitle": infer clean title (e.g., “Non-Disclosure Agreement”) or derive from filename.
+- SUMMARY: 3–4 sentences total, plain language; array only.
+- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ 280 chars.
+- CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ 280 chars.
+- MAIN CLAUSES: up to 5; fuller sentences (longer OK); DO NOT start with numbers/bullets.
+- POTENTIAL ISSUES: up to 5; 1–3 sentences each (longer OK).
+- SMART SUGGESTIONS: exactly 3; each ends with “For example: …” followed by a concrete example.
 - Bars thresholds:
   professionalism/favorability/confidence: 0–48 red, 49–74 orange, 75–100 green
   deadlinePressure: 0–35 green, 36–68 orange, 69–100 red
@@ -97,21 +89,14 @@ Hard constraints:
 - Output VALID JSON only.`;
 
     // === USER content ===
-    const baseUser = imageDataURI
+    const userContent = imageDataURI
       ? [
           { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}\n\nOCR the contract image(s) if needed, then analyze. Follow the SYSTEM schema exactly.` },
           { type: "image_url", image_url: { url: imageDataURI } }
         ]
       : [
-          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n\nAnalyze this contract text:\n${String(text).slice(0, fast ? 30000 : 200000)}\n\nFollow the SYSTEM schema and constraints exactly.` }
+          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n\nAnalyze this contract text:\n${String(text).slice(0, 200000)}\n\nFollow the SYSTEM schema and constraints exactly.` }
         ];
-
-    // Ask for translations unless fast mode is on
-    const transAsk = fast
-      ? "DO NOT include translations to minimize latency."
-      : `Also include a "translations" object with the same four arrays translated into ALL of these codes: ${SUPPORTED.join(", ")}.`;
-
-    baseUser[0].text += `\n\n${transAsk}`;
 
     // === OpenAI call ===
     const openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -122,14 +107,11 @@ Hard constraints:
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        temperature: 0.1,
-        top_p: 0.1,
-        presence_penalty: 0,
-        frequency_penalty: 0,
+        temperature: 0.2,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
-          { role: "user", content: baseUser }
+          { role: "user", content: userContent }
         ]
       })
     });
@@ -143,7 +125,7 @@ Hard constraints:
     const data = await openaiResp.json().catch(() => ({}));
     const content = data?.choices?.[0]?.message?.content || "{}";
 
-    // === Parse + normalize (bands/safety; strip numbering; ensure translations shape) ===
+    // === Parse + normalize (enforce bands/labels/caps; strip leading numbering) ===
     let parsed = {};
     try { parsed = JSON.parse(content); } catch { parsed = {}; }
 
@@ -151,7 +133,10 @@ Hard constraints:
     const bandClarity = v => (v >= 78 ? "green" : v >= 49 ? "orange" : "red");
     const scoreBand = v => (v <= 48 ? "red" : v <= 77 ? "orange" : "green");
 
-    const safetyFromBand = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+    // UI badge semantics
+    const riskSafety    = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+    const claritySafety = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+
     const scoreLine  = b => b === "green" ? "The contract is nearly perfectly done"
                          : b === "orange" ? "The contract is done well"
                          : "The contract isnt done well";
@@ -163,30 +148,36 @@ Hard constraints:
 
     const roleOut = parsed.role === "writer" ? "writer" : "signer";
     const title = parsed.contractTitle || parsed.contractName || originalName || "Contract";
-    const detectedLang = SUPPORTED.includes(parsed.detectedLang) ? parsed.detectedLang : "en";
+    const lang  = parsed.detectedLang || "en";
 
-    // Arrays
-    const toArr = (v) => Array.isArray(v) ? v.filter(Boolean).map(x => x.trim()) : [];
-    let summaryArr = toArr(parsed?.analysis?.summary).slice(0,4);
+    // Summary
+    let summaryArr = Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [];
+    summaryArr = summaryArr.filter(Boolean).map((s) => s.trim()).slice(0,4);
 
-    // Risk/Clarity
+    // Risk / Clarity
     const rVal  = clamp(parsed?.analysis?.risk?.value ?? parsed?.analysis?.risk);
     const rBand = parsed?.analysis?.risk?.band || bandRisk(rVal);
     const rNote = capStr(parsed?.analysis?.risk?.note || "", 280);
-    const rSafe = parsed?.analysis?.risk?.safety || safetyFromBand(rBand);
 
     const cVal  = clamp(parsed?.analysis?.clarity?.value ?? parsed?.analysis?.clarity);
     const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
     const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
-    const cSafe = parsed?.analysis?.clarity?.safety || safetyFromBand(cBand);
 
-    // Lists
-    const mainClauses = toArr(parsed?.analysis?.mainClauses).map(s => stripLead(capStr(s, 600))).slice(0,5);
-    const potentialIssues = toArr(parsed?.analysis?.potentialIssues).map(s => stripLead(capStr(s, 700))).slice(0,5);
-    let smartSuggestions = toArr(parsed?.analysis?.smartSuggestions).map(s => stripLead(capStr(s, 700))).slice(0,3);
+    // Clauses / Issues / Suggestions (longer + strip numbering)
+    const mainClauses = (parsed?.analysis?.mainClauses || [])
+      .filter(Boolean).map(s => stripLead(capStr(s, 700))).slice(0,5);
+
+    const potentialIssues = (parsed?.analysis?.potentialIssues || [])
+      .filter(Boolean).map(s => stripLead(capStr(s, 900))).slice(0,5);
+
+    let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
+      .filter(Boolean).map(s => {
+        const text = stripLead(capStr(s, 900));
+        return /for example\s*:/i.test(text) ? text : (text.replace(/\.*$/,"") + ". For example: …");
+      }).slice(0,3);
     while (smartSuggestions.length < 3) smartSuggestions.push("");
 
-    // Bars & Score
+    // Bars
     const barsIn = parsed?.analysis?.bars || {};
     const bars = {
       professionalism:  clamp(barsIn.professionalism),
@@ -195,38 +186,46 @@ Hard constraints:
       confidenceToSign: clamp(barsIn.confidenceToSign)
     };
 
+    // Score
     const scVal = clamp(parsed?.analysis?.scoreChecker?.value);
     const scBand = parsed?.analysis?.scoreChecker?.band || scoreBand(scVal);
     const scLine = parsed?.analysis?.scoreChecker?.line || scoreLine(scBand);
     const scVerdict = parsed?.analysis?.scoreChecker?.verdict || scoreVerdict(scBand);
 
-    // Build translations (ensure object exists; if fast==true or missing, at least seed with detected language)
-    let translations = parsed.translations && typeof parsed.translations === "object" ? parsed.translations : {};
-    const pack = { summary: summaryArr, mainClauses, potentialIssues, smartSuggestions };
+    // Ensure translations object exists and carry over localized notes if provided
+    const tr = parsed.translations && typeof parsed.translations === "object" ? parsed.translations : {};
+    // Normalize each supported language container to avoid undefined
+    const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
+    const normTr = {};
+    LANGS.forEach(l=>{
+      if (tr[l]) {
+        normTr[l] = {
+          summary: Array.isArray(tr[l].summary)? tr[l].summary.slice(0,4): undefined,
+          mainClauses: Array.isArray(tr[l].mainClauses)? tr[l].mainClauses.slice(0,5): undefined,
+          potentialIssues: Array.isArray(tr[l].potentialIssues)? tr[l].potentialIssues.slice(0,5): undefined,
+          smartSuggestions: Array.isArray(tr[l].smartSuggestions)? tr[l].smartSuggestions.slice(0,3): undefined,
+          riskNote: typeof tr[l].riskNote === "string" ? capStr(tr[l].riskNote, 280) : undefined,
+          clarityNote: typeof tr[l].clarityNote === "string" ? capStr(tr[l].clarityNote, 280) : undefined
+        };
+      }
+    });
 
-    // Seed detected language with pack if empty
-    if (!translations[detectedLang]) translations[detectedLang] = pack;
-
-    // Also always provide English fallback
-    if (!translations.en) translations.en = pack;
-
-    // Final normalized payload
     const normalized = {
       contractName: parsed.contractName || originalName || "Contract",
       contractTitle: title,
       role: roleOut,
-      detectedLang,
+      detectedLang: lang,
       analysis: {
         summary: summaryArr,
-        risk: { value: rVal, note: rNote, band: rBand, safety: rSafe },
-        clarity: { value: cVal, note: cNote, band: cBand, safety: cSafe },
+        risk: { value: rVal, note: rNote, band: rBand, safety: riskSafety(rBand) },
+        clarity: { value: cVal, note: cNote, band: cBand, safety: claritySafety(cBand) },
         mainClauses,
         potentialIssues,
         smartSuggestions,
         bars,
         scoreChecker: { value: scVal, band: scBand, verdict: scVerdict, line: scLine }
       },
-      translations
+      translations: normTr
     };
 
     return send(res, 200, normalized);
@@ -235,4 +234,3 @@ Hard constraints:
     return send(res, 500, { error: "Could not analyze this file. Try again or use another file." });
   }
 };
-
