@@ -8,47 +8,28 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root{
-      --bg:#0e0c13;
-      --card:#1c1b22;
-      --border:#3b3b3b;
-      --white:#ffffff;
-      --muted:#bdbdbd;
-      --green:#00ff65;
-      --orange:#df911a;
-      --red:#fe0000;
-      --black:#000000;
-      --radius:21px;
-      --gap:18px;
-      --sidebar:300px;
+      --bg:#0e0c13; --card:#1c1b22; --border:#3b3b3b; --white:#ffffff; --muted:#bdbdbd;
+      --green:#00ff65; --orange:#df911a; --red:#fe0000; --black:#000000;
+      --radius:21px; --gap:18px; --sidebar:300px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
-
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
     /* ===== SIDEBAR ===== */
-    .sidebar{
-      background:#0f0e14;border-right:1px solid var(--border);
-      padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
-    }
+    .sidebar{background:#0f0e14;border-right:1px solid var(--border);padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px}
     .brand{padding:0 2px 0 18px}
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
     .brand span{font-size:24px;color:var(--white);font-weight:400}
-
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-    .nav a{
-      text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;
-      padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;
-      font-size:19px;
-    }
+    .nav a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;font-size:19px;}
     .nav a img.icon{width:30px;height:30px;opacity:.95}
     .nav a img.arr{width:20px;height:20px;opacity:.9}
     .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
     .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
     .nav a.active:hover{background:#181620;border-color:var(--border)}
-
     .push{flex:1}
     .end-only{display:none;opacity:0;transform:translateY(8px)}
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
@@ -56,73 +37,41 @@
 
     /* ===== MAIN ===== */
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:12px}
-    .topbar{
-      position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;
-      height:64px;border-bottom:1px solid var(--border);
-    }
+    .topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;height:64px;border-bottom:1px solid var(--border)}
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Contract Title row — smaller + muted */
-    .doc-title{
-      display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px
-    }
+    /* Contract Title row — smaller + muted (per your ask) */
+    .doc-title{display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px}
     .doc-title .label{font-size:18px;color:var(--muted);font-weight:400}
     .doc-title .value{font-size:18px;color:var(--muted);font-weight:400}
 
     /* Language control */
-    .lang{position:relative}
-    .lang-btn{
-      display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);
-      font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none
-    }
+    .lang{position:relative;padding:6px 4px} /* bigger hover hitbox */
+    .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
-
-    .lang-menu{
-      position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:240px;max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
-      scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
-    }
+    .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
+    .lang.open .lang-menu{display:block}  /* JS-controlled stay-open */
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-
-    /* Hover-to-open and stay-open while hovering button OR menu */
-    .lang:hover .lang-menu{display:block}
-
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
     /* Grid */
-    .grid{
-      display:grid;
-      grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);
-      gap:var(--gap);
-      align-items:start;
-      margin-top:6px;
-    }
+    .grid{display:grid;grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);gap:var(--gap);align-items:start;margin-top:6px}
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
     /* Fade-in */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
-
-    .card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;
-      opacity:0;transform:translateY(8px);
-    }
-
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
     .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
 
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
-
-    #summaryText:empty{min-height:72px}
-    #issuesList:empty{min-height:72px}
-    #suggestionsList:empty{min-height:72px}
-    #clausesList:empty{min-height:72px}
+    #summaryText:empty,#issuesList:empty,#suggestionsList:empty,#clausesList:empty{min-height:72px}
     #riskNote:empty,#clarNote:empty{min-height:24px}
     #scoreCard .score-remark:empty{min-height:40px}
 
@@ -152,25 +101,21 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    #scoreCard{margin-top:12px;}
-    #confRightCard{margin-top:12px;}
+    #scoreCard{margin-top:12px}
+    #confRightCard{margin-top:12px}
     #summaryCard,#riskCard,#clarCard,#profCard,#favCard,#deadCard,#issuesCard,#clausesCard,#suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
 
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
-
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
     .score-remark{font-size:20px;color:var(--muted)}
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
     .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
 
-    .scroll-y{max-height:none !important;overflow:visible !important}
-
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
     .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
-
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
     .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
@@ -198,11 +143,7 @@
       </div>
 
       <nav class="nav">
-        <a class="active" href="#">
-          <img class="arr" src="https://imgur.com/CHGomYz.png" alt="">
-          <img class="icon" src="https://imgur.com/lnQTDuo.png" alt="">
-          <span>Overview</span>
-        </a>
+        <a class="active" href="#"><img class="arr" src="https://imgur.com/CHGomYz.png" alt=""><img class="icon" src="https://imgur.com/lnQTDuo.png" alt=""><span>Overview</span></a>
         <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
         <a href="privacy.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
         <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
@@ -224,8 +165,7 @@
         <div class="top-left"><div class="top-title" id="uiOverview">Overview</div></div>
         <div class="lang" id="lang">
           <button class="lang-btn" id="langBtn" type="button">
-            <span id="langNow">EN</span>
-            <span class="caret" aria-hidden="true"></span>
+            <span id="langNow">EN</span><span class="caret" aria-hidden="true"></span>
           </button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
             <div class="lang-item" data-code="en">English</div>
@@ -295,7 +235,6 @@
 
         <!-- RIGHT -->
         <div class="right">
-          <!-- Risk -->
           <section class="card" id="riskCard">
             <div class="hcard">
               <div class="circle">
@@ -313,7 +252,6 @@
             </div>
           </section>
 
-          <!-- Clarity -->
           <section class="card" id="clarCard">
             <div class="hcard">
               <div class="circle">
@@ -331,13 +269,11 @@
             </div>
           </section>
 
-          <!-- Clauses -->
           <section class="card" id="clausesCard">
             <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="uiClauses">Main Clauses</span></h3>
             <div class="list numbered" id="clausesList"></div>
           </section>
 
-          <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <div class="hcard">
               <div class="circle">
@@ -345,11 +281,8 @@
                   <circle class="track" cx="80" cy="80" r="74"></circle>
                   <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
-                <div class="score-center">
-                  <div class="score-pct" id="scorePct">80%</div>
-                </div>
+                <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
               </div>
-
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="uiScoreChecker">Score Checker</span></h3>
                 <div class="score-remark" id="scoreRemark">The contract is nearly perfectly done.</div>
@@ -359,7 +292,6 @@
             </div>
           </section>
 
-          <!-- Confidence -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span id="uiConfidence">Confidence to sign freely</span></div>
@@ -372,12 +304,10 @@
     </main>
   </div>
 
-  <!-- Download -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
 
-  <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <h4>Enter your email to download the PDF report</h4>
@@ -392,7 +322,7 @@
 
 <script>
 (() => {
-  // ===== 0) UI i18n labels + localized score-remarks =====
+  /* ================= UI LABELS (i18n) ================= */
   const UI = {
     en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
         issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",
@@ -456,49 +386,27 @@
         band:{green:"完全安全",orange:"总体安全",red:"不安全"}}
   };
 
-  // ===== 1) Build DATA (live -> fallback) =====
+  /* ============== DATA: live (localStorage) -> fallback demo ============== */
   const fallbackDemo = {
     meta:{ title:"Sample Agreement", detectedLang:"en" },
-    summary:[
-      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened.",
-      "Payment schedule and termination rights are clear; some legacy phrasing can be simplified for non-lawyers.",
-      "Define late-fee mechanics and 'material breach' to prevent minor admin delays from escalating."
-    ],
-    risk:{ value:25, note:"Termination, dispute handling and scope changes need to be tightened a bit better." },
-    clarity:{ value:80, note:"Some provisions are thin on definitions which reduces predictability in changes." },
-    clauses:[
-      "Payment Terms: Net 30 with a stated late-fee mechanism; include a brief grace period and a reasonable cap.",
-      "Scope of Work: Deliverables listed in an exhibit; add objective acceptance criteria per milestone.",
-      "IP & Licensing: Client owns final assets; creator retains tools and pre-existing know-how.",
-      "Termination: Convenience with notice; cure period for minor breaches to avoid accidental termination.",
-      "Confidentiality: Standard carve-outs and reasonable survival."
-    ],
-    issues:[
-      "Late-fee compounding can balloon costs on long delays; switch to simple interest with a hard cap to keep penalties proportional.",
-      "Indemnity is one-sided and unlimited; use mutual indemnity and cap exposure at a multiple of fees to align incentives.",
-      "Undefined cure periods allow immediate termination for trivial issues; add a standard 10-day cure except for true emergencies.",
-      "“Material breach” is undefined; provide objective triggers and a threshold to avoid subjective disputes.",
-      "Scope changes lack a formal change-order; require signed amendments capturing price and timeline impact."
-    ],
-    suggestions:[
-      "Add objective acceptance criteria and a short user-testing window per milestone, e.g., “Client will accept within 5 business days if the deliverable meets items A–C; otherwise list defects.”",
-      "Introduce a 5–7 day grace period before late fees and convert compounding to simple interest with a cap, e.g., “1% simple interest/month, capped at 10% of invoice.”",
-      "Define “material breach” and include a ten-day cure for non-critical breaches, e.g., “Missing a milestone by >10 business days after notice constitutes material breach unless force majeure.”"
-    ],
-    meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 },
-    translations:{}
+    summary:["…"],
+    risk:{ value:45, note:"…" },
+    clarity:{ value:70, note:"…" },
+    clauses:["1. …"],
+    issues:["…"],
+    suggestions:["1. …"],
+    meters:{ professionalism:65, favorability:50, deadline:40, confidence:70 },
+    translations:{} // demo shows default english content
   };
 
   const mode = localStorage.getItem("analysisMode");
   let payload = {};
-  if (mode === "live") {
-    try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
-  }
+  if (mode === "live") { try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {} }
 
   const normalized = (() => {
     if (!payload || !payload.analysis) return fallbackDemo;
     const a = payload.analysis;
-    const supported = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
+    const supported = Object.keys(UI);
     const detected = (payload.detectedLang || "en").toLowerCase();
     const baseLang = supported.includes(detected) ? detected : "en";
     return {
@@ -519,7 +427,7 @@
     };
   })();
 
-  // ===== 2) Helpers =====
+  /* ================== Helpers ================== */
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const clamp01 = v => Math.max(0,Math.min(100,Number(v||0)));
@@ -536,21 +444,7 @@
     return v>=75?'green':v>=49?'orange':'red';
   };
 
-  function setArc(arcEl, metric, value, valEl){
-    const v=clamp01(value); const rr=parseFloat(arcEl.getAttribute('r'))||74;
-    const circ=2*Math.PI*rr;
-    arcEl.style.stroke=colorFor(metric,v);
-    arcEl.style.strokeDasharray=circ; arcEl.style.strokeDashoffset=circ;
-    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset=circ*(1-v/100); });
-    if(valEl) valEl.textContent=v+"%";
-  }
-  function setMeter(fillEl, labelEl, metric, value){
-    const v=clamp01(value); labelEl.textContent=v+"%";
-    fillEl.style.background=colorFor(metric,v);
-    requestAnimationFrame(()=>{ fillEl.style.width=v+"%"; });
-  }
-
-  // ===== 3) Language / content state =====
+  /* ============== Language & content selection ============== */
   const supported = Object.keys(UI);
   const detectedLang = normalized.meta.detectedLang;
   let currentLang = supported.includes(detectedLang) ? detectedLang : "en";
@@ -574,88 +468,94 @@
     $("#uiVerySafe").textContent = t.verysafe;
   }
 
-  // Pull localized content arrays + risk/clarity notes
+  function sanitizeNote(s){ const v=(s||"").trim(); return (v==="string"||v==="…") ? "" : v; }
+
   function getLocalizedContent(lang){
     const tr = normalized.translations || {};
     const seg = tr[lang] || {};
-    const riskNoteTr = tr[lang]?.riskNote;
-    const clarNoteTr = tr[lang]?.clarityNote;
-
     return {
       title: normalized.meta.title,
-      summary: (Array.isArray(seg.summary) && seg.summary.length) ? seg.summary : normalized.summary,
-      clauses: (Array.isArray(seg.mainClauses) && seg.mainClauses.length) ? seg.mainClauses : normalized.clauses,
-      issues: (Array.isArray(seg.potentialIssues) && seg.potentialIssues.length) ? seg.potentialIssues : normalized.issues,
-      suggestions: (Array.isArray(seg.smartSuggestions) && seg.smartSuggestions.length) ? seg.smartSuggestions : normalized.suggestions,
-      risk: { value: normalized.risk.value, note: (typeof riskNoteTr === "string" && riskNoteTr) ? riskNoteTr : (normalized.risk.note || "") },
-      clarity: { value: normalized.clarity.value, note: (typeof clarNoteTr === "string" && clarNoteTr) ? clarNoteTr : (normalized.clarity.note || "") }
+      summary: Array.isArray(seg.summary)&&seg.summary.length ? seg.summary : normalized.summary,
+      clauses: Array.isArray(seg.mainClauses)&&seg.mainClauses.length ? seg.mainClauses : normalized.clauses,
+      issues: Array.isArray(seg.potentialIssues)&&seg.potentialIssues.length ? seg.potentialIssues : normalized.issues,
+      suggestions: Array.isArray(seg.smartSuggestions)&&seg.smartSuggestions.length ? seg.smartSuggestions : normalized.suggestions,
+      risk: { value: normalized.risk.value, note: sanitizeNote(typeof seg.riskNote==="string"?seg.riskNote:normalized.risk.note) },
+      clarity: { value: normalized.clarity.value, note: sanitizeNote(typeof seg.clarityNote==="string"?seg.clarityNote:normalized.clarity.note) }
     };
   }
 
+  function setArc(arcEl, metric, value, valEl){
+    const v=clamp01(value); const rr=parseFloat(arcEl.getAttribute('r'))||74;
+    const circ=2*Math.PI*rr;
+    arcEl.style.stroke=colorFor(metric,v);
+    arcEl.style.strokeDasharray=circ; arcEl.style.strokeDashoffset=circ;
+    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset=circ*(1-v/100); });
+    if(valEl) valEl.textContent=v+"%";
+  }
+  function setMeter(fillEl, labelEl, metric, value){
+    const v=clamp01(value); labelEl.textContent=v+"%";
+    fillEl.style.background=colorFor(metric,v);
+    requestAnimationFrame(()=>{ fillEl.style.width=v+"%"; });
+  }
+
   function renderAll(lang){
-    // UI labels
     renderUILabels(lang);
     $("#langNow").textContent = lang.toUpperCase();
 
-    // Content
     const data = getLocalizedContent(lang);
 
-    // Title
     $("#uiTitleValue").textContent = data.title || "—";
 
-    // Summary
     const sBox=$("#summaryText"); sBox.innerHTML="";
     (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-    // Clauses / Issues / Suggestions
-    (function(){ const el=$("#clausesList"); el.innerHTML=""; (data.clauses||[]).forEach(t=>addP(el,t)); })();
-    (function(){ const el=$("#issuesList");  el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
-    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(el,t)); })();
+    const cl=$("#clausesList"); cl.innerHTML=""; (data.clauses||[]).forEach(t=>addP(cl,t));
+    const il=$("#issuesList");  il.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
+    const sl=$("#suggestionsList"); sl.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(sl,t));
 
-    // Donuts + notes + badges
     const riskVal = clamp01(data.risk.value), clarVal = clamp01(data.clarity.value);
     setArc($("#riskArc"), 'risk', riskVal, $("#riskVal"));
     setArc($("#clarArc"), 'clarity', clarVal, $("#clarVal"));
     $("#riskNote").textContent = data.risk.note || "";
     $("#clarNote").textContent = data.clarity.note || "";
 
-    const rBand = bandFor('risk', riskVal);
-    const cBand = bandFor('clarity', clarVal);
+    const rBand = bandFor('risk', riskVal), cBand = bandFor('clarity', clarVal);
     $("#riskDot").style.background = colorFor('risk', riskVal);
     $("#clarDot").style.background = colorFor('clarity', clarVal);
-    $("#riskBadge").textContent = (UI[lang]?.band?.[rBand]) || UI.en.band[rBand];
-    $("#clarBadge").textContent = (UI[lang]?.band?.[cBand]) || UI.en.band[cBand];
-
-    // Localized Score Checker remark
     const t = UI[lang] || UI.en;
-    const remark = (clarVal>=78) ? t.remark.green : (clarVal>=49) ? t.remark.orange : t.remark.red;
+    $("#riskBadge").textContent = t.band[rBand];
+    $("#clarBadge").textContent = t.band[cBand];
+
     setArc($("#scoreArc"), 'clarity', clarVal);
     $("#scorePct").textContent = clarVal + "%";
     $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
-    $("#scoreRemark").textContent = remark;
+    $("#scoreRemark").textContent = (clarVal>=78) ? t.remark.green : (clarVal>=49) ? t.remark.orange : t.remark.red;
 
-    // Bars
     setMeter($("#confFill"), $("#confVal"), 'professionalism', normalized.meters.professionalism);
     setMeter($("#favFill"),  $("#favVal"),  'favorability',    normalized.meters.favorability);
     setMeter($("#deadFill"), $("#deadVal"), 'deadline',        normalized.meters.deadline);
     setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      normalized.meters.confidence);
   }
 
-  // ===== 4) Initial render =====
+  /* ======= Init render ======= */
   renderAll(currentLang);
-  $("#langNow").textContent = currentLang.toUpperCase();
 
-  // Pure hover behavior (no click required)
+  /* ======= HOVER STAY-OPEN DROPDOWN (no click needed) ======= */
+  const langBox = document.getElementById("lang");
+  let closeTimer=null;
+  const openMenu = ()=>{ clearTimeout(closeTimer); langBox.classList.add("open"); };
+  const scheduleClose = ()=>{ clearTimeout(closeTimer); closeTimer=setTimeout(()=>langBox.classList.remove("open"), 140); };
+  ["mouseenter","mousemove"].forEach(ev=>langBox.addEventListener(ev, openMenu));
+  langBox.addEventListener("mouseleave", scheduleClose);
   document.querySelectorAll(".lang-item").forEach(item=>{
     item.addEventListener("click", ()=>{
-      const code=item.getAttribute("data-code");
-      if(!code) return;
-      currentLang = code;
-      renderAll(currentLang);
+      const code=item.getAttribute("data-code"); if(!code) return;
+      currentLang = code; renderAll(currentLang);
+      scheduleClose();
     });
   });
 
-  // ===== 5) Reveal animations =====
+  /* ======= Reveal animations ======= */
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
@@ -663,30 +563,22 @@
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  // ===== 6) Download modal & PDF (uses current language labels) =====
+  /* ======= Download modal & PDF ======= */
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
-  function nearBottom(){
-    const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
-    const show=scrolledFromBottom<=300;
-    dlWrap.style.display=show?"flex":"none";
-    endBox.style.display=show?"block":"none";
-    if(show){ dlWrap.classList.add('fade-in'); endBox.classList.add('fade-in'); }
-  }
-  window.addEventListener("scroll", nearBottom, {passive:true});
-  window.addEventListener("load", nearBottom);
+  function nearBottom(){ const s=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight); const show=s<=300;
+    dlWrap.style.display=show?"flex":"none"; endBox.style.display=show?"block":"none";
+    if(show){ dlWrap.classList.add('fade-in'); endBox.classList.add('fade-in'); } }
+  window.addEventListener("scroll", nearBottom, {passive:true}); window.addEventListener("load", nearBottom);
 
   const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
-  function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
+  const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim());
   $("#emailSubmit").addEventListener("click", async ()=>{
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
-    err.style.display="none";
-    const lang = (document.getElementById("langNow").textContent||"EN").toLowerCase();
-    const data = getLocalizedContent(lang);
-    await generatePDF("Report", data, lang);
-    closeModal();
+    err.style.display="none"; const lang=currentLang; const data = getLocalizedContent(lang);
+    await generatePDF("Report", data, lang); closeModal();
   });
 
   async function generatePDF(title, d, lang){
@@ -729,3 +621,4 @@
 </script>
 </body>
 </html>
+
