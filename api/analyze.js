@@ -47,7 +47,7 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT (strict schema + your constraints) ===
+    // === SYSTEM PROMPT (schema + constraints tuned for your UI) ===
     const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
 Schema:
@@ -55,39 +55,37 @@ Schema:
   "contractName": "string",
   "contractTitle": "string",
   "role": "signer|writer",
-  "detectedLang": "en|de|fr|it|nl|ro|sq",
+  "detectedLang": "en|de|fr|it|es|pt|nl|ro|sq|tr|ja|zh",
   "analysis": {
     "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string","string","string","string","string"], // 5 max; each like “1) Title: short; brief explanation”
-    "potentialIssues": ["string","string","string","string","string"], // 5 max, bullet-style lines
-    "smartSuggestions": ["string","string","string"],              // exactly 3, numbered “1) …”
+    "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
+    "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
+    "smartSuggestions": ["string","string","string"],              // exactly 3; may include a short concrete example: "For example: …"
     "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
     "en"?: { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."] }
-    // optionally: de, fr, it, nl, ro, sq with same shape
+    // optionally: de, fr, it, es, pt, nl, ro, sq, tr, ja, zh with same shape
   }
 }
 
 Hard constraints:
 - Echo user role in "role".
 - "contractTitle": infer clean title (e.g., “Non-Disclosure Agreement”) or derive from filename.
-- SUMMARY: 3–4 sentences total, plain language, approximate the user's sample length; output as an array (for spacing).
-- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ "Termination, dispute handling and scope changes need to be tightened a bit better."
+- SUMMARY: 3–4 sentences total, plain language; output as an array (for spacing).
+- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ 280 chars.
   Safety: green="generally safe", orange="not that safe", red="not safe".
-- CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ "Some provisions are thin on definitions which reduces predictability in changes."
+- CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ 280 chars.
   Safety: green="safe", orange="not that safe", red="not safe".
-- MAIN CLAUSES: up to 5; each line ≤ "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
-- POTENTIAL ISSUES: up to 5; each ≤ "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-- SMART SUGGESTIONS: exactly 3; each ≤ "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap."
-- 4 BARS thresholds:
-  professionalism: 0–48 red, 49–74 orange, 75–100 green
-  favorabilityIndex: 0–48 red, 49–74 orange, 75–100 green
+- MAIN CLAUSES: up to 5; fuller sentences (can be longer than usual); do not start with numbers or bullets.
+- POTENTIAL ISSUES: up to 5; 1–3 sentences each allowed.
+- SMART SUGGESTIONS: exactly 3; allow a brief example ("For example: …").
+- Bars thresholds:
+  professionalism/favorability/confidence: 0–48 red, 49–74 orange, 75–100 green
   deadlinePressure: 0–35 green, 36–68 orange, 69–100 red
-  confidenceToSign: 0–48 red, 49–74 orange, 75–100 green
 - SCORE CHECKER thresholds: 0–48 red, 49–77 orange, 78–100 green; verdict red="unsafe", orange="safe", green="very safe"; line red="The contract isnt done well", orange="The contract is done well", green="The contract is nearly perfectly done".
 - Tailor to role ("signer" = protective asks; "writer" = drafting/negotiation).
 - If info is insufficient, keep arrays short and scores conservative, but NEVER break schema.
@@ -130,17 +128,18 @@ Hard constraints:
     const data = await openaiResp.json().catch(() => ({}));
     const content = data?.choices?.[0]?.message?.content || "{}";
 
-    // === Parse + normalize (enforce bands/labels/caps) ===
+    // === Parse + normalize (enforce bands/labels/caps; strip leading numbering) ===
     let parsed = {};
     try { parsed = JSON.parse(content); } catch { parsed = {}; }
 
     const bandRisk = v => (v <= 25 ? "green" : v <= 58 ? "orange" : "red");
-    const riskSafety = b => b === "green" ? "generally safe" : b === "orange" ? "not that safe" : "not safe";
-
     const bandClarity = v => (v >= 78 ? "green" : v >= 49 ? "orange" : "red");
-    const claritySafety = b => b === "green" ? "safe" : b === "orange" ? "not that safe" : "not safe";
-
     const scoreBand = v => (v <= 48 ? "red" : v <= 77 ? "orange" : "green");
+
+    // UI labels: green=Totally safe, orange=Generally safe, red=Not safe
+    const riskSafety    = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+    const claritySafety = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+
     const scoreLine  = b => b === "green" ? "The contract is nearly perfectly done"
                          : b === "orange" ? "The contract is done well"
                          : "The contract isnt done well";
@@ -148,6 +147,7 @@ Hard constraints:
 
     const capStr = (s, n) => (s || "").trim().slice(0, n);
     const clamp = (v) => { v = Number(v || 0); return Math.max(0, Math.min(100, v)); };
+    const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
 
     const roleOut = parsed.role === "writer" ? "writer" : "signer";
     const title = parsed.contractTitle || parsed.contractName || originalName || "Contract";
@@ -155,29 +155,29 @@ Hard constraints:
 
     // Summary array (3–4)
     let summaryArr = Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [];
-    summaryArr = summaryArr.filter(Boolean).map(s => s.trim()).slice(0,4);
+    summaryArr = summaryArr.filter(Boolean).map((s) => s.trim()).slice(0,4);
 
     // Risk
     const rVal  = clamp(parsed?.analysis?.risk?.value ?? parsed?.analysis?.risk);
     const rBand = parsed?.analysis?.risk?.band || bandRisk(rVal);
-    const rNote = capStr(parsed?.analysis?.risk?.note || "", 120);
-    const rSafe = parsed?.analysis?.risk?.safety || riskSafety(rBand);
+    const rNote = capStr(parsed?.analysis?.risk?.note || "", 280);
+    const rSafe = riskSafety(rBand);
 
     // Clarity
     const cVal  = clamp(parsed?.analysis?.clarity?.value ?? parsed?.analysis?.clarity);
     const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
-    const cNote = capStr(parsed?.analysis?.clarity?.note || "", 120);
-    const cSafe = parsed?.analysis?.clarity?.safety || claritySafety(cBand);
+    const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
+    const cSafe = claritySafety(cBand);
 
-    // Clauses/issues/suggestions (caps)
+    // Clauses/issues/suggestions (longer + strip numbering)
     const mainClauses = (parsed?.analysis?.mainClauses || [])
-      .filter(Boolean).map(s => capStr(s, 220)).slice(0,5);
+      .filter(Boolean).map(s => stripLead(capStr(s, 500))).slice(0,5);
 
     const potentialIssues = (parsed?.analysis?.potentialIssues || [])
-      .filter(Boolean).map(s => capStr(s, 180)).slice(0,5);
+      .filter(Boolean).map(s => stripLead(capStr(s, 600))).slice(0,5);
 
     let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
-      .filter(Boolean).map(s => capStr(s, 160)).slice(0,3);
+      .filter(Boolean).map(s => stripLead(capStr(s, 600))).slice(0,3);
     while (smartSuggestions.length < 3) smartSuggestions.push("");
 
     // Bars
@@ -220,4 +220,3 @@ Hard constraints:
     return send(res, 500, { error: "Could not analyze this file. Try again or use another file." });
   }
 };
-
