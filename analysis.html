@@ -64,12 +64,12 @@
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Contract Title row (muted color, same size as "Summary") */
+    /* Contract Title row — smaller + muted */
     .doc-title{
-      display:flex;align-items:center;gap:10px;padding:2px 6px 0 6px
+      display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px
     }
-    .doc-title .label{font-size:24px;color:var(--muted);font-weight:400}
-    .doc-title .value{font-size:24px;color:var(--muted);font-weight:400}
+    .doc-title .label{font-size:18px;color:var(--muted);font-weight:400}
+    .doc-title .value{font-size:18px;color:var(--muted);font-weight:400}
 
     /* Language control */
     .lang{position:relative}
@@ -88,10 +88,8 @@
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
 
-    /* Hover-to-open on desktop */
+    /* Hover-to-open and stay-open while hovering button OR menu */
     .lang:hover .lang-menu{display:block}
-    /* If JS adds .open (mobile tap), keep open */
-    .lang.open .lang-menu{display:block}
 
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
@@ -106,7 +104,7 @@
     }
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Fade-in base */
+    /* Fade-in */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
 
@@ -118,7 +116,6 @@
     .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
 
-    /* Text blocks */
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
 
@@ -157,9 +154,7 @@
 
     #scoreCard{margin-top:12px;}
     #confRightCard{margin-top:12px;}
-    #summaryCard,#riskCard,#clarCard,
-    #profCard,#favCard,#deadCard,#issuesCard,#clausesCard,
-    #suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+    #summaryCard,#riskCard,#clarCard,#profCard,#favCard,#deadCard,#issuesCard,#clausesCard,#suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
 
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
@@ -397,55 +392,67 @@
 
 <script>
 (() => {
-  // ===== 0) UI i18n labels =====
+  // ===== 0) UI i18n labels + localized score-remarks =====
   const UI = {
     en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
         issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",
         score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",
+        remark:{green:"The contract is nearly perfectly done.",orange:"The contract is done well.",red:"The contract isn’t done well."},
         band:{green:"Totally safe",orange:"Generally safe",red:"Not safe"}},
     it:{overview:"Panoramica",title:"Titolo:",summary:"Sintesi",prof:"Professionalità",fav:"Indice di favorevolezza",deadline:"Pressione delle scadenze",
         issues:"Problemi potenziali",suggestions:"Suggerimenti intelligenti",risk:"Livello di rischio",clarity:"Chiarezza delle clausole",clauses:"Clausole principali",
         score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",
+        remark:{green:"Il contratto è quasi perfetto.",orange:"Il contratto è fatto bene.",red:"Il contratto non è fatto bene."},
         band:{green:"Completamente sicuro",orange:"Generalmente sicuro",red:"Non sicuro"}},
     de:{overview:"Übersicht",title:"Titel:",summary:"Zusammenfassung",prof:"Professionalität",fav:"Günstigkeitsindex",deadline:"Termindruck",
         issues:"Mögliche Probleme",suggestions:"Smarte Vorschläge",risk:"Risikostufe",clarity:"Klausel-Klarheit",clauses:"Wesentliche Klauseln",
         score:"Score-Prüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",
+        remark:{green:"Der Vertrag ist nahezu perfekt.",orange:"Der Vertrag ist gut gemacht.",red:"Der Vertrag ist nicht gut gemacht."},
         band:{green:"Völlig sicher",orange:"Im Allgemeinen sicher",red:"Nicht sicher"}},
     es:{overview:"Resumen",title:"Título:",summary:"Síntesis",prof:"Profesionalidad",fav:"Índice de favorabilidad",deadline:"Presión de plazos",
         issues:"Problemas potenciales",suggestions:"Sugerencias inteligentes",risk:"Nivel de riesgo",clarity:"Claridad de cláusulas",clauses:"Cláusulas principales",
         score:"Comprobador de puntuación",unsafe:"Inseguro",safe:"Seguro",verysafe:"Muy seguro",
+        remark:{green:"El contrato está casi perfecto.",orange:"El contrato está bien hecho.",red:"El contrato no está bien hecho."},
         band:{green:"Totalmente seguro",orange:"Generalmente seguro",red:"No seguro"}},
     fr:{overview:"Aperçu",title:"Titre :",summary:"Résumé",prof:"Professionnalisme",fav:"Indice de favorabilité",deadline:"Pression des délais",
         issues:"Problèmes potentiels",suggestions:"Suggestions intelligentes",risk:"Niveau de risque",clarity:"Clarté des clauses",clauses:"Clauses principales",
         score:"Contrôle du score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",
+        remark:{green:"Le contrat est presque parfait.",orange:"Le contrat est bien fait.",red:"Le contrat n’est pas bien fait."},
         band:{green:"Totalement sûr",orange:"Généralement sûr",red:"Pas sûr"}},
     pt:{overview:"Visão geral",title:"Título:",summary:"Resumo",prof:"Profissionalismo",fav:"Índice de favorabilidade",deadline:"Pressão de prazo",
         issues:"Problemas potenciais",suggestions:"Sugestões inteligentes",risk:"Nível de risco",clarity:"Clareza das cláusulas",clauses:"Cláusulas principais",
         score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",
+        remark:{green:"O contrato está quase perfeito.",orange:"O contrato está bem elaborado.",red:"O contrato não está bem elaborado."},
         band:{green:"Totalmente seguro",orange:"Geralmente seguro",red:"Não seguro"}},
     nl:{overview:"Overzicht",title:"Titel:",summary:"Samenvatting",prof:"Professionaliteit",fav:"Voordeligheidsindex",deadline:"Deadline-druk",
         issues:"Potentiële problemen",suggestions:"Slimme suggesties",risk:"Risiconiveau",clarity:"Duidelijkheid van clausules",clauses:"Belangrijkste clausules",
         score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",
+        remark:{green:"Het contract is bijna perfect.",orange:"Het contract is goed opgesteld.",red:"Het contract is niet goed opgesteld."},
         band:{green:"Helemaal veilig",orange:"Over het algemeen veilig",red:"Niet veilig"}},
     ro:{overview:"Prezentare",title:"Titlu:",summary:"Rezumat",prof:"Profesionalism",fav:"Indice de favorabilitate",deadline:"Presiunea termenelor",
         issues:"Probleme potențiale",suggestions:"Sugestii inteligente",risk:"Nivel de risc",clarity:"Claritatea clauzelor",clauses:"Clauze principale",
         score:"Verificator de scor",unsafe:"Nesigur",safe:"Sigur",verysafe:"Foarte sigur",
+        remark:{green:"Contractul este aproape perfect.",orange:"Contractul este bine realizat.",red:"Contractul nu este bine realizat."},
         band:{green:"Complet sigur",orange:"În general sigur",red:"Nesigur"}},
     sq:{overview:"Përmbledhje",title:"Titulli:",summary:"Përmbledhje",prof:"Profesionalizmi",fav:"Indeksi i favorshmërisë",deadline:"Presioni i afateve",
         issues:"Çështje të mundshme",suggestions:"Sugjerime të zgjuara",risk:"Niveli i rrezikut",clarity:"Qartësia e klauzolave",clauses:"Klauzolat kryesore",
         score:"Kontrolluesi i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",
+        remark:{green:"Kontrata është pothuajse perfekte.",orange:"Kontrata është bërë mirë.",red:"Kontrata nuk është bërë mirë."},
         band:{green:"Plotësisht e sigurt",orange:"Në përgjithësi e sigurt",red:"Jo e sigurt"}},
     tr:{overview:"Genel bakış",title:"Başlık:",summary:"Özet",prof:"Profesyonellik",fav:"Elverişlilik Endeksi",deadline:"Zaman baskısı",
         issues:"Olası sorunlar",suggestions:"Akıllı öneriler",risk:"Risk seviyesi",clarity:"Hüküm açıklığı",clauses:"Ana hükümler",
         score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",
+        remark:{green:"Sözleşme neredeyse kusursuz.",orange:"Sözleşme iyi hazırlanmış.",red:"Sözleşme iyi hazırlanmış değil."},
         band:{green:"Tamamen güvenli",orange:"Genel olarak güvenli",red:"Güvenli değil"}},
     ja:{overview:"概要",title:"タイトル：",summary:"要約",prof:"プロ意識",fav:"有利性指数",deadline:"締切プレッシャー",
         issues:"潜在的な問題",suggestions:"スマート提案",risk:"リスク水準",clarity:"条項の明確さ",clauses:"主要条項",
         score:"スコア確認",unsafe:"危険",safe:"安全",verysafe:"非常に安全",
+        remark:{green:"契約はほぼ完璧です。",orange:"契約は良くできています。",red:"契約は十分ではありません。"},
         band:{green:"完全に安全",orange:"概ね安全",red:"安全ではない"}},
     zh:{overview:"概览",title:"标题：",summary:"摘要",prof:"专业性",fav:"有利指数",deadline:"期限压力",
         issues:"潜在问题",suggestions:"智能建议",risk:"风险等级",clarity:"条款清晰度",clauses:"主要条款",
         score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",
+        remark:{green:"合同几乎完美。",orange:"合同完成得很好。",red:"合同完成得不好。"},
         band:{green:"完全安全",orange:"总体安全",red:"不安全"}}
   };
 
@@ -474,9 +481,9 @@
       "Scope changes lack a formal change-order; require signed amendments capturing price and timeline impact."
     ],
     suggestions:[
-      "Add objective acceptance criteria and a short user-testing window per milestone. For example: “Client will accept within 5 business days if the deliverable meets items A–C; otherwise, specific defects will be listed.”",
-      "Introduce a 5–7 day grace period before late fees and convert compounding to simple interest with a cap. For example: “Late fee: 1% simple interest per month, capped at 10% of the invoice.”",
-      "Define “material breach” and include a ten-day cure for non-critical breaches. For example: “Failure to meet a Milestone by >10 business days after notice constitutes material breach unless due to force majeure.”"
+      "Add objective acceptance criteria and a short user-testing window per milestone, e.g., “Client will accept within 5 business days if the deliverable meets items A–C; otherwise list defects.”",
+      "Introduce a 5–7 day grace period before late fees and convert compounding to simple interest with a cap, e.g., “1% simple interest/month, capped at 10% of invoice.”",
+      "Define “material breach” and include a ten-day cure for non-critical breaches, e.g., “Missing a milestone by >10 business days after notice constitutes material breach unless force majeure.”"
     ],
     meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 },
     translations:{}
@@ -488,29 +495,17 @@
     try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
   }
 
-  // Normalize the inbound payload to a common shape for UI
   const normalized = (() => {
-    if (!payload || !payload.analysis) {
-      return fallbackDemo;
-    }
+    if (!payload || !payload.analysis) return fallbackDemo;
     const a = payload.analysis;
-
-    // Preferred UI language at load: detectedLang if supported, else 'en'
     const supported = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
     const detected = (payload.detectedLang || "en").toLowerCase();
     const baseLang = supported.includes(detected) ? detected : "en";
-
     return {
       meta: { title: payload.contractTitle || payload.contractName || "Contract", detectedLang: baseLang },
       summary: Array.isArray(a.summary) ? a.summary.slice(0,4) : [],
-      risk: {
-        value: Number(a.risk?.value ?? 0),
-        note: a.risk?.note || ""
-      },
-      clarity: {
-        value: Number(a.clarity?.value ?? 0),
-        note: a.clarity?.note || ""
-      },
+      risk: { value: Number(a.risk?.value ?? 0), note: a.risk?.note || "" },
+      clarity: { value: Number(a.clarity?.value ?? 0), note: a.clarity?.note || "" },
       clauses: (a.mainClauses || []).slice(0,5),
       issues: (a.potentialIssues || []).slice(0,5),
       suggestions: (a.smartSuggestions || []).slice(0,3),
@@ -527,7 +522,7 @@
   // ===== 2) Helpers =====
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const clamp01 = (v)=>Math.max(0,Math.min(100,Number(v||0)));
+  const clamp01 = v => Math.max(0,Math.min(100,Number(v||0)));
   const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
   const colorFor=(metric,v)=>{
     if(metric==='risk')     return v<=25?cssVar('--green'):v<=58?cssVar('--orange'):cssVar('--red');
@@ -558,10 +553,8 @@
   // ===== 3) Language / content state =====
   const supported = Object.keys(UI);
   const detectedLang = normalized.meta.detectedLang;
-  // Start with detected language if we have translations for headings at least
   let currentLang = supported.includes(detectedLang) ? detectedLang : "en";
 
-  // Render all UI labels (headings/badges) by language
   function renderUILabels(lang){
     const t = UI[lang] || UI.en;
     $("#uiOverview").textContent = t.overview;
@@ -581,7 +574,7 @@
     $("#uiVerySafe").textContent = t.verysafe;
   }
 
-  // Get content in selected language (fallbacks to original/English if segment missing)
+  // Pull localized content arrays + risk/clarity notes
   function getLocalizedContent(lang){
     const tr = normalized.translations || {};
     const seg = tr[lang] || {};
@@ -590,10 +583,10 @@
 
     return {
       title: normalized.meta.title,
-      summary: (seg.summary && seg.summary.length ? seg.summary : normalized.summary),
-      clauses: (seg.mainClauses && seg.mainClauses.length ? seg.mainClauses : normalized.clauses),
-      issues: (seg.potentialIssues && seg.potentialIssues.length ? seg.potentialIssues : normalized.issues),
-      suggestions: (seg.smartSuggestions && seg.smartSuggestions.length ? seg.smartSuggestions : normalized.suggestions),
+      summary: (Array.isArray(seg.summary) && seg.summary.length) ? seg.summary : normalized.summary,
+      clauses: (Array.isArray(seg.mainClauses) && seg.mainClauses.length) ? seg.mainClauses : normalized.clauses,
+      issues: (Array.isArray(seg.potentialIssues) && seg.potentialIssues.length) ? seg.potentialIssues : normalized.issues,
+      suggestions: (Array.isArray(seg.smartSuggestions) && seg.smartSuggestions.length) ? seg.smartSuggestions : normalized.suggestions,
       risk: { value: normalized.risk.value, note: (typeof riskNoteTr === "string" && riskNoteTr) ? riskNoteTr : (normalized.risk.note || "") },
       clarity: { value: normalized.clarity.value, note: (typeof clarNoteTr === "string" && clarNoteTr) ? clarNoteTr : (normalized.clarity.note || "") }
     };
@@ -607,7 +600,7 @@
     // Content
     const data = getLocalizedContent(lang);
 
-    // Contract Title row
+    // Title
     $("#uiTitleValue").textContent = data.title || "—";
 
     // Summary
@@ -619,29 +612,26 @@
     (function(){ const el=$("#issuesList");  el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
     (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(el,t)); })();
 
-    // Donuts + notes + badges sync with bands + translation of badge text
+    // Donuts + notes + badges
     const riskVal = clamp01(data.risk.value), clarVal = clamp01(data.clarity.value);
     setArc($("#riskArc"), 'risk', riskVal, $("#riskVal"));
     setArc($("#clarArc"), 'clarity', clarVal, $("#clarVal"));
     $("#riskNote").textContent = data.risk.note || "";
     $("#clarNote").textContent = data.clarity.note || "";
 
-    // Badge colors & text
     const rBand = bandFor('risk', riskVal);
     const cBand = bandFor('clarity', clarVal);
     $("#riskDot").style.background = colorFor('risk', riskVal);
     $("#clarDot").style.background = colorFor('clarity', clarVal);
-    $("#riskBadge").textContent = UI[lang]?.band?.[rBand] || UI.en.band[rBand];
-    $("#clarBadge").textContent = UI[lang]?.band?.[cBand] || UI.en.band[cBand];
+    $("#riskBadge").textContent = (UI[lang]?.band?.[rBand]) || UI.en.band[rBand];
+    $("#clarBadge").textContent = (UI[lang]?.band?.[cBand]) || UI.en.band[cBand];
 
-    // Score Checker (based on clarity value as agreed)
+    // Localized Score Checker remark
+    const t = UI[lang] || UI.en;
+    const remark = (clarVal>=78) ? t.remark.green : (clarVal>=49) ? t.remark.orange : t.remark.red;
     setArc($("#scoreArc"), 'clarity', clarVal);
     $("#scorePct").textContent = clarVal + "%";
     $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
-    const remark = (clarVal>=78) ? "The contract is nearly perfectly done."
-                : (clarVal>=49) ? "The contract is done well."
-                                : "The contract isn’t done well.";
-    // Remark stays in detected/origin language is fine, but we can map to UI language if needed later.
     $("#scoreRemark").textContent = remark;
 
     // Bars
@@ -651,28 +641,17 @@
     setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      normalized.meters.confidence);
   }
 
-  // ===== 4) First render using detected language (or EN) =====
+  // ===== 4) Initial render =====
   renderAll(currentLang);
   $("#langNow").textContent = currentLang.toUpperCase();
 
-  // Keep hover menu on desktop; enable tap-open on mobile
-  const langBox = $("#lang");
-  $("#langBtn").addEventListener("click", () => {
-    // Toggle for touch/mobile
-    langBox.classList.toggle("open");
-  }, {passive:true});
-  document.addEventListener("click", (e)=>{
-    if(!langBox.contains(e.target)) langBox.classList.remove("open");
-  });
-
-  // Language selection
+  // Pure hover behavior (no click required)
   document.querySelectorAll(".lang-item").forEach(item=>{
     item.addEventListener("click", ()=>{
       const code=item.getAttribute("data-code");
       if(!code) return;
       currentLang = code;
       renderAll(currentLang);
-      langBox.classList.remove("open");
     });
   });
 
@@ -684,7 +663,7 @@
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  // ===== 6) Download modal & PDF =====
+  // ===== 6) Download modal & PDF (uses current language labels) =====
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
@@ -704,8 +683,9 @@
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    const data = getLocalizedContent(currentLang);
-    await generatePDF("Report", data, currentLang);
+    const lang = (document.getElementById("langNow").textContent||"EN").toLowerCase();
+    const data = getLocalizedContent(lang);
+    await generatePDF("Report", data, lang);
     closeModal();
   });
 
