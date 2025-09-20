@@ -50,25 +50,42 @@ module.exports = async (req, res) => {
     // === SYSTEM PROMPT (schema + constraints tuned for your UI) ===
     const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
+Supported UI languages: en, it, de, es, fr, pt, nl, ro, sq, tr, ja, zh.
+If the contract's detected language is one of these, WRITE THE ANALYSIS FIELDS in that language.
+If the detected language is NOT supported, write the analysis in English.
+Additionally, include a "translations" object with best-effort human-quality translations for the supported languages (at least "en"). It's okay if some languages are missing.
+
 Schema:
 {
   "contractName": "string",
   "contractTitle": "string",
   "role": "signer|writer",
-  "detectedLang": "en|de|fr|it|es|pt|nl|ro|sq|tr|ja|zh",
+  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
   "analysis": {
     "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
     "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
     "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
-    "smartSuggestions": ["string","string","string"],              // exactly 3; may include a short concrete example: "For example: …"
+    "smartSuggestions": ["string","string","string"],              // exactly 3; allow a brief example ("For example: …")
     "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
-    "en"?: { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."] }
-    // optionally: de, fr, it, es, pt, nl, ro, sq, tr, ja, zh with same shape
+    // OPTIONAL: include as many of these as you can; each mirrors the arrays above
+    // You may also include "riskNote" and "clarityNote" string keys to translate those notes.
+    "en"?: { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "it"?: { "...": "..." },
+    "de"?: { "...": "..." },
+    "es"?: { "...": "..." },
+    "fr"?: { "...": "..." },
+    "pt"?: { "...": "..." },
+    "nl"?: { "...": "..." },
+    "ro"?: { "...": "..." },
+    "sq"?: { "...": "..." },
+    "tr"?: { "...": "..." },
+    "ja"?: { "...": "..." },
+    "zh"?: { "...": "..." }
   }
 }
 
@@ -171,13 +188,13 @@ Hard constraints:
 
     // Clauses/issues/suggestions (longer + strip numbering)
     const mainClauses = (parsed?.analysis?.mainClauses || [])
-      .filter(Boolean).map(s => stripLead(capStr(s, 500))).slice(0,5);
-
-    const potentialIssues = (parsed?.analysis?.potentialIssues || [])
       .filter(Boolean).map(s => stripLead(capStr(s, 600))).slice(0,5);
 
+    const potentialIssues = (parsed?.analysis?.potentialIssues || [])
+      .filter(Boolean).map(s => stripLead(capStr(s, 800))).slice(0,5);
+
     let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
-      .filter(Boolean).map(s => stripLead(capStr(s, 600))).slice(0,3);
+      .filter(Boolean).map(s => stripLead(capStr(s, 800))).slice(0,3);
     while (smartSuggestions.length < 3) smartSuggestions.push("");
 
     // Bars
