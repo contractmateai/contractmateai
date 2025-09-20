@@ -24,6 +24,7 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
+
     .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
 
     /* ===== SIDEBAR ===== */
@@ -54,7 +55,7 @@
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
 
     /* ===== MAIN ===== */
-    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap)}
+    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:12px}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
       display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;
@@ -63,20 +64,12 @@
     .top-left{display:flex;align-items:center;gap:12px}
     .top-title{font-size:20px;color:var(--white);font-weight:400}
 
-    /* Doc title row (under topbar) */
+    /* Contract Title row (muted color, same size as "Summary") */
     .doc-title{
-      padding:6px 6px 0 6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+      display:flex;align-items:center;gap:10px;padding:2px 6px 0 6px
     }
-    .doc-title .label{color:var(--white);opacity:.9;font-weight:400;letter-spacing:.2px}
-    .doc-title .name{color:var(--white);font-weight:400}
-    @media (min-width:700px){
-      .doc-title .label{font-size:24px}
-      .doc-title .name{font-size:28px}
-    }
-    @media (max-width:699px){
-      .doc-title .label{font-size:20px}
-      .doc-title .name{font-size:24px}
-    }
+    .doc-title .label{font-size:24px;color:var(--muted);font-weight:400}
+    .doc-title .value{font-size:24px;color:var(--muted);font-weight:400}
 
     /* Language control */
     .lang{position:relative}
@@ -86,15 +79,20 @@
     }
     .lang-btn #langNow{letter-spacing:.6px}
     .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
+
     .lang-menu{
       position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
       border-radius:12px;min-width:240px;max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
       scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
-    /* keep open on hover OR when .open is set (mobile click toggles) */
-    .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
+
+    /* Hover-to-open on desktop */
+    .lang:hover .lang-menu{display:block}
+    /* If JS adds .open (mobile tap), keep open */
+    .lang.open .lang-menu{display:block}
+
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
     .lang-item:hover{background:#17161e}
 
@@ -108,10 +106,15 @@
     }
     .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
 
-    /* Fade-in */
+    /* Fade-in base */
     @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn .8s ease forwards}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
+
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;
+      opacity:0;transform:translateY(8px);
+    }
+
     .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
     .card h3 img{width:30px;height:30px}
 
@@ -119,7 +122,6 @@
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
 
-    /* Heights when empty */
     #summaryText:empty{min-height:72px}
     #issuesList:empty{min-height:72px}
     #suggestionsList:empty{min-height:72px}
@@ -127,16 +129,13 @@
     #riskNote:empty,#clarNote:empty{min-height:24px}
     #scoreCard .score-remark:empty{min-height:40px}
 
-    /* Bullets (Issues) */
     .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
     .bullets li{margin:0 0 12px}
 
-    /* Numbered lists (Main Clauses / Suggestions) -> 1. 2. 3. 4. 5. */
     .numbered{counter-reset:item}
     .numbered p{position:relative;padding-left:26px}
     .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
 
-    /* Meters */
     .meter-block{display:flex;flex-direction:column;gap:10px}
     .meter-head{display:flex;align-items:center;justify-content:space-between}
     .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
@@ -144,7 +143,6 @@
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
     .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
-    /* Donuts */
     .hcard{display:flex;gap:16px;align-items:center}
     .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
     .circle svg{transform:rotate(-90deg)}
@@ -157,22 +155,27 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* Score Checker */
     #scoreCard{margin-top:12px;}
     #confRightCard{margin-top:12px;}
-    #summaryCard,#riskCard,#clarCard,#profCard,#favCard,#deadCard,#issuesCard,#clausesCard,#suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+    #summaryCard,#riskCard,#clarCard,
+    #profCard,#favCard,#deadCard,#issuesCard,#clausesCard,
+    #suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
+
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
     .score-remark{font-size:20px;color:var(--muted)}
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
-    .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
+    .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
 
     .scroll-y{max-height:none !important;overflow:visible !important}
+
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
     .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
+
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
     .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
     .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
@@ -223,14 +226,13 @@
     <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
-        <div class="top-left"><div class="top-title" id="overviewLabel">Overview</div></div>
+        <div class="top-left"><div class="top-title" id="uiOverview">Overview</div></div>
         <div class="lang" id="lang">
           <button class="lang-btn" id="langBtn" type="button">
             <span id="langNow">EN</span>
             <span class="caret" aria-hidden="true"></span>
           </button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <!-- Use data-code for switching; label is native -->
             <div class="lang-item" data-code="en">English</div>
             <div class="lang-item" data-code="it">Italiano</div>
             <div class="lang-item" data-code="de">Deutsch</div>
@@ -247,23 +249,23 @@
         </div>
       </div>
 
-      <!-- Contract Title Row -->
+      <!-- Contract title row -->
       <div class="doc-title">
-        <span class="label" id="titleWord">Title:</span>
-        <span class="name" id="contractTitle">—</span>
+        <span class="label" id="uiTitleLabel">Title:</span>
+        <span class="value" id="uiTitleValue">—</span>
       </div>
 
       <div class="grid">
         <!-- LEFT -->
         <div class="left">
           <section class="card" id="summaryCard">
-            <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="hSummary">Summary</span></h3>
+            <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="uiSummary">Summary</span></h3>
             <div class="list" id="summaryText"></div>
           </section>
 
           <section class="card meter-block" id="profCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span id="hProfessionalism">Professionalism</span></div>
+              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span id="uiProfessionalism">Professionalism</span></div>
               <div id="confVal">0%</div>
             </div>
             <div class="meter"><div id="confFill" class="fill"></div></div>
@@ -271,7 +273,7 @@
 
           <section class="card meter-block" id="favCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span id="hFavorability">Favorability Index</span></div>
+              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span id="uiFavorability">Favorability Index</span></div>
               <div id="favVal">0%</div>
             </div>
             <div class="meter"><div id="favFill" class="fill"></div></div>
@@ -279,19 +281,19 @@
 
           <section class="card meter-block" id="deadCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span id="hDeadline">Deadline pressure</span></div>
+              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span id="uiDeadline">Deadline pressure</span></div>
               <div id="deadVal">0%</div>
             </div>
             <div class="meter"><div id="deadFill" class="fill"></div></div>
           </section>
 
           <section class="card" id="issuesCard">
-            <h3><img src="https://imgur.com/ppLDtiq.png" alt=""><span id="hIssues">Potential Issues</span></h3>
+            <h3><img src="https://imgur.com/ppLDtiq.png" alt=""><span id="uiIssues">Potential Issues</span></h3>
             <ul class="bullets" id="issuesList"></ul>
           </section>
 
           <section class="card" id="suggestionsCard">
-            <h3><img src="https://imgur.com/EoVDfd5.png" alt=""><span id="hSuggestions">Smart Suggestions</span></h3>
+            <h3><img src="https://imgur.com/EoVDfd5.png" alt=""><span id="uiSuggestions">Smart Suggestions</span></h3>
             <div class="list numbered" id="suggestionsList"></div>
           </section>
         </div>
@@ -309,9 +311,9 @@
                 <div class="val" id="riskVal">0%</div>
               </div>
               <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt=""><span id="hRisk">Risk Level</span></h3>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt=""><span id="uiRisk">Risk Level</span></h3>
                 <div class="muted" id="riskNote"></div>
-                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">—</span></div>
+                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
               </div>
             </div>
           </section>
@@ -327,16 +329,16 @@
                 <div class="val" id="clarVal">0%</div>
               </div>
               <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt=""><span id="hClarity">Clause Clarity</span></h3>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt=""><span id="uiClarity">Clause Clarity</span></h3>
                 <div class="muted" id="clarNote"></div>
-                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">—</span></div>
+                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
               </div>
             </div>
           </section>
 
           <!-- Clauses -->
           <section class="card" id="clausesCard">
-            <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="hClauses">Main Clauses</span></h3>
+            <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="uiClauses">Main Clauses</span></h3>
             <div class="list numbered" id="clausesList"></div>
           </section>
 
@@ -349,31 +351,23 @@
                   <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
                 </svg>
                 <div class="score-center">
-                  <div class="score-pct" id="scorePct">0%</div>
+                  <div class="score-pct" id="scorePct">80%</div>
                 </div>
               </div>
 
               <div class="score-side">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="hScore">Score Checker</span></h3>
-
-                <div class="score-remark" id="scoreRemark"></div>
-
-                <div class="score-bar">
-                  <span class="score-ind" id="scoreInd"></span>
-                </div>
-                <div class="score-scale">
-                  <span id="scaleUnsafe">Unsafe</span>
-                  <span id="scaleSafe">Safe</span>
-                  <span id="scaleVerySafe">Very Safe</span>
-                </div>
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="uiScoreChecker">Score Checker</span></h3>
+                <div class="score-remark" id="scoreRemark">The contract is nearly perfectly done.</div>
+                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
+                <div class="score-scale"><span id="uiUnsafe">Unsafe</span><span id="uiSafe">Safe</span><span id="uiVerySafe">Very Safe</span></div>
               </div>
             </div>
           </section>
 
-          <!-- Confidence to sign freely -->
+          <!-- Confidence -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span id="hConfidence">Confidence to sign freely</span></div>
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span id="uiConfidence">Confidence to sign freely</span></div>
               <div id="conf2Val">0%</div>
             </div>
             <div class="meter"><div id="conf2Fill" class="fill"></div></div>
@@ -391,7 +385,7 @@
   <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
-      <h4 id="emailPrompt">Enter your email to download the PDF report</h4>
+      <h4>Enter your email to download the PDF report</h4>
       <div class="modal-row">
         <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
         <button class="btn primary" id="emailSubmit">Download</button>
@@ -403,333 +397,286 @@
 
 <script>
 (() => {
-  // ------- Supported UI languages
-  const SUP = ["en","it","de","es","fr","pt","nl","ro","sq","tr","zh","ja"];
-  const SHORT = { en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT", nl:"NL", ro:"RO", sq:"SQ", tr:"TR", zh:"ZH", ja:"JA" };
-
-  // ------- UI translations (labels, remarks, badges)
-  const I18N = {
-    en:{ overview:"Overview", titleWord:"Title:", summary:"Summary",
-         professionalism:"Professionalism", favorability:"Favorability Index", deadline:"Deadline pressure",
-         issues:"Potential Issues", suggestions:"Smart Suggestions", risk:"Risk Level", clarity:"Clause Clarity",
-         clauses:"Main Clauses", score:"Score Checker", confidence:"Confidence to sign freely",
-         scaleUnsafe:"Unsafe", scaleSafe:"Safe", scaleVerySafe:"Very Safe",
-         remarkGreen:"The contract is nearly perfectly done.",
-         remarkOrange:"The contract is done well.",
-         remarkRed:"The contract isn’t done well.",
-         safeTot:"Totally safe", safeGen:"Generally safe", safeNot:"Not safe",
-         emailPrompt:"Enter your email to download the PDF report",
-         emailErr:"Please enter a valid email address.",
-         download:"Download", cancel:"Cancel" },
-    it:{ overview:"Panoramica", titleWord:"Titolo:", summary:"Sommario",
-         professionalism:"Professionalità", favorability:"Indice di favorevolezza", deadline:"Pressione delle scadenze",
-         issues:"Problemi potenziali", suggestions:"Suggerimenti intelligenti", risk:"Livello di rischio", clarity:"Chiarezza delle clausole",
-         clauses:"Clausole principali", score:"Verifica punteggio", confidence:"Fiducia nel firmare liberamente",
-         scaleUnsafe:"Rischioso", scaleSafe:"Sicuro", scaleVerySafe:"Molto sicuro",
-         remarkGreen:"Il contratto è quasi perfetto.",
-         remarkOrange:"Il contratto è fatto bene.",
-         remarkRed:"Il contratto non è fatto bene.",
-         safeTot:"Completamente sicuro", safeGen:"Generalmente sicuro", safeNot:"Non sicuro",
-         emailPrompt:"Inserisci l’email per scaricare il PDF",
-         emailErr:"Inserisci un indirizzo email valido.",
-         download:"Scarica", cancel:"Annulla" },
-    de:{ overview:"Übersicht", titleWord:"Titel:", summary:"Zusammenfassung",
-         professionalism:"Professionalität", favorability:"Günstigkeitsindex", deadline:"Termindruck",
-         issues:"Mögliche Probleme", suggestions:"Smarte Vorschläge", risk:"Risikostufe", clarity:"Klarheit der Klauseln",
-         clauses:"Hauptklauseln", score:"Score-Prüfer", confidence:"Zuversicht frei zu unterschreiben",
-         scaleUnsafe:"Riskant", scaleSafe:"Sicher", scaleVerySafe:"Sehr sicher",
-         remarkGreen:"Der Vertrag ist nahezu perfekt.",
-         remarkOrange:"Der Vertrag ist gut gemacht.",
-         remarkRed:"Der Vertrag ist nicht gut gemacht.",
-         safeTot:"Völlig sicher", safeGen:"Generell sicher", safeNot:"Nicht sicher",
-         emailPrompt:"E-Mail eingeben, um den PDF-Bericht zu laden",
-         emailErr:"Bitte eine gültige E-Mail eingeben.",
-         download:"Herunterladen", cancel:"Abbrechen" },
-    es:{ overview:"Resumen", titleWord:"Título:", summary:"Resumen",
-         professionalism:"Profesionalidad", favorability:"Índice de favorabilidad", deadline:"Presión de plazos",
-         issues:"Problemas potenciales", suggestions:"Sugerencias inteligentes", risk:"Nivel de riesgo", clarity:"Claridad de las cláusulas",
-         clauses:"Cláusulas principales", score:"Comprobador de puntuación", confidence:"Confianza para firmar libremente",
-         scaleUnsafe:"Riesgoso", scaleSafe:"Seguro", scaleVerySafe:"Muy seguro",
-         remarkGreen:"El contrato está casi perfecto.",
-         remarkOrange:"El contrato está bien hecho.",
-         remarkRed:"El contrato no está bien hecho.",
-         safeTot:"Totalmente seguro", safeGen:"Generalmente seguro", safeNot:"No seguro",
-         emailPrompt:"Escribe tu email para descargar el PDF",
-         emailErr:"Introduce un email válido.",
-         download:"Descargar", cancel:"Cancelar" },
-    fr:{ overview:"Aperçu", titleWord:"Titre :", summary:"Résumé",
-         professionalism:"Professionnalisme", favorability:"Indice de favorabilité", deadline:"Pression des délais",
-         issues:"Problèmes potentiels", suggestions:"Suggestions intelligentes", risk:"Niveau de risque", clarity:"Clarté des clauses",
-         clauses:"Clauses principales", score:"Vérificateur de score", confidence:"Confiance pour signer librement",
-         scaleUnsafe:"Risque", scaleSafe:"Sûr", scaleVerySafe:"Très sûr",
-         remarkGreen:"Le contrat est presque parfait.",
-         remarkOrange:"Le contrat est bien réalisé.",
-         remarkRed:"Le contrat n’est pas bien réalisé.",
-         safeTot:"Totalement sûr", safeGen:"Généralement sûr", safeNot:"Pas sûr",
-         emailPrompt:"Entrez votre e-mail pour télécharger le PDF",
-         emailErr:"Veuillez entrer une adresse e-mail valide.",
-         download:"Télécharger", cancel:"Annuler" },
-    pt:{ overview:"Visão geral", titleWord:"Título:", summary:"Resumo",
-         professionalism:"Profissionalismo", favorability:"Índice de favorabilidade", deadline:"Pressão de prazo",
-         issues:"Problemas potenciais", suggestions:"Sugestões inteligentes", risk:"Nível de risco", clarity:"Clareza das cláusulas",
-         clauses:"Cláusulas principais", score:"Verificador de pontuação", confidence:"Confiança para assinar livremente",
-         scaleUnsafe:"Arriscado", scaleSafe:"Seguro", scaleVerySafe:"Muito seguro",
-         remarkGreen:"O contrato está quase perfeito.",
-         remarkOrange:"O contrato está bem feito.",
-         remarkRed:"O contrato não está bem feito.",
-         safeTot:"Totalmente seguro", safeGen:"Geralmente seguro", safeNot:"Não seguro",
-         emailPrompt:"Digite seu e-mail para baixar o PDF",
-         emailErr:"Insira um e-mail válido.",
-         download:"Baixar", cancel:"Cancelar" },
-    nl:{ overview:"Overzicht", titleWord:"Titel:", summary:"Samenvatting",
-         professionalism:"Professionaliteit", favorability:"Voordeligheidsindex", deadline:"Deadline-druk",
-         issues:"Mogelijke problemen", suggestions:"Slimme suggesties", risk:"Risiconiveau", clarity:"Duidelijkheid van clausules",
-         clauses:"Belangrijkste clausules", score:"Score-controle", confidence:"Vertrouwen om vrij te tekenen",
-         scaleUnsafe:"Onveilig", scaleSafe:"Veilig", scaleVerySafe:"Zeer veilig",
-         remarkGreen:"Het contract is bijna perfect.",
-         remarkOrange:"Het contract is goed gedaan.",
-         remarkRed:"Het contract is niet goed gedaan.",
-         safeTot:"Volledig veilig", safeGen:"Over het algemeen veilig", safeNot:"Onveilig",
-         emailPrompt:"Voer je e-mail in om de PDF te downloaden",
-         emailErr:"Voer een geldig e-mailadres in.",
-         download:"Downloaden", cancel:"Annuleren" },
-    ro:{ overview:"Prezentare", titleWord:"Titlu:", summary:"Rezumat",
-         professionalism:"Profesionalism", favorability:"Indice de favorabilitate", deadline:"Presiune pe termen",
-         issues:"Probleme potențiale", suggestions:"Sugestii inteligente", risk:"Nivel de risc", clarity:"Claritatea clauzelor",
-         clauses:"Clauze principale", score:"Verificator scor", confidence:"Încredere pentru a semna liber",
-         scaleUnsafe:"Riscant", scaleSafe:"Sigur", scaleVerySafe:"Foarte sigur",
-         remarkGreen:"Contractul este aproape perfect.",
-         remarkOrange:"Contractul este bine făcut.",
-         remarkRed:"Contractul nu este bine făcut.",
-         safeTot:"Total sigur", safeGen:"În general sigur", safeNot:"Nesigur",
-         emailPrompt:"Introduceți emailul pentru a descărca PDF-ul",
-         emailErr:"Introduceți un email valid.",
-         download:"Descarcă", cancel:"Anulează" },
-    sq:{ overview:"Përmbledhje", titleWord:"Titulli:", summary:"Rezumé",
-         professionalism:"Profesionalizëm", favorability:"Indeksi i favorshmërisë", deadline:"Presioni i afateve",
-         issues:"Çështje potenciale", suggestions:"Sugjerime të zgjuara", risk:"Niveli i rrezikut", clarity:"Qartësia e klauzolave",
-         clauses:"Klauzolat kryesore", score:"Kontrolli i pikëve", confidence:"Besimi për të firmosur lirshëm",
-         scaleUnsafe:"E pasigurt", scaleSafe:"E sigurt", scaleVerySafe:"Shumë e sigurt",
-         remarkGreen:"Kontrata është pothuajse perfekte.",
-         remarkOrange:"Kontrata është bërë mirë.",
-         remarkRed:"Kontrata nuk është bërë mirë.",
-         safeTot:"Tërësisht e sigurt", safeGen:"Në përgjithësi e sigurt", safeNot:"Jo e sigurt",
-         emailPrompt:"Shkruaj emailin për të shkarkuar PDF-në",
-         emailErr:"Shkruaj një email të vlefshëm.",
-         download:"Shkarko", cancel:"Anulo" },
-    tr:{ overview:"Genel bakış", titleWord:"Başlık:", summary:"Özet",
-         professionalism:"Profesyonellik", favorability:"Lehterlik endeksi", deadline:"Zaman baskısı",
-         issues:"Olası sorunlar", suggestions:"Akıllı öneriler", risk:"Risk düzeyi", clarity:"Madde açıklığı",
-         clauses:"Ana maddeler", score:"Skor denetleyici", confidence:"Özgürce imzalama güveni",
-         scaleUnsafe:"Riskli", scaleSafe:"Güvenli", scaleVerySafe:"Çok güvenli",
-         remarkGreen:"Sözleşme neredeyse kusursuz.",
-         remarkOrange:"Sözleşme iyi hazırlanmış.",
-         remarkRed:"Sözleşme iyi hazırlanmış değil.",
-         safeTot:"Tamamen güvenli", safeGen:"Genel olarak güvenli", safeNot:"Güvenli değil",
-         emailPrompt:"PDF indirmek için e-posta girin",
-         emailErr:"Geçerli bir e-posta girin.",
-         download:"İndir", cancel:"İptal" },
-    zh:{ overview:"概览", titleWord:"标题：", summary:"摘要",
-         professionalism:"专业度", favorability:"有利指数", deadline:"截止压力",
-         issues:"潜在问题", suggestions:"智能建议", risk:"风险等级", clarity:"条款清晰度",
-         clauses:"主要条款", score:"评分检查", confidence:"自由签署的信心",
-         scaleUnsafe:"不安全", scaleSafe:"安全", scaleVerySafe:"非常安全",
-         remarkGreen:"合同几乎完美。",
-         remarkOrange:"合同完成得很好。",
-         remarkRed:"合同完成得不佳。",
-         safeTot:"完全安全", safeGen:"总体安全", safeNot:"不安全",
-         emailPrompt:"输入邮箱以下载PDF报告",
-         emailErr:"请输入有效的邮箱地址。",
-         download:"下载", cancel:"取消" },
-    ja:{ overview:"概要", titleWord:"タイトル：", summary:"要約",
-         professionalism:"プロフェッショナリズム", favorability:"有利性指数", deadline:"期限プレッシャー",
-         issues:"潜在的な問題", suggestions:"スマート提案", risk:"リスクレベル", clarity:"条項の明確さ",
-         clauses:"主要条項", score:"スコアチェッカー", confidence:"自由に署名できる自信",
-         scaleUnsafe:"危険", scaleSafe:"安全", scaleVerySafe:"非常に安全",
-         remarkGreen:"契約はほぼ完璧です。",
-         remarkOrange:"契約はよく仕上がっています。",
-         remarkRed:"契約はうまく仕上がっていません。",
-         safeTot:"完全に安全", safeGen:"概ね安全", safeNot:"安全ではない",
-         emailPrompt:"PDFレポートをダウンロードするにはメールを入力",
-         emailErr:"有効なメールアドレスを入力してください。",
-         download:"ダウンロード", cancel:"キャンセル" },
+  // ===== 0) UI i18n labels =====
+  const UI = {
+    en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
+        issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",
+        score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",
+        band:{green:"Totally safe",orange:"Generally safe",red:"Not safe"}},
+    it:{overview:"Panoramica",title:"Titolo:",summary:"Sintesi",prof:"Professionalità",fav:"Indice di favorevolezza",deadline:"Pressione delle scadenze",
+        issues:"Problemi potenziali",suggestions:"Suggerimenti intelligenti",risk:"Livello di rischio",clarity:"Chiarezza delle clausole",clauses:"Clausole principali",
+        score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",
+        band:{green:"Completamente sicuro",orange:"Generalmente sicuro",red:"Non sicuro"}},
+    de:{overview:"Übersicht",title:"Titel:",summary:"Zusammenfassung",prof:"Professionalität",fav:"Günstigkeitsindex",deadline:"Termindruck",
+        issues:"Mögliche Probleme",suggestions:"Smarte Vorschläge",risk:"Risikostufe",clarity:"Klausel-Klarheit",clauses:"Wesentliche Klauseln",
+        score:"Score-Prüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",
+        band:{green:"Völlig sicher",orange:"Im Allgemeinen sicher",red:"Nicht sicher"}},
+    es:{overview:"Resumen",title:"Título:",summary:"Síntesis",prof:"Profesionalidad",fav:"Índice de favorabilidad",deadline:"Presión de plazos",
+        issues:"Problemas potenciales",suggestions:"Sugerencias inteligentes",risk:"Nivel de riesgo",clarity:"Claridad de cláusulas",clauses:"Cláusulas principales",
+        score:"Comprobador de puntuación",unsafe:"Inseguro",safe:"Seguro",verysafe:"Muy seguro",
+        band:{green:"Totalmente seguro",orange:"Generalmente seguro",red:"No seguro"}},
+    fr:{overview:"Aperçu",title:"Titre :",summary:"Résumé",prof:"Professionnalisme",fav:"Indice de favorabilité",deadline:"Pression des délais",
+        issues:"Problèmes potentiels",suggestions:"Suggestions intelligentes",risk:"Niveau de risque",clarity:"Clarté des clauses",clauses:"Clauses principales",
+        score:"Contrôle du score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",
+        band:{green:"Totalement sûr",orange:"Généralement sûr",red:"Pas sûr"}},
+    pt:{overview:"Visão geral",title:"Título:",summary:"Resumo",prof:"Profissionalismo",fav:"Índice de favorabilidade",deadline:"Pressão de prazo",
+        issues:"Problemas potenciais",suggestions:"Sugestões inteligentes",risk:"Nível de risco",clarity:"Clareza das cláusulas",clauses:"Cláusulas principais",
+        score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",
+        band:{green:"Totalmente seguro",orange:"Geralmente seguro",red:"Não seguro"}},
+    nl:{overview:"Overzicht",title:"Titel:",summary:"Samenvatting",prof:"Professionaliteit",fav:"Voordeligheidsindex",deadline:"Deadline-druk",
+        issues:"Potentiële problemen",suggestions:"Slimme suggesties",risk:"Risiconiveau",clarity:"Duidelijkheid van clausules",clauses:"Belangrijkste clausules",
+        score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",
+        band:{green:"Helemaal veilig",orange:"Over het algemeen veilig",red:"Niet veilig"}},
+    ro:{overview:"Prezentare",title:"Titlu:",summary:"Rezumat",prof:"Profesionalism",fav:"Indice de favorabilitate",deadline:"Presiunea termenelor",
+        issues:"Probleme potențiale",suggestions:"Sugestii inteligente",risk:"Nivel de risc",clarity:"Claritatea clauzelor",clauses:"Clauze principale",
+        score:"Verificator de scor",unsafe:"Nesigur",safe:"Sigur",verysafe:"Foarte sigur",
+        band:{green:"Complet sigur",orange:"În general sigur",red:"Nesigur"}},
+    sq:{overview:"Përmbledhje",title:"Titulli:",summary:"Përmbledhje",prof:"Profesionalizmi",fav:"Indeksi i favorshmërisë",deadline:"Presioni i afateve",
+        issues:"Çështje të mundshme",suggestions:"Sugjerime të zgjuara",risk:"Niveli i rrezikut",clarity:"Qartësia e klauzolave",clauses:"Klauzolat kryesore",
+        score:"Kontrolluesi i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",
+        band:{green:"Plotësisht e sigurt",orange:"Në përgjithësi e sigurt",red:"Jo e sigurt"}},
+    tr:{overview:"Genel bakış",title:"Başlık:",summary:"Özet",prof:"Profesyonellik",fav:"Elverişlilik Endeksi",deadline:"Zaman baskısı",
+        issues:"Olası sorunlar",suggestions:"Akıllı öneriler",risk:"Risk seviyesi",clarity:"Hüküm açıklığı",clauses:"Ana hükümler",
+        score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",
+        band:{green:"Tamamen güvenli",orange:"Genel olarak güvenli",red:"Güvenli değil"}},
+    ja:{overview:"概要",title:"タイトル：",summary:"要約",prof:"プロ意識",fav:"有利性指数",deadline:"締切プレッシャー",
+        issues:"潜在的な問題",suggestions:"スマート提案",risk:"リスク水準",clarity:"条項の明確さ",clauses:"主要条項",
+        score:"スコア確認",unsafe:"危険",safe:"安全",verysafe:"非常に安全",
+        band:{green:"完全に安全",orange:"概ね安全",red:"安全ではない"}},
+    zh:{overview:"概览",title:"标题：",summary:"摘要",prof:"专业性",fav:"有利指数",deadline:"期限压力",
+        issues:"潜在问题",suggestions:"智能建议",risk:"风险等级",clarity:"条款清晰度",clauses:"主要条款",
+        score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",
+        band:{green:"完全安全",orange:"总体安全",red:"不安全"}}
   };
 
-  // ------- Helpers
-  const $ = s => document.querySelector(s);
-  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const between = (v,min,max)=>Math.max(min,Math.min(Number(v)||0,max));
-  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=String(t||"");el.appendChild(p);};
-  function colorFor(metric, v){
-    if (metric === 'risk')     { if (v<=25) return cssVar('--green'); if (v<=58) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'clarity')  { if (v>=78) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'deadline') { if (v<=35) return cssVar('--green'); if (v<=68) return cssVar('--orange'); return cssVar('--red'); }
-    if (v>=75) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red');
-  }
-  function bandFor(metric, v){
-    if (metric==='risk')     return (v<=25) ? 'green' : (v<=58) ? 'orange' : 'red';
-    if (metric==='clarity')  return (v>=78) ? 'green' : (v>=49) ? 'orange' : 'red';
-    return 'green';
-  }
-  function setArc(arcEl, metric, value, valEl, noteEl, note){
-    const v = between(value||0, 0, 100);
-    const rr = parseFloat(arcEl.getAttribute('r')) || 74;
-    const circ = 2*Math.PI*rr;
-    arcEl.style.stroke = colorFor(metric, v);
-    arcEl.style.strokeDasharray = String(circ);
-    arcEl.style.strokeDashoffset = String(circ);
-    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.6s ease"; arcEl.style.strokeDashoffset = String(circ * (1 - v/100)); });
-    if (valEl) valEl.textContent = v + "%";
-    if (noteEl) noteEl.textContent = note || "";
-  }
-  function setMeter(fill, label, metric, value){
-    const v = between(value||0, 0, 100);
-    label.textContent = v + "%";
-    fill.style.background = colorFor(metric, v);
-    requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
-  }
+  // ===== 1) Build DATA (live -> fallback) =====
+  const fallbackDemo = {
+    meta:{ title:"Sample Agreement", detectedLang:"en" },
+    summary:[
+      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened.",
+      "Payment schedule and termination rights are clear; some legacy phrasing can be simplified for non-lawyers.",
+      "Define late-fee mechanics and 'material breach' to prevent minor admin delays from escalating."
+    ],
+    risk:{ value:25, note:"Termination, dispute handling and scope changes need to be tightened a bit better." },
+    clarity:{ value:80, note:"Some provisions are thin on definitions which reduces predictability in changes." },
+    clauses:[
+      "Payment Terms: Net 30 with a stated late-fee mechanism; include a brief grace period and a reasonable cap.",
+      "Scope of Work: Deliverables listed in an exhibit; add objective acceptance criteria per milestone.",
+      "IP & Licensing: Client owns final assets; creator retains tools and pre-existing know-how.",
+      "Termination: Convenience with notice; cure period for minor breaches to avoid accidental termination.",
+      "Confidentiality: Standard carve-outs and reasonable survival."
+    ],
+    issues:[
+      "Late-fee compounding can balloon costs on long delays; switch to simple interest with a hard cap to keep penalties proportional.",
+      "Indemnity is one-sided and unlimited; use mutual indemnity and cap exposure at a multiple of fees to align incentives.",
+      "Undefined cure periods allow immediate termination for trivial issues; add a standard 10-day cure except for true emergencies.",
+      "“Material breach” is undefined; provide objective triggers and a threshold to avoid subjective disputes.",
+      "Scope changes lack a formal change-order; require signed amendments capturing price and timeline impact."
+    ],
+    suggestions:[
+      "Add objective acceptance criteria and a short user-testing window per milestone. For example: “Client will accept within 5 business days if the deliverable meets items A–C; otherwise, specific defects will be listed.”",
+      "Introduce a 5–7 day grace period before late fees and convert compounding to simple interest with a cap. For example: “Late fee: 1% simple interest per month, capped at 10% of the invoice.”",
+      "Define “material breach” and include a ten-day cure for non-critical breaches. For example: “Failure to meet a Milestone by >10 business days after notice constitutes material breach unless due to force majeure.”"
+    ],
+    meters:{ professionalism:95, confidence:75, favorability:75, deadline:18 },
+    translations:{}
+  };
 
-  // ------- Load payload from analyze step (live) or fallback
   const mode = localStorage.getItem("analysisMode");
   let payload = {};
   if (mode === "live") {
     try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
   }
-  // graceful defaults
-  const analysis = payload.analysis || {};
-  const toArr = (v) => Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
 
-  // Base report (original language)
-  const base = {
-    contractTitle: payload.contractTitle || payload.contractName || "Contract",
-    detectedLang: (payload.detectedLang || "en").toLowerCase(),
-    summary: toArr(analysis.summary).slice(0,4),
-    risk: { value: Number(analysis?.risk?.value ?? 0), note: analysis?.risk?.note || "" },
-    clarity: { value: Number(analysis?.clarity?.value ?? 0), note: analysis?.clarity?.note || "" },
-    clauses: (analysis.mainClauses || []).slice(0,5),
-    issues: (analysis.potentialIssues || []).slice(0,5),
-    suggestions: (analysis.smartSuggestions || []).slice(0,3),
-    bars: {
-      professionalism: Number(analysis?.bars?.professionalism ?? 0),
-      favorability:    Number(analysis?.bars?.favorabilityIndex ?? 0),
-      deadline:        Number(analysis?.bars?.deadlinePressure ?? 0),
-      confidence:      Number(analysis?.bars?.confidenceToSign ?? 0),
-    },
-    score: {
-      value: Number(analysis?.scoreChecker?.value ?? 0),
-      band: analysis?.scoreChecker?.band || null
-    },
-    translations: payload.translations || {}
+  // Normalize the inbound payload to a common shape for UI
+  const normalized = (() => {
+    if (!payload || !payload.analysis) {
+      return fallbackDemo;
+    }
+    const a = payload.analysis;
+
+    // Preferred UI language at load: detectedLang if supported, else 'en'
+    const supported = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
+    const detected = (payload.detectedLang || "en").toLowerCase();
+    const baseLang = supported.includes(detected) ? detected : "en";
+
+    return {
+      meta: { title: payload.contractTitle || payload.contractName || "Contract", detectedLang: baseLang },
+      summary: Array.isArray(a.summary) ? a.summary.slice(0,4) : [],
+      risk: {
+        value: Number(a.risk?.value ?? 0),
+        note: a.risk?.note || ""
+      },
+      clarity: {
+        value: Number(a.clarity?.value ?? 0),
+        note: a.clarity?.note || ""
+      },
+      clauses: (a.mainClauses || []).slice(0,5),
+      issues: (a.potentialIssues || []).slice(0,5),
+      suggestions: (a.smartSuggestions || []).slice(0,3),
+      meters: {
+        professionalism: Number(a.bars?.professionalism ?? 0),
+        confidence: Number(a.bars?.confidenceToSign ?? 0),
+        favorability: Number(a.bars?.favorabilityIndex ?? 0),
+        deadline: Number(a.bars?.deadlinePressure ?? 0)
+      },
+      translations: payload.translations || {}
+    };
+  })();
+
+  // ===== 2) Helpers =====
+  const $ = s => document.querySelector(s);
+  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const clamp01 = (v)=>Math.max(0,Math.min(100,Number(v||0)));
+  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
+  const colorFor=(metric,v)=>{
+    if(metric==='risk')     return v<=25?cssVar('--green'):v<=58?cssVar('--orange'):cssVar('--red');
+    if(metric==='clarity')  return v>=78?cssVar('--green'):v>=49?cssVar('--orange'):cssVar('--red');
+    if(metric==='deadline') return v<=35?cssVar('--green'):v<=68?cssVar('--orange'):cssVar('--red');
+    return v>=75?cssVar('--green'):v>=49?cssVar('--orange'):cssVar('--red');
+  };
+  const bandFor=(metric,v)=>{
+    if(metric==='risk')     return v<=25?'green':v<=58?'orange':'red';
+    if(metric==='clarity')  return v>=78?'green':v>=49?'orange':'red';
+    return v>=75?'green':v>=49?'orange':'red';
   };
 
-  // Decide initial UI language
-  const storedLang = (localStorage.getItem("uiLang")||"").toLowerCase();
-  let currentLang = SUP.includes(storedLang) ? storedLang : (SUP.includes(base.detectedLang) ? base.detectedLang : "en");
+  function setArc(arcEl, metric, value, valEl){
+    const v=clamp01(value); const rr=parseFloat(arcEl.getAttribute('r'))||74;
+    const circ=2*Math.PI*rr;
+    arcEl.style.stroke=colorFor(metric,v);
+    arcEl.style.strokeDasharray=circ; arcEl.style.strokeDashoffset=circ;
+    requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset=circ*(1-v/100); });
+    if(valEl) valEl.textContent=v+"%";
+  }
+  function setMeter(fillEl, labelEl, metric, value){
+    const v=clamp01(value); labelEl.textContent=v+"%";
+    fillEl.style.background=colorFor(metric,v);
+    requestAnimationFrame(()=>{ fillEl.style.width=v+"%"; });
+  }
 
-  // Build the report content for a target UI lang
-  function reportFor(lang){
-    const t = base.translations?.[lang] || {};
+  // ===== 3) Language / content state =====
+  const supported = Object.keys(UI);
+  const detectedLang = normalized.meta.detectedLang;
+  // Start with detected language if we have translations for headings at least
+  let currentLang = supported.includes(detectedLang) ? detectedLang : "en";
+
+  // Render all UI labels (headings/badges) by language
+  function renderUILabels(lang){
+    const t = UI[lang] || UI.en;
+    $("#uiOverview").textContent = t.overview;
+    $("#uiTitleLabel").textContent = t.title;
+    $("#uiSummary").textContent = t.summary;
+    $("#uiProfessionalism").textContent = t.prof;
+    $("#uiFavorability").textContent = t.fav;
+    $("#uiDeadline").textContent = t.deadline;
+    $("#uiIssues").textContent = t.issues;
+    $("#uiSuggestions").textContent = t.suggestions;
+    $("#uiRisk").textContent = t.risk;
+    $("#uiClarity").textContent = t.clarity;
+    $("#uiClauses").textContent = t.clauses;
+    $("#uiScoreChecker").textContent = t.score;
+    $("#uiUnsafe").textContent = t.unsafe;
+    $("#uiSafe").textContent = t.safe;
+    $("#uiVerySafe").textContent = t.verysafe;
+  }
+
+  // Get content in selected language (fallbacks to original/English if segment missing)
+  function getLocalizedContent(lang){
+    const tr = normalized.translations || {};
+    const seg = tr[lang] || {};
+    const riskNoteTr = tr[lang]?.riskNote;
+    const clarNoteTr = tr[lang]?.clarityNote;
+
     return {
-      title: base.contractTitle,
-      summary: toArr(t.summary).length ? toArr(t.summary).slice(0,4) : base.summary,
-      clauses: Array.isArray(t.mainClauses) && t.mainClauses.length ? t.mainClauses.slice(0,5) : base.clauses,
-      issues: Array.isArray(t.potentialIssues) && t.potentialIssues.length ? t.potentialIssues.slice(0,5) : base.issues,
-      suggestions: Array.isArray(t.smartSuggestions) && t.smartSuggestions.length ? t.smartSuggestions.slice(0,3) : base.suggestions,
-      // risk/clarity notes: use translated note if present; else original
-      riskNote: (t.riskNote || base.risk.note || ""),
-      clarityNote: (t.clarityNote || base.clarity.note || ""),
-      riskVal: base.risk.value,
-      clarityVal: base.clarity.value,
-      bars: base.bars,
-      scoreVal: base.score.value
+      title: normalized.meta.title,
+      summary: (seg.summary && seg.summary.length ? seg.summary : normalized.summary),
+      clauses: (seg.mainClauses && seg.mainClauses.length ? seg.mainClauses : normalized.clauses),
+      issues: (seg.potentialIssues && seg.potentialIssues.length ? seg.potentialIssues : normalized.issues),
+      suggestions: (seg.smartSuggestions && seg.smartSuggestions.length ? seg.smartSuggestions : normalized.suggestions),
+      risk: { value: normalized.risk.value, note: (typeof riskNoteTr === "string" && riskNoteTr) ? riskNoteTr : (normalized.risk.note || "") },
+      clarity: { value: normalized.clarity.value, note: (typeof clarNoteTr === "string" && clarNoteTr) ? clarNoteTr : (normalized.clarity.note || "") }
     };
   }
 
-  // UI text swap
-  function setUIStrings(lang){
-    const L = I18N[lang] || I18N.en;
-    $("#overviewLabel").textContent = L.overview;
-    $("#titleWord").textContent = L.titleWord;
-    $("#hSummary").textContent = L.summary;
-    $("#hProfessionalism").textContent = L.professionalism;
-    $("#hFavorability").textContent = L.favorability;
-    $("#hDeadline").textContent = L.deadline;
-    $("#hIssues").textContent = L.issues;
-    $("#hSuggestions").textContent = L.suggestions;
-    $("#hRisk").textContent = L.risk;
-    $("#hClarity").textContent = L.clarity;
-    $("#hClauses").textContent = L.clauses;
-    $("#hScore").textContent = L.score;
-    $("#hConfidence").textContent = L.confidence;
-    $("#scaleUnsafe").textContent = L.scaleUnsafe;
-    $("#scaleSafe").textContent = L.scaleSafe;
-    $("#scaleVerySafe").textContent = L.scaleVerySafe;
-    $("#emailPrompt").textContent = L.emailPrompt;
-    $("#emailErr").textContent = L.emailErr;
-    $("#emailSubmit").textContent = L.download;
-    $("#emailCancel").textContent = L.cancel;
-  }
+  function renderAll(lang){
+    // UI labels
+    renderUILabels(lang);
+    $("#langNow").textContent = lang.toUpperCase();
 
-  // Badges per band with translation
-  function badgeText(lang, band, domain){ // domain risk|clarity (same wording)
-    const L = I18N[lang] || I18N.en;
-    if (band==='green') return L.safeTot;
-    if (band==='orange') return L.safeGen;
-    return L.safeNot;
-  }
+    // Content
+    const data = getLocalizedContent(lang);
 
-  // Render the whole page for a given lang
-  function render(lang){
-    currentLang = SUP.includes(lang) ? lang : "en";
-    localStorage.setItem("uiLang", currentLang);
-    $("#langNow").textContent = SHORT[currentLang] || "EN";
-    setUIStrings(currentLang);
-
-    const d = reportFor(currentLang);
-    $("#contractTitle").textContent = d.title || "—";
+    // Contract Title row
+    $("#uiTitleValue").textContent = data.title || "—";
 
     // Summary
     const sBox=$("#summaryText"); sBox.innerHTML="";
-    (d.summary||[]).forEach(t=>addP(sBox,t));
+    (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
 
-    // Main Clauses
-    (function(){ const el=$("#clausesList"); el.innerHTML=""; (d.clauses||[]).forEach(t=>addP(el,t)); })();
+    // Clauses / Issues / Suggestions
+    (function(){ const el=$("#clausesList"); el.innerHTML=""; (data.clauses||[]).forEach(t=>addP(el,t)); })();
+    (function(){ const el=$("#issuesList");  el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
+    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(el,t)); })();
 
-    // Issues
-    (function(){ const el=$("#issuesList"); el.innerHTML=""; (d.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
+    // Donuts + notes + badges sync with bands + translation of badge text
+    const riskVal = clamp01(data.risk.value), clarVal = clamp01(data.clarity.value);
+    setArc($("#riskArc"), 'risk', riskVal, $("#riskVal"));
+    setArc($("#clarArc"), 'clarity', clarVal, $("#clarVal"));
+    $("#riskNote").textContent = data.risk.note || "";
+    $("#clarNote").textContent = data.clarity.note || "";
 
-    // Suggestions
-    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (d.suggestions||[]).forEach(t=>addP(el,t)); })();
+    // Badge colors & text
+    const rBand = bandFor('risk', riskVal);
+    const cBand = bandFor('clarity', clarVal);
+    $("#riskDot").style.background = colorFor('risk', riskVal);
+    $("#clarDot").style.background = colorFor('clarity', clarVal);
+    $("#riskBadge").textContent = UI[lang]?.band?.[rBand] || UI.en.band[rBand];
+    $("#clarBadge").textContent = UI[lang]?.band?.[cBand] || UI.en.band[cBand];
 
-    // Donuts + notes + badges
-    setArc($("#riskArc"), 'risk', d.riskVal, $("#riskVal"), $("#riskNote"), d.riskNote);
-    setArc($("#clarArc"), 'clarity', d.clarityVal, $("#clarVal"), $("#clarNote"), d.clarityNote);
-
-    // Badge colors and text based on band
-    const rBand = bandFor('risk', d.riskVal);
-    const cBand = bandFor('clarity', d.clarityVal);
-    $("#riskDot").style.background = (rBand==='green')?cssVar('--green'):(rBand==='orange')?cssVar('--orange'):cssVar('--red');
-    $("#clarDot").style.background = (cBand==='green')?cssVar('--green'):(cBand==='orange')?cssVar('--orange'):cssVar('--red');
-    $("#riskBadge").textContent = badgeText(currentLang, rBand, 'risk');
-    $("#clarBadge").textContent = badgeText(currentLang, cBand, 'clarity');
+    // Score Checker (based on clarity value as agreed)
+    setArc($("#scoreArc"), 'clarity', clarVal);
+    $("#scorePct").textContent = clarVal + "%";
+    $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
+    const remark = (clarVal>=78) ? "The contract is nearly perfectly done."
+                : (clarVal>=49) ? "The contract is done well."
+                                : "The contract isn’t done well.";
+    // Remark stays in detected/origin language is fine, but we can map to UI language if needed later.
+    $("#scoreRemark").textContent = remark;
 
     // Bars
-    setMeter($("#confFill"), $("#confVal"), 'professionalism', d.bars.professionalism);
-    setMeter($("#favFill"),  $("#favVal"),  'favorability',    d.bars.favorability);
-    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        d.bars.deadline);
-    setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence',    d.bars.confidence);
-
-    // Score checker (use clarity scale for color/remark)
-    const v = between(d.scoreVal,0,100);
-    setArc($("#scoreArc"), 'clarity', v);
-    $("#scorePct").textContent = v + "%";
-    $("#scoreInd").style.left = `calc(${v}% - 1.5px)`;
-    const L = I18N[currentLang] || I18N.en;
-    const remark = (v>=78) ? L.remarkGreen : (v>=49) ? L.remarkOrange : L.remarkRed;
-    $("#scoreRemark").textContent = remark;
+    setMeter($("#confFill"), $("#confVal"), 'professionalism', normalized.meters.professionalism);
+    setMeter($("#favFill"),  $("#favVal"),  'favorability',    normalized.meters.favorability);
+    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        normalized.meters.deadline);
+    setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      normalized.meters.confidence);
   }
 
-  // ----- Initial reveal animations
+  // ===== 4) First render using detected language (or EN) =====
+  renderAll(currentLang);
+  $("#langNow").textContent = currentLang.toUpperCase();
+
+  // Keep hover menu on desktop; enable tap-open on mobile
+  const langBox = $("#lang");
+  $("#langBtn").addEventListener("click", () => {
+    // Toggle for touch/mobile
+    langBox.classList.toggle("open");
+  }, {passive:true});
+  document.addEventListener("click", (e)=>{
+    if(!langBox.contains(e.target)) langBox.classList.remove("open");
+  });
+
+  // Language selection
+  document.querySelectorAll(".lang-item").forEach(item=>{
+    item.addEventListener("click", ()=>{
+      const code=item.getAttribute("data-code");
+      if(!code) return;
+      currentLang = code;
+      renderAll(currentLang);
+      langBox.classList.remove("open");
+    });
+  });
+
+  // ===== 5) Reveal animations =====
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
@@ -737,7 +684,7 @@
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  // ----- Download button visibility & modal
+  // ===== 6) Download modal & PDF =====
   const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
@@ -749,8 +696,7 @@
   window.addEventListener("scroll", nearBottom, {passive:true});
   window.addEventListener("load", nearBottom);
 
-  const modal=$("#emailModal");
-  const openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
+  const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
   $("#downloadBtn").addEventListener("click", openModal);
   $("#emailCancel").addEventListener("click", closeModal);
   function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
@@ -758,69 +704,47 @@
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    await generatePDF("Report", reportFor(currentLang)); // use current language content
+    const data = getLocalizedContent(currentLang);
+    await generatePDF("Report", data, currentLang);
     closeModal();
   });
 
-  async function generatePDF(title, d){
+  async function generatePDF(title, d, lang){
+    const t = UI[lang] || UI.en;
     const { jsPDF } = window.jspdf;
     const doc=new jsPDF({ unit:"pt", format:"a4" });
     const pageW=doc.internal.pageSize.getWidth();
     const margin=48, width=pageW-margin*2, lh=18;
 
-    // Header bar
     doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
     doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
-    doc.text("SignSense — Contract Analysis Report", margin, 48);
+    doc.text("SignSense — " + (t.overview || "Overview"), margin, 48);
 
-    // Title
-    const L = I18N[currentLang] || I18N.en;
     let y=100;
-    doc.setFontSize(10); doc.setTextColor(189,189,189);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y); y+=lh*1.6;
-    doc.setTextColor(255,255,255); doc.setFontSize(12);
-    doc.text(`${L.titleWord} ${String(d.title||"")}`, margin, y); y+=lh*1.4;
+    const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
+    doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
 
-    y=section(L.summary, y); y=bullets(d.summary, y);
-    y=section(`${L.risk}: ${d.riskVal ?? 0}%`, y); y=paragraph(String(d.riskNote||""), y);
-    y=section(`${L.clarity}: ${d.clarityVal ?? 0}%`, y); y=paragraph(String(d.clarityNote||""), y);
-    y=section(L.clauses, y); y=bullets(d.clauses, y, true);
-    y=section(L.issues, y); y=bullets(d.issues, y);
-    y=section(L.suggestions, y); y=bullets(d.suggestions, y);
+    y=section((t.title||"Title:") + " " + (d.title||"—"), y);
+    y=section(t.summary||"Summary", y); y=bullets(d.summary, y);
+    y=section(`${t.risk||"Risk Level"}: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
+    y=section(`${t.clarity||"Clause Clarity"}: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
+    y=section(t.clauses||"Main Clauses", y); y=bullets(d.clauses, y);
+    y=section(t.issues||"Potential Issues", y); y=bullets(d.issues, y);
+    y=section(t.suggestions||"Smart Suggestions", y); y=bullets(d.suggestions, y);
     doc.save("SignSense_Report.pdf");
 
-    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(String(t), margin, y); return y+12; }
-    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(String(text),width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
-    function bullets(arr,y,numbered=false){
-      const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      let idx=1;
-      list.forEach(t=>{
-        const prefix = numbered ? (idx++ + ". ") : "• ";
-        const lines=doc.splitTextToSize(prefix+String(t), width);
-        lines.forEach((line,j)=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;});
-      });
-      return y;
+    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
+    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
+    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
+      list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
+        if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
+        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} });
+        y+=lh;
+      }); return y;
     }
   }
 
-  // ----- Language menu behavior: hover show; click toggles for mobile; persist choice
-  const lang = $("#lang");
-  // keep open while hovering (CSS does most); add click toggle for touch
-  $("#langBtn").addEventListener("click", ()=>{ lang.classList.toggle("open"); });
-  $("#langMenu").addEventListener("click", (e)=>{
-    const item = e.target.closest(".lang-item");
-    if(!item) return;
-    const code = (item.getAttribute("data-code")||"en").toLowerCase();
-    render(code);
-    lang.classList.remove("open");
-  });
-  // close on outside click (mobile)
-  document.addEventListener("click", (e)=>{
-    if(!lang.contains(e.target)) lang.classList.remove("open");
-  });
-
-  // ----- Initial render
-  render(currentLang);
+  document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
 </body>
