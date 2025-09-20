@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT: require full translations for all supported languages ===
+    // === SYSTEM PROMPT: require full translations (now includes title) ===
     const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
 Schema:
@@ -55,30 +55,19 @@ Schema:
   "role": "signer|writer",
   "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
   "analysis": {
-    "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
+    "summary": ["string","string","string"],
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
-    "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
-    "smartSuggestions": ["string","string","string"],              // exactly 3; each ends with "e.g., …" + a concrete example
+    "mainClauses": ["string","string","string","string","string"],
+    "potentialIssues": ["string","string","string","string","string"],
+    "smartSuggestions": ["string","string","string"],              // each ends with "e.g., …" + a concrete example
     "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
-    // REQUIRED: Provide localized arrays and short notes for ALL of these languages:
-    // en, it, de, es, fr, pt, nl, ro, sq, tr, ja, zh
-    "en": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "it": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "de": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "es": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "fr": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "pt": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "nl": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ro": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "sq": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "tr": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ja": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "zh": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
+    // REQUIRED for: en, it, de, es, fr, pt, nl, ro, sq, tr, ja, zh
+    // Provide localized arrays, short notes, AND a localized title.
+    "en": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
   }
 }
 
@@ -88,16 +77,16 @@ Hard constraints:
 - SUMMARY: 3–4 sentences total, plain language; array only.
 - RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ 280 chars.
 - CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ 280 chars.
-- MAIN CLAUSES: up to 5; fuller sentences (longer OK); DO NOT start with numbers/bullets.
+- MAIN CLAUSES: up to 5; fuller sentences; DO NOT start with numbers/bullets.
 - POTENTIAL ISSUES: up to 5; 1–3 sentences each (longer OK).
-- SMART SUGGESTIONS: exactly 3; each ends with “e.g., …” followed by a concrete example.
+- SMART SUGGESTIONS: exactly 3; each ends with “e.g., …”.
 - Bars thresholds:
   professionalism/favorability/confidence: 0–48 red, 49–74 orange, 75–100 green
   deadlinePressure: 0–35 green, 36–68 orange, 69–100 red
 - SCORE CHECKER thresholds: 0–48 red, 49–77 orange, 78–100 green; verdict red="unsafe", orange="safe", green="very safe"; line red="The contract isnt done well", orange="The contract is done well", green="The contract is nearly perfectly done".
 - Tailor to role ("signer" = protective asks; "writer" = drafting/negotiation).
 - If info is insufficient, keep arrays short and scores conservative, but NEVER break schema.
-- Output VALID JSON only.`;
+- Output VALID JSON only. Keep responses concise to minimize size.`;
 
     // === USER content ===
     const userContent = imageDataURI
@@ -106,10 +95,11 @@ Hard constraints:
           { type: "image_url", image_url: { url: imageDataURI } }
         ]
       : [
-          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n\nAnalyze this contract text:\n${String(text).slice(0, 200000)}\n\nFollow the SYSTEM schema and constraints exactly.` }
+          // Trim text aggressively for speed (~60k chars)
+          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n\nAnalyze this contract text:\n${String(text).slice(0, 60000)}\n\nFollow the SYSTEM schema and constraints exactly.` }
         ];
 
-    // === OpenAI call ===
+    // === OpenAI call (tuned for speed) ===
     const openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -118,12 +108,15 @@ Hard constraints:
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        temperature: 0.2,
+        temperature: 0.15,
+        max_tokens: 1400,            // cap output size to speed up
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system },
           { role: "user", content: userContent }
-        ]
+        ],
+        // small nudge for shorter, faster outputs
+        top_p: 0.8
       })
     });
 
@@ -173,7 +166,7 @@ Hard constraints:
     const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
     const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
 
-    // Clauses / Issues / Suggestions (longer + strip numbering)
+    // Clauses / Issues / Suggestions
     const mainClauses = (parsed?.analysis?.mainClauses || [])
       .filter(Boolean).map(s => stripLead(capStr(s, 900))).slice(0,5);
 
@@ -183,10 +176,7 @@ Hard constraints:
     let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
       .filter(Boolean).map(s => {
         let text = stripLead(capStr(s, 1000));
-        // Ensure "e.g., …" example ending (avoid duplicates)
-        if (!/\beg\.,/i.test(text)) {
-          text = text.replace(/\.\s*$/,"") + " e.g., …";
-        }
+        if (!/\beg\.,/i.test(text)) text = text.replace(/\.\s*$/,"") + " e.g., …";
         return text;
       }).slice(0,3);
     while (smartSuggestions.length < 3) smartSuggestions.push("");
@@ -206,13 +196,14 @@ Hard constraints:
     const scLine = parsed?.analysis?.scoreChecker?.line || scoreLine(scBand);
     const scVerdict = parsed?.analysis?.scoreChecker?.verdict || scoreVerdict(scBand);
 
-    // Normalize translations for ALL supported languages
+    // Normalize translations (ensure "title" exists)
     const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
     const trIn = (parsed.translations && typeof parsed.translations === "object") ? parsed.translations : {};
     const normTr = {};
     LANGS.forEach(l=>{
       const seg = trIn[l] || {};
       normTr[l] = {
+        title: typeof seg.title === "string" ? capStr(seg.title, 160) : undefined,
         summary: Array.isArray(seg.summary)? seg.summary.slice(0,4) : undefined,
         mainClauses: Array.isArray(seg.mainClauses)? seg.mainClauses.slice(0,5) : undefined,
         potentialIssues: Array.isArray(seg.potentialIssues)? seg.potentialIssues.slice(0,5) : undefined,
