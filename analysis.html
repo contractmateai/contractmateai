@@ -439,20 +439,34 @@
   }
   const a = payload.analysis || {};
   const toArr = (v) => Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
-  const data = (mode === "live") ? {
-    summary: toArr(a.summary).slice(0,4),
-    risk: { value: Number(a.risk ?? 0), note: a.riskNote || "Termination, dispute handling and scope changes need to be tightened a bit better." },
-    clarity:{ value: Number(a.clarity ?? 0), note: a.clarityNote || "Some provisions are thin on definitions which reduces predictability in changes." },
-    clauses: (a.keyClauses || []).slice(0,5),
-    issues: (a.potentialIssues || []).slice(0,5),
-    suggestions: (a.smartSuggestions || []).slice(0,3),
-    meters: {
-      professionalism: Number(a.professionalism ?? a.compliance ?? 0),
-      favorability:    Number(a.favorability ?? a.favorabilityIndex ?? a.clarity ?? 0),
-      deadline:        Number(a.deadlinePressure ?? 0),
-      confidence:      Number(a.confidence ?? a.compliance ?? 0),
-    }
-  } : fallbackDemo;
+const data = (mode === "live") ? {
+  // summary comes as an array already
+  summary: toArr(a.summary).slice(0, 4),
+
+  // risk / clarity are objects with value + note
+  risk: {
+    value: Number(a.risk?.value ?? 0),
+    note:  a.risk?.note || "Termination, dispute handling and scope changes need to be tightened a bit better."
+  },
+  clarity: {
+    value: Number(a.clarity?.value ?? 0),
+    note:  a.clarity?.note || "Some provisions are thin on definitions which reduces predictability in changes."
+  },
+
+  // your API calls these "mainClauses"
+  clauses: (a.mainClauses || []).slice(0, 5),
+  issues: (a.potentialIssues || []).slice(0, 5),
+  suggestions: (a.smartSuggestions || []).slice(0, 3),
+
+  // bars are under analysis.bars
+  meters: {
+    professionalism: Number(a.bars?.professionalism ?? 0),
+    favorability:    Number(a.bars?.favorabilityIndex ?? 0),
+    deadline:        Number(a.bars?.deadlinePressure ?? 0),
+    confidence:      Number(a.bars?.confidenceToSign ?? 0),
+  }
+} : fallbackDemo;
+
 
   // ---- 2) UI helpers (unchanged) ----
   const $ = s => document.querySelector(s);
