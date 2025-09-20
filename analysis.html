@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -32,10 +32,10 @@
       background:#0f0e14;border-right:1px solid var(--border);
       padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px
     }
-    .brand{padding:0 2px 0 18px} /* more to the right */
+    .brand{padding:0 2px 0 18px}
     .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
     .brand img{width:34px;height:34px}
-    .brand span{font-size:24px;color:var(--white);font-weight:400} /* larger SignSense */
+    .brand span{font-size:24px;color:var(--white);font-weight:400}
 
     .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
     .nav a{
@@ -50,8 +50,7 @@
     .nav a.active:hover{background:#181620;border-color:var(--border)}
 
     .push{flex:1}
-    .end-only{display:none;opacity:0;transform:translateY(8px)} /* for fade-in */
-
+    .end-only{display:none;opacity:0;transform:translateY(8px)}
     .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
     .footer-sep{height:1px;background:var(--border);margin:10px 0}
 
@@ -59,7 +58,7 @@
     .main{padding:0 20px 140px;display:grid;grid-template-rows:auto 1fr;gap:var(--gap)}
     .topbar{
       position:sticky;top:0;z-index:5;background:var(--bg);
-      display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px; /* a bit lower */
+      display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;
       height:64px;border-bottom:1px solid var(--border);
     }
     .top-left{display:flex;align-items:center;gap:12px}
@@ -76,13 +75,13 @@
 
     .lang-menu{
       position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);
-      border-radius:12px;min-width:240px;max-height:240px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
+      border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;
       scrollbar-width:thin;scrollbar-color:#6a6a6a transparent;
     }
     .lang-menu::-webkit-scrollbar{width:6px}
     .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
 
-    /* keep menu open when hovering either the button or the menu, and also when .open is set by JS */
+    /* Hover-open by default; JS adds .open to keep it stable between button/menu */
     .lang:hover .lang-menu, .lang.open .lang-menu{display:block}
 
     .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
@@ -114,7 +113,7 @@
     .list{display:flex;flex-direction:column;gap:16px}
     .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
 
-    /* SAFE HEIGHTS when you delete text in code */
+    /* SAFE HEIGHTS */
     #summaryText:empty{min-height:72px}
     #issuesList:empty{min-height:72px}
     #suggestionsList:empty{min-height:72px}
@@ -137,7 +136,7 @@
     .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
     .meter-title img{width:32px;height:32px}
     .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
-    .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px} /* slower */
+    .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
 
     /* Donuts */
     .hcard{display:flex;gap:16px;align-items:center}
@@ -152,16 +151,14 @@
     .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
     .status span{font-size:17px;color:var(--white);font-weight:400}
 
-    /* ===== Score Checker (Clause-Clarity style, edited) ===== */
+    /* Score Checker */
     #scoreCard{margin-top:12px;}
     #confRightCard{margin-top:12px;}
     #summaryCard,#riskCard,#clarCard,
     #profCard,#favCard,#deadCard,#issuesCard,#clausesCard,
     #suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
-
     #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
     #scoreCard .score-pct{font-size:42px}
-
     .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
     .score-remark{font-size:20px;color:var(--muted)}
     .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
@@ -170,7 +167,7 @@
 
     .scroll-y{max-height:none !important;overflow:visible !important}
 
-    /* Download button (bigger and higher, fades in) */
+    /* Download button */
     .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
     .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
     .download:hover{filter:brightness(1.03)}
@@ -192,7 +189,6 @@
 </head>
 <body>
   <div class="layout">
-    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
       <div class="brand">
         <a href="index.html" aria-label="Go to homepage">
@@ -208,12 +204,7 @@
           <span>Overview</span>
         </a>
         <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
-    <a href="privacy.html">
-  <img class="arr" src="https://imgur.com/xhkeG0y.png" alt="">
-  <img class="icon" src="https://imgur.com/krMnFVT.png" alt="">
-  <span>Privacy</span>
-</a>
-
+        <a href="privacy.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
         <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
         <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Leave a Review</span></a>
       </nav>
@@ -227,7 +218,6 @@
       </div>
     </aside>
 
-    <!-- ===== MAIN ===== -->
     <main class="main">
       <div class="topbar">
         <div class="top-left"><div class="top-title">Overview</div></div>
@@ -237,18 +227,18 @@
             <span class="caret" aria-hidden="true"></span>
           </button>
           <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <div class="lang-item" data-lang="English">English</div>
-            <div class="lang-item" data-lang="Italiano">Italiano</div>
-            <div class="lang-item" data-lang="Deutsch">Deutsch</div>
-            <div class="lang-item" data-lang="Español">Español</div>
-            <div class="lang-item" data-lang="Français">Français</div>
-            <div class="lang-item" data-lang="Português">Português</div>
-            <div class="lang-item" data-lang="Nederlands">Nederlands</div>
-            <div class="lang-item" data-lang="Română">Română</div>
-            <div class="lang-item" data-lang="Shqip">Shqip</div>
-            <div class="lang-item" data-lang="Türkçe">Türkçe</div>
-            <div class="lang-item" data-lang="中文">中文</div>
-            <div class="lang-item" data-lang="日本語">日本語</div>
+            <div class="lang-item" data-code="en">English</div>
+            <div class="lang-item" data-code="it">Italiano</div>
+            <div class="lang-item" data-code="de">Deutsch</div>
+            <div class="lang-item" data-code="es">Español</div>
+            <div class="lang-item" data-code="fr">Français</div>
+            <div class="lang-item" data-code="pt">Português</div>
+            <div class="lang-item" data-code="nl">Nederlands</div>
+            <div class="lang-item" data-code="ro">Română</div>
+            <div class="lang-item" data-code="sq">Shqip</div>
+            <div class="lang-item" data-code="tr">Türkçe</div>
+            <div class="lang-item" data-code="zh">中文</div>
+            <div class="lang-item" data-code="ja">日本語</div>
           </div>
         </div>
       </div>
@@ -343,7 +333,6 @@
           <!-- Score Checker -->
           <section class="card" id="scoreCard">
             <div class="hcard">
-              <!-- Donut -->
               <div class="circle">
                 <svg width="160" height="160" viewBox="0 0 160 160">
                   <circle class="track" cx="80" cy="80" r="74"></circle>
@@ -354,21 +343,16 @@
                 </div>
               </div>
 
-              <!-- Right side -->
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt="">Score Checker</h3>
-
                 <div class="score-remark">The contract is nearly perfectly done.</div>
-
-                <div class="score-bar">
-                  <span class="score-ind" id="scoreInd"></span>
-                </div>
+                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
                 <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
               </div>
             </div>
           </section>
 
-          <!-- Confidence to sign freely (under Score Checker) -->
+          <!-- Confidence to sign freely -->
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
               <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span>Confidence to sign freely</span></div>
@@ -381,12 +365,10 @@
     </main>
   </div>
 
-  <!-- Download (appears near bottom + fades in) -->
   <div class="download-wrap" id="dlWrap">
     <button class="download" id="downloadBtn">Download Report</button>
   </div>
 
-  <!-- Email modal -->
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <h4>Enter your email to download the PDF report</h4>
@@ -401,12 +383,34 @@
 
 <script>
 (() => {
-  // ---- 1) Build DATA (live -> fallback to demo) ----
+  // ---------- Helpers ----------
+  const $ = s => document.querySelector(s);
+  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const clamp = (v,min=0,max=100)=>Math.max(min,Math.min(Number(v)||0,max));
+  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=String(t||'');el.appendChild(p);};
+  const toArr = (v)=> Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
+  const bandFor = (metric, v) => {
+    v = clamp(v);
+    if (metric==='risk')     return v<=25?'green':v<=58?'orange':'red';
+    if (metric==='clarity')  return v>=78?'green':v>=49?'orange':'red';
+    if (metric==='deadline') return v<=35?'green':v<=68?'orange':'red';
+    return v>=75?'green':v>=49?'orange':'red';
+  };
+  const colorFor = (metric, v) => {
+    const b = bandFor(metric, v);
+    return b==='green'?cssVar('--green'):b==='orange'?cssVar('--orange'):cssVar('--red');
+  };
+  const labelFor = (metric, v) => { // both boxes use same copy rule
+    const b = bandFor(metric, v);
+    return b==='green' ? 'Totally safe' : b==='orange' ? 'Generally safe' : 'Not safe';
+  };
+
+  // ---------- Load data ----------
   const fallbackDemo = {
     summary: [
       "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
       "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
-      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes.",
+      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
     ],
     risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
     clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
@@ -425,11 +429,13 @@
       "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
     ],
     suggestions: [
-      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
+      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick. For example: 3-day UAT window with pass/fail list.",
+      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap. For example: simple 1%/mo capped at 10% of invoice.",
+      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations. For example: exclude administrative delays."
     ],
-    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 }
+    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 },
+    detectedLang: "en",
+    translations: {}
   };
 
   const mode = localStorage.getItem("analysisMode");
@@ -437,50 +443,60 @@
   if (mode === "live") {
     try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {}
   }
-  const a = payload.analysis || {};
-  const toArr = (v) => Array.isArray(v) ? v : (v ? String(v).split(/\n{2,}|\n/g).filter(Boolean) : []);
-const data = (mode === "live") ? {
-  // summary comes as an array already
-  summary: toArr(a.summary).slice(0, 4),
+  if (!payload || !payload.analysis) payload = fallbackDemo;
 
-  // risk / clarity are objects with value + note
-  risk: {
-    value: Number(a.risk?.value ?? 0),
-    note:  a.risk?.note || "Termination, dispute handling and scope changes need to be tightened a bit better."
-  },
-  clarity: {
-    value: Number(a.clarity?.value ?? 0),
-    note:  a.clarity?.note || "Some provisions are thin on definitions which reduces predictability in changes."
-  },
+  // normalize accessors
+  const A = payload.analysis || {};
+  const base = {
+    summary: toArr(A.summary).slice(0,4),
+    risk: { value: Number(A.risk?.value ?? 0), note: A.risk?.note || "" },
+    clarity: { value: Number(A.clarity?.value ?? 0), note: A.clarity?.note || "" },
+    clauses: (A.mainClauses || []).slice(0,5),
+    issues: (A.potentialIssues || []).slice(0,5),
+    suggestions: (A.smartSuggestions || []).slice(0,3),
+    meters: {
+      professionalism: Number(A.bars?.professionalism ?? 0),
+      favorability:    Number(A.bars?.favorabilityIndex ?? 0),
+      deadline:        Number(A.bars?.deadlinePressure ?? 0),
+      confidence:      Number(A.bars?.confidenceToSign ?? 0),
+    },
+    translations: payload.translations || {},
+    detectedLang: payload.detectedLang || "en"
+  };
 
-  // your API calls these "mainClauses"
-  clauses: (a.mainClauses || []).slice(0, 5),
-  issues: (a.potentialIssues || []).slice(0, 5),
-  suggestions: (a.smartSuggestions || []).slice(0, 3),
+  // ---------- Language menu (hover-open + switch content) ----------
+  const langEl = $("#lang");
+  const langMenu = $("#langMenu");
+  const langBtn  = $("#langBtn");
+  const langNow  = $("#langNow");
+  const codeToShort = {
+    en:"EN", it:"IT", de:"DE", es:"ES", fr:"FR", pt:"PT",
+    nl:"NL", ro:"RO", sq:"SQ", tr:"TR", ja:"日本語", zh:"中文"
+  };
+  let hoverTimer = null;
+  langEl.addEventListener("mouseenter", ()=>{ clearTimeout(hoverTimer); langEl.classList.add("open"); });
+  langEl.addEventListener("mouseleave", ()=>{ hoverTimer=setTimeout(()=>langEl.classList.remove("open"), 120); });
+  // touch/click toggle for mobile
+  langBtn.addEventListener("click", (e)=>{ e.stopPropagation(); langEl.classList.toggle("open"); });
+  document.addEventListener("click", ()=> langEl.classList.remove("open"));
 
-  // bars are under analysis.bars
-  meters: {
-    professionalism: Number(a.bars?.professionalism ?? 0),
-    favorability:    Number(a.bars?.favorabilityIndex ?? 0),
-    deadline:        Number(a.bars?.deadlinePressure ?? 0),
-    confidence:      Number(a.bars?.confidenceToSign ?? 0),
-  }
-} : fallbackDemo;
+  let currentLang = (base.detectedLang || "en").toLowerCase();
+  if (!codeToShort[currentLang]) currentLang = "en";
+  langNow.textContent = codeToShort[currentLang];
 
+  langMenu.querySelectorAll(".lang-item").forEach(item=>{
+    item.addEventListener("click", ()=>{
+      const code = item.getAttribute("data-code") || "en";
+      currentLang = code;
+      langNow.textContent = codeToShort[code] || "EN";
+      render();
+      langEl.classList.remove("open");
+    });
+  });
 
-  // ---- 2) UI helpers (unchanged) ----
-  const $ = s => document.querySelector(s);
-  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const between = (v,min,max)=>Math.max(min,Math.min(v,max));
-  const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
-  function colorFor(metric, v){
-    if (metric === 'risk')     { if (v<=25) return cssVar('--green'); if (v<=58) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'clarity')  { if (v>=78) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red'); }
-    if (metric === 'deadline') { if (v<=35) return cssVar('--green'); if (v<=68) return cssVar('--orange'); return cssVar('--red'); }
-    if (v>=75) return cssVar('--green'); if (v>=49) return cssVar('--orange'); return cssVar('--red');
-  }
-  function setArc(arcEl, metric, value, valEl, noteEl, note){
-    const v = between(value||0, 0, 100);
+  // ---------- UI painters ----------
+  function setArc(arcEl, metric, value, valEl){
+    const v = clamp(value);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2*Math.PI*rr;
     arcEl.style.stroke = colorFor(metric, v);
@@ -488,50 +504,70 @@ const data = (mode === "live") ? {
     arcEl.style.strokeDashoffset = circ;
     requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset = circ * (1 - v/100); });
     if (valEl) valEl.textContent = v + "%";
-    if (noteEl) noteEl.textContent = note || "";
   }
   function setMeter(fill, label, metric, value){
-    const v = between(value||0, 0, 100);
+    const v = clamp(value);
     label.textContent = v + "%";
     fill.style.background = colorFor(metric, v);
     requestAnimationFrame(()=>{ fill.style.width = v + "%"; });
   }
 
-  // ---- 3) Populate UI with DATA ----
-  // Summary
-  const sBox=$("#summaryText"); sBox.innerHTML="";
-  (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+  function render() {
+    // choose translated content if available
+    const T = base.translations[currentLang] || {};
+    const summary     = (T.summary && T.summary.length) ? T.summary.slice(0,4) : base.summary;
+    const clauses     = (T.mainClauses && T.mainClauses.length) ? T.mainClauses.slice(0,5) : base.clauses;
+    const issues      = (T.potentialIssues && T.potentialIssues.length) ? T.potentialIssues.slice(0,5) : base.issues;
+    const suggestions = (T.smartSuggestions && T.smartSuggestions.length) ? T.smartSuggestions.slice(0,3) : base.suggestions;
 
-  // Clauses / Issues / Suggestions
-  (function(){ const el=$("#clausesList"); el.innerHTML=""; (data.clauses||[]).forEach(t=>addP(el,t)); })();
-  (function(){ const el=$("#issuesList");  el.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
-  (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(el,t)); })();
+    // Summary
+    const sBox=$("#summaryText"); sBox.innerHTML="";
+    summary.forEach(t=>addP(sBox,t));
 
-  // Donuts
-  setArc($("#riskArc"), 'risk',     data.risk?.value ?? 0, $("#riskVal"), $("#riskNote"), data.risk?.note);
-  setArc($("#clarArc"), 'clarity',  data.clarity?.value ?? 0, $("#clarVal"), $("#clarNote"), data.clarity?.note);
+    // Clauses / Issues / Suggestions
+    (function(){ const el=$("#clausesList"); el.innerHTML=""; (clauses||[]).forEach(t=>addP(el,t)); })();
+    (function(){ const el=$("#issuesList");  el.innerHTML=""; (issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; el.appendChild(li);}); })();
+    (function(){ const el=$("#suggestionsList"); el.innerHTML=""; (suggestions||[]).forEach(t=>addP(el,t)); })();
 
-  // Bars
-  setMeter($("#confFill"), $("#confVal"), 'professionalism', data.meters?.professionalism ?? 0);
-  setMeter($("#favFill"),  $("#favVal"),  'favorability',    data.meters?.favorability ?? 0);
-  setMeter($("#deadFill"), $("#deadVal"), 'deadline',        data.meters?.deadline ?? 0);
+    // Risk donut + badge + note
+    setArc($("#riskArc"), 'risk', base.risk.value, $("#riskVal"));
+    const riskBandColor = colorFor('risk', base.risk.value);
+    $("#riskNote").textContent = base.risk.note || "";
+    $("#riskDot").style.background = riskBandColor;
+    $("#riskBadge").textContent = labelFor('risk', base.risk.value);
 
-  // Score Checker (mirrors clarity color bands 0–48 red, 49–77 orange, 78–100 green)
-  (function scoreChecker(){
-    const v = Number(data.clarity?.value ?? 0);
-    setArc($("#scoreArc"), 'clarity', v);
-    $("#scorePct").textContent = v + "%";
-    $("#scoreInd").style.left = `calc(${between(v,0,100)}% - 1.5px)`;
-    const remark = document.querySelector("#scoreCard .score-remark");
-    remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
-                     : (v>=49) ? "The contract is done well."
-                               : "The contract isn’t done well.";
-  })();
+    // Clarity donut + badge + note
+    setArc($("#clarArc"), 'clarity', base.clarity.value, $("#clarVal"));
+    const clarBandColor = colorFor('clarity', base.clarity.value);
+    $("#clarNote").textContent = base.clarity.note || "";
+    $("#clarDot").style.background = clarBandColor;
+    $("#clarBadge").textContent = labelFor('clarity', base.clarity.value);
 
-  // Right-side Confidence bar (use meters.confidence)
-  setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', data.meters?.confidence ?? 0);
+    // Bars
+    setMeter($("#confFill"), $("#confVal"), 'professionalism', base.meters.professionalism);
+    setMeter($("#favFill"),  $("#favVal"),  'favorability',    base.meters.favorability);
+    setMeter($("#deadFill"), $("#deadVal"), 'deadline',        base.meters.deadline);
 
-  // ---- 4) Reveal animations / download modal (unchanged) ----
+    // Score Checker (mirror clarity)
+    (function scoreChecker(){
+      const v = clamp(base.clarity.value);
+      setArc($("#scoreArc"), 'clarity', v);
+      $("#scorePct").textContent = v + "%";
+      $("#scoreInd").style.left = `calc(${v}% - 1.5px)`;
+      const remark = document.querySelector("#scoreCard .score-remark");
+      remark.textContent = (v>=78) ? "The contract is nearly perfectly done."
+                      : (v>=49) ? "The contract is done well."
+                                : "The contract isn’t done well.";
+    })();
+
+    // Right-side Confidence bar
+    setMeter($("#conf2Fill"), $("#conf2Val"), 'confidence', base.meters.confidence);
+  }
+
+  // initial paint
+  render();
+
+  // ---------- reveal animations / modal / PDF ----------
   window.addEventListener('load', () => {
     ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
     setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
@@ -539,7 +575,7 @@ const data = (mode === "live") ? {
   const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
   ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
 
-  const dlWrap=document.getElementById("dlWrap"), endBox=document.getElementById("sidebarEnd");
+  const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
   function nearBottom(){
     const scrolledFromBottom=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
     const show=scrolledFromBottom<=300;
@@ -558,7 +594,11 @@ const data = (mode === "live") ? {
     const email=$("#emailInput").value||"", err=$("#emailErr");
     if(!validEmail(email)){ err.style.display="block"; return; }
     err.style.display="none";
-    await generatePDF("Report", data);
+    await generatePDF("Report", {
+      summary: toArr($("#summaryText").innerText.split("\n")),
+      risk: base.risk, clarity: base.clarity,
+      clauses: base.clauses, issues: base.issues, suggestions: base.suggestions
+    });
     closeModal();
   });
 
@@ -595,7 +635,7 @@ const data = (mode === "live") ? {
     }
   }
 
-  document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
+  $("#leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
 })();
 </script>
 
