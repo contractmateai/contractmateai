@@ -597,7 +597,7 @@ const fallbackDemo = {
     await generatePDF("Report", data, lang); closeModal();
   });
 
-<script>
+
 /* ====== Poppins loader for jsPDF (Regular + Bold) ====== */
 async function ensurePoppins(doc){
   // Skip if already registered
@@ -883,7 +883,7 @@ async function generatePDF(filename, d, lang){
 
   doc.save((filename || "SignSense_Report") + ".pdf");
 }
-</script>
+
 
 })();
 </script>
