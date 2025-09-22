@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT: require full translations for all supported languages ===
+    // === SYSTEM PROMPT: require full translations for all supported languages, INCLUDING localized title ===
     const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
 Schema:
@@ -65,20 +65,20 @@ Schema:
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
-    // REQUIRED: Provide localized arrays and short notes for ALL of these languages:
-    // en, it, de, es, fr, pt, nl, ro, sq, tr, ja, zh
-    "en": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "it": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "de": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "es": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "fr": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "pt": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "nl": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ro": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "sq": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "tr": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ja": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "zh": { "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
+    // REQUIRED FOR EACH LANGUAGE: include a localized "title" (translated contractTitle),
+    // plus localized arrays/notes.
+    "en": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "it": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "de": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "es": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "fr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "pt": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "nl": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "ro": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "sq": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "tr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "ja": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "zh": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
   }
 }
 
@@ -183,7 +183,6 @@ Hard constraints:
     let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
       .filter(Boolean).map(s => {
         let text = stripLead(capStr(s, 1000));
-        // Ensure "e.g., …" example ending (avoid duplicates)
         if (!/\beg\.,/i.test(text)) {
           text = text.replace(/\.\s*$/,"") + " e.g., …";
         }
@@ -206,13 +205,14 @@ Hard constraints:
     const scLine = parsed?.analysis?.scoreChecker?.line || scoreLine(scBand);
     const scVerdict = parsed?.analysis?.scoreChecker?.verdict || scoreVerdict(scBand);
 
-    // Normalize translations for ALL supported languages
+    // Normalize translations for ALL supported languages (now includes "title")
     const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
     const trIn = (parsed.translations && typeof parsed.translations === "object") ? parsed.translations : {};
     const normTr = {};
     LANGS.forEach(l=>{
       const seg = trIn[l] || {};
       normTr[l] = {
+        title: typeof seg.title === "string" ? capStr(seg.title, 200) : undefined,
         summary: Array.isArray(seg.summary)? seg.summary.slice(0,4) : undefined,
         mainClauses: Array.isArray(seg.mainClauses)? seg.mainClauses.slice(0,5) : undefined,
         potentialIssues: Array.isArray(seg.potentialIssues)? seg.potentialIssues.slice(0,5) : undefined,
