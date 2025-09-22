@@ -322,6 +322,9 @@
 
 <script>
 (() => {
+  // FORCE DEMO MODE (no live payload)
+localStorage.setItem("analysisMode","demo"); localStorage.removeItem("analysisRaw");
+
   /* ================= UI LABELS (i18n) ================= */
   const UI = {
     en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
