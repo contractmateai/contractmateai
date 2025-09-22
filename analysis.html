@@ -390,44 +390,50 @@ localStorage.setItem("analysisMode","demo"); localStorage.removeItem("analysisRa
   };
 
   /* ============== DATA: live (localStorage) -> fallback demo ============== */
-  const fallbackDemo = {
-    meta:{ title:"Sample Agreement", detectedLang:"en" },
-    summary:["…"],
-    risk:{ value:45, note:"…" },
-    clarity:{ value:70, note:"…" },
-    clauses:["1. …"],
-    issues:["…"],
-    suggestions:["1. …"],
-    meters:{ professionalism:65, favorability:50, deadline:40, confidence:70 },
-    translations:{} // demo shows default english content
-  };
+/* ============== DATA: live (localStorage) -> fallback demo ============== */
+const fallbackDemo = {
+  meta: { title: "Sample Agreement", detectedLang: "en" },
+  summary: [
+    "The Vienna Convention establishes a framework for international sales contracts between parties from different countries.",
+    "It outlines the rights and obligations of buyers and sellers, including provisions for contract formation, delivery, and liability.",
+    "The Convention aims to promote uniformity in international trade and reduce legal barriers."
+  ],
+  risk: {
+    value: 45,
+    note: "The contract is generally safe, with clear provisions for both parties."
+  },
+  clarity: {
+    value: 70,
+    note: "The clauses are generally clear and well-structured, facilitating understanding."
+  },
+  clauses: [
+    "The Convention applies to contracts for the sale of goods between parties whose places of business are in different countries.",
+    "Parties may exclude the application of the Convention or derogate from its provisions.",
+    "The seller must deliver goods that conform to the contract in terms of quantity, quality, and packaging.",
+    "The buyer must pay the price and take delivery of the goods as stipulated in the contract.",
+    "In case of non-compliance, the aggrieved party has the right to seek damages or terminate the contract."
+  ],
+  issues: [
+    "Parties may not fully understand their rights and obligations under the Convention, leading to disputes.",
+    "Exclusions or modifications to the Convention's provisions may create legal uncertainties.",
+    "The lack of clarity in certain terms could lead to differing interpretations between parties.",
+    "The Convention does not cover all aspects of sales, such as liability for personal injury or property damage.",
+    "Parties must ensure compliance with local laws that may affect the enforceability of the contract."
+  ],
+  suggestions: [
+    "Consider including a clause that specifies the governing law for any disputes, e.g., 'This contract shall be governed by the laws of Italy.'",
+    "Ensure that all parties fully understand the implications of excluding any provisions of the Convention, e.g., 'Parties may opt-out of certain liability clauses.'",
+    "Include a clear dispute resolution mechanism, e.g., 'Any disputes arising from this contract shall be resolved through arbitration in Vienna.'"
+  ],
+  meters: {
+    professionalism: 65,
+    favorability: 50,
+    deadline: 40,
+    confidence: 70
+  },
+  translations: {} // demo uses English; UI falls back correctly
+};
 
-  const mode = localStorage.getItem("analysisMode");
-  let payload = {};
-  if (mode === "live") { try { payload = JSON.parse(localStorage.getItem("analysisRaw") || "{}"); } catch {} }
-
-  const normalized = (() => {
-    if (!payload || !payload.analysis) return fallbackDemo;
-    const a = payload.analysis;
-    const supported = Object.keys(UI);
-    const detected = (payload.detectedLang || "en").toLowerCase();
-    const baseLang = supported.includes(detected) ? detected : "en";
-    return {
-      meta: { title: payload.contractTitle || payload.contractName || "Contract", detectedLang: baseLang },
-      summary: Array.isArray(a.summary) ? a.summary.slice(0,4) : [],
-      risk: { value: Number(a.risk?.value ?? 0), note: a.risk?.note || "" },
-      clarity: { value: Number(a.clarity?.value ?? 0), note: a.clarity?.note || "" },
-      clauses: (a.mainClauses || []).slice(0,5),
-      issues: (a.potentialIssues || []).slice(0,5),
-      suggestions: (a.smartSuggestions || []).slice(0,3),
-      meters: {
-        professionalism: Number(a.bars?.professionalism ?? 0),
-        confidence: Number(a.bars?.confidenceToSign ?? 0),
-        favorability: Number(a.bars?.favorabilityIndex ?? 0),
-        deadline: Number(a.bars?.deadlinePressure ?? 0)
-      },
-      translations: payload.translations || {}
-    };
   })();
 
   /* ================== Helpers ================== */
