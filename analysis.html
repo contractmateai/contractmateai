@@ -597,42 +597,294 @@ const fallbackDemo = {
     await generatePDF("Report", data, lang); closeModal();
   });
 
-  async function generatePDF(title, d, lang){
-    const t = UI[lang] || UI.en;
-    const { jsPDF } = window.jspdf;
-    const doc=new jsPDF({ unit:"pt", format:"a4" });
-    const pageW=doc.internal.pageSize.getWidth();
-    const margin=48, width=pageW-margin*2, lh=18;
+<script>
+/* ====== Poppins loader for jsPDF (Regular + Bold) ====== */
+async function ensurePoppins(doc){
+  // Skip if already registered
+  if (doc.getFontList && doc.getFontList()['Poppins']) return;
 
-    doc.setFillColor(28,27,34); doc.rect(0,0,pageW,80,'F');
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","normal"); doc.setFontSize(18);
-    doc.text("SignSense — " + (t.overview || "Overview"), margin, 48);
+  // Public TTFs from Google Fonts repo via jsDelivr (OFL-licensed)
+  const REG_URL = "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Regular.ttf";
+  const BLD_URL = "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Bold.ttf";
 
-    let y=100;
-    const date=new Date().toLocaleString(); doc.setFontSize(10); doc.setTextColor(189,189,189);
-    doc.text(`Generated: ${date}`, margin, y); y+=lh*1.6;
-
-    y=section((t.title||"Title:") + " " + (d.title||"—"), y);
-    y=section(t.summary||"Summary", y); y=bullets(d.summary, y);
-    y=section(`${t.risk||"Risk Level"}: ${d.risk?.value ?? 0}%`, y); y=paragraph(d.risk?.note || "", y);
-    y=section(`${t.clarity||"Clause Clarity"}: ${d.clarity?.value ?? 0}%`, y); y=paragraph(d.clarity?.note || "", y);
-    y=section(t.clauses||"Main Clauses", y); y=bullets(d.clauses, y);
-    y=section(t.issues||"Potential Issues", y); y=bullets(d.issues, y);
-    y=section(t.suggestions||"Smart Suggestions", y); y=bullets(d.suggestions, y);
-    doc.save("SignSense_Report.pdf");
-
-    function section(t,y){ if(y>780){ doc.addPage(); y=64; } doc.setFont("helvetica","normal"); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text(t, margin, y); return y+12; }
-    function paragraph(text,y){ if(!text) return y; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11); let lines=doc.splitTextToSize(text,width); lines.forEach(line=>{ if(y>780){doc.addPage(); y=64;} doc.text(line, margin, y); y+=lh;}); return y; }
-    function bullets(arr,y){ const list=Array.isArray(arr)?arr:[]; doc.setFont("helvetica","normal"); doc.setTextColor(189,189,189); doc.setFontSize(11);
-      list.forEach(t=>{ const lines=doc.splitTextToSize(String(t),width-12);
-        if(y>780){doc.addPage(); y=64;} doc.text("•", margin, y);
-        lines.forEach((line,i)=>{ if(i===0){doc.text(line, margin+12, y);} else { y+=lh; doc.text(line, margin+12, y);} });
-        y+=lh;
-      }); return y;
-    }
+  async function fetchAsBase64(url){
+    const r = await fetch(url, {mode:"cors"});
+    const buf = await r.arrayBuffer();
+    // Convert to base64
+    let binary = "";
+    const bytes = new Uint8Array(buf);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
   }
 
-  document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
+  const [regB64, boldB64] = await Promise.all([
+    fetchAsBase64(REG_URL),
+    fetchAsBase64(BLD_URL)
+  ]);
+
+  // Register with jsPDF
+  doc.addFileToVFS("Poppins-Regular.ttf", regB64);
+  doc.addFont("Poppins-Regular.ttf", "Poppins", "normal");
+
+  doc.addFileToVFS("Poppins-Bold.ttf", boldB64);
+  doc.addFont("Poppins-Bold.ttf", "Poppins", "bold");
+}
+
+/* === icons & marks you specified === */
+const ASSETS = {
+  logo:       "https://imgur.com/aRIGT9V.png",
+  risk:       "https://imgur.com/hSkzUQu.png",
+  clarity:    "https://imgur.com/3J3mzur.png",
+  pro:        "https://imgur.com/FLqsaQJ.png",
+  fav:        "https://imgur.com/GIAYFBC.png",
+  dead:       "https://imgur.com/BbyV5gF.png",
+  score:      "https://imgur.com/H47wt5e.png",
+  confidence: "https://imgur.com/GzPeaz5.png"
+};
+
+/* === small helper: image URL -> dataURL so jsPDF can embed === */
+async function imgToDataURL(url){
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = url;
+  await new Promise((res, rej)=>{ img.onload = res; img.onerror = rej; });
+  const c = document.createElement("canvas");
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  c.getContext("2d").drawImage(img, 0, 0);
+  return c.toDataURL("image/png");
+}
+
+/* ================= Main generator (Poppins everywhere) ================= */
+async function generatePDF(filename, d, lang){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  await ensurePoppins(doc);               // ← ensure font is ready
+
+  const FONT = "Poppins";                 // ← use Poppins
+  const REG = "normal";
+  const B   = "bold";
+
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+
+  // preload icons
+  const IM = {};
+  for (const k in ASSETS) IM[k] = await imgToDataURL(ASSETS[k]);
+
+  // utils
+  const M = 38;
+  const H2  = (t,y)=>{ doc.setFont(FONT,B); doc.setFontSize(18); doc.setTextColor(0,0,0); doc.text(t, M, y); };
+  const P   = (t,y,w,lineH=16)=>{ doc.setFont(FONT,REG); doc.setFontSize(11); doc.setTextColor(30,30,30);
+    const lines = doc.splitTextToSize(t,w);
+    lines.forEach(line=>{ doc.text(line, M+14, y); y+=lineH; }); return y; };
+  const bulletList = (arr,y,w,lineH=16)=>{ doc.setFont(FONT,REG); doc.setFontSize(11); doc.setTextColor(30,30,30);
+    (arr||[]).forEach(item=>{
+      const lines = doc.splitTextToSize(String(item), w-16);
+      doc.text("•", M+10, y); doc.text(lines[0], M+22, y);
+      for (let i=1;i<lines.length;i++){ y+=lineH; doc.text(lines[i], M+22, y); }
+      y+=lineH;
+    }); return y; };
+  const roundedRect = (x,y,w,h,r=12, mode='S', border=3)=>{ doc.setDrawColor(0,0,0); doc.setLineWidth(border); doc.roundedRect(x,y,w,h,r,r,mode); };
+  const blackBorderBox = (x,y,w,h)=> roundedRect(x,y,w,h,12,"S",3);
+
+  function header(){
+    doc.setFillColor(0,0,0); doc.rect(0,0,W,120,"F");
+    doc.setTextColor(255,255,255);
+    doc.setFont(FONT,REG); doc.setFontSize(46); doc.text("Contract Report", M, 72);
+    doc.setFont(FONT,REG); doc.setFontSize(14);
+    const dt = new Date();
+    const day = dt.getDate().toString().padStart(2,"0");
+    const month = dt.toLocaleString('en', { month:'long' });
+    const year = dt.getFullYear();
+    doc.text(`Generated on ${day} ${month} ${year}`, M, 102);
+  }
+
+  function footer(pageNo){
+    // page chip
+    doc.setFillColor(0,0,0);
+    doc.roundedRect(M, H-54, 96, 30, 10, 10, "F");
+    doc.setTextColor(255,255,255); doc.setFont(FONT,B); doc.setFontSize(12);
+    doc.text(`PAGE ${pageNo}`, M+20, H-34);
+
+    // logo (above corner text)
+    doc.addImage(IM.logo, "PNG", W-140, H-84, 110, 30);
+
+    // disclaimer (underlined, NOT bold)
+    const y = H-16, prefix = "Kindly keep in mind that although you might find this report helpful, this is ",
+          suffix = " legal advice.";
+    doc.setTextColor(30,30,30); doc.setFont(FONT,REG); doc.setFontSize(10);
+    let x = M; doc.text(prefix, x, y); x += doc.getTextWidth(prefix);
+    doc.setFont(FONT,B); const notW = doc.getTextWidth("not");
+    doc.text("not", x, y);
+    doc.setLineWidth(0.8); doc.line(x, y+2, x+notW, y+2);
+    x += notW; doc.setFont(FONT,REG); doc.text(suffix, x, y);
+    // underline whole sentence
+    doc.line(M, y+2, x + doc.getTextWidth(suffix), y+2);
+  }
+
+  /* ===================== PAGE 1 ===================== */
+  header();
+  let y = 140;
+
+  // Title row
+  doc.setTextColor(0,0,0);
+  doc.setFont(FONT,B); doc.setFontSize(14); doc.text("Title:", M, y);
+  doc.setFont(FONT,REG); doc.text(` ${d.title || "—"}`, M+40, y);
+  y += 20;
+
+  // Summary bordered box
+  const sumTop = y + 8;
+  H2("Summary of Contract:", y); y += 10;
+  const boxTextY = y + 22;
+  const summaryStr = (Array.isArray(d.summary) ? d.summary : [d.summary]).join("\n\n");
+  let yMeasure = P(summaryStr, boxTextY, W - (M*2) - 28);
+  const sumH = (yMeasure - boxTextY) + 34;
+  blackBorderBox(M-6, sumTop, W - (M*2) + 12, sumH);
+  y = sumTop + sumH + 28;
+
+  // Percentage Breakdown (2 cards)
+  doc.setFont(FONT,B); doc.setFontSize(16); doc.text("Percentage Breakdown", M, y);
+  y += 16;
+  const cardW = (W - M*2 - 16) / 2;
+  const rowY = y + 12;
+
+  // Risk Level card
+  let box1Y = rowY, box1H = 120;
+  blackBorderBox(M, box1Y, cardW, box1H);
+  doc.addImage(IM.risk,"PNG", M+14, box1Y+14, 26, 26);
+  doc.setFont(FONT,B); doc.setFontSize(14); doc.text("Risk Level", M+48, box1Y+32);
+  doc.setFontSize(32); doc.text(`${(d.risk?.value ?? 0)}%`, M+24, box1Y+84);
+  doc.setFont(FONT,REG); doc.setFontSize(11);
+  doc.text("Clear terms overall, but", M+110, box1Y+66);
+  doc.text("missing late fees and",     M+110, box1Y+82);
+  doc.text("dispute process.",          M+110, box1Y+98);
+  doc.setFillColor(230,255,230); roundedRect(M+24, box1Y+94, 118, 20, 8, "F", 1.2);
+  doc.setFont(FONT,REG); doc.setTextColor(0,110,0); doc.setFontSize(11); doc.text("Generally Safe", M+34, box1Y+108);
+  doc.setTextColor(0,0,0);
+
+  // Clause Clarity card
+  const cardX2 = M + cardW + 16;
+  blackBorderBox(cardX2, box1Y, cardW, box1H);
+  doc.addImage(IM.clarity,"PNG", cardX2+14, box1Y+14, 26, 26);
+  doc.setFont(FONT,B); doc.setFontSize(14); doc.text("Clause Clarity", cardX2+48, box1Y+32);
+  doc.setFontSize(32); doc.text(`${(d.clarity?.value ?? 0)}%`, cardX2+24, box1Y+84);
+  doc.setFont(FONT,REG); doc.setFontSize(11);
+  doc.text("Plain language used, but", cardX2+110, box1Y+66);
+  doc.text("some clauses need",       cardX2+110, box1Y+82);
+  doc.text("clearer detail.",         cardX2+110, box1Y+98);
+  doc.setFillColor(230,255,230); roundedRect(cardX2+24, box1Y+94, 118, 20, 8, "F", 1.2);
+  doc.setFont(FONT,REG); doc.setTextColor(0,110,0); doc.setFontSize(11); doc.text("Generally Safe", cardX2+34, box1Y+108);
+  doc.setTextColor(0,0,0);
+
+  y = box1Y + box1H + 28;
+
+  // Statistical Bars
+  doc.setFont(FONT,B); doc.setFontSize(16); doc.text("Statistical Bars", M, y);
+  y += 14;
+
+  function statBar(label, icon, value, yBar){
+    const barH = 34, barW = W - (M*2) - 12, x = M;
+    blackBorderBox(x, yBar, barW, barH);
+    doc.addImage(icon, "PNG", x+10, yBar+6, 22, 22);
+    doc.setFont(FONT,B); doc.setFontSize(12); doc.text(label, x+40, yBar+22);
+    // % right
+    const pct = `${value}%`; const tx = x + barW - 40 - doc.getTextWidth(pct);
+    doc.text(pct, tx, yBar+22);
+    // inner fill
+    const innerW = barW - 14, innerX = x+7;
+    doc.setFillColor(160, 235, 160);
+    doc.roundedRect(innerX, yBar+barH-16, (innerW*value)/100, 10, 5, 5, "F");
+  }
+  statBar("Professionalism", IM.pro, (d.meters?.professionalism??65), y); y += 46;
+  statBar("Favorability Index", IM.fav, (d.meters?.favorability??50), y); y += 46;
+  statBar("Deadline Pressure", IM.dead, (d.meters?.deadline??40), y); y += 58;
+
+  // Main Clauses
+  doc.setFont(FONT,B); doc.setFontSize(16); doc.text("Main Clauses", M, y);
+  const mcBoxY = y - 8, mcTextY = y + 14;
+  let yMC = bulletList(d.clauses||[], mcTextY, W - (M*2) - 28);
+  const mcH = (yMC - mcTextY) + 34;
+  blackBorderBox(M-6, mcBoxY, W - (M*2) + 12, mcH);
+  y = mcBoxY + mcH + 16;
+
+  footer(1);
+
+  /* ===================== PAGE 2 ===================== */
+  doc.addPage();
+  header();
+  y = 140;
+
+  // Potential Issues
+  doc.setFont(FONT,B); doc.setFontSize(16); doc.text("Potential Issues that might occur", M, y);
+  const piBoxY = y - 8, piTextY = y + 14;
+  let yPI = bulletList(d.issues||[], piTextY, W - (M*2) - 28);
+  const piH = (yPI - piTextY) + 34;
+  blackBorderBox(M-6, piBoxY, W - (M*2) + 12, piH);
+  y = piBoxY + piH + 24;
+
+  // Smart Suggestions
+  doc.setFont(FONT,B); doc.setFontSize(16); doc.text("Smart Suggestions", M, y);
+  const ssBoxY = y - 8, ssTextY = y + 14;
+  let ySS = ssTextY;
+  const suggestions = Array.isArray(d.suggestions)? d.suggestions : [];
+  doc.setFont(FONT,REG); doc.setFontSize(11); doc.setTextColor(30,30,30);
+  suggestions.forEach((s, i) => {
+    const num = `${i+1}. `, wNum = doc.getTextWidth(num);
+    const lines = doc.splitTextToSize(String(s), W - (M*2) - 28 - wNum);
+    doc.text(num, M+14, ySS); doc.text(lines[0], M+14 + wNum, ySS);
+    for (let k=1;k<lines.length;k++){ ySS += 16; doc.text(lines[k], M+14 + wNum, ySS); }
+    ySS += 22;
+  });
+  const ssH = (ySS - ssTextY) + 20;
+  blackBorderBox(M-6, ssBoxY, W - (M*2) + 12, ssH);
+  y = ssBoxY + ssH + 24;
+
+  // Bottom row: Score Checker + Confidence
+  const leftW = (W - M*2 - 16) * 0.58;
+  const rightW = (W - M*2 - 16) - leftW;
+  const scX = M, scY = y, scH = 162;
+  blackBorderBox(scX, scY, leftW, scH);
+  doc.addImage(IM.score,"PNG", scX+14, scY+14, 26, 26);
+  doc.setFont(FONT,B); doc.setFontSize(14); doc.setTextColor(0,0,0);
+  doc.text("Score Checker", scX+48, scY+32);
+  doc.setFont(FONT,B); doc.setFontSize(34);
+  const scorePct = (d.clarity?.value ?? 0);
+  doc.text(`${scorePct}%`, scX+24, scY+84);
+  doc.setFont(FONT,REG); doc.setFontSize(11);
+  doc.text("The contract is nearly perfectly done.", scX+24, scY+108);
+  doc.setDrawColor(47,47,47); doc.setLineWidth(1.2);
+  doc.roundedRect(scX+24, scY+124, leftW-48, 22, 10, 10, "S");
+  const indX = scX+24 + (leftW-48) * (scorePct/100);
+  doc.setFillColor(0,0,0); doc.rect(indX-1.5, scY+118, 3, 34, "F");
+  doc.setFontSize(10); doc.setTextColor(90,90,90);
+  doc.text("Unsafe", scX+24, scY+166);
+  const safeW = doc.getTextWidth("Safe"); doc.text("Safe", scX + 24 + (leftW-48)/2 - safeW/2, scY+166);
+  const vsW = doc.getTextWidth("Very Safe"); doc.text("Very Safe", scX + 24 + (leftW-48) - vsW, scY+166);
+  doc.setTextColor(0,0,0);
+
+  // Confidence to sign freely
+  const cfX = scX + leftW + 16, cfY = scY, cfH = scH;
+  blackBorderBox(cfX, cfY, rightW, cfH);
+  doc.addImage(IM.confidence,"PNG", cfX+14, cfY+14, 26, 26);
+  doc.setFont(FONT,B); doc.setFontSize(14); doc.text("Confidence to sign freely", cfX+48, cfY+32);
+  const mX = cfX+24, mY = cfY+74, mW = rightW-48, mH = 22;
+  blackBorderBox(mX-2, mY-2, mW+4, mH+4);
+  const confV = (d.meters?.confidence ?? 70);
+  doc.setFillColor(255, 200, 0); doc.rect(mX, mY, mW * (confV/100), mH, "F");
+  doc.setFont(FONT,B); doc.setFontSize(12);
+  const confTxt = `${confV}%`; const confTx = mX + mW - 6 - doc.getTextWidth(confTxt);
+  doc.text(confTxt, confTx, mY - 8);
+
+  // © line near bottom-right (above logo), then footer
+  doc.setTextColor(0,0,0); doc.setFont(FONT, REG); doc.setFontSize(10);
+  doc.text("© 2025 SignSense. All rights reserved.", W-248, H-54);
+  footer(2);
+
+  doc.save((filename || "SignSense_Report") + ".pdf");
+}
+</script>
+
 })();
 </script>
 </body>
