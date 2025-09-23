@@ -537,28 +537,29 @@
     }
 
     /* === icons & marks === */
-    const ASSETS = {
-      logo:       "https://imgur.com/aRIGT9V.png",
-      risk:       "https://imgur.com/hSkzUQu.png",
-      clarity:    "https://imgur.com/3J3mzur.png",
-      pro:        "https://imgur.com/FLqsaQJ.png",
-      fav:        "https://imgur.com/GIAYFBC.png",
-      dead:       "https://imgur.com/BbyV5gF.png",
-      score:      "https://imgur.com/H47wt5e.png",
-      confidence: "https://imgur.com/GzPeaz5.png"
-    };
+   const ASSETS = {
+  logo:       "https://i.imgur.com/aRIGT9V.png",
+  risk:       "https://i.imgur.com/hSkzUQu.png",
+  clarity:    "https://i.imgur.com/3J3mzur.png",
+  pro:        "https://i.imgur.com/FLqsaQJ.png",
+  fav:        "https://i.imgur.com/GIAYFBC.png",
+  dead:       "https://i.imgur.com/BbyV5gF.png",
+  score:      "https://i.imgur.com/H47wt5e.png",
+  confidence: "https://i.imgur.com/GzPeaz5.png"
+};
+
 
     /* === image URL -> dataURL for jsPDF === */
-    async function imgToDataURL(url){
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = url;
-      await new Promise((res, rej)=>{ img.onload = res; img.onerror = rej; });
-      const c = document.createElement("canvas");
-      c.width = img.naturalWidth; c.height = img.naturalHeight;
-      c.getContext("2d").drawImage(img, 0, 0);
-      return c.toDataURL("image/png");
-    }
+async function imgToDataURL(url){
+  const res = await fetch(url);                  
+  if (!res.ok) throw new Error("Image fetch failed " + res.status);
+  const buf = await res.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return "data:image/png;base64," + btoa(binary);
+}
+
 
     /* ================= Main generator (Poppins everywhere if available) ================= */
   /* ================= Main generator (Updated Layout) ================= */
