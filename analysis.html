@@ -563,314 +563,436 @@ async function imgToDataURL(url){
 
     /* ================= Main generator (Poppins everywhere if available) ================= */
   /* ================= Main generator (Updated Layout) ================= */
-async function generatePDF(filename, d, lang){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-  // Fonts
-  await ensurePoppins(doc);
-  const FONT = (doc.getFontList && doc.getFontList().Poppins) ? "Poppins" : "helvetica";
-  const bold = () => doc.setFont(FONT, "bold");
-  const reg  = () => doc.setFont(FONT, "normal");
-  reg();
-
-  // Page metrics
-  const W = doc.internal.pageSize.getWidth();
-  const H = doc.internal.pageSize.getHeight();
-  const M = 42;
-
-  // Preload icons
-  const IM = {};
-  for (const k in ASSETS) {
-    try { IM[k] = await imgToDataURL(ASSETS[k]); } catch { IM[k] = null; }
-  }
-
-  /* ---------- helpers (smooth + clean) ---------- */
-  const Box = (x,y,w,h) => {
-    doc.setDrawColor(0,0,0);
-    doc.setLineWidth(2);
-    doc.roundedRect(x,y,w,h,16,16);
-  };
-
-  function tagWithIcon(x, y, icon, label){
-    // black chip behind title
-    doc.setFillColor(0,0,0);
-    doc.roundedRect(x, y, doc.getTextWidth(label)+64, 30, 10, 10, "F");
-    if(icon) doc.addImage(icon, "PNG", x+8, y+6, 18, 18);
-    doc.setTextColor(255,255,255);
-    bold(); doc.setFontSize(12); doc.text(label, x+32, y+20);
-    doc.setTextColor(0,0,0);
-  }
-
-  function tinyText(txt, x, y, w, lh=14){
-    const lines = doc.splitTextToSize(String(txt||""), w);
-    reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
-    lines.forEach((ln,i)=>doc.text(ln, x, y + i*lh));
-    doc.setTextColor(0,0,0);
-    return y + lines.length*lh;
-  }
-
-  function donutPNG(pct, color="#28e070", size=150){
-    const c = document.createElement("canvas");
-    c.width = size; c.height = size;
-    const ctx = c.getContext("2d");
-    const cx=size/2, cy=size/2;
-    const ringW = Math.round(size*0.18);       // thicker, smooth
-    const r     = Math.round(size*0.42);
-
-    // track
-    ctx.lineWidth = ringW;
-    ctx.strokeStyle = "#000";
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
-
-    // value arc
-    const a0 = -Math.PI/2;
-    const a1 = a0 + Math.max(0,Math.min(100,pct))/100 * Math.PI*2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = color;
-    ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1); ctx.stroke();
-
-    // white center
-    ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.arc(cx,cy, r - ringW + 4, 0, Math.PI*2); ctx.fill();
-
-    // % text
-    ctx.fillStyle = "#000";
-    ctx.font = `bold ${Math.round(size*0.26)}px ${FONT}`;
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillText(`${Math.round(pct)}%`, cx, cy-2);
-
-    return c.toDataURL("image/png");
-  }
-
-  function pillBarPNG(pct, width, height=20, fill="#9ef0b6"){
-    // super clean thin pill with rounded mask
-    const c = document.createElement("canvas");
-    c.width = width; c.height = height;
-    const ctx = c.getContext("2d");
-    const r = height/2;
-
-    // draw rounded border
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#000";
-    ctx.beginPath();
-    ctx.moveTo(r,1);
-    ctx.lineTo(width-r-1,1);
-    ctx.arc(width-r-1,r,r,-Math.PI/2,Math.PI/2);
-    ctx.lineTo(r,height-1);
-    ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
-    ctx.stroke();
-
-    // clip to rounded shape
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(r,0);
-    ctx.lineTo(width-r,0);
-    ctx.arc(width-r,r,r,-Math.PI/2,Math.PI/2);
-    ctx.lineTo(r,height);
-    ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
-    ctx.closePath();
-    ctx.clip();
-
-    // fill to percentage
-    const inner = Math.max(0,Math.min(100,pct))/100;
-    ctx.fillStyle = fill;
-    ctx.fillRect(0,0, Math.max(0, width * inner), height);
-    ctx.restore();
-
-    return c.toDataURL("image/png");
-  }
-
-  function header(){
-    doc.setFillColor(0,0,0); doc.rect(0,0,W,120,"F");
-    doc.setTextColor(255,255,255);
-    bold(); doc.setFontSize(54); doc.text("Contract Report", M, 72);
-    reg();  doc.setFontSize(16);
-    const dt = new Date();
-    const day = String(dt.getDate()).padStart(2,"0");
-    const month = dt.toLocaleString("en",{month:"long"});
-    const year = dt.getFullYear();
-    doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
-    doc.setTextColor(0,0,0);
-  }
-
-  function footer(page){
-    // PAGE pill pinned left
-    doc.setFillColor(0,0,0);
-    doc.roundedRect(M-6, H-78, 114, 40, 12, 12, "F");
-    doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
-    doc.text(`PAGE ${page}`, M+16, H-52);
-
-    // centered + fully underlined disclaimer
-    const txt = "Kindly keep in mind that although you might find this report helpful, this is not legal advice.";
-    reg(); doc.setTextColor(0,0,0); doc.setFontSize(11);
-    const x = W/2, y = H-18;
-    doc.text(txt, x, y, {align:"center"});
-    const w = doc.getTextWidth(txt);
-    doc.setLineWidth(0.8);
-    doc.line(x - w/2, y+2, x + w/2, y+2);
-  }
-
-  /* ================= PAGE 1 ================= */
-  header();
-  let y = 148;
-
-  // Title
-  bold(); doc.setFontSize(14); doc.text("Title:", M, y);
-  reg();  doc.setFontSize(14); doc.text(` ${d.title || "—"}`, M+44, y);
-  y += 26;
-
-  // Summary card
-  const sTop = y;
-  bold(); doc.setFontSize(16); doc.text("Summary of Contract:", M, y);
-  let sy = y + 26;
-  sy = tinyText(
-    Array.isArray(d.summary) ? d.summary.join("\n\n") : d.summary,
-    M+18, sy, W-(M*2)-36, 16
-  );
-  Box(M-6, sTop-10, W-(M*2)+12, (sy-(y+26))+40);
-  y = sTop + (sy-(y+26))+40 + 22;
-
-  // Percentage Breakdown
-  bold(); doc.setFontSize(16); doc.text("Percentage Breakdown", M, y);
-  y += 14;
-
-  const colGap = 24;
-  const colW = (W - M*2 - colGap)/2;
-  const cardH = 172;
-  const leftX = M;
-  const rightX = M + colW + colGap;
-
-  // RISK card
-  Box(leftX, y, colW, cardH);
-  tagWithIcon(leftX+16, y+12, IM.risk, "Risk Level");
-  const riskPct = Number(d?.risk?.value ?? 0);
-  const riskImg = donutPNG(riskPct, "#20e07a", 150);
-  doc.addImage(riskImg, "PNG", leftX+18, y+38, 116, 116);
-
-  // Right copy for risk
-  let rx = leftX+148, ry = y+58;
-  ry = tinyText("Clear terms overall, but missing late fees and dispute process.", rx, ry, colW-168, 14);
-  // status with green square
-  doc.setFillColor(240,255,240); doc.roundedRect(leftX+28, y+130, 132, 24, 8, 8, "F");
-  doc.setDrawColor(0,0,0); doc.setLineWidth(1);
-  doc.rect(leftX+36, y+136, 10, 10); doc.setFillColor(40,224,112); doc.rect(leftX+36+1, y+136+1, 8, 8, "F");
-  reg(); doc.setFontSize(11); doc.text("Generally Safe", leftX+52, y+147);
-
-  // CLARITY card
-  Box(rightX, y, colW, cardH);
-  tagWithIcon(rightX+16, y+12, IM.clarity, "Clause Clarity");
-  const clarPct = Number(d?.clarity?.value ?? 0);
-  const clarImg = donutPNG(clarPct, "#20e07a", 150);
-  doc.addImage(clarImg, "PNG", rightX+18, y+38, 116, 116);
-
-  let cx = rightX+148, cy = y+58;
-  cy = tinyText("Plain language used, but some clauses need clearer detail.", cx, cy, colW-168, 14);
-  doc.setFillColor(240,255,240); doc.roundedRect(rightX+28, y+130, 132, 24, 8, 8, "F");
-  doc.setDrawColor(0,0,0); doc.setLineWidth(1);
-  doc.rect(rightX+36, y+136, 10, 10); doc.setFillColor(40,224,112); doc.rect(rightX+36+1, y+136+1, 8, 8, "F");
-  reg(); doc.setFontSize(11); doc.text("Generally Safe", rightX+52, y+147);
-
-  // Bars + Clauses row
-  y += cardH + 26;
-  const barsTop = y;
-
-  // Left column: Statistical Bars
-  bold(); doc.setFontSize(16); doc.text("Statistical Bars", M, y); y += 12;
-
-  function barRow(label, pct, icon, yTop, color){
-    const bW = colW, bH = 56;
-    Box(M, yTop, bW, bH);
-    // premium icon ring
-    if(icon){
-      doc.setDrawColor(0,0,0); doc.setLineWidth(2);
-      doc.circle(M+28, yTop+28, 16);     // outer border
-      doc.addImage(icon, "PNG", M+18, yTop+18, 20, 20);
+    /* ================= PDF Helpers (add these right before generatePDF if not already there) ================= */
+    function getColorFor(metric, v, band){
+      if(metric === 'risk') return v <= 25 ? '#00ff65' : v <= 58 ? '#df911a' : '#fe0000';
+      if(metric === 'clarity' || metric === 'score') return v >= 78 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
+      if(metric === 'professionalism') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
+      if(metric === 'favorability') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
+      if(metric === 'deadline') return v <= 35 ? '#00ff65' : v <= 68 ? '#df911a' : '#fe0000';
+      if(metric === 'confidence') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
+      return '#df911a';
     }
-    tagWithIcon(M+54, yTop+10, null, label); // black chip behind white title
-    const bar = pillBarPNG(pct, bW-90, 20, color);
-    doc.addImage(bar, "PNG", M+54, yTop+30, bW-90, 20);
-    bold(); doc.setFontSize(11); doc.text(`${pct}%`, M+bW-28, yTop+42, {align:"right"});
-  }
 
-  barRow("Professionalism",      Math.round(Number(d?.meters?.professionalism ?? 65)), IM.pro,  y, "#9ef0b6"); y += 64;
-  barRow("Favorability Index",   Math.round(Number(d?.meters?.favorability   ?? 50)), IM.fav, y, "#f2c059");  y += 64;
-  barRow("Deadline Pressure",    Math.round(Number(d?.meters?.deadline      ?? 40)), IM.dead,y, "#9ef0b6");   y += 64;
+    function getBadgeBgColor(band){
+      return band === 'green' ? [240,255,240] : band === 'orange' ? [255,244,230] : [255,230,230];
+    }
 
-  // Right column: Main Clauses (aligned to barsTop)
-  const clX = rightX, clY = barsTop;
-  bold(); doc.setFontSize(16); doc.text("Main Clauses", clX, clY);
-  let listY = clY + 26;
-  const listW = colW;
-  Box(clX, clY+6, listW, Math.max(200, 360)); // container
-  reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
-  const items = (Array.isArray(d.clauses)?d.clauses:[]).slice(0,4);
-  items.forEach((t,i)=>{
-    doc.text(`${i+1}.`, clX+20, listY);
-    listY = tinyText(String(t), clX+36, listY, listW-48, 16) + 8;
-  });
-  doc.setTextColor(0,0,0);
+    function getDotColor(band){
+      return band === 'green' ? [40,224,112] : band === 'orange' ? [223,145,26] : [254,0,0];
+    }
 
-  footer(1);
+    function capitalizeSafety(safety){
+      return safety.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
 
-  /* ================= PAGE 2 (unchanged layout logic, just clean styling) ================= */
-  doc.addPage();
-  header();
-  let y2 = 148;
+    function gradientBarPNG(width, height=22, indPos){
+      const c = document.createElement("canvas");
+      c.width = width; c.height = height + 20; // extra for ind
+      const ctx = c.getContext("2d");
 
-  // Potential Issues
-  bold(); doc.setFontSize(16); doc.text("Potential Issues that might occur", M, y2);
-  let iTop = y2 + 24, iY = iTop;
-  const iW = W-(M*2)+12;
-  (Array.isArray(d.issues)?d.issues:[]).forEach(it=>{
-    doc.text("•", M+16, iY);
-    iY = tinyText(String(it), M+30, iY, W-(M*2)-40, 16) + 6;
-  });
-  Box(M-6, iTop-18, iW, (iY - iTop) + 30);
-  y2 = iTop + (iY - iTop) + 54;
+      // bar
+      const r = height/2;
 
-  // Smart Suggestions
-  bold(); doc.setFontSize(16); doc.text("Smart Suggestions", M, y2);
-  const s2Top = y2 + 24; let s2Y = s2Top;
-  (Array.isArray(d.suggestions)?d.suggestions:[]).forEach((s,i)=>{
-    const num = `${i+1}. `;
-    const numW = doc.getTextWidth(num);
-    const lines = doc.splitTextToSize(String(s), W-(M*2)-40-numW);
-    doc.text(num, M+16, s2Y);
-    doc.text(lines[0], M+16+numW, s2Y);
-    for(let k=1;k<lines.length;k++){ s2Y += 16; doc.text(lines[k], M+16+numW, s2Y); }
-    s2Y += 10;
-  });
-  Box(M-6, s2Top-18, iW, (s2Y - s2Top) + 24);
-  y2 = s2Top + (s2Y - s2Top) + 46;
+      // clip
+      ctx.beginPath();
+      ctx.moveTo(r,10);
+      ctx.lineTo(width-r,10);
+      ctx.arc(width-r,10+r,r, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(r,10+height);
+      ctx.arc(r,10+r,r, Math.PI/2, -Math.PI/2);
+      ctx.closePath();
+      ctx.clip();
 
-  // Score + Confidence row
-  const gap = 24;
-  const leftW = (W - M*2 - gap) * 0.58;
-  const rightW = (W - M*2 - gap) - leftW;
-  const scX = M, cfX = M + leftW + gap, rowH = 170;
+      // gradient fill
+      const grad = ctx.createLinearGradient(0,0,width,0);
+      grad.addColorStop(0, "#ff6b6b");
+      grad.addColorStop(0.45, "#ffd166");
+      grad.addColorStop(1, "#00e676");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,10, width, height);
 
-  // Score card
-  Box(scX, y2, leftW, rowH);
-  tagWithIcon(scX+16, y2+12, IM.score, "Score Checker");
-  const scorePct = Math.round(Number(d?.clarity?.value ?? 0));
-  const scoreDonut = donutPNG(scorePct, "#20e07a", 150);
-  doc.addImage(scoreDonut, "PNG", scX+20, y2+46, 116, 116);
-  tinyText("The contract is nearly perfectly done.", scX+150, y2+88, leftW-170, 14);
+      // border
+      ctx.restore();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#000";
+      ctx.beginPath();
+      ctx.moveTo(r,10);
+      ctx.lineTo(width-r,10);
+      ctx.arc(width-r,10+r,r, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(r,10+height);
+      ctx.arc(r,10+r,r, Math.PI/2, -Math.PI/2);
+      ctx.stroke();
 
-  // Confidence bar
-  Box(cfX, y2, rightW, rowH);
-  tagWithIcon(cfX+16, y2+12, IM.confidence, "Confidence to sign freely");
-  const confV = Math.round(Number(d?.meters?.confidence ?? 70));
-  const confBar = pillBarPNG(confV, rightW-80, 22, "#f2c059");
-  doc.addImage(confBar, "PNG", cfX+24, y2+88, rightW-80, 22);
-  bold(); doc.setFontSize(12); doc.text(`${confV}%`, cfX+rightW-28, y2+100, {align:"right"});
+      // indicator
+      const pos = Math.max(0, Math.min(1, indPos)) * width;
+      ctx.fillStyle = "#fff";
+      ctx.shadowColor = "rgba(0,0,0,0.3)";
+      ctx.shadowBlur = 6;
+      ctx.fillRect(pos - 1.5, 0, 3, height + 20);
 
-  footer(2);
+      return c.toDataURL("image/png");
+    }
 
-  // Save
-  doc.save((filename || "SignSense_Report") + ".pdf");
-}
+    /* ================= Main generator (Updated Layout) ================= */
+    async function generatePDF(filename, d, lang){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+      // Fonts
+      await ensurePoppins(doc);
+      const FONT = (doc.getFontList && doc.getFontList().Poppins) ? "Poppins" : "helvetica";
+      const bold = () => doc.setFont(FONT, "bold");
+      const reg  = () => doc.setFont(FONT, "normal");
+      reg();
+
+      // Page metrics
+      const W = doc.internal.pageSize.getWidth();
+      const H = doc.internal.pageSize.getHeight();
+      const M = 42;
+
+      // Preload icons
+      const IM = {};
+      for (const k in ASSETS) {
+        try { IM[k] = await imgToDataURL(ASSETS[k]); } catch { IM[k] = null; }
+      }
+
+      /* ---------- helpers (smooth + clean) ---------- */
+      const Box = (x,y,w,h) => {
+        doc.setDrawColor(0,0,0);
+        doc.setLineWidth(3);
+        doc.roundedRect(x,y,w,h,16,16);
+      };
+
+      function tagWithIcon(x, y, icon, label){
+        // black chip behind title
+        doc.setFillColor(0,0,0);
+        doc.roundedRect(x, y, doc.getTextWidth(label)+64, 30, 10, 10, "F");
+        if(icon) doc.addImage(icon, "PNG", x+8, y+6, 18, 18);
+        doc.setTextColor(255,255,255);
+        bold(); doc.setFontSize(12); doc.text(label, x+32, y+20);
+        doc.setTextColor(0,0,0);
+      }
+
+      function tinyText(txt, x, y, w, lh=14){
+        const lines = doc.splitTextToSize(String(txt||""), w);
+        reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
+        lines.forEach((ln,i)=>doc.text(ln, x, y + i*lh));
+        doc.setTextColor(0,0,0);
+        return y + lines.length*lh;
+      }
+
+      function donutPNG(pct, color="#28e070", size=150){
+        const c = document.createElement("canvas");
+        c.width = size; c.height = size;
+        const ctx = c.getContext("2d");
+        const cx=size/2, cy=size/2;
+        const ringW = Math.round(size*0.18);       // thicker, smooth
+        const r     = Math.round(size*0.42);
+
+        // track
+        ctx.lineWidth = ringW;
+        ctx.strokeStyle = "#000";
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+
+        // value arc
+        const a0 = -Math.PI/2;
+        const a1 = a0 + Math.max(0,Math.min(100,pct))/100 * Math.PI*2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = color;
+        ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1); ctx.stroke();
+
+        // white center
+        ctx.fillStyle = "#fff";
+        ctx.beginPath(); ctx.arc(cx,cy, r - ringW + 4, 0, Math.PI*2); ctx.fill();
+
+        // % text
+        ctx.fillStyle = "#000";
+        ctx.font = `bold ${Math.round(size*0.26)}px ${FONT}`;
+        ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(`${Math.round(pct)}%`, cx, cy-2);
+
+        return c.toDataURL("image/png");
+      }
+
+      function pillBarPNG(pct, width, height=20, fill="#9ef0b6"){
+        // super clean thin pill with rounded mask
+        const c = document.createElement("canvas");
+        c.width = width; c.height = height;
+        const ctx = c.getContext("2d");
+        const r = height/2;
+
+        // draw rounded border
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#000";
+        ctx.beginPath();
+        ctx.moveTo(r,1);
+        ctx.lineTo(width-r-1,1);
+        ctx.arc(width-r-1,r,r,-Math.PI/2,Math.PI/2);
+        ctx.lineTo(r,height-1);
+        ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
+        ctx.stroke();
+
+        // clip to rounded shape
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(r,0);
+        ctx.lineTo(width-r,0);
+        ctx.arc(width-r,r,r,-Math.PI/2,Math.PI/2);
+        ctx.lineTo(r,height);
+        ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
+        ctx.closePath();
+        ctx.clip();
+
+        // fill to percentage
+        const inner = Math.max(0,Math.min(100,pct))/100;
+        ctx.fillStyle = fill;
+        ctx.fillRect(0,0, Math.max(0, width * inner), height);
+        ctx.restore();
+
+        return c.toDataURL("image/png");
+      }
+
+      function header(){
+        doc.setFillColor(0,0,0); doc.rect(0,0,W,120,"F");
+        doc.setTextColor(255,255,255);
+        bold(); doc.setFontSize(54); doc.text("Contract Report", M, 72);
+        reg();  doc.setFontSize(16);
+        const dt = new Date();
+        const day = String(dt.getDate()).padStart(2,"0");
+        const month = dt.toLocaleString("en",{month:"long"});
+        const year = dt.getFullYear();
+        doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
+        doc.setTextColor(0,0,0);
+      }
+
+      function footer(page){
+        // PAGE pill pinned left
+        doc.setFillColor(0,0,0);
+        doc.roundedRect(M-6, H-78, 114, 40, 12, 12, "F");
+        doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
+        doc.text(`PAGE ${page}`, M+16, H-52);
+
+        // Logo above PAGE pill on page 1, above © on page 2
+        if(page === 1){
+          if(IM.logo) doc.addImage(IM.logo, "PNG", M, H-120, 40, 40);
+        } else {
+          if(IM.logo) doc.addImage(IM.logo, "PNG", W - M - 40, H-120, 40, 40);
+        }
+
+        // centered + fully underlined disclaimer with "not" bold
+        const parts = ["Kindly keep in mind that although you might find this report helpful, this is ", "not", " legal advice."];
+        reg(); doc.setFontSize(11); doc.setTextColor(0,0,0);
+        const y = H-18;
+        let w = 0;
+        parts.forEach(p => w += doc.getTextWidth(p));
+        let xx = (W - w)/2;
+        reg(); doc.text(parts[0], xx, y); xx += doc.getTextWidth(parts[0]);
+        bold(); doc.text(parts[1], xx, y); xx += doc.getTextWidth(parts[1]);
+        reg(); doc.text(parts[2], xx, y);
+        doc.setLineWidth(0.8);
+        doc.line((W - w)/2, y+2, (W + w)/2, y+2);
+
+        // Page 2 extras: black pill SignSense right, © below
+        if(page === 2){
+          const pillW = 100;
+          const pillX = W - M - pillW;
+          doc.setFillColor(0,0,0);
+          doc.roundedRect(pillX, H-78, pillW, 40, 12, 12, "F");
+          doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
+          doc.text("SignSense", pillX + pillW/2, H-52, {align:"center"});
+
+          doc.setTextColor(0,0,0); reg(); doc.setFontSize(11);
+          doc.text("© 2025 SignSense. All rights reserved.", pillX, H-34);
+        }
+      }
+
+      /* ================= PAGE 1 ================= */
+      header();
+      let y = 148;
+
+      // Title
+      bold(); doc.setFontSize(14); doc.text("Title:", M, y);
+      reg();  doc.setFontSize(14); doc.text(` ${d.title || "—"}`, M+44, y);
+      y += 26;
+
+      // Summary card
+      const sTop = y;
+      bold(); doc.setFontSize(16); doc.text("Summary of Contract:", M, y);
+      let sy = y + 26;
+      sy = tinyText(
+        Array.isArray(d.summary) ? d.summary.join("\n\n") : d.summary,
+        M+18, sy, W-(M*2)-36, 16
+      );
+      Box(M-6, sTop-10, W-(M*2)+12, (sy-(y+26))+40);
+      y = sTop + (sy-(y+26))+40 + 22;
+
+      // Percentage Breakdown
+      bold(); doc.setFontSize(16); doc.text("Percentage Breakdown", M, y);
+      y += 14;
+
+      const colGap = 24;
+      const colW = (W - M*2 - colGap)/2;
+      const cardH = 172;
+      const leftX = M;
+      const rightX = M + colW + colGap;
+
+      // RISK card
+      Box(leftX, y, colW, cardH);
+      tagWithIcon(leftX+16, y+12, IM.risk, "Risk Level");
+      const riskPct = Number(d?.risk?.value ?? 0);
+      const riskBand = riskPct <= 25 ? 'green' : riskPct <= 58 ? 'orange' : 'red';
+      const riskColor = getColorFor('risk', riskPct, riskBand);
+      const riskImg = donutPNG(riskPct, riskColor, 150);
+      doc.addImage(riskImg, "PNG", leftX+18, y+38, 116, 116);
+
+      // Right copy for risk
+      let rx = leftX+148, ry = y+58;
+      ry = tinyText(d.risk?.note || "Clear terms overall, but missing late fees and dispute process.", rx, ry, colW-168, 14);
+      // status with colored square
+      const badgeBg = getBadgeBgColor(riskBand);
+      doc.setFillColor(...badgeBg); doc.roundedRect(leftX+28, y+130, 132, 24, 8, 8, "F");
+      doc.setDrawColor(0,0,0); doc.setLineWidth(1);
+      doc.rect(leftX+36, y+136, 10, 10);
+      const dotCol = getDotColor(riskBand);
+      doc.setFillColor(...dotCol); doc.rect(leftX+36+1, y+136+1, 8, 8, "F");
+      reg(); doc.setFontSize(11); doc.text(capitalizeSafety(d.risk?.safety || "Generally Safe"), leftX+52, y+147);
+
+      // CLARITY card
+      Box(rightX, y, colW, cardH);
+      tagWithIcon(rightX+16, y+12, IM.clarity, "Clause Clarity");
+      const clarPct = Number(d?.clarity?.value ?? 0);
+      const clarBand = clarPct >= 78 ? 'green' : clarPct >= 49 ? 'orange' : 'red';
+      const clarColor = getColorFor('clarity', clarPct, clarBand);
+      const clarImg = donutPNG(clarPct, clarColor, 150);
+      doc.addImage(clarImg, "PNG", rightX+18, y+38, 116, 116);
+
+      let cx = rightX+148, cy = y+58;
+      cy = tinyText(d.clarity?.note || "Plain language used, but some clauses need clearer detail.", cx, cy, colW-168, 14);
+      const clarBg = getBadgeBgColor(clarBand);
+      doc.setFillColor(...clarBg); doc.roundedRect(rightX+28, y+130, 132, 24, 8, 8, "F");
+      doc.setDrawColor(0,0,0); doc.setLineWidth(1);
+      doc.rect(rightX+36, y+136, 10, 10);
+      const clarDot = getDotColor(clarBand);
+      doc.setFillColor(...clarDot); doc.rect(rightX+36+1, y+136+1, 8, 8, "F");
+      reg(); doc.setFontSize(11); doc.text(capitalizeSafety(d.clarity?.safety || "Generally Safe"), rightX+52, y+147);
+
+      // Bars + Clauses row
+      y += cardH + 26;
+      const barsTop = y;
+
+      // Left column: Statistical Bars
+      bold(); doc.setFontSize(16); doc.text("Statistical Bars", M, y); y += 12;
+
+      function barRow(label, pct, icon, yTop, metric){
+        const bW = colW, bH = 56;
+        Box(M, yTop, bW, bH);
+        // premium icon ring
+        if(icon){
+          doc.setDrawColor(0,0,0); doc.setLineWidth(3);
+          doc.circle(M+28, yTop+28, 16);     // outer border
+          doc.addImage(icon, "PNG", M+18, yTop+18, 20, 20);
+        }
+        tagWithIcon(M+54, yTop+10, null, label); // black chip behind white title
+        const barColor = getColorFor(metric, pct);
+        const bar = pillBarPNG(pct, bW-90, 20, barColor);
+        doc.addImage(bar, "PNG", M+54, yTop+30, bW-90, 20);
+        bold(); doc.setFontSize(11); doc.text(`${pct}%`, M+bW-28, yTop+42, {align:"right"});
+      }
+
+      barRow("Professionalism",      Math.round(Number(normalized.meters.professionalism ?? 65)), IM.pro,  y, "professionalism"); y += 64;
+      barRow("Favorability Index",   Math.round(Number(normalized.meters.favorability   ?? 50)), IM.fav, y, "favorability");  y += 64;
+      barRow("Deadline Pressure",    Math.round(Number(normalized.meters.deadline      ?? 40)), IM.dead,y, "deadline");   y += 64;
+
+      // Right column: Main Clauses (aligned to barsTop)
+      const clX = rightX, clY = barsTop;
+      bold(); doc.setFontSize(16); doc.text("Main Clauses", clX, clY);
+      let listY = clY + 26;
+      const listW = colW;
+      Box(clX, clY+6, listW, Math.max(200, 360)); // container
+      reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
+      const items = (Array.isArray(d.clauses)?d.clauses:[]).slice(0,4);
+      items.forEach((t,i)=>{
+        doc.text(`${i+1}.`, clX+20, listY);
+        listY = tinyText(String(t), clX+36, listY, listW-48, 16) + 8;
+      });
+      doc.setTextColor(0,0,0);
+
+      footer(1);
+
+      /* ================= PAGE 2 ================= */
+      doc.addPage();
+      header();
+      let y2 = 148;
+
+      // Potential Issues
+      bold(); doc.setFontSize(16); doc.text("Potential Issues that might occur", M, y2);
+      let iTop = y2 + 24, iY = iTop;
+      const iW = W-(M*2)+12;
+      (Array.isArray(d.issues)?d.issues:[]).forEach(it=>{
+        doc.text("•", M+16, iY);
+        iY = tinyText(String(it), M+30, iY, W-(M*2)-40, 16) + 6;
+      });
+      Box(M-6, iTop-18, iW, (iY - iTop) + 30);
+      y2 = iTop + (iY - iTop) + 54;
+
+      // Smart Suggestions
+      bold(); doc.setFontSize(16); doc.text("Smart Suggestions", M, y2);
+      const s2Top = y2 + 24; let s2Y = s2Top;
+      (Array.isArray(d.suggestions)?d.suggestions:[]).forEach((s,i)=>{
+        const num = `${i+1}. `;
+        const numW = doc.getTextWidth(num);
+        const lines = doc.splitTextToSize(String(s), W-(M*2)-40-numW);
+        doc.text(num, M+16, s2Y);
+        doc.text(lines[0], M+16+numW, s2Y);
+        for(let k=1;k<lines.length;k++){ s2Y += 16; doc.text(lines[k], M+16+numW, s2Y); }
+        s2Y += 10;
+      });
+      Box(M-6, s2Top-18, iW, (s2Y - s2Top) + 24);
+      y2 = s2Top + (s2Y - s2Top) + 46;
+
+      // Score + Confidence row
+      const gap = 24;
+      const leftW = (W - M*2 - gap) * 0.58;
+      const rightW = (W - M*2 - gap) - leftW;
+      const rowH = 200;
+
+      // Score card
+      Box(M, y2, leftW, rowH);
+      tagWithIcon(M+16, y2+12, IM.score, "Score Checker");
+      const scorePct = Math.round(Number(d?.clarity?.value ?? 0));
+      const scoreBand = scorePct >= 78 ? 'green' : scorePct >= 49 ? 'orange' : 'red';
+      const scoreColor = getColorFor('score', scorePct, scoreBand);
+      const scoreDonut = donutPNG(scorePct, scoreColor, 150);
+      doc.addImage(scoreDonut, "PNG", M+20, y2+46, 116, 116);
+      tinyText(d?.analysis?.scoreChecker?.line || "The contract is nearly perfectly done.", M+150, y2+88, leftW-170, 14);
+
+      // Gradient bar with indicator
+      const barW = leftW - 40;
+      const indPos = scorePct / 100;
+      const gradBar = gradientBarPNG(barW, 22, indPos);
+      doc.addImage(gradBar, "PNG", M+20, y2+140, barW, 42);
+
+      // Scale labels
+      reg(); doc.setFontSize(11);
+      doc.text("Unsafe", M+20, y2+188);
+      doc.text("Safe", M + 20 + barW/2, y2+188, {align:"center"});
+      doc.text("Very Safe", M + 20 + barW, y2+188, {align:"right"});
+
+      // Confidence bar
+      Box(M + leftW + gap, y2, rightW, rowH);
+      tagWithIcon(M + leftW + gap +16, y2+12, IM.confidence, "Confidence to sign freely");
+      const confV = Math.round(Number(normalized.meters.confidence ?? 70));
+      const confColor = getColorFor('confidence', confV);
+      const confBar = pillBarPNG(confV, rightW-80, 22, confColor);
+      doc.addImage(confBar, "PNG", M + leftW + gap +24, y2+88, rightW-80, 22);
+      bold(); doc.setFontSize(12); doc.text(`${confV}%`, M + leftW + gap + rightW -28, y2+100, {align:"right"});
+
+      footer(2);
+
+      // Save
+      doc.save((filename || "SignSense_Report") + ".pdf");
+    }
 
 
 
