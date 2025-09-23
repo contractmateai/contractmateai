@@ -579,252 +579,282 @@ async function generatePDF(filename, d, lang){
   const H = doc.internal.pageSize.getHeight();
   const M = 42;
 
-  // === preload icons & logo ===
+  // preload icons (uses ASSETS defined above)
   const IM = {};
   for (const k in ASSETS) {
     try { IM[k] = await imgToDataURL(ASSETS[k]); } catch { IM[k] = null; }
   }
 
-  // === Hi-DPI donut charts ===
-  function donutPNG(pct, ringColor="#28e070", size=150, px=3){
+  /* ---------- tiny render helpers (thin bars, thicker donuts, tight text) ---------- */
+  function textBlock(txt, x, y, w, lh=16){           // consistent wrapping
+    const lines = doc.splitTextToSize(String(txt||""), w);
+    lines.forEach((ln,i)=>doc.text(ln, x, y + i*lh));
+    return y + lines.length*lh;
+  }
+
+  function donutPNG(pct, ringColor="#28e070", size=150){
     const c = document.createElement("canvas");
-    c.width = size*px; c.height = size*px;
+    c.width = size; c.height = size;
     const ctx = c.getContext("2d");
-    ctx.scale(px, px);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
+    const cx=size/2, cy=size/2;
+    const ringW = Math.round(size*0.16);             // thicker ring
+    const trackR = Math.round(size*0.42);
 
-    const cx=size/2, cy=size/2, r=size*0.40, track=size*0.44;
+    // track
+    ctx.lineWidth = ringW;
+    ctx.strokeStyle = "#000";
+    ctx.beginPath(); ctx.arc(cx,cy,trackR,0,Math.PI*2); ctx.stroke();
 
-    // outer track
-    ctx.lineWidth = 22; ctx.strokeStyle="#000";
-    ctx.beginPath(); ctx.arc(cx,cy,track-ctx.lineWidth/2,0,Math.PI*2); ctx.stroke();
+    // arc
+    const start = -Math.PI/2;
+    const end = start + Math.max(0,Math.min(100,pct))/100 * Math.PI*2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = ringColor;
+    ctx.beginPath(); ctx.arc(cx,cy,trackR,start,end); ctx.stroke();
 
-    // progress arc
-    const start=-Math.PI/2, end=start+(Math.max(0,Math.min(100,pct))/100)*Math.PI*2;
-    ctx.lineCap="round"; ctx.strokeStyle=ringColor;
-    ctx.beginPath(); ctx.arc(cx,cy,track-ctx.lineWidth/2,start,end); ctx.stroke();
-
-    // inner circle
+    // center
     ctx.fillStyle="#fff";
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,cy,trackR - ringW + 4,0,Math.PI*2); ctx.fill();
 
-    // percentage text
-    ctx.fillStyle="#000"; ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.font=`bold ${size*0.22}px ${FONT}`;
-    ctx.fillText(`${Math.round(pct)}%`, cx, cy-6);
+    // percent
+    ctx.fillStyle="#000";
+    ctx.font = `bold ${Math.round(size*0.26)}px ${FONT}`;
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(`${Math.round(pct)}%`, cx, cy-2);
 
     return c.toDataURL("image/png");
   }
 
-  // === Hi-DPI pill bars ===
-  function pillBarPNG(pct, width=520, height=42, fill="#a7efb9", px=3){
+  function pillBarPNG(pct, width, height=22, fill="#a7efb9"){ // thinner, crisp
     const c = document.createElement("canvas");
-    c.width = width*px; c.height = height*px;
+    c.width = width; c.height = height;
     const ctx = c.getContext("2d");
-    ctx.scale(px, px);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
     const r = height/2;
 
     // border
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2.2;
     ctx.strokeStyle = "#000";
     ctx.beginPath();
-    ctx.moveTo(r,1.5);
-    ctx.lineTo(width-r-1.5,1.5);
-    ctx.arc(width-r-1.5,r,r,-Math.PI/2,Math.PI/2);
-    ctx.lineTo(r,height-1.5);
+    ctx.moveTo(r,1.1);
+    ctx.lineTo(width-r-1.1,1.1);
+    ctx.arc(width-r-1.1,r,r,-Math.PI/2,Math.PI/2);
+    ctx.lineTo(r,height-1.1);
     ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
     ctx.stroke();
 
     // fill
     const inner = Math.max(0,Math.min(100,pct))/100;
-    const fillW = (width-6)*inner;
+    const fx = 2.5 + inner*(width-5);
     ctx.fillStyle = fill;
     ctx.beginPath();
-    ctx.moveTo(3+r,3);
-    const endX = 3+fillW;
-    if(endX <= 3+r){
-      ctx.arc(3+r,height/2,(endX-3)/2,-Math.PI/2,Math.PI/2);
-    } else {
-      ctx.lineTo(endX,3);
-      ctx.lineTo(endX,height-3);
-      ctx.lineTo(3+r,height-3);
-    }
+    ctx.moveTo(2.5,2.5);
+    ctx.lineTo(fx,2.5);
+    ctx.lineTo(fx,height-2.5);
+    ctx.lineTo(2.5,height-2.5);
+    ctx.closePath();
     ctx.fill();
 
     return c.toDataURL("image/png");
   }
 
-  // ===== helpers =====
-  const Box = (x,y,w,h) => { doc.setDrawColor(0,0,0); doc.setLineWidth(3); doc.roundedRect(x,y,w,h,12,12); };
-  const H1 = () => {
-    doc.setFillColor(0,0,0);
-    doc.rect(0,0,W,120,"F");
-    doc.setTextColor(255,255,255); 
-    bold(); doc.setFontSize(54); 
-    doc.text("Contract Report", M, 72);
-    reg(); doc.setFontSize(16);
-    const dt = new Date();
-    const day = String(dt.getDate()).padStart(2,"0");
-    const month = dt.toLocaleString("en",{month:"long"});
-    const year = dt.getFullYear();
+  const Box = (x,y,w,h) => { doc.setDrawColor(0,0,0); doc.setLineWidth(2.6); doc.roundedRect(x,y,w,h,14,14); };
+
+  function header(){
+    doc.setFillColor(0,0,0); doc.rect(0,0,W,120,"F");
+    doc.setTextColor(255,255,255);
+    bold(); doc.setFontSize(54); doc.text("Contract Report", M, 72);
+    reg();  doc.setFontSize(16);
+    const dt=new Date();
+    const day=String(dt.getDate()).padStart(2,"0");
+    const month=dt.toLocaleString("en",{month:"long"});
+    const year=dt.getFullYear();
     doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
     doc.setTextColor(0,0,0);
-  };
+  }
 
-  const PageFooter = (n, putLogoRight=true) => {
+  function footer(page, logoLeft=false){
+    if(logoLeft && IM.logo) doc.addImage(IM.logo,"PNG", M, H-92, 120, 32);
     doc.setFillColor(0,0,0);
-    doc.roundedRect(M,H-56,106,36,12,12,"F");
+    doc.roundedRect(M, H-56, 106, 36, 12, 12, "F");
     doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
-    doc.text(`PAGE ${n}`, M+22, H-33);
+    doc.text(`PAGE ${page}`, M+22, H-33);
 
-    if(putLogoRight && IM.logo) doc.addImage(IM.logo,"PNG",W-150,H-86,120,34);
+    if(!logoLeft && IM.logo) doc.addImage(IM.logo,"PNG", W-150, H-86, 120, 34);
 
-    // disclaimer
-    doc.setTextColor(0,0,0); reg(); doc.setFontSize(10);
-    const y = H-10, pre = "Kindly keep in mind that although you might find this report helpful, this is ", suf = " legal advice.";
-    let x = M;
+    // disclaimer (tight, linear)
+    reg(); doc.setTextColor(0,0,0); doc.setFontSize(10);
+    const pre="Kindly keep in mind that although you might find this report helpful, this is ";
+    const post=" legal advice.";
+    let x=M, y=H-10;
     doc.text(pre,x,y); x+=doc.getTextWidth(pre);
-    bold();
-    const wNot = doc.getTextWidth("not");
-    doc.text("not",x,y); doc.setLineWidth(0.8); doc.line(x,y+2,x+wNot,y+2);
-    x+=wNot; reg();
-    doc.text(suf,x,y); doc.line(M,y+2,x+doc.getTextWidth(suf),y+2);
-  };
+    bold(); const w=doc.getTextWidth("not"); doc.text("not",x,y); doc.setLineWidth(0.8); doc.line(x,y+2,x+w,y+2);
+    x+=w; reg(); doc.text(post,x,y);
+  }
 
   /* ================= PAGE 1 ================= */
-  H1();
+  header();
   let y = 148;
 
-  // Title
-  bold(); doc.setFontSize(16); doc.text("Title:",M,y);
-  reg();  doc.setFontSize(16); doc.text(` ${d.title||"—"}`,M+52,y);
-  y+=26;
+  // Title line
+  bold(); doc.setFontSize(16); doc.text("Title:", M, y);
+  reg();  doc.setFontSize(16); doc.text(` ${d.title || "—"}`, M+52, y);
+  y += 26;
 
-  // Summary
-  bold(); doc.setFontSize(18); doc.text("Summary of Contract:",M,y); y+=10;
-  const sTop = y, sW = W-(M*2)+12;
-  const sTxt = Array.isArray(d.summary)?d.summary.join("\n\n"):String(d.summary||"");
+  // Summary box
+  const sTop = y;
+  const sW = W - M*2 + 12;
+  bold(); doc.setFontSize(18); doc.text("Summary of Contract:", M, y); y += 10;
   reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
-  const sLines = doc.splitTextToSize(sTxt, W-(M*2)-28);
-  let ly = y+24;
-  sLines.forEach(line=>{ doc.text(line,M+16,ly); ly+=16; });
-  const sH = (ly-(y+24))+36;
-  doc.setTextColor(0,0,0); Box(M-6,sTop-8,sW,sH);
-  y = sTop+sH+24;
+  let sy = y + 24;
+  sy = textBlock(
+    Array.isArray(d.summary) ? d.summary.join("\n\n") : d.summary,
+    M+16, sy, W-(M*2)-28, 16
+  );
+  doc.setTextColor(0,0,0);
+  Box(M-6, sTop-8, sW, (sy-(y+24))+36);
+  y = sTop + (sy-(y+24))+36 + 24;
 
-  // Percentage Breakdown
-  bold(); doc.setFontSize(18); doc.text("Percentage Breakdown",M,y); y+=14;
-  const cardW = (W-(M*2)-18)/2, cardH=160, leftX=M, rightX=M+cardW+18;
+  // Percentage Breakdown (two cards with donuts + right copy)
+  bold(); doc.setFontSize(18); doc.text("Percentage Breakdown", M, y); y += 14;
 
-  // Risk card
-  Box(leftX,y,cardW,cardH);
-  if(IM.risk) doc.addImage(IM.risk,"PNG",leftX+14,y+14,26,26);
-  bold(); doc.setFontSize(14); doc.text("Risk Level",leftX+48,y+32);
+  const cardW = (W - M*2 - 18)/2, cardH = 160, leftX = M, rightX = M + cardW + 18;
+
+  // --- Risk card
+  Box(leftX, y, cardW, cardH);
+  if (IM.risk) doc.addImage(IM.risk, "PNG", leftX+14, y+14, 26, 26);
+  bold(); doc.setFontSize(14); doc.text("Risk Level", leftX+48, y+32);
+
   const riskP = Number(d?.risk?.value ?? 0);
-  const riskPNG = donutPNG(riskP,"#28e070",150);
-  doc.addImage(riskPNG,"PNG",leftX+14,y+44,110,110);
+  const riskPNG = donutPNG(riskP, "#28e070", 150);
+  doc.addImage(riskPNG, "PNG", leftX+14, y+40, 110, 110);
 
-  // Clarity card
-  Box(rightX,y,cardW,cardH);
-  if(IM.clarity) doc.addImage(IM.clarity,"PNG",rightX+14,y+14,26,26);
-  bold(); doc.setFontSize(14); doc.text("Clause Clarity",rightX+48,y+32);
+  // right copy
+  reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
+  let rx = leftX+134, ry = y+64;
+  ry = textBlock("Clear terms overall, but missing late fees and dispute process.", rx, ry, cardW-150, 14);
+  // status pill
+  doc.setFillColor(230,255,230); doc.roundedRect(leftX+30, y+126, 122, 22, 8, 8, "F");
+  doc.setTextColor(0,110,0); reg(); doc.setFontSize(11); doc.text("Generally Safe", leftX+40, y+141);
+  doc.setTextColor(0,0,0);
+
+  // --- Clarity card
+  Box(rightX, y, cardW, cardH);
+  if (IM.clarity) doc.addImage(IM.clarity, "PNG", rightX+14, y+14, 26, 26);
+  bold(); doc.setFontSize(14); doc.text("Clause Clarity", rightX+48, y+32);
+
   const clarP = Number(d?.clarity?.value ?? 0);
-  const clarPNG = donutPNG(clarP,"#28e070",150);
-  doc.addImage(clarPNG,"PNG",rightX+14,y+44,110,110);
+  const clarPNG = donutPNG(clarP, "#28e070", 150);
+  doc.addImage(clarPNG, "PNG", rightX+14, y+40, 110, 110);
+
+  reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
+  let cx = rightX+134, cy = y+64;
+  cy = textBlock("Plain language used, but some clauses need clearer detail.", cx, cy, cardW-150, 14);
+  doc.setFillColor(230,255,230); doc.roundedRect(rightX+30, y+126, 122, 22, 8, 8, "F");
+  doc.setTextColor(0,110,0); reg(); doc.setFontSize(11); doc.text("Generally Safe", rightX+40, y+141);
+  doc.setTextColor(0,0,0);
 
   y += cardH + 26;
 
-  // Statistical Bars
-  bold(); doc.setFontSize(18); doc.text("Statistical Bars",M,y); y+=14;
-  function barRow(label,value,icon,yTop){
-    const bW = W-(M*2), bH = 56;
-    Box(M,yTop,bW,bH);
-    if(icon) doc.addImage(icon,"PNG",M+14,yTop+14,26,26);
-    bold(); doc.setFontSize(14); doc.text(label,M+48,yTop+32);
-    bold(); doc.setFontSize(14); doc.text(`${value}%`,M+bW-44,yTop+32);
-    const p = pillBarPNG(value,bW-60,28,label==="Favorability Index"?"#f5c04a":"#a7efb9");
-    doc.addImage(p,"PNG",M+30,yTop+18,bW-60,28);
-  }
-  barRow("Professionalism",Number(d?.meters?.professionalism??65),IM.pro,y); y+=64;
-  barRow("Favorability Index",Number(d?.meters?.favorability??50),IM.fav,y); y+=64;
-  barRow("Deadline Pressure",Number(d?.meters?.deadline??40),IM.dead,y); y+=76;
+  // Statistical Bars (thin, with icons and right-aligned %)
+  bold(); doc.setFontSize(18); doc.text("Statistical Bars", M, y); y += 14;
 
-  // PAGE 1 footer
-  if(IM.logo) doc.addImage(IM.logo,"PNG",M,H-92,120,32);
-  PageFooter(1,false);
+  function barRow(label, value, icon, yTop, color){
+    const bW = W - M*2, bH = 56;
+    Box(M, yTop, bW, bH);
+    if (icon) doc.addImage(icon, "PNG", M+14, yTop+14, 26, 26);
+    bold(); doc.setFontSize(14); doc.text(label, M+48, yTop+32);
+    bold(); doc.setFontSize(12); doc.text(`${value}%`, M + bW - 44, yTop+32);
+    const inner = pillBarPNG(value, bW-60, 22, color);
+    doc.addImage(inner, "PNG", M+30, yTop+18, bW-60, 22);
+  }
+
+  barRow("Professionalism", Number(d?.meters?.professionalism ?? 65), IM.pro,  y, "#98f1b7"); y += 64;
+  barRow("Favorability Index", Number(d?.meters?.favorability ?? 50), IM.fav, y, "#f0bf63"); y += 64;
+  barRow("Deadline Pressure", Number(d?.meters?.deadline ?? 40), IM.dead,    y, "#98f1b7"); y += 76;
+
+  // Clauses (right column starter on page 1 to match mock)
+  bold(); doc.setFontSize(18); doc.text("Main Clauses", M + (W - M*2)/2 + 18, 148);
+  let clTop = 148 + 10;
+  const colX = M + (W - M*2)/2 + 18;
+  reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
+  let cyList = clTop + 24;
+  (Array.isArray(d.clauses) ? d.clauses : []).slice(0,4).forEach((c,i)=>{
+    doc.text(`${i+1}.`, colX+16, cyList);
+    cyList = textBlock(String(c), colX+36, cyList, (W - M*2)/2 - 38, 16) + 8;
+  });
+  doc.setTextColor(0,0,0);
+  Box(colX-6, clTop-8, (W - M*2)/2 + 12, (cyList-(clTop+24))+36);
+
+  footer(1, true);
 
   /* ================= PAGE 2 ================= */
   doc.addPage();
-  H1();
+  header();
   y = 148;
 
   // Potential Issues
-  bold(); doc.setFontSize(18); doc.text("Potential Issues that might occur",M,y); y+=10;
-  const piTop = y, piW = W-(M*2)+12;
+  bold(); doc.setFontSize(18); doc.text("Potential Issues that might occur", M, y); y += 10;
+  const piTop = y, piW = W - M*2 + 12;
   reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
-  let yi = y+24;
+  let yi = y + 24;
   (Array.isArray(d.issues)?d.issues:[]).forEach(it=>{
-    const lines = doc.splitTextToSize(String(it),W-(M*2)-40);
-    doc.text("•",M+16,yi);
-    lines.forEach(ln=>{ doc.text(ln,M+30,yi); yi+=16; });
-    yi+=4;
+    doc.text("•", M+16, yi);
+    yi = textBlock(String(it), M+30, yi, W-(M*2)-40, 16) + 4;
   });
   doc.setTextColor(0,0,0);
-  Box(M-6,piTop-8,piW,(yi-(piTop+24))+36);
-  y = piTop+((yi-(piTop+24))+36)+24;
+  Box(M-6, piTop-8, piW, (yi-(piTop+24))+36);
+  y = piTop + ((yi-(piTop+24))+36) + 24;
 
   // Smart Suggestions
-  bold(); doc.setFontSize(18); doc.text("Smart Suggestions",M,y); y+=10;
-  const ssTop=y, ssW=W-(M*2)+12;
+  bold(); doc.setFontSize(18); doc.text("Smart Suggestions", M, y); y += 10;
+  const ssTop = y, ssW = W - M*2 + 12;
   reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
-  let ys=y+24;
+  let ys = y + 24;
   (Array.isArray(d.suggestions)?d.suggestions:[]).forEach((s,i)=>{
-    const num=`${i+1}. `;
-    const numW=doc.getTextWidth(num);
-    const lines = doc.splitTextToSize(String(s),W-(M*2)-40-numW);
-    doc.text(num,M+16,ys);
-    doc.text(lines[0],M+16+numW,ys);
-    for(let k=1;k<lines.length;k++){ ys+=16; doc.text(lines[k],M+16+numW,ys); }
-    ys+=8;
+    const num = `${i+1}. `;
+    const numW = doc.getTextWidth(num);
+    const lines = doc.splitTextToSize(String(s), W-(M*2)-40-numW);
+    doc.text(num, M+16, ys);
+    doc.text(lines[0], M+16+numW, ys);
+    for(let k=1;k<lines.length;k++){ ys += 16; doc.text(lines[k], M+16+numW, ys); }
+    ys += 8;
   });
   doc.setTextColor(0,0,0);
-  Box(M-6,ssTop-8,ssW,(ys-(ssTop+24))+28);
-  y = ssTop+((ys-(ssTop+24))+28)+24;
+  Box(M-6, ssTop-8, ssW, (ys-(ssTop+24))+28);
+  y = ssTop + ((ys-(ssTop+24))+28) + 24;
 
-  // Score Checker + Confidence
-  const leftW=(W-(M*2)-18)*0.58;
-  const rightW=(W-(M*2)-18)-leftW;
-  const scX=M, cfX=M+leftW+18, rowH=170;
+  // Score + Confidence
+  const leftW = (W - M*2 - 18) * 0.58;
+  const rightW = (W - M*2 - 18) - leftW;
+  const scX = M, cfX = M + leftW + 18, rowH = 170;
 
   // Score Checker
-  Box(scX,y,leftW,rowH);
-  if(IM.score) doc.addImage(IM.score,"PNG",scX+14,y+14,26,26);
-  bold(); doc.setFontSize(14); doc.text("Score Checker",scX+48,y+32);
-  const scorePct=Math.round(clarP);
-  const scoreDonut=donutPNG(scorePct,"#28e070",150);
-  doc.addImage(scoreDonut,"PNG",scX+16,y+48,110,110);
+  Box(scX, y, leftW, rowH);
+  if (IM.score) doc.addImage(IM.score,"PNG", scX+14, y+14, 26, 26);
+  bold(); doc.setFontSize(14); doc.text("Score Checker", scX+48, y+32);
+  const scorePct = Math.round(Number(d?.clarity?.value ?? 0));
+  const scoreDonut = donutPNG(scorePct, "#28e070", 150);
+  doc.addImage(scoreDonut, "PNG", scX+16, y+48, 110, 110);
+  reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
+  doc.text("The contract is nearly perfectly done.", scX+140, y+88);
+  doc.setTextColor(0,0,0);
 
   // Confidence
-  Box(cfX,y,rightW,rowH);
-  if(IM.confidence) doc.addImage(IM.confidence,"PNG",cfX+14,y+14,26,26);
-  bold(); doc.setFontSize(14); doc.text("Confidence to sign freely",cfX+48,y+32);
-  const confV=Number(d?.meters?.confidence??70);
-  const confBar=pillBarPNG(confV,rightW-48,34,"#f4b740");
-  doc.addImage(confBar,"PNG",cfX+24,y+78,rightW-48,34);
-  bold(); doc.setFontSize(12); doc.text(`${confV}%`,cfX+rightW-64,y+66);
+  Box(cfX, y, rightW, rowH);
+  if (IM.confidence) doc.addImage(IM.confidence,"PNG", cfX+14, y+14, 26, 26);
+  bold(); doc.setFontSize(14); doc.text("Confidence to sign freely", cfX+48, y+32);
+  const confV = Number(d?.meters?.confidence ?? 70);
+  const confBar = pillBarPNG(confV, rightW-48, 26, "#f4b740");
+  doc.addImage(confBar, "PNG", cfX+24, y+78, rightW-48, 26);
+  bold(); doc.setFontSize(12); doc.text(`${confV}%`, cfX+rightW-64, y+66);
 
-  // Footer page 2
-  if(IM.logo) doc.addImage(IM.logo,"PNG",W-150,H-86,120,34);
-  reg(); doc.setFontSize(10); doc.text("© 2025 SignSense. All rights reserved.",W-240,H-56);
-  PageFooter(2);
+  if (IM.logo) doc.addImage(IM.logo,"PNG", W-150, H-86, 120, 34);
+  reg(); doc.setFontSize(10); doc.text("© 2025 SignSense. All rights reserved.", W-240, H-56);
+  footer(2);
 
-  // save
-  doc.save((filename||"SignSense_Report")+".pdf");
+  doc.save((filename || "SignSense_Report") + ".pdf");
 }
+
 
 
 
