@@ -585,42 +585,47 @@ async function generatePDF(filename, d, lang){
     try { IM[k] = await imgToDataURL(ASSETS[k]); } catch { IM[k] = null; }
   }
 
-  // === donut charts ===
-  function donutPNG(pct, ringColor="#28e070", size=220){
+  // === Hi-DPI donut charts ===
+  function donutPNG(pct, ringColor="#28e070", size=150, px=3){
     const c = document.createElement("canvas");
-    c.width = size; c.height = size;
+    c.width = size*px; c.height = size*px;
     const ctx = c.getContext("2d");
+    ctx.scale(px, px);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
     const cx=size/2, cy=size/2, r=size*0.40, track=size*0.44;
 
-    // outer black track
-    ctx.lineWidth = 22;
-    ctx.strokeStyle = "#000";
+    // outer track
+    ctx.lineWidth = 22; ctx.strokeStyle="#000";
     ctx.beginPath(); ctx.arc(cx,cy,track-ctx.lineWidth/2,0,Math.PI*2); ctx.stroke();
 
     // progress arc
-    const start = -Math.PI/2, end = start + (Math.max(0,Math.min(100,pct))/100)*Math.PI*2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = ringColor;
+    const start=-Math.PI/2, end=start+(Math.max(0,Math.min(100,pct))/100)*Math.PI*2;
+    ctx.lineCap="round"; ctx.strokeStyle=ringColor;
     ctx.beginPath(); ctx.arc(cx,cy,track-ctx.lineWidth/2,start,end); ctx.stroke();
 
-    // inner white circle
-    ctx.fillStyle = "#fff";
+    // inner circle
+    ctx.fillStyle="#fff";
     ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
 
-    // percentage
-    ctx.fillStyle = "#000";
-    ctx.font = `bold ${size*0.22}px ${FONT}`;
-    ctx.textAlign="center"; ctx.textBaseline="middle";
+    // percentage text
+    ctx.fillStyle="#000"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.font=`bold ${size*0.22}px ${FONT}`;
     ctx.fillText(`${Math.round(pct)}%`, cx, cy-6);
 
     return c.toDataURL("image/png");
   }
 
-  // === pill bar ===
-  function pillBarPNG(pct, width=520, height=42, fill="#a7efb9"){
+  // === Hi-DPI pill bars ===
+  function pillBarPNG(pct, width=520, height=42, fill="#a7efb9", px=3){
     const c = document.createElement("canvas");
-    c.width = width; c.height = height;
+    c.width = width*px; c.height = height*px;
     const ctx = c.getContext("2d");
+    ctx.scale(px, px);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
     const r = height/2;
 
     // border
@@ -820,6 +825,7 @@ async function generatePDF(filename, d, lang){
   // save
   doc.save((filename||"SignSense_Report")+".pdf");
 }
+
 
 
     document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
