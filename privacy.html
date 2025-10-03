@@ -135,74 +135,61 @@
 
     /* ===== Footer (from homepage mobile) ===== */
   /* ===== Footer — mobile layout exactly like screenshot ===== */
+/* ===== Footer — compact, non-bold, single-line items ===== */
 .site-footer{
   background:#0a0a0a;
   border-top:1px solid var(--bar-border);
-  padding:26px 16px 36px;
+  padding:22px 14px 30px;
   color:#fff;
 }
-
-.footer-wrap{
-  max-width:980px;
-  margin:0 auto;
-}
+.footer-wrap{ max-width:980px; margin:0 auto; }
 
 /* Top row: brand + copyright + disclaimer */
-.footer-brandrow{
-  display:grid;
-  grid-template-columns:auto;
-  align-items:center;
-  row-gap:8px;
-}
-.footer-logo{
-  display:flex; align-items:center; gap:10px;
-}
-.footer-logo img{ width:36px; height:36px; border-radius:8px; }
-.footer-logo span{ font-size:28px; font-weight:600; }
+.footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
+.footer-logo{ display:flex; align-items:center; gap:10px; }
+.footer-logo img{ width:32px; height:32px; border-radius:8px; }
+.footer-logo span{ font-size:22px; font-weight:400; }                /* smaller, not bold */
 
-.footer-copy{ font-size:20px; font-weight:600; color:#fff; }
-.footer-disclaimer{ font-size:16px; color:#bdbdbd; }
+.footer-copy{
+  font-size:13px; font-weight:400; color:#fff;
+  white-space:nowrap; line-height:1.2;                               /* keep in one row */
+}
+.footer-disclaimer{ font-size:12px; color:#bdbdbd; }
 
 /* Social icons row */
-.footer-socials{
-  display:flex; gap:14px;
-  margin:18px 0 10px;
-}
+.footer-socials{ display:flex; gap:12px; margin:14px 0 6px; }
 .social-btn{
-  width:44px; height:44px; display:inline-flex;
-  align-items:center; justify-content:center;
-  border:1px solid #2a2a2a; border-radius:12px;
-  text-decoration:none;
+  width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
   transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
 }
-.social-btn:hover{ transform:translateY(-1px); border-color:#3a3a3a; opacity:.95; }
-.social-btn svg{ width:22px; height:22px; fill:#ffffff; }
+.social-btn svg{ width:18px; height:18px; fill:#ffffff; }
 
 /* Link columns */
 .footer-cols{
-  display:grid;
-  grid-template-columns: 1fr 1fr 1fr;   /* three columns on mobile like the photo */
-  gap:28px;
-  align-items:start;
-  margin-top:14px;
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:16px; align-items:start; margin-top:10px;
 }
 .footer-col h4{
-  font-size:28px; font-weight:700; margin-bottom:16px; color:#ffffff;
+  font-size:16px; font-weight:400; margin-bottom:8px; color:#ffffff; /* smaller, not bold */
 }
 .footer-link{
   display:block; text-decoration:none;
-  font-size:22px; color:#d0d0d0;
-  margin:16px 0;
+  font-size:15px; line-height:1.25; color:#d0d0d0;
+  margin:10px 0 0;
+  white-space:nowrap;                                                /* single line per item */
 }
 .footer-link:hover{ color:#ffffff; text-decoration:none; }
 
-/* Optional: tiny divider space below columns if you add items later */
-.footer-bottom-space{ height:4px; }
+.footer-bottom-space{ height:2px; }
 
-/* Super-small screens fallback (keeps look but avoids overflow on <340px) */
+/* safety fallback for very narrow devices */
 @media (max-width: 340px){
-  .footer-cols{ grid-template-columns:1fr 1fr; }
+  .footer-logo span{ font-size:20px; }
+  .footer-copy{ font-size:12px; }
+  .footer-link{ font-size:14px; }
 }
+
   </style>
 </head>
 <body>
