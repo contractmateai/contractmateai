@@ -161,21 +161,31 @@
       font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     }
     .field::placeholder{ color:#9a9a9a; }
-    /* Fix browser autofill turning fields white */
+/* === Autofill: force dark background (keep LAST) === */
+input.field, textarea.field {
+  background: var(--field) !important;
+  -webkit-text-fill-color: #d0d0d0;
+  color: #d0d0d0;
+  appearance: none;
+}
+
 input.field:-webkit-autofill,
 input.field:-webkit-autofill:hover,
 input.field:-webkit-autofill:focus,
 textarea.field:-webkit-autofill {
-  -webkit-text-fill-color: #d0d0d0;
+  -webkit-text-fill-color: #d0d0d0 !important;
   -webkit-box-shadow: 0 0 0 1000px var(--field) inset !important;
   box-shadow: 0 0 0 1000px var(--field) inset !important;
-  transition: background-color 9999s ease-out 0s; /* prevents flash */
+  border-radius: 14px !important;
   caret-color: #e0e0e0;
 }
+
 input.field:-moz-autofill {
   box-shadow: 0 0 0 1000px var(--field) inset !important;
-  -moz-text-fill-color: #d0d0d0;
+  -moz-text-fill-color: #d0d0d0 !important;
+  border-radius: 14px !important;
 }
+
 
     .email-field{
       margin-bottom:10px;     /* ensures space before message */
@@ -540,16 +550,22 @@ input.field:-moz-autofill {
           });
 
           if(!res.ok) throw new Error('Network response was not ok');
-         setAlert('Thanks! Your message has been sent.', true);
+      setAlert('Thanks! Your message has been sent.', true);
 form.reset();
 
-// Force Chrome/Brave to drop autofill highlight and repaint the inputs
-['name','phone','email','message'].forEach((id)=>{
+// Hard reset autofill paint by replacing the elements
+['email'].forEach((id)=>{
+  const el = document.getElementById(id);
+  const clone = el.cloneNode(true); // copies attributes, not the autofill state
+  el.parentNode.replaceChild(clone, el);
+});
+
+// Optional: quick blur to ensure repaint
+['name','phone','message'].forEach((id)=>{
   const el = document.getElementById(id);
   el.blur();
-  el.disabled = true;
-  setTimeout(()=>{ el.disabled = false; }, 50);
 });
+
 
         }catch(err){
           setAlert('Sorry, something went wrong. Please try again.');
