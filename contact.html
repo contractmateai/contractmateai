@@ -308,12 +308,16 @@ input.field:-moz-autofill {
     <!-- ===== CONTACT CARD ===== -->
     <section class="container contact-wrap" data-aos="fade-up">
       <div class="contact-card">
-        <form id="contactForm" novalidate>
+       <form id="contactForm" novalidate autocomplete="off">
+
           <div class="row">
             <input class="field" type="text" id="name" name="name" placeholder="Name" required />
             <input class="field" type="tel" id="phone" name="phone" placeholder="Phone" required />
           </div>
-          <input class="field email-field" type="email" id="email" name="email" placeholder="Email" required />
+          <input class="field email-field" type="email" id="email" name="email"
+       placeholder="Email" required autocomplete="off"
+       autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" />
+
           <textarea class="field" id="message" name="message" placeholder="Message" required></textarea>
           <button class="send-btn" id="sendBtn" type="submit">Send</button>
           <div class="sla">We will contact you within 24 hours.</div>
@@ -536,8 +540,17 @@ input.field:-moz-autofill {
           });
 
           if(!res.ok) throw new Error('Network response was not ok');
-          setAlert('Thanks! Your message has been sent.', true);
-          form.reset();
+         setAlert('Thanks! Your message has been sent.', true);
+form.reset();
+
+// Force Chrome/Brave to drop autofill highlight and repaint the inputs
+['name','phone','email','message'].forEach((id)=>{
+  const el = document.getElementById(id);
+  el.blur();
+  el.disabled = true;
+  setTimeout(()=>{ el.disabled = false; }, 50);
+});
+
         }catch(err){
           setAlert('Sorry, something went wrong. Please try again.');
         }finally{
