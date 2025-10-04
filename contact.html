@@ -9,7 +9,7 @@
 
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <!-- Fonts: add Poppins -->
+  <!-- Fonts: Inter + Poppins (Poppins for all + message placeholder) -->
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
@@ -21,7 +21,7 @@
       --muted:#d8cccc;
       --lime:#aafe2a;
 
-      /* Top bar + panel (same as privacy page) */
+      /* Top bar + panel */
       --bar:#04040e;
       --bar-border:#232323;
       --panel:#04040e;
@@ -33,6 +33,7 @@
     *{ box-sizing:border-box; margin:0; padding:0; }
     html,body{ height:100%; }
     body{
+      /* Make whole page Poppins per your request */
       font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       color:var(--text);
       overflow-x:hidden;
@@ -42,7 +43,7 @@
       background-attachment:fixed,fixed;
     }
 
-    /* ===== Floating Top Bar (EXACT match with privacy page) ===== */
+    /* ===== Floating Top Bar (exact) ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -139,7 +140,7 @@
     /* ===== Layout ===== */
     .container{ max-width:960px; margin:0 auto; padding:0 16px; }
 
-    /* ===== Contact Card (same color as topbar) ===== */
+    /* ===== Contact Card ===== */
     .contact-wrap{ padding:10px 0 30px; }
     .contact-card{
       background:var(--bar);
@@ -157,9 +158,16 @@
       color:#d0d0d0;
       border:none; border-radius:14px; padding:14px 16px; font-size:16px; outline:none;
       caret-color:#e0e0e0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     }
     .field::placeholder{ color:#9a9a9a; }
-    textarea.field{ min-height:180px; resize:none; margin-bottom:12px; }
+    .email-field{
+      margin-bottom:10px;     /* ensures space before message */
+      display:block;
+    }
+    textarea.field{
+      min-height:180px; resize:none; margin-bottom:12px; display:block;
+    }
     /* Message placeholder must be Poppins */
     textarea.field::placeholder{ font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
@@ -171,28 +179,17 @@
     .send-btn:hover{ box-shadow:0 0 16px rgba(255,255,255,.9); }
     .sla{ color:#9a9a9a; font-size:12px; text-align:center; margin-top:8px; }
 
-    /* ===== Channels (centered, two lines, underlined links) ===== */
-    .channels{
-      text-align:center;
-      margin:20px 0 0;
-      padding-bottom:4px;
-    }
-    .channel-line{
-      font-size:20px;
-      line-height:1.5;
-    }
+    /* ===== Channels (centered, email link w/o underline) ===== */
+    .channels{ text-align:center; margin:20px 0 0; padding-bottom:4px; }
+    .channel-line{ font-size:20px; line-height:1.5; }
     .channel-line + .channel-line{ margin-top:8px; }
     .channel-line .label{ color:#fff; }
-    .channel-line a{
-      color:#d8cccc;
-      text-decoration:underline;
-      text-underline-offset:2px;
-    }
+    .channel-line a{ color:#d8cccc; text-decoration:underline; text-underline-offset:2px; }
     .channel-line a:hover{ opacity:.95; }
     /* remove underline for the email address only */
     .channels .channel-line a[href^="mailto:"]{ text-decoration:none; }
 
-    /* ===== FAQ (same style as mobile pages) ===== */
+    /* ===== FAQ ===== */
     .faq-section{ max-width:1200px; margin:12px auto 0; padding:40px 16px 74px; text-align:initial; }
     .faq-title{ text-align:center; font-size:clamp(32px, 8vw, 44px); line-height:1.1; font-weight:400; margin-bottom:18px; }
     .faq-list{ max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:18px; text-align:left; padding-left:0; }
@@ -209,7 +206,7 @@
     }
     .faq-item.open .faq-a{ padding:12px 20px 20px; max-height:420px; opacity:1; border-radius:0 0 24px 24px; }
 
-    /* ===== NEW FOOTER (from privacy page) ===== */
+    /* ===== FOOTER (from privacy page) ===== */
     .site-footer{
       background:#0a0a0a;
       border-top:1px solid var(--bar-border);
@@ -217,18 +214,12 @@
       color:#fff;
     }
     .footer-wrap{ max-width:980px; margin:0 auto; }
-
     .footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
     .footer-logo{ display:flex; align-items:flex-start; gap:6px; }
     .footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
     .footer-logo span{ font-size:22px; font-weight:400; }
-
-    .footer-copy{
-      font-size:15px; font-weight:400; color:#fff;
-      white-space:nowrap; line-height:1.3;
-    }
+    .footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
     .footer-disclaimer{ font-size:12px; color:#bdbdbd; }
-
     .footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
     .social-btn{
       width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
@@ -236,22 +227,10 @@
       transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
     }
     .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
-
-    .footer-cols{
-      display:grid; grid-template-columns:1fr 1fr 1fr;
-      gap:16px; align-items:start; margin-top:10px;
-    }
-    .footer-col h4{
-      font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff;
-    }
-    .footer-link{
-      display:block; text-decoration:none;
-      font-size:14px; line-height:1.25; color:#d0d0d0;
-      margin:8px 0 0;
-      white-space:nowrap;
-    }
+    .footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+    .footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+    .footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
     .footer-link:hover{ color:#ffffff; text-decoration:none; }
-
     .footer-bottom-space{ height:2px; }
 
     @media (max-width:980px){
@@ -327,7 +306,7 @@
       </div>
     </section>
 
-    <!-- ===== CHANNELS (centered, two lines) ===== -->
+    <!-- ===== CHANNELS ===== -->
     <section class="container" data-aos="fade-up" style="margin-top: 6px;">
       <div class="channels">
         <div class="channel-line">
@@ -388,10 +367,9 @@
     </section>
   </div>
 
-  <!-- ===== FOOTER (from privacy page) ===== -->
+  <!-- ===== FOOTER (compact) ===== -->
   <footer class="site-footer">
     <div class="footer-wrap">
-      <!-- Brand + copyright + disclaimer -->
       <div class="footer-brandrow">
         <div class="footer-logo">
           <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
@@ -401,42 +379,33 @@
         <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
       </div>
 
-      <!-- Socials -->
       <div class="footer-socials">
         <a class="social-btn" href="#" aria-label="X">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
         </a>
         <a class="social-btn" href="#" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
         </a>
         <a class="social-btn" href="#" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
         </a>
       </div>
 
-      <!-- Columns -->
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Help</h4>
           <a class="footer-link" href="contact.html">Contact us</a>
           <a class="footer-link" href="index.html#how-it-works">How it Works</a>
         </div>
-
         <div class="footer-col">
           <h4>Product</h4>
           <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
         </div>
-
         <div class="footer-col">
           <h4>Legal</h4>
           <a class="footer-link" href="terms.html">Terms of Service</a>
           <a class="footer-link" href="privacy.html">Privacy Policy</a>
+          <!-- Cookie Policy goes to cookies.html like you asked -->
           <a class="footer-link" href="cookies.html">Cookie Policy</a>
         </div>
       </div>
@@ -445,7 +414,7 @@
     </div>
   </footer>
 
-  <!-- Hidden input (unused here, kept for parity with your pattern) -->
+  <!-- Hidden input (kept for parity) -->
   <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
