@@ -443,7 +443,12 @@
     <div class="scroll-full">
       <div class="scroll-wrapper">
         <section class="scroll-section" id="how-it-works" data-aos="fade-up">
-          <h3>Everything you need for clarity and security in one seamless experience.</h3>
+         <h3>
+  Everything you need for clarity<br />
+  &amp; security in one seamless<br />
+  experience.
+</h3>
+
           <div class="scroll-strip top-row"></div>
           <div class="scroll-strip bottom-row"></div>
           <div class="scroll-shadow-left"></div>
@@ -927,31 +932,39 @@
   }
 
   // Custom "Add more?" modal with Cancel / Yes (returns Promise<boolean>)
-  function askAddMore(msg = 'Add more photos?'){
-    return new Promise(resolve => {
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
-      const box = document.createElement('div');
-      box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
-      box.innerHTML = `
-        <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
-        <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
-        <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
-          <button id="am-cancel" style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">Cancel</button>
-          <button id="am-yes"    style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
-        </div>`;
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
+ // Custom "Add more?" modal with Yes (left) / No (right) → Promise<boolean>
+function askAddMore(msg = 'Add more photos?'){
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+    box.innerHTML = `
+      <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+      <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+        <!-- YES on the left (green) -->
+        <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
+        <!-- NO on the right (same style as old Cancel: grey) -->
+        <button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
+      </div>`;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
 
-      const cleanup = (val)=>{ overlay.remove(); resolve(val); };
-      box.querySelector('#am-cancel').addEventListener('click', ()=>cleanup(false));
-      box.querySelector('#am-yes').addEventListener('click', ()=>cleanup(true));
-      overlay.addEventListener('click', (e)=>{ if(e.target===overlay) cleanup(false); });
-      document.addEventListener('keydown', function onKey(e){
-        if(e.key==='Escape'){ document.removeEventListener('keydown', onKey); cleanup(false); }
-      });
-    });
-  }
+    const cleanup = (val) => {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+      resolve(val);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
+    document.addEventListener('keydown', onKey);
+
+    box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));   // reopen camera
+    box.querySelector('#am-no').addEventListener('click',  () => cleanup(false));  // finish
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+  });
+}
+
 
   async function maybeAddMoreAndReopenCamera(){
     if (pickedFiles.length >= 10) { finishPicking(); return; }
