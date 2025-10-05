@@ -574,13 +574,14 @@
 
 
   <!-- Hidden input for “Review a Contract” (camera + files) -->
-  <input
-    id="contractFile"
-    type="file"
-    accept=".pdf,.doc,.docx,.txt,image/*"
-    capture="environment"
-    style="display:none"
-  />
+<input
+  id="contractFile"
+  type="file"
+  accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*"
+  multiple
+  style="display:none"
+/>
+
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
@@ -878,85 +879,120 @@
       });
     });
 
-    // ===== CTA → file picker, then Role Picker → mock analysis redirect
-    (function(){
-      const cta = document.getElementById('ctaBtn');
-      const ctaWrap = document.getElementById('ctaWrap');
-      const roleUI = document.getElementById('rolePicker');
-      const input = document.getElementById('contractFile');
-      let pickedFile = null;
-      let chosenRole = null;
+   <script>
+  (function(){
+    const cta      = document.getElementById('ctaBtn');
+    const ctaWrap  = document.getElementById('ctaWrap');
+    const roleUI   = document.getElementById('rolePicker');
+    const input    = document.getElementById('contractFile');
 
-      if (cta) {
-        cta.addEventListener('click', (e)=>{ e.preventDefault(); input.value=''; input.click(); });
+    // simple counter under the button
+    const counterEl = document.createElement('div');
+    counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
+    ctaWrap?.appendChild(counterEl);
+
+    // hold everything the user selects/captures until they’re done
+    let pickedFiles = [];  // up to 10
+    let chosenRole = null;
+
+    function resetPicker(){ input.value = ''; }
+    function updateCounter(){
+      counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : '';
+    }
+    function addFiles(list){
+      for (const f of Array.from(list)) {
+        if (pickedFiles.length >= 10) break;
+        pickedFiles.push(f);
+      }
+      updateCounter();
+    }
+
+    // open the sheet (Photo Library / Take Photo / Choose File)
+    cta?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      resetPicker();
+      input.click();
+    });
+
+    // each time user picks or captures, we add and offer to add more (useful for "Take Photo")
+    input.addEventListener('change', ()=>{
+      if (!input.files || !input.files.length) return;
+
+      addFiles(input.files);
+
+      if (pickedFiles.length < 10) {
+        const more = confirm(`Added ${pickedFiles.length}. Add more? (up to 10)`);
+        if (more) { resetPicker(); input.click(); return; }
       }
 
-      input.addEventListener('change', ()=>{
-        if (!input.files || !input.files.length) return;
-        pickedFile = input.files[0];
-        if (ctaWrap) ctaWrap.style.display = 'none';
-        roleUI.hidden = false;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      // user is done adding → reveal role picker once
+      if (ctaWrap) ctaWrap.style.display = 'none';
+      roleUI.hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // role selection (unchanged except we guard for at least one file)
+    roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        chosenRole = btn.dataset.role || 'signer';
+
+        if (!pickedFiles.length) {
+          alert('Please add at least one file or photo.');
+          return;
+        }
+
+        // ---- MOCK ANALYSIS (KEEP YOUR EXISTING OBJECT EXACTLY AS IS) ----
+        const mock = {
+          languageOriginal: "en",
+          summary: [
+            "This contract is generally favorable with low overall risk.",
+            "Payment schedule and termination rights are standard.",
+            "Watch late-fee compounding and define 'material breach'.",
+          ],
+          risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+          clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+          clauses: [
+            "Payment Terms — Net 30 with 2% per month late fee.",
+            "Scope of Work — Deliverables listed in Schedule A.",
+            "Termination — 30-day convenience; immediate for cause.",
+            "IP & Licensing — Client owns final assets; creator keeps tools.",
+          ],
+          issues: [
+            "Late fee compounding escalates costs on long delays.",
+            "Indemnity is one-sided; consider mutual or capped liability.",
+          ],
+          suggestions: [
+            "Add a 5–7 day grace period before late fees.",
+            "Define 'material breach' + 10-day cure period.",
+            "List milestones and acceptance criteria.",
+          ],
+          meters: { confidence: 75, favorability: 80, deadline: 18 },
+          translations: { en: {} },
+        };
+
+        // persist role & selection (use first file for display name)
+        localStorage.setItem("role", chosenRole);
+        if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
+        else localStorage.removeItem("hideConfidence");
+
+        localStorage.setItem("analysisData", JSON.stringify(mock));
+        localStorage.setItem("contractName", pickedFiles[0].name || "Contract");
+        localStorage.setItem("detectedLang", "en");
+        localStorage.setItem("summary", mock.summary.join("\n\n"));
+        localStorage.setItem("risk", String(mock.risk.value));
+        localStorage.setItem("clarity", String(mock.clarity.value));
+        localStorage.setItem("compliance", "0");
+        localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+        localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+        localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+        localStorage.setItem("numSelectedFiles", String(pickedFiles.length));
+
+        window.location.href = "analysis.html";
       });
-
-      roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          chosenRole = btn.dataset.role || 'signer';
-          if(!pickedFile){
-            alert('Please choose a contract file first.');
-            return;
-          }
-
-          // ---- MOCK ANALYSIS (same as previous mobile, unchanged) ----
-          const mock = {
-            languageOriginal: "en",
-            summary: [
-              "This contract is generally favorable with low overall risk.",
-              "Payment schedule and termination rights are standard.",
-              "Watch late-fee compounding and define 'material breach'.",
-            ],
-            risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-            clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-            clauses: [
-              "Payment Terms — Net 30 with 2% per month late fee.",
-              "Scope of Work — Deliverables listed in Schedule A.",
-              "Termination — 30-day convenience; immediate for cause.",
-              "IP & Licensing — Client owns final assets; creator keeps tools.",
-            ],
-            issues: [
-              "Late fee compounding escalates costs on long delays.",
-              "Indemnity is one-sided; consider mutual or capped liability.",
-            ],
-            suggestions: [
-              "Add a 5–7 day grace period before late fees.",
-              "Define 'material breach' + 10-day cure period.",
-              "List milestones and acceptance criteria.",
-            ],
-            meters: { confidence: 75, favorability: 80, deadline: 18 },
-            translations: { en: {} },
-          };
-
-          // Persist role (for analysis page UI choices)
-          localStorage.setItem("role", chosenRole);
-          if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
-          else localStorage.removeItem("hideConfidence");
-
-          localStorage.setItem("analysisData", JSON.stringify(mock));
-          localStorage.setItem("contractName", pickedFile.name || "Contract");
-          localStorage.setItem("detectedLang", "en");
-          localStorage.setItem("summary", mock.summary.join("\n\n"));
-          localStorage.setItem("risk", String(mock.risk.value));
-          localStorage.setItem("clarity", String(mock.clarity.value));
-          localStorage.setItem("compliance", "0");
-          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-          localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
-
-          window.location.href = "analysis.html";
-        });
-      });
+    });
+  })();
 
       // Leave a Review
       const leaveBtn = document.getElementById('leaveReview');
