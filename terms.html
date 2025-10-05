@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SignSense — Terms &amp; Conditions</title>
+  <title>SignSense — Terms of Service</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Fonts: Inter + Poppins (match contact.html; Poppins sitewide) -->
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
   <style>
@@ -19,6 +20,8 @@
       --text:#fff9f9;
       --muted:#d8cccc;
       --lime:#aafe2a;
+
+      /* Top bar + panel (match contact.html) */
       --bar:#04040e;
       --bar-border:#232323;
       --panel:#04040e;
@@ -26,17 +29,19 @@
 
     *{ box-sizing:border-box; margin:0; padding:0; }
     html,body{ height:100%; }
+
+    /* Use Poppins to match your contact page/sitewide pref */
     body{
-      font-family: "Inter",system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       color:var(--text);
       overflow-x:hidden;
       background:
         radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
         linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
-      background-attachment: fixed, fixed;
+      background-attachment:fixed,fixed;
     }
 
-    /* ===== Floating Top Bar (mobile) ===== */
+    /* ===== Floating Top Bar (exact like contact.html) ===== */
     .topbar-wrap{
       position:fixed; top:18px; left:0; right:0; z-index:1000;
       display:flex; justify-content:center; pointer-events:none;
@@ -134,41 +139,41 @@
     ul{ padding-left:20px; }
     b,strong{ color:#eaeaea; }
 
-    /* ===== Footer (mobile) ===== */
+    /* ===== FOOTER (compact — exactly like contact.html) ===== */
     .site-footer{
-      background:#000; border-top:1px solid var(--bar-border);
-      margin-top:40px; padding:36px 16px 34px; color:#fff;
+      background:#0a0a0a;
+      border-top:1px solid var(--bar-border);
+      padding:22px 14px 30px;
+      color:#fff;
     }
-    .footer-inner{ max-width:720px; margin:0 auto; text-align:center; }
-    .footer-brand{
-      display:inline-flex; align-items:center; gap:10px; margin-bottom:24px;
+    .footer-wrap{ max-width:980px; margin:0 auto; }
+    .footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
+    .footer-logo{ display:flex; align-items:flex-start; gap:6px; }
+    .footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
+    .footer-logo span{ font-size:22px; font-weight:400; }
+    .footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
+    .footer-disclaimer{ font-size:12px; color:#bdbdbd; }
+    .footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
+    .social-btn{
+      width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
+      transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
     }
-    .footer-brand img{ width:38px; height:38px; border-radius:8px; }
-    .footer-brand span{ font-size:28px; font-weight:600; }
-    .footer-columns{
-      display:flex; flex-direction:column; gap:30px; align-items:center; justify-content:center;
-    }
-    .footer-col h4{ font-size:26px; font-weight:700; margin-bottom:10px; }
-    .footer-col a{
-      display:block; color:#e9e6e6; text-decoration:none; font-size:18px; margin:10px 0;
-    }
-    /* socials just a little smaller */
-    .footer-col.socials a{ font-size:16px; }
-    .footer-col a:hover{ opacity:.9; text-decoration:underline; }
-    .footer-sep{
-      margin:26px auto 14px; height:1px; width:100%; max-width:720px; border:none; background:#2c2c2c;
-    }
-    .footer-links{
-      display:flex; gap:26px; justify-content:center; margin-bottom:18px;
-    }
-    .footer-links a{ color:#d6d6d6; text-decoration:underline; }
-    .footer-legal{
-      font-size:14px; color:#cfcfcf; opacity:.95; line-height:1.6;
-    }
+    .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
+    .footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+    .footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+    .footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
+    .footer-link:hover{ color:#ffffff; text-decoration:none; }
+    .footer-bottom-space{ height:2px; }
 
-    @media (max-width: 980px){
+    @media (max-width:980px){
       .topbar-nav{ display:none; }
       .menu-toggle{ display:block; }
+    }
+    @media (max-width: 340px){
+      .footer-logo span{ font-size:20px; }
+      .footer-copy{ font-size:14px; }
+      .footer-link{ font-size:13px; }
     }
   </style>
 </head>
@@ -182,7 +187,7 @@
       </div>
 
       <nav class="topbar-nav">
-        <a href="index.html#how-it-works">See How It Works</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener">See How It Works</a>
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -199,7 +204,7 @@
   <div class="menu-overlay" id="menuOverlay"></div>
   <div class="menu-panel" id="menuPanel" aria-hidden="true">
     <nav class="menu-list">
-      <a class="menu-item" href="index.html#how-it-works">See How It Works <span class="chev">›</span></a>
+      <a class="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span class="chev">›</span></a>
       <a class="menu-item" href="index.html">Home <span class="chev">›</span></a>
       <a class="menu-item" href="contact.html">Contact <span class="chev">›</span></a>
     </nav>
@@ -212,14 +217,14 @@
   <div class="hero-wrapper">
     <!-- ===== Page Hero ===== -->
     <section class="page-hero" data-aos="fade-up">
-      <h1>Terms &amp; Conditions</h1>
-      <div class="sub">Last Updated: 14 September 2025</div>
+      <h1>Terms of Service</h1>
+      <div class="sub">Last Updated: 05 October 2025</div>
     </section>
 
     <!-- ===== CONTENT ===== -->
     <div class="content" data-aos="fade-up">
       <div class="intro-title">Introduction</div>
-      <p>Welcome to SignSense (“<strong>SignSense</strong>,” “<strong>we</strong>,” “<strong>our</strong>,” or “<strong>us</strong>”). These Terms &amp; Conditions (“<strong>Terms</strong>”) govern your access to and use of our website and AI-powered contract review tool (collectively, the “<strong>Services</strong>”). By accessing or using the Services, you agree to be bound by these Terms. If you do not agree, please do not use the Services.</p>
+      <p>Welcome to SignSense (“<strong>SignSense</strong>,” “<strong>we</strong>,” “<strong>our</strong>,” or “<strong>us</strong>”). These <strong>Terms of Service</strong> (“<strong>Terms</strong>”) govern your access to and use of our website and AI-powered contract review tool (collectively, the “<strong>Services</strong>”). By accessing or using the Services, you agree to be bound by these Terms. If you do not agree, please do not use the Services.</p>
 
       <h2>1) Who We Are</h2>
       <p>SignSense is owned and operated by an individual based in Albania (Europe). There is no registered company entity at this time.</p>
@@ -232,7 +237,7 @@
 
       <h2>4) Eligibility &amp; Use</h2>
       <ul>
-        <li>No specific age restriction is imposed; however, you represent that you have the legal capacity to enter into these Terms or are using the Services with appropriate guidance.</li>
+        <li>You represent that you have the legal capacity to enter into these Terms or are using the Services with appropriate guidance.</li>
         <li>You agree to comply with these Terms and all applicable laws while using the Services.</li>
       </ul>
 
@@ -240,7 +245,7 @@
       <ul>
         <li><strong>No Permanent Storage:</strong> Uploaded documents are processed to generate results and are <strong>not stored</strong> after analysis, aside from any temporary caching technically required to complete the request.</li>
         <li><strong>Email (Optional):</strong> If you choose to provide an email (e.g., to receive a report), it will be used only to deliver the requested materials or updates you opt into.</li>
-        <li><strong>Privacy Policy:</strong> For details on how we handle personal data, please refer to our <a href="privacy.html">Privacy Policy</a>.</li>
+        <li><strong>Privacy Policy:</strong> For details on how we handle personal data (including city or IP for abuse prevention and personalization), please refer to our <a href="privacy.html">Privacy Policy</a>.</li>
       </ul>
 
       <h2>6) Acceptable Use &amp; Prohibited Conduct</h2>
@@ -284,46 +289,49 @@
     </div>
   </div>
 
-  <!-- ===== FOOTER (mobile) ===== -->
+  <!-- ===== FOOTER (compact, identical to contact.html) ===== -->
   <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
-        <span>SignSense</span>
+    <div class="footer-wrap">
+      <div class="footer-brandrow">
+        <div class="footer-logo">
+          <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+          <span>SignSense</span>
+        </div>
+        <div class="footer-copy">© 2025 SignSense. All rights reserved.</div>
+        <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
       </div>
 
-      <div class="footer-columns">
+      <div class="footer-socials">
+        <a class="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
+        </a>
+        <a class="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
+        </a>
+        <a class="social-btn" href="https://www.instagram.com/signsense.io/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
+        </a>
+      </div>
+
+      <div class="footer-cols">
         <div class="footer-col">
-          <h4>Quick Menu</h4>
-          <a href="index.html#how-it-works">How it Works</a>
-          <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener" id="footerLeaveReview">Leave Review</a>
+          <h4>Help</h4>
+          <a class="footer-link" href="contact.html">Contact us</a>
+          <a class="footer-link" href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
         </div>
-
         <div class="footer-col">
-          <h4>Information</h4>
-          <a href="contact.html">Contact</a>
-          <a href="index.html">Home</a>
+          <h4>Product</h4>
+          <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
         </div>
-
-        <div class="footer-col socials">
-          <h4>Socials</h4>
-          <a href="#" target="_blank" rel="noopener">Instagram</a>
-          <a href="#" target="_blank" rel="noopener">YouTube</a>
-          <a href="#" target="_blank" rel="noopener">X</a>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a class="footer-link" href="terms.html">Terms of Service</a>
+          <a class="footer-link" href="privacy.html">Privacy Policy</a>
+          <a class="footer-link" href="cookies.html">Cookie Policy</a>
         </div>
       </div>
 
-      <hr class="footer-sep" />
-
-      <div class="footer-links">
-        <a href="terms.html">Terms &amp; Conditions</a>
-        <a href="privacy.html">Privacy Policy</a>
-      </div>
-
-      <div class="footer-legal">
-        <div>For informational use only. Not legal advice.</div>
-        <div>© 2025 SignSense. All rights reserved.</div>
-      </div>
+      <div class="footer-bottom-space"></div>
     </div>
   </footer>
 
@@ -331,7 +339,7 @@
   <script>
     AOS.init({ once:true });
 
-    // ===== Attach panel right under the bar
+    // ===== Attach panel right under the bar (exact behavior)
     const topbarWrap = document.getElementById('topbarWrap');
     const topbar = document.getElementById('topbar');
     const menuToggle = document.getElementById('menuToggle');
@@ -369,7 +377,7 @@
       if (menuPanel.classList.contains('open')) closeMenu();
     }, { passive:true });
 
-    // ===== Hide/show bar on scroll
+    // ===== Hide/show bar on scroll (exact)
     (function(){
       let lastY = window.scrollY, ticking=false;
       function onScroll(){
