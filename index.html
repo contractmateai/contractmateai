@@ -104,7 +104,7 @@
     .menu-item{
       display:flex; align-items:center; justify-content:space-between;
       padding:16px 4px; font-size:24px; color:#fff; text-decoration:none;
-      border-bottom:none;           /* no dividers */
+      border-bottom:none;
     }
     .menu-item .chev{ opacity:.9; }
 
@@ -119,7 +119,7 @@
     .hero{ text-align:center; padding:64px 16px 18px; }
     .tagline-absolute{
       display:inline-flex; align-items:center; gap:10px;
-      background:#090922; color:#bbb; padding:6px 12px; border-radius:53px;
+      background:#090922; color:#bdb7ff; padding:6px 12px; border-radius:53px;
       position:relative; top:-6px; margin-bottom:10px;
       box-shadow:none; font-size:13px;
     }
@@ -132,12 +132,28 @@
     .hero h1 .lime{ color:var(--lime); }
     .subtext{ color:var(--muted); margin:16px auto 26px; font-size:18px; line-height:1.45; max-width:680px; }
 
+    /* CTA & Role Picker wrapper */
+    .cta-area{ display:flex; justify-content:center; align-items:center; flex-direction:column; gap:10px; }
+
     .cta-btn{
       background:#fff; color:#000; border:2px solid #999; padding:14px 26px; border-radius:16px; font-size:18px; cursor:pointer;
       display:inline-flex; align-items:center; gap:10px; box-shadow:0 0 10px rgba(255,255,255,.3); transition:box-shadow .3s ease;
       font-weight:500;
     }
     .cta-btn:hover{ box-shadow:0 0 15px rgba(255,255,255,.7); }
+
+    /* === Role Picker (hidden until after file selection) === */
+    .role-picker{
+      display:inline-flex; align-items:center; gap:12px; background:transparent;
+    }
+    .role-title{ font-size:18px; color:#fff; }
+    .role-buttons{ display:inline-flex; gap:10px; }
+    .role-btn{
+      background:#a7fd3c; color:#000; border:2px solid transparent; border-radius:12px; padding:10px 14px; font-size:16px; cursor:pointer;
+      font-family:"Inter", sans-serif;
+    }
+    .role-btn.active{ border-color:#fff; }
+    .role-picker[hidden]{ display:none !important; }
 
     /* YouTube embed */
     .yt-wrap{
@@ -154,16 +170,14 @@
     /* ===== POWERED BY STRIP ===== */
     .logo-strip{ margin: 46px auto 10px; width:99.5vw; overflow:hidden; position:relative; }
     .logo-track{ display:flex; align-items:center; gap:0; will-change:transform; }
-    .logo-piece{
-      flex:0 0 200%;
-      width:200%; height:auto; display:block; user-select:none; -webkit-user-drag:none;
-    }
+    .logo-piece{ flex:0 0 200%; width:200%; height:auto; display:block; user-select:none; -webkit-user-drag:none; }
     .logo-fade{ position:absolute; top:0; bottom:0; width:110px; z-index:2; pointer-events:none; }
     .logo-fade.left{ left:0; background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
     .logo-fade.right{ right:0; background:linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
 
     .section-badge{
-      background:#090922; color:#bbb; padding:6px 14px; border-radius:53px; display:inline-flex; align-items:center; gap:6px;
+      background:#090922; color:#bdb7ff;
+ padding:6px 14px; border-radius:53px; display:inline-flex; align-items:center; gap:6px;
       box-shadow:0 0 0 transparent; font-size:15px;
     }
 
@@ -174,7 +188,7 @@
       max-width:860px; margin-left:auto; margin-right:auto;
     }
 
-    /* ===== Insights (your exact version) ===== */
+    /* ===== Insights ===== */
     .insight-section{ padding:38px 16px 40px; }
     .insight-content{
       display:flex; justify-content:center; align-items:center; flex-wrap:wrap;
@@ -212,7 +226,8 @@
       position:relative; padding:22px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304);
       border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:28px auto 0; overflow:hidden; max-width:1280px; transform:scale(.88);
     }
-    .scroll-section h3{ text-align:center; font-size:22px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
+    /* ↓ a bit smaller per request (was 22px) */
+    .scroll-section h3{ text-align:center; font-size:20px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
     .scroll-strip{ display:flex; gap:22px; padding:12px 0; white-space:nowrap; flex-shrink:0; will-change:transform; }
     .scroll-item{ background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:42px; padding:12px 20px; display:inline-flex; align-items:center; gap:14px; }
     .scroll-item img{ width:40px; height:40px; border-radius:50%; background:#101010; object-fit:cover; }
@@ -265,44 +280,45 @@
     }
     .faq-item.open .faq-a{ padding:14px 20px 20px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
 
-    /* ===== Footer (matches your screenshot) ===== */
-    .site-footer{
-      background:#000; border-top:1px solid var(--bar-border);
-      margin-top:40px; padding:36px 16px 34px; color:#fff;
-    }
-    .footer-inner{ max-width:720px; margin:0 auto; text-align:center; }
-    .footer-brand{
-      display:inline-flex; align-items:center; gap:10px; margin-bottom:24px;
-    }
-    .footer-brand img{ width:38px; height:38px; border-radius:8px; }
-    .footer-brand span{ font-size:28px; font-weight:600; }
-    .footer-columns{
-      display:flex; flex-direction:column; gap:30px; align-items:center; justify-content:center;
-    }
-    .footer-col h4{
-      font-size:26px; font-weight:700; margin-bottom:10px;
-    }
-    .footer-col a{
-      display:block; color:#e9e6e6; text-decoration:none; font-size:18px; margin:10px 0;
-    }
-    /* Socials just a little smaller */
-    .footer-col.socials a{ font-size:16px; }
-    .footer-col a:hover{ opacity:.9; text-decoration:underline; }
-    .footer-sep{
-      margin:26px auto 14px; height:1px; width:100%; max-width:720px; border:none; background:#2c2c2c;
-    }
-    .footer-links{
-      display:flex; gap:26px; justify-content:center; margin-bottom:18px;
-    }
-    .footer-links a{ color:#d6d6d6; text-decoration:underline; }
-    .footer-legal{
-      font-size:14px; color:#cfcfcf; opacity:.95; line-height:1.6;
-    }
+    /* ===== Footer ===== */
+ /* ===== FOOTER (from contact page) ===== */
+.site-footer{
+  background:#0a0a0a;
+  border-top:1px solid var(--bar-border);
+  padding:22px 14px 30px;
+  color:#fff;
+}
+.footer-wrap{ max-width:980px; margin:0 auto; }
+.footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
+.footer-logo{ display:flex; align-items:flex-start; gap:6px; }
+.footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
+.footer-logo span{ font-size:22px; font-weight:400; }
+.footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
+.footer-disclaimer{ font-size:12px; color:#bdbdbd; }
+.footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
+.social-btn{
+  width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
+  transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
+}
+.social-btn svg{ width:18px; height:18px; fill:#ffffff; }
+.footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+.footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+.footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
+.footer-link:hover{ color:#ffffff; text-decoration:none; }
+.footer-bottom-space{ height:2px; }
 
-    @media (max-width: 980px){
-      .topbar-nav{ display:none; }
-      .menu-toggle{ display:block; }
-    }
+@media (max-width: 340px){
+  .footer-logo span{ font-size:20px; }
+  .footer-copy{ font-size:14px; }
+  .footer-link{ font-size:13px; }
+}
+/* Mobile: match Contact page behavior */
+@media (max-width:980px){
+  .topbar-nav{ display:none; }   /* hide links on small screens */
+  .menu-toggle{ display:block; } /* show burger */
+}
+
   </style>
 </head>
 <body>
@@ -315,7 +331,8 @@
       </div>
 
       <nav class="topbar-nav">
-        <a href="index.html#how-it-works">See How It Works</a>
+       <a href="https://youtube.com" target="_blank" rel="noopener">See How It Works</a>
+
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -332,7 +349,7 @@
   <div class="menu-overlay" id="menuOverlay"></div>
   <div class="menu-panel" id="menuPanel" aria-hidden="true">
     <nav class="menu-list">
-      <a class="menu-item" href="index.html#how-it-works">See How It Works <span class="chev">›</span></a>
+     <a class="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span class="chev">›</span></a>
       <a class="menu-item" href="index.html">Home <span class="chev">›</span></a>
       <a class="menu-item" href="contact.html">Contact <span class="chev">›</span></a>
     </nav>
@@ -358,9 +375,23 @@
        Free contract reviewing and no need for an account creation or sign up.
       </p>
 
-      <button class="cta-btn" id="ctaBtn">
-        Review A Contract <span aria-hidden="true">↗</span>
-      </button>
+      <!-- CTA area (button → replaced by role picker after file chosen) -->
+      <div class="cta-area">
+        <div id="ctaWrap">
+          <button class="cta-btn" id="ctaBtn">
+            Review A Contract <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+
+        <!-- Hidden Role Picker (appears where CTA was) -->
+        <div id="rolePicker" class="role-picker" hidden>
+          <span class="role-title">You are:</span>
+          <div class="role-buttons">
+            <button type="button" class="role-btn" data-role="signer">The Signer</button>
+            <button type="button" class="role-btn" data-role="writer">The Writer</button>
+          </div>
+        </div>
+      </div>
 
       <!-- YouTube -->
       <div class="yt-wrap">
@@ -385,10 +416,16 @@
       <div class="section-badge">Instant Clarity Engine ↗</div>
     </div>
 
-    <h2 class="section-title">Understand Your<br />Contract <span class="lime">at a Glance</span></h2>
-    <p class="section-sub">
-      We highlight key terms, risks &amp; clauses so you can grasp the essentials
-    </p>
+   <h2 class="section-title">
+  Way Smarter Reviews,<br />
+  <span class="lime">Faster&nbsp;Decisions</span>
+</h2>
+<p class="section-sub">
+  AI highlights key clauses, risks, and<br />
+  red&nbsp;flags so you can sign smarter.
+</p>
+
+
 
     <!-- ===== Insights ===== -->
     <section class="insight-section" data-aos="fade-up">
@@ -442,7 +479,7 @@
       </div>
     </section>
 
-    <!-- ===== FAQ ===== -->
+    <!-- ===== FAQ (unchanged) ===== -->
     <section class="faq-section" data-aos="fade-up">
       <h2 class="faq-title">Frequently Asked Questions</h2>
       <div class="faq-list">
@@ -490,50 +527,60 @@
   </div>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
+<footer class="site-footer">
+  <div class="footer-wrap">
+    <div class="footer-brandrow">
+      <div class="footer-logo">
         <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
         <span>SignSense</span>
       </div>
+      <div class="footer-copy">© 2025 SignSense. All rights reserved.</div>
+      <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
+    </div>
 
-      <div class="footer-columns">
-        <div class="footer-col">
-          <h4>Quick Menu</h4>
-          <a href="#how-it-works">How it Works</a>
-          <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener" id="footerLeaveReview">Leave Review</a>
-        </div>
+    <div class="footer-socials">
+      <a class="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
+      </a>
+      <a class="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
+      </a>
+      <a class="social-btn" href="https://www.instagram.com/signsense.io/" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
+      </a>
+    </div>
 
-        <div class="footer-col">
-          <h4>Information</h4>
-          <a href="contact.html">Contact</a>
-          <a href="index.html">Home</a>
-        </div>
-
-        <div class="footer-col socials">
-          <h4>Socials</h4>
-          <a href="#" target="_blank" rel="noopener">Instagram</a>
-          <a href="#" target="_blank" rel="noopener">YouTube</a>
-          <a href="#" target="_blank" rel="noopener">X</a>
-        </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Help</h4>
+        <a class="footer-link" href="contact.html">Contact us</a>
+        <a class="footer-link" href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
       </div>
-
-      <hr class="footer-sep" />
-
-      <div class="footer-links">
-        <a href="terms.html">Terms &amp; Conditions</a>
-        <a href="privacy.html">Privacy Policy</a>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
       </div>
-
-      <div class="footer-legal">
-        <div>For informational use only. Not legal advice.</div>
-        <div>© 2025 SignSense. All rights reserved.</div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a class="footer-link" href="terms.html">Terms of Service</a>
+        <a class="footer-link" href="privacy.html">Privacy Policy</a>
+        <a class="footer-link" href="cookies.html">Cookie Policy</a>
       </div>
     </div>
-  </footer>
 
-  <!-- Hidden input for “Review a Contract” mock -->
-  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
+    <div class="footer-bottom-space"></div>
+  </div>
+</footer>
+
+
+  <!-- Hidden input for “Review a Contract” (camera + files) -->
+  <input
+    id="contractFile"
+    type="file"
+    accept=".pdf,.doc,.docx,.txt,image/*"
+    capture="environment"
+    style="display:none"
+  />
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
@@ -820,7 +867,7 @@
       viewport.addEventListener('touchcancel', onPointerUp, { passive:true });
     })();
 
-    // ===== FAQ toggles
+    // ===== FAQ toggles (unchanged)
     document.querySelectorAll(".faq-item .faq-q").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const item = btn.parentElement;
@@ -831,53 +878,96 @@
       });
     });
 
-    // ===== CTA → file picker mock + analysis redirect
-    const triggers = [document.getElementById('ctaBtn')].filter(Boolean);
-    const input = document.getElementById('contractFile');
-    triggers.forEach(t => t.addEventListener('click', (e)=>{ e.preventDefault(); input.click(); }));
-    input.addEventListener('change', ()=>{
-      if (!input.files || !input.files.length) return;
-      const mock = {
-        languageOriginal: "en",
-        summary: [
-          "This contract is generally favorable with low overall risk.",
-          "Payment schedule and termination rights are standard.",
-          "Watch late-fee compounding and define 'material breach'.",
-        ],
-        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-        clauses: [
-          "Payment Terms — Net 30 with 2% per month late fee.",
-          "Scope of Work — Deliverables listed in Schedule A.",
-          "Termination — 30-day convenience; immediate for cause.",
-          "IP & Licensing — Client owns final assets; creator keeps tools.",
-        ],
-        issues: [
-          "Late fee compounding escalates costs on long delays.",
-          "Indemnity is one-sided; consider mutual or capped liability.",
-        ],
-        suggestions: [
-          "Add a 5–7 day grace period before late fees.",
-          "Define 'material breach' + 10-day cure period.",
-          "List milestones and acceptance criteria.",
-        ],
-        meters: { confidence: 75, favorability: 80, deadline: 18 },
-        translations: { en: {} },
-      };
-      localStorage.setItem("analysisData", JSON.stringify(mock));
-      window.location.href = "analysis.html";
-    });
+    // ===== CTA → file picker, then Role Picker → mock analysis redirect
+    (function(){
+      const cta = document.getElementById('ctaBtn');
+      const ctaWrap = document.getElementById('ctaWrap');
+      const roleUI = document.getElementById('rolePicker');
+      const input = document.getElementById('contractFile');
+      let pickedFile = null;
+      let chosenRole = null;
 
-    // ===== Leave a Review → open Tally
-    const leaveBtn = document.getElementById('leaveReview');
-    if (leaveBtn){
-      leaveBtn.addEventListener('click', ()=>{
-        window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
+      if (cta) {
+        cta.addEventListener('click', (e)=>{ e.preventDefault(); input.value=''; input.click(); });
+      }
+
+      input.addEventListener('change', ()=>{
+        if (!input.files || !input.files.length) return;
+        pickedFile = input.files[0];
+        if (ctaWrap) ctaWrap.style.display = 'none';
+        roleUI.hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
-    }
 
-    // Footer: "Leave Review" already links directly to Tally via href
-    // (No JS redirect needed anymore.)
+      roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          chosenRole = btn.dataset.role || 'signer';
+          if(!pickedFile){
+            alert('Please choose a contract file first.');
+            return;
+          }
+
+          // ---- MOCK ANALYSIS (same as previous mobile, unchanged) ----
+          const mock = {
+            languageOriginal: "en",
+            summary: [
+              "This contract is generally favorable with low overall risk.",
+              "Payment schedule and termination rights are standard.",
+              "Watch late-fee compounding and define 'material breach'.",
+            ],
+            risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+            clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+            clauses: [
+              "Payment Terms — Net 30 with 2% per month late fee.",
+              "Scope of Work — Deliverables listed in Schedule A.",
+              "Termination — 30-day convenience; immediate for cause.",
+              "IP & Licensing — Client owns final assets; creator keeps tools.",
+            ],
+            issues: [
+              "Late fee compounding escalates costs on long delays.",
+              "Indemnity is one-sided; consider mutual or capped liability.",
+            ],
+            suggestions: [
+              "Add a 5–7 day grace period before late fees.",
+              "Define 'material breach' + 10-day cure period.",
+              "List milestones and acceptance criteria.",
+            ],
+            meters: { confidence: 75, favorability: 80, deadline: 18 },
+            translations: { en: {} },
+          };
+
+          // Persist role (for analysis page UI choices)
+          localStorage.setItem("role", chosenRole);
+          if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
+          else localStorage.removeItem("hideConfidence");
+
+          localStorage.setItem("analysisData", JSON.stringify(mock));
+          localStorage.setItem("contractName", pickedFile.name || "Contract");
+          localStorage.setItem("detectedLang", "en");
+          localStorage.setItem("summary", mock.summary.join("\n\n"));
+          localStorage.setItem("risk", String(mock.risk.value));
+          localStorage.setItem("clarity", String(mock.clarity.value));
+          localStorage.setItem("compliance", "0");
+          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+          localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+
+          window.location.href = "analysis.html";
+        });
+      });
+
+      // Leave a Review
+      const leaveBtn = document.getElementById('leaveReview');
+      if (leaveBtn){
+        leaveBtn.addEventListener('click', ()=>{
+          window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
+        });
+      }
+      const footerLeave = document.getElementById('footerLeaveReview');
+      footerLeave?.addEventListener('click', (e)=>{ /* anchor has href already */ });
+    })();
   </script>
 </body>
 </html>
