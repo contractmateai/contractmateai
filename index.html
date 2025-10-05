@@ -581,6 +581,16 @@
   multiple
   style="display:none"
 />
+  <!-- Camera-only input (opens camera directly on mobile) -->
+<input
+  id="contractCamera"
+  type="file"
+  accept="image/*"
+  capture="environment"
+  multiple
+  style="display:none"
+/>
+
 
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
@@ -879,129 +889,179 @@
       });
     });
 
-  (function(){
-    const cta      = document.getElementById('ctaBtn');
-    const ctaWrap  = document.getElementById('ctaWrap');
-    const roleUI   = document.getElementById('rolePicker');
-    const input    = document.getElementById('contractFile');
+(function(){
+  const cta      = document.getElementById('ctaBtn');
+  const ctaWrap  = document.getElementById('ctaWrap');
+  const roleUI   = document.getElementById('rolePicker');
 
-    // simple counter under the button
-    const counterEl = document.createElement('div');
-    counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
-    ctaWrap?.appendChild(counterEl);
+  // two inputs: generic (shows sheet), camera (opens camera directly)
+  const inputGeneric = document.getElementById('contractFile');
+  const inputCamera  = document.getElementById('contractCamera');
 
-    // hold everything the user selects/captures until they’re done
-    let pickedFiles = [];  // up to 10
-    let chosenRole = null;
+  // simple counter under the button
+  const counterEl = document.createElement('div');
+  counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
+  ctaWrap?.appendChild(counterEl);
 
-    function resetPicker(){ input.value = ''; }
-    function updateCounter(){
-      counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : '';
+  let pickedFiles = [];  // up to 10
+  let chosenRole  = null;
+  let finished    = false;
+
+  function resetPicker(el){ if (el) el.value = ''; }
+  function updateCounter(){
+    counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : '';
+  }
+  function addFiles(list){
+    for (const f of Array.from(list)) {
+      if (pickedFiles.length >= 10) break;
+      pickedFiles.push(f);
     }
-    function addFiles(list){
-      for (const f of Array.from(list)) {
-        if (pickedFiles.length >= 10) break;
-        pickedFiles.push(f);
-      }
-      updateCounter();
-    }
+    updateCounter();
+  }
+  function finishPicking(){
+    if (finished) return;
+    finished = true;
+    if (ctaWrap) ctaWrap.style.display = 'none';
+    roleUI.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-    // open the sheet (Photo Library / Take Photo / Choose File)
-    cta?.addEventListener('click', (e)=>{
-      e.preventDefault();
-      resetPicker();
-      input.click();
-    });
+  // Custom "Add more?" modal with Cancel / Yes (returns Promise<boolean>)
+  function askAddMore(msg = 'Add more photos?'){
+    return new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+      const box = document.createElement('div');
+      box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+      box.innerHTML = `
+        <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+        <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+          <button id="am-cancel" style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">Cancel</button>
+          <button id="am-yes"    style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
+        </div>`;
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
 
-    // each time user picks or captures, we add and offer to add more (useful for "Take Photo")
-    input.addEventListener('change', ()=>{
-      if (!input.files || !input.files.length) return;
-
-      addFiles(input.files);
-
-      if (pickedFiles.length < 10) {
-        const more = confirm(`Added ${pickedFiles.length}. Add more? (up to 10)`);
-        if (more) { resetPicker(); input.click(); return; }
-      }
-
-      // user is done adding → reveal role picker once
-      if (ctaWrap) ctaWrap.style.display = 'none';
-      roleUI.hidden = false;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    // role selection (unchanged except we guard for at least one file)
-    roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        chosenRole = btn.dataset.role || 'signer';
-
-        if (!pickedFiles.length) {
-          alert('Please add at least one file or photo.');
-          return;
-        }
-
-        // ---- MOCK ANALYSIS (KEEP YOUR EXISTING OBJECT EXACTLY AS IS) ----
-        const mock = {
-          languageOriginal: "en",
-          summary: [
-            "This contract is generally favorable with low overall risk.",
-            "Payment schedule and termination rights are standard.",
-            "Watch late-fee compounding and define 'material breach'.",
-          ],
-          risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
-          clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
-          clauses: [
-            "Payment Terms — Net 30 with 2% per month late fee.",
-            "Scope of Work — Deliverables listed in Schedule A.",
-            "Termination — 30-day convenience; immediate for cause.",
-            "IP & Licensing — Client owns final assets; creator keeps tools.",
-          ],
-          issues: [
-            "Late fee compounding escalates costs on long delays.",
-            "Indemnity is one-sided; consider mutual or capped liability.",
-          ],
-          suggestions: [
-            "Add a 5–7 day grace period before late fees.",
-            "Define 'material breach' + 10-day cure period.",
-            "List milestones and acceptance criteria.",
-          ],
-          meters: { confidence: 75, favorability: 80, deadline: 18 },
-          translations: { en: {} },
-        };
-
-        // persist role & selection (use first file for display name)
-        localStorage.setItem("role", chosenRole);
-        if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
-        else localStorage.removeItem("hideConfidence");
-
-        localStorage.setItem("analysisData", JSON.stringify(mock));
-        localStorage.setItem("contractName", pickedFiles[0].name || "Contract");
-        localStorage.setItem("detectedLang", "en");
-        localStorage.setItem("summary", mock.summary.join("\n\n"));
-        localStorage.setItem("risk", String(mock.risk.value));
-        localStorage.setItem("clarity", String(mock.clarity.value));
-        localStorage.setItem("compliance", "0");
-        localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-        localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-        localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
-        localStorage.setItem("numSelectedFiles", String(pickedFiles.length));
-
-        window.location.href = "analysis.html";
+      const cleanup = (val)=>{ overlay.remove(); resolve(val); };
+      box.querySelector('#am-cancel').addEventListener('click', ()=>cleanup(false));
+      box.querySelector('#am-yes').addEventListener('click', ()=>cleanup(true));
+      overlay.addEventListener('click', (e)=>{ if(e.target===overlay) cleanup(false); });
+      document.addEventListener('keydown', function onKey(e){
+        if(e.key==='Escape'){ document.removeEventListener('keydown', onKey); cleanup(false); }
       });
     });
+  }
 
-      // Leave a Review
-      const leaveBtn = document.getElementById('leaveReview');
-      if (leaveBtn){
-        leaveBtn.addEventListener('click', ()=>{
-          window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
-        });
+  async function maybeAddMoreAndReopenCamera(){
+    if (pickedFiles.length >= 10) { finishPicking(); return; }
+    const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
+    if (yes) {
+      // open CAMERA directly (not the sheet)
+      resetPicker(inputCamera);
+      inputCamera.click();
+    } else {
+      finishPicking();
+    }
+  }
+
+  // First click → open the 3-option sheet
+  cta?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    finished = false;
+    pickedFiles = [];
+    updateCounter();
+    resetPicker(inputGeneric);
+    inputGeneric.click();
+  });
+
+  // Returned from the 3-option picker (Photo Library / Take Photo / Files)
+  inputGeneric.addEventListener('change', ()=>{
+    if (!inputGeneric.files || !inputGeneric.files.length) return; // user cancelled
+    addFiles(inputGeneric.files);
+    maybeAddMoreAndReopenCamera();  // Yes → jump straight to CAMERA
+  });
+
+  // Returned from camera-only input
+  inputCamera.addEventListener('change', ()=>{
+    // If user cancels camera, FileList is empty or no change event—just finish
+    if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; }
+    addFiles(inputCamera.files);
+    maybeAddMoreAndReopenCamera();  // loop until 10 or Cancel
+  });
+
+  // Role selection (unchanged except we guard for at least one file)
+  roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      chosenRole = btn.dataset.role || 'signer';
+
+      if (!pickedFiles.length) {
+        alert('Please add at least one file or photo.');
+        return;
       }
-      const footerLeave = document.getElementById('footerLeaveReview');
-      footerLeave?.addEventListener('click', (e)=>{ /* anchor has href already */ });
-    })();
+
+      // ---- MOCK ANALYSIS (unchanged) ----
+      const mock = {
+        languageOriginal: "en",
+        summary: [
+          "This contract is generally favorable with low overall risk.",
+          "Payment schedule and termination rights are standard.",
+          "Watch late-fee compounding and define 'material breach'.",
+        ],
+        risk: { value: 25, note: "Risks mainly around late fees and indemnity scope." },
+        clarity: { value: 80, note: "Most clauses are explicit; a few terms undefined." },
+        clauses: [
+          "Payment Terms — Net 30 with 2% per month late fee.",
+          "Scope of Work — Deliverables listed in Schedule A.",
+          "Termination — 30-day convenience; immediate for cause.",
+          "IP & Licensing — Client owns final assets; creator keeps tools.",
+        ],
+        issues: [
+          "Late fee compounding escalates costs on long delays.",
+          "Indemnity is one-sided; consider mutual or capped liability.",
+        ],
+        suggestions: [
+          "Add a 5–7 day grace period before late fees.",
+          "Define 'material breach' + 10-day cure period.",
+          "List milestones and acceptance criteria.",
+        ],
+        meters: { confidence: 75, favorability: 80, deadline: 18 },
+        translations: { en: {} },
+      };
+
+      localStorage.setItem("role", chosenRole);
+      if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
+      else localStorage.removeItem("hideConfidence");
+
+      localStorage.setItem("analysisData", JSON.stringify(mock));
+      localStorage.setItem("contractName", pickedFiles[0]?.name || "Contract");
+      localStorage.setItem("detectedLang", "en");
+      localStorage.setItem("summary", mock.summary.join("\n\n"));
+      localStorage.setItem("risk", String(mock.risk.value));
+      localStorage.setItem("clarity", String(mock.clarity.value));
+      localStorage.setItem("compliance", "0");
+      localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
+      localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
+      localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+      localStorage.setItem("numSelectedFiles", String(pickedFiles.length));
+
+      window.location.href = "analysis.html";
+    });
+  });
+
+  // Leave a Review (unchanged)
+  const leaveBtn = document.getElementById('leaveReview');
+  if (leaveBtn){
+    leaveBtn.addEventListener('click', ()=>{
+      window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
+    });
+  }
+  const footerLeave = document.getElementById('footerLeaveReview');
+  footerLeave?.addEventListener('click', (e)=>{ /* anchor has href already */ });
+})();
+
   </script>
 </body>
 </html>
