@@ -1,1 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SignSense — Cookie Policy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
+  <!-- Fonts: Inter + Poppins (match other pages; Poppins sitewide) -->
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-deep:#0d011b;
+      --bg-mid:#000000;
+      --text:#fff9f9;
+      --muted:#d8cccc;
+      --lime:#aafe2a;
+
+      /* Top bar + panel (match contact/privacy/terms) */
+      --bar:#04040e;
+      --bar-border:#232323;
+      --panel:#04040e;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; }
+    body{
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
+        linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
+      background-attachment:fixed,fixed;
+    }
+
+    /* ===== Floating Top Bar (identical to others) ===== */
+    .topbar-wrap{
+      position:fixed; top:18px; left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; pointer-events:none;
+      transition:transform .28s ease, opacity .25s ease;
+    }
+    .topbar-wrap.hide{ transform:translateY(-140%); opacity:0; }
+    .topbar{
+      pointer-events:auto;
+      width:min(1120px, calc(100% - 28px));
+      min-height:68px;
+      padding:10px 16px;
+      background:var(--bar);
+      border:1px solid var(--bar-border);
+      border-radius:16px;
+      display:flex; align-items:center; justify-content:space-between;
+      box-shadow:0 8px 30px rgba(0,0,0,.28);
+      transition:border-radius .18s ease, border-color .18s ease;
+    }
+    .topbar.merged{
+      border-bottom-left-radius:0;
+      border-bottom-right-radius:0;
+      border-bottom-color:transparent;
+    }
+    .topbar-left{ display:flex; align-items:center; gap:10px; }
+    .topbar-logo{ height:34px; width:auto; border-radius:8px; }
+    .topbar-brand{ color:#fff; text-decoration:none; font-size:26px; font-weight:400; }
+
+    .topbar-nav a{ color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400; }
+    .topbar-nav a:hover{ opacity:.85; }
+
+    /* burger */
+    .menu-toggle{
+      display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer;
+    }
+    .menu-toggle .bar{
+      position:absolute; left:0; right:0; height:2px; background:#ffffff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease;
+    }
+    .menu-toggle .b1{ top:3px; }
+    .menu-toggle .b2{ top:11px; }
+    .menu-toggle .b3{ top:19px; }
+    .menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
+    .menu-toggle.open .b2{ opacity:0; }
+    .menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
+
+    /* attached dropdown */
+    .menu-overlay{
+      position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease;
+      z-index:999;
+    }
+    .menu-panel{
+      position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
+      width:min(720px, calc(100% - 28px));
+      background:var(--panel);
+      border:1px solid var(--bar-border); border-top:none;
+      border-radius:0 0 16px 16px;
+      padding:18px 22px 22px;
+      box-shadow:0 20px 34px rgba(0,0,0,.55);
+      z-index:1001; pointer-events:none;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+    .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
+    .menu-overlay.show{ opacity:1; pointer-events:auto; }
+
+    .menu-list{ margin-top:2px; }
+    .menu-item{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 4px; font-size:24px; color:#fff; text-decoration:none;
+    }
+    .menu-item .chev{ opacity:.9; }
+
+    .menu-disclaimer{
+      text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6;
+      font-size:16px;
+    }
+
+    .hero-wrapper{ margin-top:82px; }
+
+    /* ===== Page Hero ===== */
+    .page-hero{
+      text-align:center; padding:64px 16px 18px;
+    }
+    .page-hero h1{
+      font-family:"Shoika", sans-serif; font-weight:400;
+      font-size: clamp(36px, 8.6vw, 58px); line-height:1.1;
+    }
+    .page-hero .sub{ color:var(--muted); margin-top:10px; font-size:16px; }
+
+    /* ===== Content ===== */
+    .content{
+      max-width:960px; margin:0 auto; padding:0 16px 64px;
+    }
+    .intro-title{ font-size:28px; margin:10px 0 14px; }
+    h2{ font-size:26px; margin:28px 0 12px; font-weight:600; }
+    p, li{ color:var(--muted); font-size:18px; line-height:1.7; }
+    ul{ padding-left:20px; }
+    code{ background:#191624; padding:1px 6px; border-radius:6px; font-size:14px; }
+
+    /* ===== FOOTER (compact, identical to other pages) ===== */
+    .site-footer{
+      background:#0a0a0a;
+      border-top:1px solid var(--bar-border);
+      padding:22px 14px 30px;
+      color:#fff;
+    }
+    .footer-wrap{ max-width:980px; margin:0 auto; }
+    .footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
+    .footer-logo{ display:flex; align-items:flex-start; gap:6px; }
+    .footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
+    .footer-logo span{ font-size:22px; font-weight:400; }
+    .footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
+    .footer-disclaimer{ font-size:12px; color:#bdbdbd; }
+    .footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
+    .social-btn{
+      width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
+      transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
+    }
+    .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
+    .footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+    .footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+    .footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
+    .footer-link:hover{ color:#ffffff; text-decoration:none; }
+    .footer-bottom-space{ height:2px; }
+
+    @media (max-width:980px){
+      .topbar-nav{ display:none; }
+      .menu-toggle{ display:block; }
+    }
+    @media (max-width: 340px){
+      .footer-logo span{ font-size:20px; }
+      .footer-copy{ font-size:14px; }
+      .footer-link{ font-size:13px; }
+    }
+    /* === Fix: stop visited links turning purple === */
+a,
+a:visited,
+.topbar-nav a,
+.topbar-nav a:visited,
+.menu-item,
+.menu-item:visited,
+.footer-link,
+.footer-link:visited,
+.content a,
+.content a:visited {
+  color: #d8cccc;              /* keep same color for visited + unvisited */
+  text-decoration: underline;  /* optional: matches your style */
+}
+
+a:hover,
+.topbar-nav a:hover,
+.menu-item:hover,
+.footer-link:hover,
+.content a:hover {
+  opacity: .9;
+}
+
+  </style>
+</head>
+<body>
+  <!-- ===== Floating Top Bar (same as contact/privacy/terms) ===== -->
+  <div class="topbar-wrap" id="topbarWrap">
+    <div class="topbar" id="topbar">
+      <div class="topbar-left">
+        <a href="index.html"><img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" /></a>
+        <a href="index.html" class="topbar-brand">SignSense</a>
+      </div>
+
+      <nav class="topbar-nav">
+        <a href="https://youtube.com" target="_blank" rel="noopener">See How It Works</a>
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <span class="bar b1"></span>
+        <span class="bar b2"></span>
+        <span class="bar b3"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overlay + attached dropdown panel -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="menu-panel" id="menuPanel" aria-hidden="true">
+    <nav class="menu-list">
+      <a class="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span class="chev">›</span></a>
+      <a class="menu-item" href="index.html">Home <span class="chev">›</span></a>
+      <a class="menu-item" href="contact.html">Contact <span class="chev">›</span></a>
+    </nav>
+    <div class="menu-disclaimer">
+      <div>Not legal advice.</div>
+      <div>© 2025 SignSense. All rights reserved.</div>
+    </div>
+  </div>
+
+  <div class="hero-wrapper">
+    <!-- ===== Page Hero ===== -->
+    <section class="page-hero" data-aos="fade-up">
+      <h1>Cookie Policy</h1>
+      <div class="sub">Last Updated: 05 October 2025</div>
+    </section>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="content" data-aos="fade-up">
+      <div class="intro-title">How SignSense uses cookies & local storage</div>
+      <p>This Cookie Policy explains how SignSense (“we”, “our”, “us”) uses cookies and similar technologies (like localStorage and sessionStorage) on our website. For how we process personal data, see our <a href="privacy.html">Privacy Policy</a>.</p>
+
+      <h2>1) What are cookies & similar tech?</h2>
+      <p><strong>Cookies</strong> are small text files placed on your device by your browser. We also use <strong>localStorage</strong> and <strong>sessionStorage</strong>, which store data in your browser to support site functionality.</p>
+
+      <h2>2) What we use them for</h2>
+      <ul>
+        <li><strong>Strictly Necessary (Essential):</strong> Core features like keeping the menu state stable or remembering basic preferences. These cannot be turned off in our systems.</li>
+        <li><strong>Functional:</strong> Quality-of-life features, e.g., temporarily keeping a draft of your uploaded contract text (in your browser only) so you don’t lose it if you navigate away.</li>
+        <li><strong>Analytics (optional):</strong> Privacy-focused analytics (e.g., page views and performance). We do not use them for advertising or profiling.</li>
+      </ul>
+
+      <h2>3) Examples of storage we may use (browser-only)</h2>
+      <ul>
+        <li><code>ss_menu_open</code> (sessionStorage): remembers if the mobile menu is open. Expires when you close the tab.</li>
+        <li><code>ss_upload_draft</code> (localStorage): optional temporary draft of text before analysis to prevent accidental loss. You can clear it anytime via your browser settings.</li>
+        <li><code>ss_consent</code> (localStorage or cookie): your cookie preferences/consent choice so we don’t ask repeatedly.</li>
+      </ul>
+
+      <h2>4) Third-party services</h2>
+      <p>We may use privacy-respecting analytics or infrastructure that set their own cookies. We do not run advertising cookies. See our <a href="privacy.html">Privacy Policy</a> for details about data processing with third parties (e.g., AI providers strictly for analysis).</p>
+
+      <h2>5) Managing your choices</h2>
+      <ul>
+        <li><strong>Consent banner:</strong> On your first visit, you can accept or manage preferences. Essential items are always on because the site won’t work without them.</li>
+        <li><strong>Browser controls:</strong> You can block or delete cookies and clear site data (including localStorage/sessionStorage) via your browser settings.</li>
+        <li><strong>Analytics opt-out:</strong> If enabled, you can decline analytics in the banner or by clearing consent (<em>Manage Cookies</em> link, if present).</li>
+      </ul>
+
+      <h2>6) Your rights (GDPR/EEA)</h2>
+      <p>If you are in the EEA/UK, essential storage relies on our legitimate interests to provide the service, while optional categories rely on your consent. You can withdraw consent at any time using the banner/preferences. For data rights requests, contact <strong>support@signsense.io</strong>.</p>
+
+      <h2>7) Cookie/Storage table (illustrative)</h2>
+      <ul>
+        <li><strong>Category:</strong> Essential — <strong>Name:</strong> <code>ss_menu_open</code> — <strong>Type:</strong> sessionStorage — <strong>Purpose:</strong> UI menu state — <strong>Duration:</strong> session</li>
+        <li><strong>Category:</strong> Functional — <strong>Name:</strong> <code>ss_upload_draft</code> — <strong>Type:</strong> localStorage — <strong>Purpose:</strong> preserve draft before analysis — <strong>Duration:</strong> until cleared</li>
+        <li><strong>Category:</strong> Consent — <strong>Name:</strong> <code>ss_consent</code> — <strong>Type:</strong> localStorage/cookie — <strong>Purpose:</strong> remember preferences — <strong>Duration:</strong> up to 12 months</li>
+        <li><strong>Category:</strong> Analytics (optional) — <strong>Name:</strong> varies by provider — <strong>Type:</strong> cookie — <strong>Purpose:</strong> usage metrics — <strong>Duration:</strong> varies</li>
+      </ul>
+
+      <h2>8) Do Not Track</h2>
+      <p>Some browsers offer a “Do Not Track” (DNT) signal. Because there’s no common industry standard, we don’t respond to DNT at this time. You can still manage cookies with the options above.</p>
+
+      <h2>9) Updates to this policy</h2>
+      <p>We may update this page as our site evolves. The “Last Updated” date at the top reflects the latest version.</p>
+
+      <h2>10) Contact</h2>
+      <p>Questions? Email us at <strong>support@signsense.io</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER (compact — identical to other pages) ===== -->
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <div class="footer-brandrow">
+        <div class="footer-logo">
+          <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+          <span>SignSense</span>
+        </div>
+        <div class="footer-copy">© 2025 SignSense. All rights reserved.</div>
+        <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
+      </div>
+
+      <div class="footer-socials">
+        <a class="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
+        </a>
+        <a class="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
+        </a>
+        <a class="social-btn" href="https://www.instagram.com/signsense.io/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
+        </a>
+      </div>
+
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Help</h4>
+          <a class="footer-link" href="contact.html">Contact us</a>
+          <a class="footer-link" href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a class="footer-link" href="terms.html">Terms of Service</a>
+          <a class="footer-link" href="privacy.html">Privacy Policy</a>
+          <a class="footer-link" href="cookies.html">Cookie Policy</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-space"></div>
+    </div>
+  </footer>
+
+  <!-- Hidden input for parity (not used here) -->
+  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none" />
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ once:true });
+
+    // ===== Attach panel right under the bar (identical behavior)
+    const topbarWrap = document.getElementById('topbarWrap');
+    const topbar = document.getElementById('topbar');
+    const menuToggle = document.getElementById('menuToggle');
+    const menuPanel  = document.getElementById('menuPanel');
+    const menuOverlay= document.getElementById('menuOverlay');
+
+    function positionPanel(){
+      const r = topbar.getBoundingClientRect();
+      menuPanel.style.top = (r.top + r.height + 0) + 'px';
+    }
+    positionPanel();
+    window.addEventListener('resize', positionPanel);
+
+    function openMenu(){
+      positionPanel();
+      menuPanel.classList.add('open');
+      menuOverlay.classList.add('show');
+      menuToggle.classList.add('open');
+      topbar.classList.add('merged');
+    }
+    function closeMenu(){
+      menuPanel.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      menuToggle.classList.remove('open');
+      topbar.classList.remove('merged');
+    }
+    menuToggle.addEventListener('click', () => {
+      if(menuPanel.classList.contains('open')) closeMenu(); else openMenu();
+    });
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+
+    // Close menu on scroll
+    window.addEventListener('scroll', () => {
+      if (menuPanel.classList.contains('open')) closeMenu();
+    }, { passive:true });
+
+    // Hide/show bar on scroll
+    (function(){
+      let lastY = window.scrollY, ticking=false;
+      function onScroll(){
+        const y = window.scrollY;
+        if (y > lastY && y > 80) topbarWrap.classList.add('hide');
+        else topbarWrap.classList.remove('hide');
+        lastY = y <= 0 ? 0 : y; ticking=false;
+      }
+      window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }}, {passive:true});
+    })();
+  </script>
+</body>
+</html>
 
