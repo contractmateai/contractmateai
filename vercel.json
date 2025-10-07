@@ -1,8 +1,9 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "installCommand": null,
-  "framework": null,
-  "trailingSlash": false,
-  "cleanUrls": true
+  "functions": {},
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }
