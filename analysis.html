@@ -1271,24 +1271,11 @@
         const pdfGenerator = new PDFGenerator();
 
         /* Todo: remove this test fn */
-        const onTestPdf = async () => {
-          const lang = currentLang;
-          const data = getLocalizedContent(lang);
-
-          // Add meter values to the data object for PDF generation
-          data.meters = normalized.meters;
-
-          try {
-            await pdfGenerator.generatePDF("SignSense_Report", data, lang);
-          } catch (e) {
-            console.error(e);
-            alert("Could not generate the PDF.");
-          }
-        };
+   
 
         /* Todo: remove cmt */
-        $("#downloadBtn").addEventListener("click", onTestPdf);
-        // $("#downloadBtn").addEventListener("click", openModal);
+     
+        $("#downloadBtn").addEventListener("click", openModal);
         $("#emailCancel").addEventListener("click", closeModal);
 
         const validEmail = (e) =>
