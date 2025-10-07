@@ -1,1004 +1,1486 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>SignSense — Analysis</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="utf-8" />
+    <title>SignSense — Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- UI font (site UI can stay Inter). PDF uses Poppins via jsPDF loader below -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
-  <!-- jsPDF -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <!-- UI font (site UI can stay Inter). PDF uses Poppins via jsPDF loader below -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <!-- jsPDF -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <!-- PDF Generator Module -->
+    <script src="js/pdf-generator.js"></script>
 
-  <style>
-    :root{
-      --bg:#0e0c13; --card:#1c1b22; --border:#3b3b3b; --white:#ffffff; --muted:#bdbdbd;
-      --green:#00ff65; --orange:#df911a; --red:#fe0000; --black:#000000;
-      --radius:21px; --gap:18px; --sidebar:300px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--white);font:400 16px/1.7 Inter,system-ui,Segoe UI,Roboto,Arial}
-    .layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+    <style>
+      :root {
+        --bg: #0e0c13;
+        --card: #1c1b22;
+        --border: #3b3b3b;
+        --white: #ffffff;
+        --muted: #bdbdbd;
+        --green: #00ff65;
+        --orange: #df911a;
+        --red: #fe0000;
+        --black: #000000;
+        --radius: 21px;
+        --gap: 18px;
+        --sidebar: 300px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--white);
+        font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: var(--sidebar) 1fr;
+        min-height: 100vh;
+      }
 
-    /* ===== SIDEBAR ===== */
-    .sidebar{background:#0f0e14;border-right:1px solid var(--border);padding:12px 16px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:16px}
-    .brand{padding:0 2px 0 18px}
-    .brand a{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:var(--white)}
-    .brand img{width:34px;height:34px}
-    .brand span{font-size:24px;color:var(--white);font-weight:400}
-    .nav{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-    .nav a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid transparent;transition:border-color .2s ease;font-size:19px;}
-    .nav a img.icon{width:30px;height:30px;opacity:.95}
-    .nav a img.arr{width:20px;height:20px;opacity:.9}
-    .nav a.active{background:#181620;border:1px solid var(--border);color:var(--white)}
-    .nav a:hover{background:transparent;border-color:var(--border);color:var(--white)}
-    .nav a.active:hover{background:#181620;border-color:var(--border)}
-    .push{flex:1}
-    .end-only{display:none;opacity:0;transform:translateY(8px)}
-    .legal,.copy,.copy2{color:var(--muted);font-size:15px;line-height:1.6}
-    .footer-sep{height:1px;background:var(--border);margin:10px 0}
+      /* ===== SIDEBAR ===== */
+      .sidebar {
+        background: #0f0e14;
+        border-right: 1px solid var(--border);
+        padding: 12px 16px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .brand {
+        padding: 0 2px 0 18px;
+      }
+      .brand a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 52px;
+        text-decoration: none;
+        color: var(--white);
+      }
+      .brand img {
+        width: 34px;
+        height: 34px;
+      }
+      .brand span {
+        font-size: 24px;
+        color: var(--white);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .nav a {
+        text-decoration: none;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 18px;
+        border-radius: 16px;
+        border: 1px solid transparent;
+        transition: border-color 0.2s ease;
+        font-size: 19px;
+      }
+      .nav a img.icon {
+        width: 30px;
+        height: 30px;
+        opacity: 0.95;
+      }
+      .nav a img.arr {
+        width: 20px;
+        height: 20px;
+        opacity: 0.9;
+      }
+      .nav a.active {
+        background: #181620;
+        border: 1px solid var(--border);
+        color: var(--white);
+      }
+      .nav a:hover {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--white);
+      }
+      .nav a.active:hover {
+        background: #181620;
+        border-color: var(--border);
+      }
+      .push {
+        flex: 1;
+      }
+      .end-only {
+        display: none;
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .legal,
+      .copy,
+      .copy2 {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .footer-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 0;
+      }
 
-    /* ===== MAIN ===== */
-    .main{padding:0 20px 140px;display:grid;grid-template-rows:auto auto 1fr;gap:12px}
-    .topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:8px 6px 10px;height:64px;border-bottom:1px solid var(--border)}
-    .top-left{display:flex;align-items:center;gap:12px}
-    .top-title{font-size:20px;color:var(--white);font-weight:400}
+      /* ===== MAIN ===== */
+      .main {
+        padding: 0 20px 140px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 12px;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--bg);
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 8px 6px 10px;
+        height: 64px;
+        border-bottom: 1px solid var(--border);
+      }
+      .top-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .top-title {
+        font-size: 20px;
+        color: var(--white);
+        font-weight: 400;
+      }
 
-    .doc-title{display:flex;align-items:center;gap:8px;padding:2px 6px 0 6px}
-    .doc-title .label{font-size:18px;color:var(--muted);font-weight:400}
-    .doc-title .value{font-size:18px;color:var(--muted);font-weight:400}
+      .doc-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 2px 6px 0 6px;
+      }
+      .doc-title .label {
+        font-size: 18px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .doc-title .value {
+        font-size: 18px;
+        color: var(--muted);
+        font-weight: 400;
+      }
 
-    .lang{position:relative;padding:6px 4px}
-    .lang-btn{display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--white);font:400 20px/1 Inter;cursor:pointer;padding:6px 10px;min-width:40px;user-select:none}
-    .lang-btn #langNow{letter-spacing:.6px}
-    .lang-btn .caret{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff;opacity:.9}
-    .lang-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border);border-radius:12px;min-width:240px;max-height:260px;overflow:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:6px;scrollbar-width:thin;scrollbar-color:#6a6a6a transparent}
-    .lang.open .lang-menu{display:block}
-    .lang-menu::-webkit-scrollbar{width:6px}
-    .lang-menu::-webkit-scrollbar-thumb{background:#6a6a6a;border-radius:10px}
-    .lang-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;color:var(--white);cursor:pointer}
-    .lang-item:hover{background:#17161e}
+      .lang {
+        position: relative;
+        padding: 6px 4px;
+      }
+      .lang-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        border: none;
+        color: var(--white);
+        font: 400 20px/1 Inter;
+        cursor: pointer;
+        padding: 6px 10px;
+        min-width: 40px;
+        user-select: none;
+      }
+      .lang-btn #langNow {
+        letter-spacing: 0.6px;
+      }
+      .lang-btn .caret {
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 7px solid #fff;
+        opacity: 0.9;
+      }
+      .lang-menu {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 8px);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        min-width: 240px;
+        max-height: 260px;
+        overflow: auto;
+        display: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        padding: 6px;
+        scrollbar-width: thin;
+        scrollbar-color: #6a6a6a transparent;
+      }
+      .lang.open .lang-menu {
+        display: block;
+      }
+      .lang-menu::-webkit-scrollbar {
+        width: 6px;
+      }
+      .lang-menu::-webkit-scrollbar-thumb {
+        background: #6a6a6a;
+        border-radius: 10px;
+      }
+      .lang-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border-radius: 10px;
+        color: var(--white);
+        cursor: pointer;
+      }
+      .lang-item:hover {
+        background: #17161e;
+      }
 
-    .grid{display:grid;grid-template-columns:minmax(560px,1.25fr) minmax(560px,1fr);gap:var(--gap);align-items:start;margin-top:6px}
-    .left,.right{display:flex;flex-direction:column;gap:var(--gap)}
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr);
+        gap: var(--gap);
+        align-items: start;
+        margin-top: 6px;
+      }
+      .left,
+      .right {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+      }
 
-    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
-    .fade-in{animation:fadeIn .8s ease forwards}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 20px;opacity:0;transform:translateY(8px)}
-    .card h3{margin:0 0 16px;display:flex;align-items:center;gap:12px;font-size:24px;color:var(--white);font-weight:400}
-    .card h3 img{width:30px;height:30px}
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.8s ease forwards;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 18px 20px;
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .card h3 {
+        margin: 0 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px;
+        color: var(--white);
+        font-weight: 400;
+      }
+      .card h3 img {
+        width: 30px;
+        height: 30px;
+      }
 
-    .list{display:flex;flex-direction:column;gap:16px}
-    .list p{margin:0;color:var(--muted);font-size:20px;overflow-wrap:anywhere;word-break:break-word}
-    #summaryText:empty,#issuesList:empty,#suggestionsList:empty,#clausesList:empty{min-height:72px}
-    #riskNote:empty,#clarNote:empty{min-height:24px}
-    #scoreCard .score-remark:empty{min-height:40px}
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .list p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 20px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      #summaryText:empty,
+      #issuesList:empty,
+      #suggestionsList:empty,
+      #clausesList:empty {
+        min-height: 72px;
+      }
+      #riskNote:empty,
+      #clarNote:empty {
+        min-height: 24px;
+      }
+      #scoreCard .score-remark:empty {
+        min-height: 40px;
+      }
 
-    .bullets{margin:0;color:var(--muted);font-size:20px;padding-left:22px;list-style:disc}
-    .bullets li{margin:0 0 12px}
+      .bullets {
+        margin: 0;
+        color: var(--muted);
+        font-size: 20px;
+        padding-left: 22px;
+        list-style: disc;
+      }
+      .bullets li {
+        margin: 0 0 12px;
+      }
 
-    .numbered{counter-reset:item}
-    .numbered p{position:relative;padding-left:26px}
-    .numbered p::before{counter-increment:item;content:counter(item) ".";position:absolute;left:0;top:0;color:var(--muted)}
+      .numbered {
+        counter-reset: item;
+      }
+      .numbered p {
+        position: relative;
+        padding-left: 26px;
+      }
+      .numbered p::before {
+        counter-increment: item;
+        content: counter(item) ".";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--muted);
+      }
 
-    .meter-block{display:flex;flex-direction:column;gap:10px}
-    .meter-head{display:flex;align-items:center;justify-content:space-between}
-    .meter-title{display:flex;align-items:center;gap:12px;font-size:22px}
-    .meter-title img{width:32px;height:32px}
-    .meter{height:10px;border-radius:999px;background:var(--black);overflow:hidden}
-    .fill{height:100%;width:0%;transition:width 1.6s ease;border-radius:999px}
+      .meter-block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .meter-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .meter-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+      }
+      .meter-title img {
+        width: 32px;
+        height: 32px;
+      }
+      .meter {
+        height: 10px;
+        border-radius: 999px;
+        background: var(--black);
+        overflow: hidden;
+      }
+      .fill {
+        height: 100%;
+        width: 0%;
+        transition: width 1.6s ease;
+        border-radius: 999px;
+      }
 
-    .hcard{display:flex;gap:16px;align-items:center}
-    .circle{width:160px;height:160px;position:relative;display:grid;place-items:center;flex:0 0 160px}
-    .circle svg{transform:rotate(-90deg)}
-    .circle .val{position:absolute;font-weight:400;font-size:34px;color:var(--white)}
-    .circle circle.track{stroke:var(--black);stroke-width:12;fill:none}
-    .circle circle.arc{stroke-width:12;fill:none;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440}
-    .htext{flex:1;display:flex;flex-direction:column;gap:8px}
-    .muted{color:var(--muted);font-size:18px}
-    .status{display:flex;align-items:center;gap:8px;margin-top:8px}
-    .status .dot{width:10px;height:10px;border-radius:2px;background:var(--green)}
-    .status span{font-size:17px;color:var(--white);font-weight:400}
+      .hcard {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .circle {
+        width: 160px;
+        height: 160px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        flex: 0 0 160px;
+      }
+      .circle svg {
+        transform: rotate(-90deg);
+      }
+      .circle .val {
+        position: absolute;
+        font-weight: 400;
+        font-size: 34px;
+        color: var(--white);
+      }
+      .circle circle.track {
+        stroke: var(--black);
+        stroke-width: 12;
+        fill: none;
+      }
+      .circle circle.arc {
+        stroke-width: 12;
+        fill: none;
+        stroke-linecap: round;
+        stroke-dasharray: 440;
+        stroke-dashoffset: 440;
+      }
+      .htext {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 18px;
+      }
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .status .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background: var(--green);
+      }
+      .status span {
+        font-size: 17px;
+        color: var(--white);
+        font-weight: 400;
+      }
 
-    #scoreCard{margin-top:12px}
-    #confRightCard{margin-top:12px}
-    #summaryCard,#riskCard,#clarCard,#profCard,#favCard,#deadCard,#issuesCard,#clausesCard,#suggestionsCard,#scoreCard,#confRightCard{will-change:transform,opacity}
+      #scoreCard {
+        margin-top: 12px;
+      }
+      #confRightCard {
+        margin-top: 12px;
+      }
+      #summaryCard,
+      #riskCard,
+      #clarCard,
+      #profCard,
+      #favCard,
+      #deadCard,
+      #issuesCard,
+      #clausesCard,
+      #suggestionsCard,
+      #scoreCard,
+      #confRightCard {
+        will-change: transform, opacity;
+      }
 
-    #scoreCard .score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
-    #scoreCard .score-pct{font-size:42px}
-    .score-side{flex:1;display:flex;flex-direction:column;gap:14px}
-    .score-remark{font-size:20px;color:var(--muted)}
-    .score-bar{position:relative;height:22px;border-radius:14px;background:linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%);border:1px solid #2f2f2f;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);width:100%}
-    .score-ind{position:absolute;top:-6px;height:34px;width:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6)}
-    .score-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
+      #scoreCard .score-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #scoreCard .score-pct {
+        font-size: 42px;
+      }
+      .score-side {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .score-remark {
+        font-size: 20px;
+        color: var(--muted);
+      }
+      .score-bar {
+        position: relative;
+        height: 22px;
+        border-radius: 14px;
+        background: linear-gradient(
+          90deg,
+          #ff6b6b 0%,
+          #ffd166 45%,
+          #00e676 100%
+        );
+        border: 1px solid #2f2f2f;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        width: 100%;
+      }
+      .score-ind {
+        position: absolute;
+        top: -6px;
+        height: 34px;
+        width: 3px;
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      }
+      .score-scale {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        color: var(--muted);
+      }
 
-    .download-wrap{position:fixed;left:var(--sidebar);right:0;bottom:34px;display:none;justify-content:center;z-index:9;opacity:0;transform:translateY(8px)}
-    .download{background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:18px 32px;display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:19px;box-shadow:0 6px 28px rgba(0,0,0,.28)}
-    .download:hover{filter:brightness(1.03)}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
-    .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px 18px 16px;width:min(480px,92vw)}
-    .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
-    .modal-row{display:flex;gap:10px;margin-top:12px}
-    .input{flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter}
-    .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
-    .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
+      .download-wrap {
+        position: fixed;
+        left: var(--sidebar);
+        right: 0;
+        bottom: 34px;
+        display: none;
+        justify-content: center;
+        z-index: 9;
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .download {
+        background: #f2f9fe;
+        color: #000;
+        border: 1px solid #cfcfcf;
+        border-radius: 16px;
+        padding: 18px 32px;
+        display: inline-flex;
+        gap: 12px;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 400;
+        font-size: 19px;
+        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.28);
+      }
+      .download:hover {
+        filter: brightness(1.03);
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+      }
+      .modal-card {
+        background: #141319;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px 18px 16px;
+        width: min(480px, 92vw);
+      }
+      .modal-card h4 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 400;
+      }
+      .modal-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .input {
+        flex: 1;
+        background: #0f0e14;
+        border: 1px solid #5a5a5a;
+        border-radius: 10px;
+        padding: 12px;
+        color: #fff;
+        font: 400 15px/1 Inter;
+      }
+      .btn {
+        background: #0f0e14;
+        border: 1px solid var(--border);
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px 14px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: #f2f9fe;
+        color: #000;
+        border-color: #cfcfcf;
+      }
 
-    @media (max-width:1100px){
-      .layout{grid-template-columns:1fr}
-      .download-wrap{left:0}
-      .grid{grid-template-columns:1fr}
-    }
-  </style>
-</head>
-<body>
-  <div class="layout">
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar">
-      <div class="brand">
-        <a href="index.html" aria-label="Go to homepage">
-          <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo">
-          <span>SignSense</span>
-        </a>
-      </div>
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .download-wrap {
+          left: 0;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
 
-      <nav class="nav">
-        <a class="active" href="#"><img class="arr" src="https://imgur.com/CHGomYz.png" alt=""><img class="icon" src="https://imgur.com/lnQTDuo.png" alt=""><span>Overview</span></a>
-        <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
-        <a href="privacy.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
-        <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
-        <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Leave a Review</span></a>
-      </nav>
+  <body>
+    <div class="layout">
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="sidebar">
+        <div class="brand">
+          <a href="index.html" aria-label="Go to homepage">
+            <!-- <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo" /> -->
+            <!-- <img src="https://i.imgur.com/Z5hv7K9.png" alt="SignSense logo" /> -->
+            <img src="public/logo.png" alt="SignSense logo" />
+            <!-- <img src="public/logo.png" alt="SignSense logo" /> -->
+            <span>SignSense</span>
+          </a>
+        </div>
 
-      <div class="push"></div>
-      <div class="end-only" id="sidebarEnd">
-        <div class="legal">All rights reserved.</div>
-        <div class="copy2">© 2025 SignSense</div>
-        <div class="footer-sep"></div>
-        <div class="copy">Not legal advice.<br/>For informational use only.</div>
-      </div>
-    </aside>
+        <nav class="nav">
+          <a class="active" href="#"
+            ><img class="arr" src="https://imgur.com/CHGomYz.png" alt="" /><img
+              class="icon"
+              src="https://imgur.com/lnQTDuo.png"
+              alt=""
+            /><span>Overview</span></a
+          >
+          <a href="index.html"
+            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
+              class="icon"
+              src="https://imgur.com/kE3okdE.png"
+              alt=""
+            /><span>Home</span></a
+          >
+          <a href="privacy.html"
+            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
+              class="icon"
+              src="https://imgur.com/krMnFVT.png"
+              alt=""
+            /><span>Privacy</span></a
+          >
+          <a href="#"
+            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
+              class="icon"
+              src="https://imgur.com/6zHviT6.png"
+              alt=""
+            /><span>Contact Us</span></a
+          >
+          <a href="#" id="leaveReview"
+            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
+              class="icon"
+              src="https://imgur.com/zwr9SOe.png"
+              alt=""
+            /><span>Leave a Review</span></a
+          >
+        </nav>
 
-    <!-- ===== MAIN ===== --> 
-    <main class="main">
-      <div class="topbar">
-        <div class="top-left"><div class="top-title" id="uiOverview">Overview</div></div>
-        <div class="lang" id="lang">
-          <button class="lang-btn" id="langBtn" type="button">
-            <span id="langNow">EN</span><span class="caret" aria-hidden="true"></span>
-          </button>
-          <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-            <div class="lang-item" data-code="en">English</div>
-            <div class="lang-item" data-code="it">Italiano</div>
-            <div class="lang-item" data-code="de">Deutsch</div>
-            <div class="lang-item" data-code="es">Español</div>
-            <div class="lang-item" data-code="fr">Français</div>
-            <div class="lang-item" data-code="pt">Português</div>
-            <div class="lang-item" data-code="nl">Nederlands</div>
-            <div class="lang-item" data-code="ro">Română</div>
-            <div class="lang-item" data-code="sq">Shqip</div>
-            <div class="lang-item" data-code="tr">Türkçe</div>
-            <div class="lang-item" data-code="zh">中文</div>
-            <div class="lang-item" data-code="ja">日本語</div>
+        <div class="push"></div>
+        <div class="end-only" id="sidebarEnd">
+          <div class="legal">All rights reserved.</div>
+          <div class="copy2">© 2025 SignSense</div>
+          <div class="footer-sep"></div>
+          <div class="copy">
+            Not legal advice.<br />For informational use only.
           </div>
         </div>
-      </div>
+      </aside>
 
-      <!-- Contract title row -->
-      <div class="doc-title">
-        <span class="label" id="uiTitleLabel">Title:</span>
-        <span class="value" id="uiTitleValue">—</span>
-      </div>
-
-      <div class="grid">
-        <!-- LEFT -->
-        <div class="left">
-          <section class="card" id="summaryCard">
-            <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="uiSummary">Summary</span></h3>
-            <div class="list" id="summaryText"></div>
-          </section>
-
-          <section class="card meter-block" id="profCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""> <span id="uiProfessionalism">Professionalism</span></div>
-              <div id="confVal">0%</div>
+      <!-- ===== MAIN ===== -->
+      <main class="main">
+        <div class="topbar">
+          <div class="top-left">
+            <div class="top-title" id="uiOverview">Overview</div>
+          </div>
+          <div class="lang" id="lang">
+            <button class="lang-btn" id="langBtn" type="button">
+              <span id="langNow">EN</span
+              ><span class="caret" aria-hidden="true"></span>
+            </button>
+            <div
+              class="lang-menu"
+              id="langMenu"
+              role="listbox"
+              aria-label="Report Language"
+            >
+              <div class="lang-item" data-code="en">English</div>
+              <div class="lang-item" data-code="it">Italiano</div>
+              <div class="lang-item" data-code="de">Deutsch</div>
+              <div class="lang-item" data-code="es">Español</div>
+              <div class="lang-item" data-code="fr">Français</div>
+              <div class="lang-item" data-code="pt">Português</div>
+              <div class="lang-item" data-code="nl">Nederlands</div>
+              <div class="lang-item" data-code="ro">Română</div>
+              <div class="lang-item" data-code="sq">Shqip</div>
+              <div class="lang-item" data-code="tr">Türkçe</div>
+              <div class="lang-item" data-code="zh">中文</div>
+              <div class="lang-item" data-code="ja">日本語</div>
             </div>
-            <div class="meter"><div id="confFill" class="fill"></div></div>
-          </section>
-
-          <section class="card meter-block" id="favCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""> <span id="uiFavorability">Favorability Index</span></div>
-              <div id="favVal">0%</div>
-            </div>
-            <div class="meter"><div id="favFill" class="fill"></div></div>
-          </section>
-
-          <section class="card meter-block" id="deadCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""> <span id="uiDeadline">Deadline pressure</span></div>
-              <div id="deadVal">0%</div>
-            </div>
-            <div class="meter"><div id="deadFill" class="fill"></div></div>
-          </section>
-
-          <section class="card" id="issuesCard">
-            <h3><img src="https://imgur.com/ppLDtiq.png" alt=""><span id="uiIssues">Potential Issues</span></h3>
-            <ul class="bullets" id="issuesList"></ul>
-          </section>
-
-          <section class="card" id="suggestionsCard">
-            <h3><img src="https://imgur.com/EoVDfd5.png" alt=""><span id="uiSuggestions">Smart Suggestions</span></h3>
-            <div class="list numbered" id="suggestionsList"></div>
-          </section>
+          </div>
         </div>
 
-        <!-- RIGHT -->
-        <div class="right">
-          <section class="card" id="riskCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="160" height="160" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="val" id="riskVal">0%</div>
-              </div>
-              <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt=""><span id="uiRisk">Risk Level</span></h3>
-                <div class="muted" id="riskNote"></div>
-                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card" id="clarCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="160" height="160" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="val" id="clarVal">0%</div>
-              </div>
-              <div class="htext">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt=""><span id="uiClarity">Clause Clarity</span></h3>
-                <div class="muted" id="clarNote"></div>
-                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card" id="clausesCard">
-            <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="uiClauses">Main Clauses</span></h3>
-            <div class="list numbered" id="clausesList"></div>
-          </section>
-
-          <section class="card" id="scoreCard">
-            <div class="hcard">
-              <div class="circle">
-                <svg width="160" height="160" viewBox="0 0 160 160">
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
-                <div class="score-center"><div class="score-pct" id="scorePct">80%</div></div>
-              </div>
-              <div class="score-side">
-                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="uiScoreChecker">Score Checker</span></h3>
-                <div class="score-remark" id="scoreRemark">The contract is nearly perfectly done.</div>
-                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
-                <div class="score-scale"><span id="uiUnsafe">Unsafe</span><span id="uiSafe">Safe</span><span id="uiVerySafe">Very Safe</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card meter-block" id="confRightCard">
-            <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""> <span id="uiConfidence">Confidence to sign freely</span></div>
-              <div id="conf2Val">0%</div>
-            </div>
-            <div class="meter"><div id="conf2Fill" class="fill"></div></div>
-          </section>
+        <!-- Contract title row -->
+        <div class="doc-title">
+          <span class="label" id="uiTitleLabel">Title:</span>
+          <span class="value" id="uiTitleValue">—</span>
         </div>
-      </div>
-    </main>
-  </div>
 
-  <div class="download-wrap" id="dlWrap">
-    <button class="download" id="downloadBtn">Download Report</button>
-  </div>
+        <div class="grid">
+          <!-- LEFT -->
+          <div class="left">
+            <section class="card" id="summaryCard">
+              <h3>
+                <img src="https://imgur.com/CuQFbD7.png" alt="" /><span
+                  id="uiSummary"
+                  >Summary</span
+                >
+              </h3>
+              <div class="list" id="summaryText"></div>
+            </section>
 
-  <div class="modal" id="emailModal" aria-modal="true" role="dialog">
-    <div class="modal-card">
-      <h4>Enter your email to download the PDF report</h4>
-      <div class="modal-row">
-        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
-        <button class="btn primary" id="emailSubmit">Download</button>
-        <button class="btn" id="emailCancel">Cancel</button>
-      </div>
-      <div id="emailErr" style="color:#ff6b6b;font-size:13px;margin-top:8px;display:none">Please enter a valid email address.</div>
+            <section class="card meter-block" id="profCard">
+              <div class="meter-head">
+                <div class="meter-title">
+                  <img src="https://imgur.com/EdMAMnx.png" alt="" />
+                  <span id="uiProfessionalism">Professionalism</span>
+                </div>
+                <div id="confVal">0%</div>
+              </div>
+              <div class="meter"><div id="confFill" class="fill"></div></div>
+            </section>
+
+            <section class="card meter-block" id="favCard">
+              <div class="meter-head">
+                <div class="meter-title">
+                  <img src="https://imgur.com/UDRuIvO.png" alt="" />
+                  <span id="uiFavorability">Favorability Index</span>
+                </div>
+                <div id="favVal">0%</div>
+              </div>
+              <div class="meter"><div id="favFill" class="fill"></div></div>
+            </section>
+
+            <section class="card meter-block" id="deadCard">
+              <div class="meter-head">
+                <div class="meter-title">
+                  <img src="https://imgur.com/VXZ3kD8.png" alt="" />
+                  <span id="uiDeadline">Deadline pressure</span>
+                </div>
+                <div id="deadVal">0%</div>
+              </div>
+              <div class="meter"><div id="deadFill" class="fill"></div></div>
+            </section>
+
+            <section class="card" id="issuesCard">
+              <h3>
+                <img src="https://imgur.com/ppLDtiq.png" alt="" /><span
+                  id="uiIssues"
+                  >Potential Issues</span
+                >
+              </h3>
+              <ul class="bullets" id="issuesList"></ul>
+            </section>
+
+            <section class="card" id="suggestionsCard">
+              <h3>
+                <img src="https://imgur.com/EoVDfd5.png" alt="" /><span
+                  id="uiSuggestions"
+                  >Smart Suggestions</span
+                >
+              </h3>
+              <div class="list numbered" id="suggestionsList"></div>
+            </section>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="right">
+            <section class="card" id="riskCard">
+              <div class="hcard">
+                <div class="circle">
+                  <svg width="160" height="160" viewBox="0 0 160 160">
+                    <circle class="track" cx="80" cy="80" r="74"></circle>
+                    <circle
+                      id="riskArc"
+                      class="arc"
+                      cx="80"
+                      cy="80"
+                      r="74"
+                    ></circle>
+                  </svg>
+                  <div class="val" id="riskVal">0%</div>
+                </div>
+                <div class="htext">
+                  <h3 style="margin-bottom: 0">
+                    <img src="https://imgur.com/Myp6Un4.png" alt="" /><span
+                      id="uiRisk"
+                      >Risk Level</span
+                    >
+                  </h3>
+                  <div class="muted" id="riskNote"></div>
+                  <div class="status">
+                    <span class="dot" id="riskDot"></span
+                    ><span id="riskBadge">Generally Safe</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card" id="clarCard">
+              <div class="hcard">
+                <div class="circle">
+                  <svg width="160" height="160" viewBox="0 0 160 160">
+                    <circle class="track" cx="80" cy="80" r="74"></circle>
+                    <circle
+                      id="clarArc"
+                      class="arc"
+                      cx="80"
+                      cy="80"
+                      r="74"
+                    ></circle>
+                  </svg>
+                  <div class="val" id="clarVal">0%</div>
+                </div>
+                <div class="htext">
+                  <h3 style="margin-bottom: 0">
+                    <img src="https://imgur.com/o39xZtC.png" alt="" /><span
+                      id="uiClarity"
+                      >Clause Clarity</span
+                    >
+                  </h3>
+                  <div class="muted" id="clarNote"></div>
+                  <div class="status">
+                    <span class="dot" id="clarDot"></span
+                    ><span id="clarBadge">Generally Safe</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card" id="clausesCard">
+              <h3>
+                <img src="https://imgur.com/K04axKU.png" alt="" /><span
+                  id="uiClauses"
+                  >Main Clauses</span
+                >
+              </h3>
+              <div class="list numbered" id="clausesList"></div>
+            </section>
+
+            <section class="card" id="scoreCard">
+              <div class="hcard">
+                <div class="circle">
+                  <svg width="160" height="160" viewBox="0 0 160 160">
+                    <circle class="track" cx="80" cy="80" r="74"></circle>
+                    <circle
+                      id="scoreArc"
+                      class="arc"
+                      cx="80"
+                      cy="80"
+                      r="74"
+                    ></circle>
+                  </svg>
+                  <div class="score-center">
+                    <div class="score-pct" id="scorePct">80%</div>
+                  </div>
+                </div>
+                <div class="score-side">
+                  <h3 style="margin-bottom: 0">
+                    <img src="https://imgur.com/mFvyCj7.png" alt="" /><span
+                      id="uiScoreChecker"
+                      >Score Checker</span
+                    >
+                  </h3>
+                  <div class="score-remark" id="scoreRemark">
+                    The contract is nearly perfectly done.
+                  </div>
+                  <div class="score-bar">
+                    <span class="score-ind" id="scoreInd"></span>
+                  </div>
+                  <div class="score-scale">
+                    <span id="uiUnsafe">Unsafe</span
+                    ><span id="uiSafe">Safe</span
+                    ><span id="uiVerySafe">Very Safe</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card meter-block" id="confRightCard">
+              <div class="meter-head">
+                <div class="meter-title">
+                  <img src="https://imgur.com/nUGfg96.png" alt="" />
+                  <span id="uiConfidence">Confidence to sign freely</span>
+                </div>
+                <div id="conf2Val">0%</div>
+              </div>
+              <div class="meter"><div id="conf2Fill" class="fill"></div></div>
+            </section>
+          </div>
+        </div>
+      </main>
     </div>
-  </div>
 
-  <script>
-  (() => {
-    // FORCE DEMO MODE (no live payload)
-    localStorage.setItem("analysisMode","demo"); localStorage.removeItem("analysisRaw");
+    <div class="download-wrap" id="dlWrap">
+      <button class="download" id="downloadBtn">Download Report</button>
+    </div>
 
-    /* ================= UI LABELS (i18n) ================= */
-    const UI = {
-      en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",
-          issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",
-          score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",conf:"Confidence to sign freely",
-          remark:{green:"The contract is nearly perfectly done.",orange:"The contract is done well.",red:"The contract isn’t done well."},
-          band:{green:"Totally safe",orange:"Generally safe",red:"Not safe"}}
-      // (other languages omitted here for brevity — they’re not used by the PDF code)
-    };
+    <div class="modal" id="emailModal" aria-modal="true" role="dialog">
+      <div class="modal-card">
+        <h4>Enter your email to download the PDF report</h4>
+        <div class="modal-row">
+          <input
+            id="emailInput"
+            class="input"
+            type="email"
+            inputmode="email"
+            placeholder="you@example.com"
+          />
+          <button class="btn primary" id="emailSubmit">Download</button>
+          <button class="btn" id="emailCancel">Cancel</button>
+        </div>
+        <div
+          id="emailErr"
+          style="
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+          "
+        >
+          Please enter a valid email address.
+        </div>
+      </div>
+    </div>
 
-    /* ===== Demo data ===== */
-    const fallbackDemo = {
-      meta: { title: "Sample Agreement", detectedLang: "en" },
-      summary: [
-        "The Vienna Convention establishes a framework for international sales contracts between parties from different countries.",
-        "It outlines the rights and obligations of buyers and sellers, including provisions for contract formation, delivery, and liability.",
-        "The Convention aims to promote uniformity in international trade and reduce legal barriers."
-      ],
-      risk: { value: 45, note: "The contract is generally safe, with clear provisions for both parties." },
-      clarity: { value: 70, note: "The clauses are generally clear and well-structured, facilitating understanding." },
-      clauses: [
-        "The Convention applies to contracts for the sale of goods between parties whose places of business are in different countries.",
-        "Parties may exclude the application of the Convention or derogate from its provisions.",
-        "The seller must deliver goods that conform to the contract in terms of quantity, quality, and packaging.",
-        "The buyer must pay the price and take delivery of the goods as stipulated in the contract.",
-        "In case of non-compliance, the aggrieved party has the right to seek damages or terminate the contract."
-      ],
-      issues: [
-        "Parties may not fully understand their rights and obligations under the Convention, leading to disputes.",
-        "Exclusions or modifications to the Convention's provisions may create legal uncertainties.",
-        "The lack of clarity in certain terms could lead to differing interpretations between parties.",
-        "The Convention does not cover all aspects of sales, such as liability for personal injury or property damage.",
-        "Parties must ensure compliance with local laws that may affect the enforceability of the contract."
-      ],
-      suggestions: [
-        "Consider including a clause that specifies the governing law for any disputes, e.g., 'This contract shall be governed by the laws of Italy.'",
-        "Ensure that all parties fully understand the implications of excluding any provisions of the Convention, e.g., 'Parties may opt-out of certain liability clauses.'",
-        "Include a clear dispute resolution mechanism, e.g., 'Any disputes arising from this contract shall be resolved through arbitration in Vienna.'"
-      ],
-      meters: { professionalism: 65, favorability: 50, deadline: 40, confidence: 70 },
-      translations: {}
-    };
+    <script>
+      (() => {
+        // FORCE DEMO MODE (no live payload)
+        localStorage.setItem("analysisMode", "demo");
+        localStorage.removeItem("analysisRaw");
 
-    const normalized = fallbackDemo;
+        /* ================= UI LABELS (i18n) ================= */
+        const UI = {
+          en: {
+            overview: "Overview",
+            title: "Title:",
+            summary: "Summary",
+            prof: "Professionalism",
+            fav: "Favorability Index",
+            deadline: "Deadline pressure",
+            issues: "Potential Issues",
+            suggestions: "Smart Suggestions",
+            risk: "Risk Level",
+            clarity: "Clause Clarity",
+            clauses: "Main Clauses",
+            score: "Score Checker",
+            unsafe: "Unsafe",
+            safe: "Safe",
+            verysafe: "Very Safe",
+            conf: "Confidence to sign freely",
+            remark: {
+              green: "The contract is nearly perfectly done.",
+              orange: "The contract is done well.",
+              red: "The contract isn’t done well.",
+            },
+            band: {
+              green: "Totally safe",
+              orange: "Generally safe",
+              red: "Not safe",
+            },
+          },
+          // (other languages omitted here for brevity — they’re not used by the PDF code)
+        };
 
-    /* ================= Helpers ================= */
-    const $ = s => document.querySelector(s);
-    const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-    const clamp01 = v => Math.max(0,Math.min(100,Number(v||0)));
-    const addP = (el, t)=>{const p=document.createElement('p');p.textContent=t;el.appendChild(p);};
-    const colorFor=(metric,v)=>{
-      if(metric==='risk')     return v<=25?cssVar('--green'):v<=58?cssVar('--orange'):cssVar('--red');
-      if(metric==='clarity')  return v>=78?cssVar('--green'):v>=49?cssVar('--orange'):cssVar('--red');
-      if(metric==='deadline') return v<=35?cssVar('--green'):v<=68?cssVar('--orange'):cssVar('--red');
-      return v>=75?cssVar('--green'):v>=49?cssVar('--orange'):cssVar('--red');
-    };
+        /* ===== Demo data ===== */
+        const fallbackDemo = {
+          meta: { title: "Sample Agreement", detectedLang: "en" },
+          summary: [
+            "The Vienna Convention establishes a framework for international sales contracts between parties from different countries.",
+            "It outlines the rights and obligations of buyers and sellers, including provisions for contract formation, delivery, and liability.",
+            "The Convention aims to promote uniformity in international trade and reduce legal barriers.",
+          ],
+          risk: {
+            value: 45,
+            note: "The contract is generally safe, with clear provisions for both parties.",
+          },
+          clarity: {
+            value: 70,
+            note: "The clauses are generally clear and well-structured, facilitating understanding.",
+          },
+          clauses: [
+            "The Convention applies to contracts for the sale of goods between parties whose places of business are in different countries.",
+            "Parties may exclude the application of the Convention or derogate from its provisions.",
+            "The seller must deliver goods that conform to the contract in terms of quantity, quality, and packaging.",
+            "The buyer must pay the price and take delivery of the goods as stipulated in the contract.",
+            "In case of non-compliance, the aggrieved party has the right to seek damages or terminate the contract.",
+          ],
+          issues: [
+            "Parties may not fully understand their rights and obligations under the Convention, leading to disputes.",
+            "Exclusions or modifications to the Convention's provisions may create legal uncertainties.",
+            "The lack of clarity in certain terms could lead to differing interpretations between parties.",
+            "The Convention does not cover all aspects of sales, such as liability for personal injury or property damage.",
+            "Parties must ensure compliance with local laws that may affect the enforceability of the contract.",
+          ],
+          suggestions: [
+            "Consider including a clause that specifies the governing law for any disputes, e.g., 'This contract shall be governed by the laws of Italy.'",
+            "Ensure that all parties fully understand the implications of excluding any provisions of the Convention, e.g., 'Parties may opt-out of certain liability clauses.'",
+            "Include a clear dispute resolution mechanism, e.g., 'Any disputes arising from this contract shall be resolved through arbitration in Vienna.'",
+          ],
+          meters: {
+            professionalism: 65,
+            favorability: 50,
+            deadline: 40,
+            confidence: 70,
+          },
+          translations: {},
+        };
 
-    const currentLang = "en";
-    function renderUILabels(lang){
-      const t = UI[lang] || UI.en;
-      $("#uiOverview").textContent = t.overview;
-      $("#uiTitleLabel").textContent = t.title;
-      $("#uiSummary").textContent = t.summary;
-      $("#uiProfessionalism").textContent = t.prof;
-      $("#uiFavorability").textContent = t.fav;
-      $("#uiDeadline").textContent = t.deadline;
-      $("#uiIssues").textContent = t.issues;
-      $("#uiSuggestions").textContent = t.suggestions;
-      $("#uiRisk").textContent = t.risk;
-      $("#uiClarity").textContent = t.clarity;
-      $("#uiClauses").textContent = t.clauses;
-      $("#uiScoreChecker").textContent = t.score;
-    }
+        const normalized = fallbackDemo;
 
-    function getLocalizedContent(lang){
-      return {
-        title: normalized.meta.title,
-        summary: normalized.summary,
-        clauses: normalized.clauses,
-        issues: normalized.issues,
-        suggestions: normalized.suggestions,
-        risk: { value: normalized.risk.value, note: normalized.risk.note },
-        clarity: { value: normalized.clarity.value, note: normalized.clarity.note }
-      };
-    }
+        /* ================= Helpers ================= */
+        const $ = (s) => document.querySelector(s);
+        const cssVar = (v) =>
+          getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+        const clamp01 = (v) => Math.max(0, Math.min(100, Number(v || 0)));
+        const addP = (el, t) => {
+          const p = document.createElement("p");
+          p.textContent = t;
+          el.appendChild(p);
+        };
+        const colorFor = (metric, v) => {
+          if (metric === "risk")
+            return v <= 25
+              ? cssVar("--green")
+              : v <= 58
+              ? cssVar("--orange")
+              : cssVar("--red");
+          if (metric === "clarity")
+            return v >= 78
+              ? cssVar("--green")
+              : v >= 49
+              ? cssVar("--orange")
+              : cssVar("--red");
+          if (metric === "deadline")
+            return v <= 35
+              ? cssVar("--green")
+              : v <= 68
+              ? cssVar("--orange")
+              : cssVar("--red");
+          return v >= 75
+            ? cssVar("--green")
+            : v >= 49
+            ? cssVar("--orange")
+            : cssVar("--red");
+        };
 
-    function setArc(arcEl, metric, value, valEl){
-      const v=clamp01(value); const rr=parseFloat(arcEl.getAttribute('r'))||74;
-      const circ=2*Math.PI*rr;
-      arcEl.style.stroke=colorFor(metric,v);
-      arcEl.style.strokeDasharray=circ; arcEl.style.strokeDashoffset=circ;
-      requestAnimationFrame(()=>{ arcEl.style.transition="stroke-dashoffset 1.8s ease"; arcEl.style.strokeDashoffset=circ*(1-v/100); });
-      if(valEl) valEl.textContent=v+"%";
-    }
-    function setMeter(fillEl, labelEl, metric, value){
-      const v=clamp01(value); labelEl.textContent=v+"%";
-      fillEl.style.background=colorFor(metric,v);
-      requestAnimationFrame(()=>{ fillEl.style.width=v+"%"; });
-    }
+        const currentLang = "en";
+        function renderUILabels(lang) {
+          const t = UI[lang] || UI.en;
+          $("#uiOverview").textContent = t.overview;
+          $("#uiTitleLabel").textContent = t.title;
+          $("#uiSummary").textContent = t.summary;
+          $("#uiProfessionalism").textContent = t.prof;
+          $("#uiFavorability").textContent = t.fav;
+          $("#uiDeadline").textContent = t.deadline;
+          $("#uiIssues").textContent = t.issues;
+          $("#uiSuggestions").textContent = t.suggestions;
+          $("#uiRisk").textContent = t.risk;
+          $("#uiClarity").textContent = t.clarity;
+          $("#uiClauses").textContent = t.clauses;
+          $("#uiScoreChecker").textContent = t.score;
+        }
 
-    function renderAll(lang){
-      renderUILabels(lang);
-      $("#langNow").textContent = lang.toUpperCase();
-      const data = getLocalizedContent(lang);
+        function getLocalizedContent(lang) {
+          return {
+            title: normalized.meta.title,
+            summary: normalized.summary,
+            clauses: normalized.clauses,
+            issues: normalized.issues,
+            suggestions: normalized.suggestions,
+            risk: { value: normalized.risk.value, note: normalized.risk.note },
+            clarity: {
+              value: normalized.clarity.value,
+              note: normalized.clarity.note,
+            },
+          };
+        }
 
-      $("#uiTitleValue").textContent = data.title || "—";
+        function setArc(arcEl, metric, value, valEl) {
+          const v = clamp01(value);
+          const rr = parseFloat(arcEl.getAttribute("r")) || 74;
+          const circ = 2 * Math.PI * rr;
+          arcEl.style.stroke = colorFor(metric, v);
+          arcEl.style.strokeDasharray = circ;
+          arcEl.style.strokeDashoffset = circ;
+          requestAnimationFrame(() => {
+            arcEl.style.transition = "stroke-dashoffset 1.8s ease";
+            arcEl.style.strokeDashoffset = circ * (1 - v / 100);
+          });
+          if (valEl) valEl.textContent = v + "%";
+        }
+        function setMeter(fillEl, labelEl, metric, value) {
+          const v = clamp01(value);
+          labelEl.textContent = v + "%";
+          fillEl.style.background = colorFor(metric, v);
+          requestAnimationFrame(() => {
+            fillEl.style.width = v + "%";
+          });
+        }
 
-      const sBox=$("#summaryText"); sBox.innerHTML="";
-      (Array.isArray(data.summary)?data.summary:[String(data.summary)]).forEach(t=>addP(sBox,t));
+        function renderAll(lang) {
+          renderUILabels(lang);
+          $("#langNow").textContent = lang.toUpperCase();
+          const data = getLocalizedContent(lang);
 
-      const cl=$("#clausesList"); cl.innerHTML=""; (data.clauses||[]).forEach(t=>addP(cl,t));
-      const il=$("#issuesList");  il.innerHTML=""; (data.issues||[]).forEach(t=>{const li=document.createElement('li'); li.textContent=t; il.appendChild(li);});
-      const sl=$("#suggestionsList"); sl.innerHTML=""; (data.suggestions||[]).forEach(t=>addP(sl,t));
+          $("#uiTitleValue").textContent = data.title || "—";
 
-      const riskVal = clamp01(data.risk.value), clarVal = clamp01(data.clarity.value);
-      setArc($("#riskArc"), 'risk', riskVal, $("#riskVal"));
-      setArc($("#clarArc"), 'clarity', clarVal, $("#clarVal"));
-      $("#riskNote").textContent = data.risk.note || "";
-      $("#clarNote").textContent = data.clarity.note || "";
+          const sBox = $("#summaryText");
+          sBox.innerHTML = "";
+          (Array.isArray(data.summary)
+            ? data.summary
+            : [String(data.summary)]
+          ).forEach((t) => addP(sBox, t));
 
-      setArc($("#scoreArc"), 'clarity', clarVal);
-      $("#scorePct").textContent = clarVal + "%";
-      $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
+          const cl = $("#clausesList");
+          cl.innerHTML = "";
+          (data.clauses || []).forEach((t) => addP(cl, t));
+          const il = $("#issuesList");
+          il.innerHTML = "";
+          (data.issues || []).forEach((t) => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            il.appendChild(li);
+          });
+          const sl = $("#suggestionsList");
+          sl.innerHTML = "";
+          (data.suggestions || []).forEach((t) => addP(sl, t));
 
-      setMeter($("#confFill"), $("#confVal"), 'professionalism', normalized.meters.professionalism);
-      setMeter($("#favFill"),  $("#favVal"),  'favorability',    normalized.meters.favorability);
-      setMeter($("#deadFill"), $("#deadVal"), 'deadline',        normalized.meters.deadline);
-      setMeter($("#conf2Fill"),$("#conf2Val"),'confidence',      normalized.meters.confidence);
-    }
+          const riskVal = clamp01(data.risk.value),
+            clarVal = clamp01(data.clarity.value);
+          setArc($("#riskArc"), "risk", riskVal, $("#riskVal"));
+          setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
+          $("#riskNote").textContent = data.risk.note || "";
+          $("#clarNote").textContent = data.clarity.note || "";
 
-    /* ======= Init render ======= */
-    renderAll(currentLang);
+          setArc($("#scoreArc"), "clarity", clarVal);
+          $("#scorePct").textContent = clarVal + "%";
+          $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
 
-    /* ======= HOVER DROPDOWN ======= */
-    const langBox = document.getElementById("lang");
-    let closeTimer=null;
-    const openMenu = ()=>{ clearTimeout(closeTimer); langBox.classList.add("open"); };
-    const scheduleClose = ()=>{ clearTimeout(closeTimer); closeTimer=setTimeout(()=>langBox.classList.remove("open"), 140); };
-    ["mouseenter","mousemove"].forEach(ev=>langBox.addEventListener(ev, openMenu));
-    langBox.addEventListener("mouseleave", scheduleClose);
+          setMeter(
+            $("#confFill"),
+            $("#confVal"),
+            "professionalism",
+            normalized.meters.professionalism
+          );
+          setMeter(
+            $("#favFill"),
+            $("#favVal"),
+            "favorability",
+            normalized.meters.favorability
+          );
+          setMeter(
+            $("#deadFill"),
+            $("#deadVal"),
+            "deadline",
+            normalized.meters.deadline
+          );
+          setMeter(
+            $("#conf2Fill"),
+            $("#conf2Val"),
+            "confidence",
+            normalized.meters.confidence
+          );
+        }
 
-    /* ======= Reveal animations ======= */
-    window.addEventListener('load', () => {
-      ["#summaryCard","#riskCard","#clarCard"].forEach(sel => { const el=$(sel); if(el){el.classList.add('fade-in');}});
-      setTimeout(()=>["#profCard","#favCard","#deadCard","#issuesCard","#clausesCard"].forEach(sel=>{const el=$(sel); if(el){el.classList.add('fade-in');}}), 180);
-    });
+        /* ======= Init render ======= */
+        renderAll(currentLang);
 
-    const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('fade-in'); io.unobserve(e.target);} });},{ threshold: .18 });
-    ["#suggestionsCard","#scoreCard","#confRightCard"].forEach(sel=>{ const el=$(sel); if(el){ io.observe(el); } });
+        /* ======= HOVER DROPDOWN ======= */
+        const langBox = document.getElementById("lang");
+        let closeTimer = null;
+        const openMenu = () => {
+          clearTimeout(closeTimer);
+          langBox.classList.add("open");
+        };
+        const scheduleClose = () => {
+          clearTimeout(closeTimer);
+          closeTimer = setTimeout(() => langBox.classList.remove("open"), 140);
+        };
+        ["mouseenter", "mousemove"].forEach((ev) =>
+          langBox.addEventListener(ev, openMenu)
+        );
+        langBox.addEventListener("mouseleave", scheduleClose);
 
-    /* ======= Download modal & PDF ======= */
-    const dlWrap=$("#dlWrap"), endBox=$("#sidebarEnd");
-    function nearBottom(){
-      const s=document.documentElement.scrollHeight-(window.scrollY+window.innerHeight);
-      const show=s<=300;
-      dlWrap.style.display=show?"flex":"none"; endBox.style.display=show?"block":"none";
-      if(show){ dlWrap.classList.add('fade-in'); endBox.classList.add('fade-in'); }
-    }
-    window.addEventListener("scroll", nearBottom, {passive:true});
-    window.addEventListener("load", nearBottom);
+        /* ======= Reveal animations ======= */
+        window.addEventListener("load", () => {
+          ["#summaryCard", "#riskCard", "#clarCard"].forEach((sel) => {
+            const el = $(sel);
+            if (el) {
+              el.classList.add("fade-in");
+            }
+          });
+          setTimeout(
+            () =>
+              [
+                "#profCard",
+                "#favCard",
+                "#deadCard",
+                "#issuesCard",
+                "#clausesCard",
+              ].forEach((sel) => {
+                const el = $(sel);
+                if (el) {
+                  el.classList.add("fade-in");
+                }
+              }),
+            180
+          );
+        });
 
-    const modal=$("#emailModal"),
-          openModal=()=>modal.style.display="flex",
-          closeModal=()=>modal.style.display="none";
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("fade-in");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.18 }
+        );
+        ["#suggestionsCard", "#scoreCard", "#confRightCard"].forEach((sel) => {
+          const el = $(sel);
+          if (el) {
+            io.observe(el);
+          }
+        });
 
-    $("#downloadBtn").addEventListener("click", openModal);
-    $("#emailCancel").addEventListener("click", closeModal);
+        /* ======= Download modal & PDF ======= */
+        const dlWrap = $("#dlWrap"),
+          endBox = $("#sidebarEnd");
+        function nearBottom() {
+          const s =
+            document.documentElement.scrollHeight -
+            (window.scrollY + window.innerHeight);
+          const show = s <= 300;
+          dlWrap.style.display = show ? "flex" : "none";
+          endBox.style.display = show ? "block" : "none";
+          if (show) {
+            dlWrap.classList.add("fade-in");
+            endBox.classList.add("fade-in");
+          }
+        }
+        window.addEventListener("scroll", nearBottom, { passive: true });
+        window.addEventListener("load", nearBottom);
 
-    const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim());
-    $("#emailSubmit").addEventListener("click", async ()=>{
-      const email=$("#emailInput").value||"", err=$("#emailErr");
-      if(!validEmail(email)){ err.style.display="block"; return; }
-      err.style.display="none";
-      const lang=currentLang; const data = getLocalizedContent(lang);
-      try{
-        await generatePDF("SignSense_Report", data, lang);
-      }catch(e){ console.error(e); alert("Could not generate the PDF."); }
-      closeModal();
-    });
+        const modal = $("#emailModal"),
+          openModal = () => (modal.style.display = "flex"),
+          closeModal = () => (modal.style.display = "none");
 
-    /* ====== Poppins loader for jsPDF (Regular + Bold) ====== */
-    async function ensurePoppins(doc){
-      try {
-        const list = doc.getFontList ? doc.getFontList() : {};
-        if (list && list.Poppins) return true;
+        // Initialize PDF Generator
+        const pdfGenerator = new PDFGenerator();
 
-        const REG_URL = "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Regular.ttf";
-        const BLD_URL = "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Bold.ttf";
+        /* Todo: remove this test fn */
+        const onTestPdf = async () => {
+          const lang = currentLang;
+          const data = getLocalizedContent(lang);
 
-        async function fetchAsBase64(url){
-          const r = await fetch(url, {mode:"cors"});
-          if (!r.ok) throw new Error("font fetch failed " + r.status);
-          const buf = await r.arrayBuffer();
+          // Add meter values to the data object for PDF generation
+          data.meters = normalized.meters;
+
+          try {
+            await pdfGenerator.generatePDF("SignSense_Report", data, lang);
+          } catch (e) {
+            console.error(e);
+            alert("Could not generate the PDF.");
+          }
+        };
+
+        /* Todo: remove cmt */
+        $("#downloadBtn").addEventListener("click", onTestPdf);
+        // $("#downloadBtn").addEventListener("click", openModal);
+        $("#emailCancel").addEventListener("click", closeModal);
+
+        const validEmail = (e) =>
+          /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || "").trim());
+
+        $("#emailSubmit").addEventListener("click", async () => {
+          const email = $("#emailInput").value || "",
+            err = $("#emailErr");
+          if (!validEmail(email)) {
+            err.style.display = "block";
+            return;
+          }
+          err.style.display = "none";
+          const lang = currentLang;
+          const data = getLocalizedContent(lang);
+
+          // Add meter values to the data object for PDF generation
+          data.meters = normalized.meters;
+
+          try {
+            await pdfGenerator.generatePDF("SignSense_Report", data, lang);
+          } catch (e) {
+            console.error(e);
+            alert("Could not generate the PDF.");
+          }
+          closeModal();
+        });
+
+        /* ====== Poppins loader for jsPDF (Regular + Bold) ====== */
+        async function ensurePoppins(doc) {
+          try {
+            const list = doc.getFontList ? doc.getFontList() : {};
+            if (list && list.Poppins) return true;
+
+            const REG_URL =
+              "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Regular.ttf";
+            const BLD_URL =
+              "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Bold.ttf";
+
+            async function fetchAsBase64(url) {
+              const r = await fetch(url, { mode: "cors" });
+              if (!r.ok) throw new Error("font fetch failed " + r.status);
+              const buf = await r.arrayBuffer();
+              let binary = "";
+              const bytes = new Uint8Array(buf);
+              for (let i = 0; i < bytes.byteLength; i++)
+                binary += String.fromCharCode(bytes[i]);
+              return btoa(binary);
+            }
+
+            const [regB64, boldB64] = await Promise.all([
+              fetchAsBase64(REG_URL),
+              fetchAsBase64(BLD_URL),
+            ]);
+            doc.addFileToVFS("Poppins-Regular.ttf", regB64);
+            doc.addFont("Poppins-Regular.ttf", "Poppins", "normal");
+            doc.addFileToVFS("Poppins-Bold.ttf", boldB64);
+            doc.addFont("Poppins-Bold.ttf", "Poppins", "bold");
+            return true;
+          } catch (e) {
+            console.warn(
+              "Poppins failed to load — using helvetica fallback.",
+              e
+            );
+            return false;
+          }
+        }
+
+        /* === icons & marks === */
+        const ASSETS = {
+          logo: "https://i.imgur.com/aRIGT9V.png",
+          risk: "https://i.imgur.com/hSkzUQu.png",
+          clarity: "https://i.imgur.com/3J3mzur.png",
+          pro: "https://i.imgur.com/FLqsaQJ.png",
+          fav: "https://i.imgur.com/GIAYFBC.png",
+          dead: "https://i.imgur.com/BbyV5gF.png",
+          score: "https://i.imgur.com/H47wt5e.png",
+          confidence: "https://i.imgur.com/GzPeaz5.png",
+        };
+
+        /* === image URL -> dataURL for jsPDF === */
+        async function imgToDataURL(url) {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error("Image fetch failed " + res.status);
+          const buf = await res.arrayBuffer();
           let binary = "";
           const bytes = new Uint8Array(buf);
-          for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-          return btoa(binary);
+          for (let i = 0; i < bytes.length; i++)
+            binary += String.fromCharCode(bytes[i]);
+          return "data:image/png;base64," + btoa(binary);
         }
 
-        const [regB64, boldB64] = await Promise.all([fetchAsBase64(REG_URL), fetchAsBase64(BLD_URL)]);
-        doc.addFileToVFS("Poppins-Regular.ttf", regB64);
-        doc.addFont("Poppins-Regular.ttf", "Poppins", "normal");
-        doc.addFileToVFS("Poppins-Bold.ttf", boldB64);
-        doc.addFont("Poppins-Bold.ttf", "Poppins", "bold");
-        return true;
-      } catch (e) {
-        console.warn("Poppins failed to load — using helvetica fallback.", e);
-        return false;
-      }
-    }
-
-    /* === icons & marks === */
-   const ASSETS = {
-  logo:       "https://i.imgur.com/aRIGT9V.png",
-  risk:       "https://i.imgur.com/hSkzUQu.png",
-  clarity:    "https://i.imgur.com/3J3mzur.png",
-  pro:        "https://i.imgur.com/FLqsaQJ.png",
-  fav:        "https://i.imgur.com/GIAYFBC.png",
-  dead:       "https://i.imgur.com/BbyV5gF.png",
-  score:      "https://i.imgur.com/H47wt5e.png",
-  confidence: "https://i.imgur.com/GzPeaz5.png"
-};
-
-
-    /* === image URL -> dataURL for jsPDF === */
-async function imgToDataURL(url){
-  const res = await fetch(url);                  
-  if (!res.ok) throw new Error("Image fetch failed " + res.status);
-  const buf = await res.arrayBuffer();
-  let binary = "";
-  const bytes = new Uint8Array(buf);
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-  return "data:image/png;base64," + btoa(binary);
-}
-
-
-    /* ================= Main generator (Poppins everywhere if available) ================= */
-  /* ================= Main generator (Updated Layout) ================= */
-    /* ================= PDF Helpers (add these right before generatePDF if not already there) ================= */
-    function getColorFor(metric, v, band){
-      if(metric === 'risk') return v <= 25 ? '#00ff65' : v <= 58 ? '#df911a' : '#fe0000';
-      if(metric === 'clarity' || metric === 'score') return v >= 78 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
-      if(metric === 'professionalism') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
-      if(metric === 'favorability') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
-      if(metric === 'deadline') return v <= 35 ? '#00ff65' : v <= 68 ? '#df911a' : '#fe0000';
-      if(metric === 'confidence') return v >= 75 ? '#00ff65' : v >= 49 ? '#df911a' : '#fe0000';
-      return '#df911a';
-    }
-
-    function getBadgeBgColor(band){
-      return band === 'green' ? [240,255,240] : band === 'orange' ? [255,244,230] : [255,230,230];
-    }
-
-    function getDotColor(band){
-      return band === 'green' ? [40,224,112] : band === 'orange' ? [223,145,26] : [254,0,0];
-    }
-
-    function capitalizeSafety(safety){
-      return safety.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    }
-
-    function gradientBarPNG(width, height=22, indPos){
-      const c = document.createElement("canvas");
-      c.width = width; c.height = height + 20; // extra for ind
-      const ctx = c.getContext("2d");
-
-      // bar
-      const r = height/2;
-
-      // clip
-      ctx.beginPath();
-      ctx.moveTo(r,10);
-      ctx.lineTo(width-r,10);
-      ctx.arc(width-r,10+r,r, -Math.PI/2, Math.PI/2);
-      ctx.lineTo(r,10+height);
-      ctx.arc(r,10+r,r, Math.PI/2, -Math.PI/2);
-      ctx.closePath();
-      ctx.clip();
-
-      // gradient fill
-      const grad = ctx.createLinearGradient(0,0,width,0);
-      grad.addColorStop(0, "#ff6b6b");
-      grad.addColorStop(0.45, "#ffd166");
-      grad.addColorStop(1, "#00e676");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0,10, width, height);
-
-      // border
-      ctx.restore();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#000";
-      ctx.beginPath();
-      ctx.moveTo(r,10);
-      ctx.lineTo(width-r,10);
-      ctx.arc(width-r,10+r,r, -Math.PI/2, Math.PI/2);
-      ctx.lineTo(r,10+height);
-      ctx.arc(r,10+r,r, Math.PI/2, -Math.PI/2);
-      ctx.stroke();
-
-      // indicator
-      const pos = Math.max(0, Math.min(1, indPos)) * width;
-      ctx.fillStyle = "#fff";
-      ctx.shadowColor = "rgba(0,0,0,0.3)";
-      ctx.shadowBlur = 6;
-      ctx.fillRect(pos - 1.5, 0, 3, height + 20);
-
-      return c.toDataURL("image/png");
-    }
-
-    /* ================= Main generator (Updated Layout) ================= */
-    async function generatePDF(filename, d, lang){
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-      // Fonts
-      await ensurePoppins(doc);
-      const FONT = (doc.getFontList && doc.getFontList().Poppins) ? "Poppins" : "helvetica";
-      const bold = () => doc.setFont(FONT, "bold");
-      const reg  = () => doc.setFont(FONT, "normal");
-      reg();
-
-      // Page metrics
-      const W = doc.internal.pageSize.getWidth();
-      const H = doc.internal.pageSize.getHeight();
-      const M = 42;
-
-      // Preload icons
-      const IM = {};
-      for (const k in ASSETS) {
-        try { IM[k] = await imgToDataURL(ASSETS[k]); } catch { IM[k] = null; }
-      }
-
-      /* ---------- helpers (smooth + clean) ---------- */
-      const Box = (x,y,w,h) => {
-        doc.setDrawColor(0,0,0);
-        doc.setLineWidth(3);
-        doc.roundedRect(x,y,w,h,16,16);
-      };
-
-      function tagWithIcon(x, y, icon, label){
-        // black chip behind title
-        doc.setFillColor(0,0,0);
-        doc.roundedRect(x, y, doc.getTextWidth(label)+64, 30, 10, 10, "F");
-        if(icon) doc.addImage(icon, "PNG", x+8, y+6, 18, 18);
-        doc.setTextColor(255,255,255);
-        bold(); doc.setFontSize(12); doc.text(label, x+32, y+20);
-        doc.setTextColor(0,0,0);
-      }
-
-      function tinyText(txt, x, y, w, lh=14){
-        const lines = doc.splitTextToSize(String(txt||""), w);
-        reg(); doc.setFontSize(11); doc.setTextColor(20,20,20);
-        lines.forEach((ln,i)=>doc.text(ln, x, y + i*lh));
-        doc.setTextColor(0,0,0);
-        return y + lines.length*lh;
-      }
-
-      function donutPNG(pct, color="#28e070", size=150){
-        const c = document.createElement("canvas");
-        c.width = size; c.height = size;
-        const ctx = c.getContext("2d");
-        const cx=size/2, cy=size/2;
-        const ringW = Math.round(size*0.18);       // thicker, smooth
-        const r     = Math.round(size*0.42);
-
-        // track
-        ctx.lineWidth = ringW;
-        ctx.strokeStyle = "#000";
-        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
-
-        // value arc
-        const a0 = -Math.PI/2;
-        const a1 = a0 + Math.max(0,Math.min(100,pct))/100 * Math.PI*2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = color;
-        ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1); ctx.stroke();
-
-        // white center
-        ctx.fillStyle = "#fff";
-        ctx.beginPath(); ctx.arc(cx,cy, r - ringW + 4, 0, Math.PI*2); ctx.fill();
-
-        // % text
-        ctx.fillStyle = "#000";
-        ctx.font = `bold ${Math.round(size*0.26)}px ${FONT}`;
-        ctx.textAlign="center"; ctx.textBaseline="middle";
-        ctx.fillText(`${Math.round(pct)}%`, cx, cy-2);
-
-        return c.toDataURL("image/png");
-      }
-
-      function pillBarPNG(pct, width, height=20, fill="#9ef0b6"){
-        // super clean thin pill with rounded mask
-        const c = document.createElement("canvas");
-        c.width = width; c.height = height;
-        const ctx = c.getContext("2d");
-        const r = height/2;
-
-        // draw rounded border
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#000";
-        ctx.beginPath();
-        ctx.moveTo(r,1);
-        ctx.lineTo(width-r-1,1);
-        ctx.arc(width-r-1,r,r,-Math.PI/2,Math.PI/2);
-        ctx.lineTo(r,height-1);
-        ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
-        ctx.stroke();
-
-        // clip to rounded shape
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(r,0);
-        ctx.lineTo(width-r,0);
-        ctx.arc(width-r,r,r,-Math.PI/2,Math.PI/2);
-        ctx.lineTo(r,height);
-        ctx.arc(r,r,r,Math.PI/2,-Math.PI/2);
-        ctx.closePath();
-        ctx.clip();
-
-        // fill to percentage
-        const inner = Math.max(0,Math.min(100,pct))/100;
-        ctx.fillStyle = fill;
-        ctx.fillRect(0,0, Math.max(0, width * inner), height);
-        ctx.restore();
-
-        return c.toDataURL("image/png");
-      }
-
-      function header(){
-        doc.setFillColor(0,0,0); doc.rect(0,0,W,120,"F");
-        doc.setTextColor(255,255,255);
-        bold(); doc.setFontSize(54); doc.text("Contract Report", M, 72);
-        reg();  doc.setFontSize(16);
-        const dt = new Date();
-        const day = String(dt.getDate()).padStart(2,"0");
-        const month = dt.toLocaleString("en",{month:"long"});
-        const year = dt.getFullYear();
-        doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
-        doc.setTextColor(0,0,0);
-      }
-
-      function footer(page){
-        // PAGE pill pinned left
-        doc.setFillColor(0,0,0);
-        doc.roundedRect(M-6, H-78, 114, 40, 12, 12, "F");
-        doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
-        doc.text(`PAGE ${page}`, M+16, H-52);
-
-        // Logo above PAGE pill on page 1, above © on page 2
-        if(page === 1){
-          if(IM.logo) doc.addImage(IM.logo, "PNG", M, H-120, 40, 40);
-        } else {
-          if(IM.logo) doc.addImage(IM.logo, "PNG", W - M - 40, H-120, 40, 40);
+        /* ================= Main generator (Poppins everywhere if available) ================= */
+        /* ================= Main generator (Updated Layout) ================= */
+        /* ================= PDF Helpers (add these right before generatePDF if not already there) ================= */
+        function getColorFor(metric, v, band) {
+          if (metric === "risk")
+            return v <= 25 ? "#00ff65" : v <= 58 ? "#df911a" : "#fe0000";
+          if (metric === "clarity" || metric === "score")
+            return v >= 78 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+          if (metric === "professionalism")
+            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+          if (metric === "favorability")
+            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+          if (metric === "deadline")
+            return v <= 35 ? "#00ff65" : v <= 68 ? "#df911a" : "#fe0000";
+          if (metric === "confidence")
+            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+          return "#df911a";
         }
 
-        // centered + fully underlined disclaimer with "not" bold
-        const parts = ["Kindly keep in mind that although you might find this report helpful, this is ", "not", " legal advice."];
-        reg(); doc.setFontSize(11); doc.setTextColor(0,0,0);
-        const y = H-18;
-        let w = 0;
-        parts.forEach(p => w += doc.getTextWidth(p));
-        let xx = (W - w)/2;
-        reg(); doc.text(parts[0], xx, y); xx += doc.getTextWidth(parts[0]);
-        bold(); doc.text(parts[1], xx, y); xx += doc.getTextWidth(parts[1]);
-        reg(); doc.text(parts[2], xx, y);
-        doc.setLineWidth(0.8);
-        doc.line((W - w)/2, y+2, (W + w)/2, y+2);
-
-        // Page 2 extras: black pill SignSense right, © below
-        if(page === 2){
-          const pillW = 100;
-          const pillX = W - M - pillW;
-          doc.setFillColor(0,0,0);
-          doc.roundedRect(pillX, H-78, pillW, 40, 12, 12, "F");
-          doc.setTextColor(255,255,255); bold(); doc.setFontSize(14);
-          doc.text("SignSense", pillX + pillW/2, H-52, {align:"center"});
-
-          doc.setTextColor(0,0,0); reg(); doc.setFontSize(11);
-          doc.text("© 2025 SignSense. All rights reserved.", pillX, H-34);
+        function getBadgeBgColor(band) {
+          return band === "green"
+            ? [240, 255, 240]
+            : band === "orange"
+            ? [255, 244, 230]
+            : [255, 230, 230];
         }
-      }
 
-      /* ================= PAGE 1 ================= */
-      header();
-      let y = 148;
-
-      // Title
-      bold(); doc.setFontSize(14); doc.text("Title:", M, y);
-      reg();  doc.setFontSize(14); doc.text(` ${d.title || "—"}`, M+44, y);
-      y += 26;
-
-      // Summary card
-      const sTop = y;
-      bold(); doc.setFontSize(16); doc.text("Summary of Contract:", M, y);
-      let sy = y + 26;
-      sy = tinyText(
-        Array.isArray(d.summary) ? d.summary.join("\n\n") : d.summary,
-        M+18, sy, W-(M*2)-36, 16
-      );
-      Box(M-6, sTop-10, W-(M*2)+12, (sy-(y+26))+40);
-      y = sTop + (sy-(y+26))+40 + 22;
-
-      // Percentage Breakdown
-      bold(); doc.setFontSize(16); doc.text("Percentage Breakdown", M, y);
-      y += 14;
-
-      const colGap = 24;
-      const colW = (W - M*2 - colGap)/2;
-      const cardH = 172;
-      const leftX = M;
-      const rightX = M + colW + colGap;
-
-      // RISK card
-      Box(leftX, y, colW, cardH);
-      tagWithIcon(leftX+16, y+12, IM.risk, "Risk Level");
-      const riskPct = Number(d?.risk?.value ?? 0);
-      const riskBand = riskPct <= 25 ? 'green' : riskPct <= 58 ? 'orange' : 'red';
-      const riskColor = getColorFor('risk', riskPct, riskBand);
-      const riskImg = donutPNG(riskPct, riskColor, 150);
-      doc.addImage(riskImg, "PNG", leftX+18, y+38, 116, 116);
-
-      // Right copy for risk
-      let rx = leftX+148, ry = y+58;
-      ry = tinyText(d.risk?.note || "Clear terms overall, but missing late fees and dispute process.", rx, ry, colW-168, 14);
-      // status with colored square
-      const badgeBg = getBadgeBgColor(riskBand);
-      doc.setFillColor(...badgeBg); doc.roundedRect(leftX+28, y+130, 132, 24, 8, 8, "F");
-      doc.setDrawColor(0,0,0); doc.setLineWidth(1);
-      doc.rect(leftX+36, y+136, 10, 10);
-      const dotCol = getDotColor(riskBand);
-      doc.setFillColor(...dotCol); doc.rect(leftX+36+1, y+136+1, 8, 8, "F");
-      reg(); doc.setFontSize(11); doc.text(capitalizeSafety(d.risk?.safety || "Generally Safe"), leftX+52, y+147);
-
-      // CLARITY card
-      Box(rightX, y, colW, cardH);
-      tagWithIcon(rightX+16, y+12, IM.clarity, "Clause Clarity");
-      const clarPct = Number(d?.clarity?.value ?? 0);
-      const clarBand = clarPct >= 78 ? 'green' : clarPct >= 49 ? 'orange' : 'red';
-      const clarColor = getColorFor('clarity', clarPct, clarBand);
-      const clarImg = donutPNG(clarPct, clarColor, 150);
-      doc.addImage(clarImg, "PNG", rightX+18, y+38, 116, 116);
-
-      let cx = rightX+148, cy = y+58;
-      cy = tinyText(d.clarity?.note || "Plain language used, but some clauses need clearer detail.", cx, cy, colW-168, 14);
-      const clarBg = getBadgeBgColor(clarBand);
-      doc.setFillColor(...clarBg); doc.roundedRect(rightX+28, y+130, 132, 24, 8, 8, "F");
-      doc.setDrawColor(0,0,0); doc.setLineWidth(1);
-      doc.rect(rightX+36, y+136, 10, 10);
-      const clarDot = getDotColor(clarBand);
-      doc.setFillColor(...clarDot); doc.rect(rightX+36+1, y+136+1, 8, 8, "F");
-      reg(); doc.setFontSize(11); doc.text(capitalizeSafety(d.clarity?.safety || "Generally Safe"), rightX+52, y+147);
-
-      // Bars + Clauses row
-      y += cardH + 26;
-      const barsTop = y;
-
-      // Left column: Statistical Bars
-      bold(); doc.setFontSize(16); doc.text("Statistical Bars", M, y); y += 12;
-
-      function barRow(label, pct, icon, yTop, metric){
-        const bW = colW, bH = 56;
-        Box(M, yTop, bW, bH);
-        // premium icon ring
-        if(icon){
-          doc.setDrawColor(0,0,0); doc.setLineWidth(3);
-          doc.circle(M+28, yTop+28, 16);     // outer border
-          doc.addImage(icon, "PNG", M+18, yTop+18, 20, 20);
+        function getDotColor(band) {
+          return band === "green"
+            ? [40, 224, 112]
+            : band === "orange"
+            ? [223, 145, 26]
+            : [254, 0, 0];
         }
-        tagWithIcon(M+54, yTop+10, null, label); // black chip behind white title
-        const barColor = getColorFor(metric, pct);
-        const bar = pillBarPNG(pct, bW-90, 20, barColor);
-        doc.addImage(bar, "PNG", M+54, yTop+30, bW-90, 20);
-        bold(); doc.setFontSize(11); doc.text(`${pct}%`, M+bW-28, yTop+42, {align:"right"});
-      }
 
-      barRow("Professionalism",      Math.round(Number(normalized.meters.professionalism ?? 65)), IM.pro,  y, "professionalism"); y += 64;
-      barRow("Favorability Index",   Math.round(Number(normalized.meters.favorability   ?? 50)), IM.fav, y, "favorability");  y += 64;
-      barRow("Deadline Pressure",    Math.round(Number(normalized.meters.deadline      ?? 40)), IM.dead,y, "deadline");   y += 64;
+        function capitalizeSafety(safety) {
+          return safety
+            .split(" ")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+        }
 
-      // Right column: Main Clauses (aligned to barsTop)
-      const clX = rightX, clY = barsTop;
-      bold(); doc.setFontSize(16); doc.text("Main Clauses", clX, clY);
-      let listY = clY + 26;
-      const listW = colW;
-      Box(clX, clY+6, listW, Math.max(200, 360)); // container
-      reg(); doc.setFontSize(12); doc.setTextColor(20,20,20);
-      const items = (Array.isArray(d.clauses)?d.clauses:[]).slice(0,4);
-      items.forEach((t,i)=>{
-        doc.text(`${i+1}.`, clX+20, listY);
-        listY = tinyText(String(t), clX+36, listY, listW-48, 16) + 8;
-      });
-      doc.setTextColor(0,0,0);
+        function gradientBarPNG(width, height = 22, indPos) {
+          const c = document.createElement("canvas");
+          c.width = width;
+          c.height = height + 20; // extra for ind
+          const ctx = c.getContext("2d");
 
-      footer(1);
+          // bar
+          const r = height / 2;
 
-      /* ================= PAGE 2 ================= */
-      doc.addPage();
-      header();
-      let y2 = 148;
+          // clip
+          ctx.beginPath();
+          ctx.moveTo(r, 10);
+          ctx.lineTo(width - r, 10);
+          ctx.arc(width - r, 10 + r, r, -Math.PI / 2, Math.PI / 2);
+          ctx.lineTo(r, 10 + height);
+          ctx.arc(r, 10 + r, r, Math.PI / 2, -Math.PI / 2);
+          ctx.closePath();
+          ctx.clip();
 
-      // Potential Issues
-      bold(); doc.setFontSize(16); doc.text("Potential Issues that might occur", M, y2);
-      let iTop = y2 + 24, iY = iTop;
-      const iW = W-(M*2)+12;
-      (Array.isArray(d.issues)?d.issues:[]).forEach(it=>{
-        doc.text("•", M+16, iY);
-        iY = tinyText(String(it), M+30, iY, W-(M*2)-40, 16) + 6;
-      });
-      Box(M-6, iTop-18, iW, (iY - iTop) + 30);
-      y2 = iTop + (iY - iTop) + 54;
+          // gradient fill
+          const grad = ctx.createLinearGradient(0, 0, width, 0);
+          grad.addColorStop(0, "#ff6b6b");
+          grad.addColorStop(0.45, "#ffd166");
+          grad.addColorStop(1, "#00e676");
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 10, width, height);
 
-      // Smart Suggestions
-      bold(); doc.setFontSize(16); doc.text("Smart Suggestions", M, y2);
-      const s2Top = y2 + 24; let s2Y = s2Top;
-      (Array.isArray(d.suggestions)?d.suggestions:[]).forEach((s,i)=>{
-        const num = `${i+1}. `;
-        const numW = doc.getTextWidth(num);
-        const lines = doc.splitTextToSize(String(s), W-(M*2)-40-numW);
-        doc.text(num, M+16, s2Y);
-        doc.text(lines[0], M+16+numW, s2Y);
-        for(let k=1;k<lines.length;k++){ s2Y += 16; doc.text(lines[k], M+16+numW, s2Y); }
-        s2Y += 10;
-      });
-      Box(M-6, s2Top-18, iW, (s2Y - s2Top) + 24);
-      y2 = s2Top + (s2Y - s2Top) + 46;
+          // border
+          ctx.restore();
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#000";
+          ctx.beginPath();
+          ctx.moveTo(r, 10);
+          ctx.lineTo(width - r, 10);
+          ctx.arc(width - r, 10 + r, r, -Math.PI / 2, Math.PI / 2);
+          ctx.lineTo(r, 10 + height);
+          ctx.arc(r, 10 + r, r, Math.PI / 2, -Math.PI / 2);
+          ctx.stroke();
 
-      // Score + Confidence row
-      const gap = 24;
-      const leftW = (W - M*2 - gap) * 0.58;
-      const rightW = (W - M*2 - gap) - leftW;
-      const rowH = 200;
+          // indicator
+          const pos = Math.max(0, Math.min(1, indPos)) * width;
+          ctx.fillStyle = "#fff";
+          ctx.shadowColor = "rgba(0,0,0,0.3)";
+          ctx.shadowBlur = 6;
+          ctx.fillRect(pos - 1.5, 0, 3, height + 20);
 
-      // Score card
-      Box(M, y2, leftW, rowH);
-      tagWithIcon(M+16, y2+12, IM.score, "Score Checker");
-      const scorePct = Math.round(Number(d?.clarity?.value ?? 0));
-      const scoreBand = scorePct >= 78 ? 'green' : scorePct >= 49 ? 'orange' : 'red';
-      const scoreColor = getColorFor('score', scorePct, scoreBand);
-      const scoreDonut = donutPNG(scorePct, scoreColor, 150);
-      doc.addImage(scoreDonut, "PNG", M+20, y2+46, 116, 116);
-      tinyText(d?.analysis?.scoreChecker?.line || "The contract is nearly perfectly done.", M+150, y2+88, leftW-170, 14);
+          return c.toDataURL("image/png");
+        }
 
-      // Gradient bar with indicator
-      const barW = leftW - 40;
-      const indPos = scorePct / 100;
-      const gradBar = gradientBarPNG(barW, 22, indPos);
-      doc.addImage(gradBar, "PNG", M+20, y2+140, barW, 42);
-
-      // Scale labels
-      reg(); doc.setFontSize(11);
-      doc.text("Unsafe", M+20, y2+188);
-      doc.text("Safe", M + 20 + barW/2, y2+188, {align:"center"});
-      doc.text("Very Safe", M + 20 + barW, y2+188, {align:"right"});
-
-      // Confidence bar
-      Box(M + leftW + gap, y2, rightW, rowH);
-      tagWithIcon(M + leftW + gap +16, y2+12, IM.confidence, "Confidence to sign freely");
-      const confV = Math.round(Number(normalized.meters.confidence ?? 70));
-      const confColor = getColorFor('confidence', confV);
-      const confBar = pillBarPNG(confV, rightW-80, 22, confColor);
-      doc.addImage(confBar, "PNG", M + leftW + gap +24, y2+88, rightW-80, 22);
-      bold(); doc.setFontSize(12); doc.text(`${confV}%`, M + leftW + gap + rightW -28, y2+100, {align:"right"});
-
-      footer(2);
-
-      // Save
-      doc.save((filename || "SignSense_Report") + ".pdf");
-    }
-
-
-
-
-    document.getElementById("leaveReview").addEventListener("click", (e)=>{ e.preventDefault(); alert("Hook this to your reviews form URL."); });
-  })();
-  </script>
+        document
+          .getElementById("leaveReview")
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+            alert("Hook this to your reviews form URL.");
+          });
+      })();
+    </script>
+  </body>
+</html>
 </body>
 </html>
