@@ -16,14 +16,14 @@ class PDFGenerator {
     //   confidence: "https://i.imgur.com/GzPeaz5.png",
     // };
     this.ASSETS = {
-      logo: "assets/logo.png",
-      risk: "assets/riskIcon.png",
-      clarity: "assets/clarityIcon.png",
-      pro: "assets/proIcon.png",
-      fav: "assets/favIcon.png",
-      dead: "assets/deadIcon.png",
-      score: "assets/scoreIcon.png",
-      confidence: "assets/confidenceIcon.png",
+      logo: "assets/icons/logo.png",
+      risk: "assets/icons/riskIcon.png",
+      clarity: "assets/icons/clarityIcon.png",
+      pro: "assets/icons/proIcon.png",
+      fav: "assets/icons/favIcon.png",
+      dead: "assets/icons/deadIcon.png",
+      score: "assets/icons/scoreIcon.png",
+      confidence: "assets/icons/confidenceIcon.png",
     };
 
     // Centralized Style Configuration
