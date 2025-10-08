@@ -214,7 +214,7 @@ transition: opacity .6s ease;/* add */
       }
 
       .tagline-absolute {
-        background-color: var(--badge-bg);
+        background-color: #1f1a34; /* bluish-purple field */
         color: var(--badge-text);
         display: inline-flex;
         align-items: center;
@@ -440,7 +440,7 @@ transition: opacity .6s ease;/* add */
       }
 
       .section-badge {
-        background-color: var(--badge-bg);
+        background-color: #1f1a34; /* bluish-purple field */
         color: var(--badge-text);
         padding: 6px 14px;
         border-radius: 53px;
@@ -2151,6 +2151,17 @@ window.addEventListener('load', () => {
 /* (optional) do the same for the top bar */
 .topbar-nav a,
 .topbar-nav a:visited { color:#d8cccc; }
+/* Remove underline from CTA-style links */
+.watch-btn,
+.leave-review {
+  text-decoration: none !important;
+}
+
+/* Ensure hover doesn’t add underline */
+.watch-btn:hover,
+.leave-review:hover {
+  text-decoration: none !important;
+}
 
 </style>
 
