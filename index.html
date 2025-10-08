@@ -555,6 +555,26 @@ transition: opacity .6s ease;/* add */
         margin-bottom: 30px;
         margin-left: -18px;
       }
+      /* row that replaces the single green icon */
+.insight-icon-row{
+  display:flex;
+  align-items:center;
+  gap:16px;                  /* space between the three */
+  margin-top:40px;           /* keep same spacing as old icon */
+  margin-bottom:30px;
+  margin-left:-18px;         /* matches your old .insight-icon offset */
+}
+
+/* circle border style from earlier */
+.circle-icon{
+  width:120px;               /* same size as the old green icon */
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#000;           /* clean edge inside the ring */
+  border:3px solid #d0d0d0;  /* slightly gray → near white, a bit thicker */
+}
+
 
       .insight-right h2 {
         font-size: 44px;
@@ -1233,12 +1253,12 @@ transition: opacity .6s ease;/* add */
         </div>
 
         <div class="insight-right">
-        <img
-  class="insight-icon"
-  src="https://i.imgur.com/ueFIxNE.png"
-  alt="Insights Icon"
-  loading="lazy"
-/>
+        <div class="insight-icon-row">
+  <img class="circle-icon" src="https://i.imgur.com/VVGvghi.png" alt="AI icon" loading="lazy" />
+  <img class="circle-icon" src="https://i.imgur.com/woCjWUt.png" alt="Speed icon" loading="lazy" />
+  <img class="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield/Secure icon" loading="lazy" />
+</div>
+
 
           <h2>Understand Your Contract <br /><span>Instantly with AI</span></h2>
           <p>
