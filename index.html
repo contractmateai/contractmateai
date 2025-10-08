@@ -113,6 +113,8 @@
   --purple-hover:#2a1f4a;
   --bar:#04040e;
   --bar-border:#3f3f3f;
+  --badge-bg:#1f1a34;
+  --badge-text:#c8acff;
 }
 /* === staged on-load sequence (hero → bg → particles) === */
 .reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
@@ -212,8 +214,8 @@ transition: opacity .6s ease;/* add */
       }
 
       .tagline-absolute {
-        background-color: #090922;
-        color: #bbb;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
         display: inline-flex;
         align-items: center;
         gap: 10px;
@@ -438,8 +440,8 @@ transition: opacity .6s ease;/* add */
       }
 
       .section-badge {
-        background-color: #090922;
-        color: #bbb;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
         padding: 6px 14px;
         border-radius: 53px;
         font-size: 15px;
@@ -1142,7 +1144,7 @@ transition: opacity .6s ease;/* add */
       <a href="index.html" class="topbar-brand">SignSense</a>
     </div>
     <nav class="topbar-nav">
-      <a href="index.html#how-it-works">See How It Works</a>
+     <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
       <a href="index.html">Home</a>
       <a href="contact.html">Contact</a>
     </nav>
@@ -1242,9 +1244,14 @@ transition: opacity .6s ease;/* add */
           <p>
            Reveal hidden risks and key terms so you can review contracts clearly, quickly, and without confusion.
           </p>
-      <button id="insightReviewBtn" class="cta-outline animated-arrow-bttn" type="button">
-  Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
+      <a id="insightReviewBtn"
+   href="https://youtube.com"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="cta-outline animated-arrow-bttn">
+  Learn More <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</a>
+
 
 
 
@@ -1492,9 +1499,14 @@ window.addEventListener('load', () => {
       <h2>Take a deeper look to<br />see how SignSense<br />really works.</h2>
       <p>Curious how SignSense works? Watch our video for a clear,
          step-by-step look at how we simplify your contracts</p>
-      <button id="watchBtn" class="watch-btn animated-arrow-bttn">
-  Watch on YouTube <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
+      <a id="watchBtn"
+   href="https://youtube.com"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="watch-btn animated-arrow-bttn">
+  Watch on Channel <span class="animated-arrow diag" aria-hidden="true">↗</span>
+</a>
+
 
     </div>
 
@@ -1658,9 +1670,13 @@ window.addEventListener('load', () => {
       <div class="review-dots" id="reviewDots"></div>
 
       <div class="leave-review-wrap">
-       <button class="leave-review animated-arrow-bttn" type="button">
+      <a class="leave-review animated-arrow-bttn"
+   href="https://tally.so/r/3EGJpA"
+   target="_blank"
+   rel="noopener noreferrer">
   Leave A Review <span class="animated-arrow diag" aria-hidden="true">↗</span>
-</button>
+</a>
+
 
       </div>
     </section>
@@ -2197,7 +2213,7 @@ async function fileToPayload(file) {
 
 <script>
 (() => {
-  const triggers = document.querySelectorAll(".cta-btn, .cta-outline, .footer-cta, #insightReviewBtn");
+ const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
   const input = document.getElementById("contractFile");
   const roleUI = document.getElementById("rolePicker");
   const reviewBtn = document.getElementById("reviewBtn");
