@@ -258,7 +258,8 @@
         <a href="index.html" class="topbar-brand">SignSense</a>
       </div>
       <nav class="topbar-nav">
-        <a href="index.html#how-it-works">See How It Works</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
+
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -285,16 +286,35 @@
   <section class="contact-section" data-aos="fade-up">
     <div class="contact-wrap" id="contact">
       <div class="contact-card">
-        <div>
-          <div class="row">
-            <input class="field" type="text" placeholder="Name" />
-            <input class="field" type="tel" placeholder="Phone" />
-          </div>
-          <input class="field email" type="email" placeholder="Email" />
-          <textarea class="field" placeholder="Message"></textarea>
-          <button class="send-btn" type="button">Send</button>
-          <div class="sla">We will contact you within 24 hours.</div>
-        </div>
+       <div>
+  <form id="contactForm" novalidate autocomplete="off">
+    <div class="row">
+      <input class="field" type="text" id="name" name="name" placeholder="Name" required />
+      <input class="field" type="tel" id="phone" name="phone" placeholder="Phone" required />
+    </div>
+
+    <input
+      class="field email"
+      type="email"
+      id="email"
+      name="email"
+      placeholder="Email"
+      required
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      inputmode="email"
+    />
+
+    <textarea class="field" id="message" name="message" placeholder="Message" required></textarea>
+
+    <button class="send-btn" id="sendBtn" type="submit">Send</button>
+    <div class="sla">We will contact you within 24 hours.</div>
+    <div id="formAlert" style="margin-top:10px; font-size:14px; color:#d8cccc;"></div>
+  </form>
+</div>
+
         <aside class="contact-info">
           <div class="info-title">Contact Information</div>
           <div class="info-sub">Your feedback matters. Let's build a better future together.</div>
@@ -477,5 +497,78 @@
       }
     })();
   </script>
+  <script>
+  // === Desktop contact form submit (mirror mobile behavior) ===
+  (function(){
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    const btn  = document.getElementById('sendBtn');
+    const alertBox = document.getElementById('formAlert');
+
+    function setAlert(msg, ok=false){
+      if(!alertBox) return;
+      alertBox.textContent = msg;
+      alertBox.style.color = ok ? '#aafe2a' : '#ffb3b3';
+    }
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      setAlert('');
+
+      const name = form.name.value.trim();
+      const phone = form.phone.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+
+      if(!name || !phone || !email || !message){
+        setAlert('Please fill out all fields.');
+        return;
+      }
+      if(!/^\S+@\S+\.\S+$/.test(email)){
+        setAlert('Please enter a valid email address.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try{
+        const res = await fetch('/api/contact', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ name, phone, email, message, to:'support@signsense.io' })
+        });
+
+        if(!res.ok) throw new Error('Network response was not ok');
+
+        setAlert('Thanks! Your message has been sent.', true);
+        form.reset();
+
+        // Autofill repaint fix for the email field (like mobile)
+        const el = document.getElementById('email');
+        if (el && el.parentNode) {
+          const clone = el.cloneNode(true);
+          el.parentNode.replaceChild(clone, el);
+        }
+
+        // Blur others to force repaint
+        ['name','phone','message'].forEach(id => {
+          const f = document.getElementById(id);
+          if (f) f.blur();
+        });
+
+        btn.textContent = 'Sent!';
+        setTimeout(() => { btn.disabled = false; btn.textContent = 'Send'; }, 4000);
+
+      }catch(err){
+        setAlert('Sorry, something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Send';
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>
