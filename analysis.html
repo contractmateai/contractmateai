@@ -181,6 +181,33 @@
     .input{flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter}
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
+    /* Inline email form that replaces the button */
+.email-inline{
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:#f2f9fe;
+  border:1px solid #cfcfcf;
+  border-radius:16px;
+  padding:10px 12px;
+  box-shadow:0 6px 28px rgba(0,0,0,.28);
+}
+.email-inline .input{
+  background:#ffffff;
+  color:#000;
+  border:1px solid #cfcfcf;
+}
+.email-err{
+  color:#ff6b6b;
+  font-size:13px;
+  margin-left:8px;
+  display:none;
+}
+@media (max-width: 420px){
+  .email-inline{ gap:8px; padding:10px; }
+  .email-inline .input{ min-width: 0; width: 54vw; }
+}
+
   </style>
 </head>
 <body>
@@ -366,9 +393,17 @@
     </div>
   </div>
 
-  <div class="download-wrap" id="dlWrap">
-    <button class="download" id="downloadBtn">Download Report</button>
-  </div>
+ <div class="download-wrap" id="dlWrap">
+  <button class="download" id="downloadBtn">Download Report</button>
+
+  <form id="emailInline" class="email-inline" novalidate>
+    <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+    <button class="btn primary" id="emailGo" type="submit">Download</button>
+    <button class="btn" id="emailCancel" type="button">Cancel</button>
+    <div id="emailErr" class="email-err">Please enter a valid email address.</div>
+  </form>
+</div>
+
 
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
@@ -536,17 +571,42 @@
   window.addEventListener("load", nearBottom);
 
   /* Modal + PDF */
-  const modal=$("#emailModal"), openModal=()=>modal.style.display="flex", closeModal=()=>modal.style.display="none";
-  $("#downloadBtn").addEventListener("click", openModal);
-  $("#emailCancel").addEventListener("click", closeModal);
-  function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
-  $("#emailSubmit").addEventListener("click", async ()=>{
-    const email=$("#emailInput").value||"", err=$("#emailErr");
-    if(!validEmail(email)){ err.style.display="block"; return; }
-    err.style.display="none";
-    await generatePDF("Report", demo);
-    closeModal();
-  });
+/* Inline email swap (replaces the bottom button) */
+const downloadBtn = $("#downloadBtn");
+const emailBox    = $("#emailInline");
+const emailInput  = $("#emailInput");
+const emailErr    = $("#emailErr");
+const emailCancel = $("#emailCancel");
+
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
+
+function openInline(){
+  downloadBtn.style.display = "none";
+  emailBox.style.display = "inline-flex";
+  emailInput.focus();
+}
+function closeInline(){
+  emailBox.style.display = "none";
+  emailErr.style.display = "none";
+  emailInput.value = "";
+  downloadBtn.style.display = "inline-flex";
+}
+
+downloadBtn.addEventListener("click", openInline);
+emailCancel.addEventListener("click", closeInline);
+
+document.getElementById("emailInline").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const email = emailInput.value;
+  if(!validEmail(email)){
+    emailErr.style.display = "block";
+    return;
+  }
+  emailErr.style.display = "none";
+  await generatePDF("Report", demo);   // uses your existing generatePDF()
+  closeInline();
+});
+
 
   async function generatePDF(title, d){
     const { jsPDF } = window.jspdf;
