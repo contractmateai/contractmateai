@@ -496,6 +496,43 @@
         container.appendChild(p);
       }
     })();
+    /* Keep footer links the same color even after visiting */
+.footer-bottom-links a:visited { color: #c5c5c5; }
+.site-footer .footer-links a:visited { color: #c5c5c5; }
+
+/* (optional) do the same for the top bar */
+.topbar-nav a,
+.topbar-nav a:visited { color:#d8cccc; }
+
+/* === Autofill: force dark background (keep these LAST) === */
+input.field,
+textarea.field {
+  background: var(--field) !important;
+  -webkit-text-fill-color: #d0d0d0; /* Chrome */
+  color: #d0d0d0;
+  appearance: none;
+  background-clip: padding-box;
+}
+
+input.field:-webkit-autofill,
+input.field:-webkit-autofill:hover,
+input.field:-webkit-autofill:focus,
+textarea.field:-webkit-autofill {
+  -webkit-text-fill-color: #d0d0d0 !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--field) inset !important;
+  box-shadow: 0 0 0 1000px var(--field) inset !important;
+  border-radius: 16px !important;
+  transition: background-color 9999s ease-out 0s !important;
+}
+
+/* Firefox */
+input.field:-moz-autofill {
+  box-shadow: 0 0 0 1000px var(--field) inset !important;
+  -moz-text-fill-color: #d0d0d0 !important;
+  border-radius: 16px !important;
+}
+</style>
+
   </script>
   <script>
   // === Desktop contact form submit (mirror mobile behavior) ===
