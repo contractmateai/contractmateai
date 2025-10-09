@@ -182,31 +182,41 @@
     .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
     /* Inline email form that replaces the button */
+/* Inline email form styled like the old modal row */
 .email-inline{
-  display:none;
+  display:none;                /* shown by JS when button is clicked */
   align-items:center;
   gap:10px;
-  background:#f2f9fe;
-  border:1px solid #cfcfcf;
+  background:#141319;          /* same as .modal-card */
+  border:1px solid var(--border);
   border-radius:16px;
-  padding:10px 12px;
+  padding:12px;                /* same padding feel as modal */
   box-shadow:0 6px 28px rgba(0,0,0,.28);
 }
+
 .email-inline .input{
-  background:#ffffff;
-  color:#000;
-  border:1px solid #cfcfcf;
+  flex:1;
+  background:#0f0e14;         /* same as .input in modal */
+  border:1px solid #5a5a5a;
+  border-radius:10px;
+  padding:12px;
+  color:#fff;
+  font:400 15px/1 Inter;
 }
+
 .email-err{
   color:#ff6b6b;
   font-size:13px;
   margin-left:8px;
   display:none;
 }
+
+/* keep buttons using your existing .btn / .btn.primary styles */
 @media (max-width: 420px){
-  .email-inline{ gap:8px; padding:10px; }
-  .email-inline .input{ min-width: 0; width: 54vw; }
+  .email-inline{ gap:8px; padding:10px; flex-wrap:wrap; }
+  .email-inline .input{ min-width:0; width:100%; }
 }
+
 
   </style>
 </head>
@@ -403,19 +413,6 @@
     <div id="emailErr" class="email-err">Please enter a valid email address.</div>
   </form>
 </div>
-
-
-  <div class="modal" id="emailModal" aria-modal="true" role="dialog">
-    <div class="modal-card">
-      <h4>Enter your email to download the PDF report</h4>
-      <div class="modal-row">
-        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
-        <button class="btn primary" id="emailSubmit">Download</button>
-        <button class="btn" id="emailCancel">Cancel</button>
-      </div>
-      <div id="emailErr" style="color:#ff6b6b;font-size:13px;margin-top:8px;display:none">Please enter a valid email address.</div>
-    </div>
-  </div>
 
 <script>
 (() => {
