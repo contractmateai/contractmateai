@@ -237,6 +237,23 @@
   .email-row{ flex-wrap:nowrap; }
   .email-inline{ width: min(92vw, 320px); }
 }
+/* Make the inline form's button narrower */
+#emailInline .btn {
+  padding: 7px 8px;      /* <= narrower left/right */
+  border-radius: 8px;
+  flex-shrink: 0;        /* don't stretch */
+}
+
+#emailInline .btn.primary {
+  padding: 7px 8px;      /* match above; keeps it compact */
+  font-size: 15px;       /* tidy text size */
+  font-weight: 500;
+}
+
+/* Make the title text the same white-ish tone as the button */
+#emailInline .email-title {
+  color: #f2f9fe;
+}
 
 
 
@@ -432,7 +449,7 @@
   <div class="email-title">Insert email to download</div>
   <div class="email-row">
     <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
-    <button class="btn primary" id="emailGo" type="submit">Download</button>
+    <button class="btn primary" id="emailGo" type="submit">Done</button>
   </div>
   <div id="emailErr" class="email-err">Please enter a valid email address.</div>
 </form>
