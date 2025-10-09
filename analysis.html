@@ -185,65 +185,70 @@ html{ overflow-x:hidden; }
     /* Inline email form that replaces the button */
 /* Inline email form styled like the old modal row */
 /* Inline email form: smaller, with title, no cancel, no focus color change */
-.email-inline{
-  display:none;               /* shown by JS when button is clicked */
-  flex-direction:column;
-  gap:8px;
-
-  /* smaller + guaranteed to never exceed viewport */
-  width:clamp(240px, 90vw, 320px);
-  max-width:320px;
-  box-sizing:border-box;
-
-  background:#141319;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px 12px;
-  box-shadow:0 6px 28px rgba(0,0,0,.28);
+.email-inline {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  width: clamp(200px, 75vw, 260px);
+  max-width: 260px;
+  background: #141319;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+  box-sizing: border-box;
 }
 
-
-.email-title{
-  font-size:14px;
-  color:#bdbdbd;
-  margin-bottom:2px;
+.email-title {
+  font-size: 13px;
+  color: #bdbdbd;
+  text-align: center;
+  margin-bottom: 4px;
 }
 
-.email-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
+.email-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.email-inline .input{
-  flex:1;
-  background:#0f0e14;
-  border:1px solid #5a5a5a;
-  border-radius:10px;
-  padding:10px 12px;
-  color:#fff;
-  font:400 15px/1 Inter;
+.email-inline .input {
+  flex: 1;
+  background: #0f0e14;
+  border: 1px solid #5a5a5a;
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: #fff;
+  font: 400 14px/1 Inter;
 }
 
-/* keep appearance the same when focused */
-.email-inline .input:focus{
-  outline:none;
-  box-shadow:none;
-  border-color:#5a5a5a;
-  background:#0f0e14;
-  color:#fff;
+.email-inline .input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #5a5a5a;
 }
 
-.email-err{
-  color:#ff6b6b;
-  font-size:13px;
-  display:none;
+.btn.primary {
+  background: #f2f9fe;
+  color: #000;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-@media (max-width: 420px){
-  .email-row{ flex-wrap:nowrap; }
-  .email-inline{ width: min(92vw, 320px); }
+.email-err {
+  color: #ff6b6b;
+  font-size: 12px;
+  text-align: center;
+  display: none;
 }
+
+@media (max-width: 420px) {
+  .email-inline { width: clamp(180px, 80vw, 240px); }
+}
+
 
 
 
