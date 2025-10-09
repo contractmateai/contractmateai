@@ -164,78 +164,46 @@
     .score-ind{position:absolute;top:-6px;height:30px;width:3px;background:#fff;border-radius:2px;left:calc(80% - 1.5px);box-shadow:0 0 8px rgba(255,255,255,.6)}
     .score-scale{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 
-    .download-wrap{
-      position:fixed; left:0; right:0;
-      bottom:calc(20px + env(safe-area-inset-bottom));
-      display:none; justify-content:center; z-index:60; opacity:0; transform:translateY(8px)
-    }
-    .download{
-      background:#f2f9fe;color:#000;border:1px solid #cfcfcf;border-radius:16px;padding:16px 26px;
-      display:inline-flex;gap:12px;align-items:center;cursor:pointer;font-weight:400;font-size:18px;box-shadow:0 6px 28px rgba(0,0,0,.28)
-    }
+   .download-wrap{
+  position:fixed; left:0; right:0;
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  display:none; justify-content:center; z-index:60;
+  opacity:0; transform:translateY(8px);
+  /* NEW: never let children push wider than the viewport */
+  padding:0 12px;
+}
 
-    .modal{position:fixed:inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100}
-    .modal-card{background:#141319;border:1px solid var(--border);border-radius:18px;padding:18px;width:min(480px,92vw)}
-    .modal-card h4{margin:0 0 10px;font-size:18px;font-weight:400}
-    .modal-row{display:flex;gap:10px;margin-top:12px}
-    .input{flex:1;background:#0f0e14;border:1px solid #5a5a5a;border-radius:10px;padding:12px;color:#fff;font:400 15px/1 Inter}
-    .btn{background:#0f0e14;border:1px solid var(--border);color:#fff;border-radius:10px;padding:12px 14px;cursor:pointer}
-    .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
-    /* Inline email form that replaces the button */
-/* Inline email form styled like the old modal row */
-/* Inline email form: smaller, with title, no cancel, no focus color change */
 .email-inline{
   display:none;                 /* shown by JS when button is clicked */
   flex-direction:column;
   gap:8px;
-  width:min(92vw, 340px);       /* smaller box */
+
+  /* NEW: small + strictly within viewport width */
+  width: clamp(240px, 90vw, 320px);
+  max-width: 320px;
+
   background:#141319;
   border:1px solid var(--border);
   border-radius:14px;
   padding:10px 12px;
   box-shadow:0 6px 28px rgba(0,0,0,.28);
+  /* make sure border/padding are included in width calc */
+  box-sizing:border-box;
 }
 
-.email-title{
-  font-size:14px;
-  color:#bdbdbd;
-  margin-bottom:2px;
-}
-
-.email-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
+.email-row{ display:flex; align-items:center; gap:8px; }
 .email-inline .input{
-  flex:1;
-  background:#0f0e14;
-  border:1px solid #5a5a5a;
-  border-radius:10px;
-  padding:10px 12px;
-  color:#fff;
-  font:400 15px/1 Inter;
+  flex:1; background:#0f0e14; border:1px solid #5a5a5a; border-radius:10px;
+  padding:10px 12px; color:#fff; font:400 15px/1 Inter;
 }
-
 /* keep appearance the same when focused */
-.email-inline .input:focus{
-  outline:none;
-  box-shadow:none;
-  border-color:#5a5a5a;
-  background:#0f0e14;
-  color:#fff;
-}
+.email-inline .input:focus{ outline:none; box-shadow:none; border-color:#5a5a5a; background:#0f0e14; color:#fff; }
 
-.email-err{
-  color:#ff6b6b;
-  font-size:13px;
-  display:none;
-}
+.email-title{ font-size:14px; color:#bdbdbd; margin-bottom:2px; }
+.email-err{ color:#ff6b6b; font-size:13px; display:none; }
 
 @media (max-width: 420px){
   .email-row{ flex-wrap:nowrap; }
-  .email-inline{ width: min(92vw, 320px); }
 }
 
 
@@ -605,6 +573,10 @@ function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim
 function openInline(){
   downloadBtn.style.display = "none";
   emailBox.style.display = "flex";
+  // lock horizontal scrolling while the box is open
+  document.documentElement.style.overflowX = 'hidden';
+  document.body.style.overflowX = 'hidden';
+
   // prevent outside-click from closing immediately when we just opened
   setTimeout(() => { document.addEventListener("click", outsideClose, { capture:true }); }, 0);
   emailInput.focus();
@@ -615,8 +587,14 @@ function closeInline(){
   emailErr.style.display = "none";
   emailInput.value = "";
   downloadBtn.style.display = "inline-flex";
+
+  // keep overflow locked (so no side scrolling)
+  document.documentElement.style.overflowX = 'hidden';
+  document.body.style.overflowX = 'hidden';
+
   document.removeEventListener("click", outsideClose, { capture:true });
 }
+
 
 // if click happens outside the email form, close it
 function outsideClose(e){
