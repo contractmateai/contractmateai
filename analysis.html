@@ -183,39 +183,61 @@
     .btn.primary{background:#f2f9fe;color:#000;border-color:#cfcfcf}
     /* Inline email form that replaces the button */
 /* Inline email form styled like the old modal row */
+/* Inline email form: smaller, with title, no cancel, no focus color change */
 .email-inline{
-  display:none;                /* shown by JS when button is clicked */
-  align-items:center;
-  gap:10px;
-  background:#141319;          /* same as .modal-card */
+  display:none;                 /* shown by JS when button is clicked */
+  flex-direction:column;
+  gap:8px;
+  width:min(92vw, 340px);       /* smaller box */
+  background:#141319;
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:12px;                /* same padding feel as modal */
+  border-radius:14px;
+  padding:10px 12px;
   box-shadow:0 6px 28px rgba(0,0,0,.28);
+}
+
+.email-title{
+  font-size:14px;
+  color:#bdbdbd;
+  margin-bottom:2px;
+}
+
+.email-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .email-inline .input{
   flex:1;
-  background:#0f0e14;         /* same as .input in modal */
+  background:#0f0e14;
   border:1px solid #5a5a5a;
   border-radius:10px;
-  padding:12px;
+  padding:10px 12px;
   color:#fff;
   font:400 15px/1 Inter;
+}
+
+/* keep appearance the same when focused */
+.email-inline .input:focus{
+  outline:none;
+  box-shadow:none;
+  border-color:#5a5a5a;
+  background:#0f0e14;
+  color:#fff;
 }
 
 .email-err{
   color:#ff6b6b;
   font-size:13px;
-  margin-left:8px;
   display:none;
 }
 
-/* keep buttons using your existing .btn / .btn.primary styles */
 @media (max-width: 420px){
-  .email-inline{ gap:8px; padding:10px; flex-wrap:wrap; }
-  .email-inline .input{ min-width:0; width:100%; }
+  .email-row{ flex-wrap:nowrap; }
+  .email-inline{ width: min(92vw, 320px); }
 }
+
 
 
   </style>
@@ -406,12 +428,15 @@
  <div class="download-wrap" id="dlWrap">
   <button class="download" id="downloadBtn">Download Report</button>
 
-  <form id="emailInline" class="email-inline" novalidate>
+<form id="emailInline" class="email-inline" novalidate>
+  <div class="email-title">Insert email to download</div>
+  <div class="email-row">
     <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
     <button class="btn primary" id="emailGo" type="submit">Download</button>
-    <button class="btn" id="emailCancel" type="button">Cancel</button>
-    <div id="emailErr" class="email-err">Please enter a valid email address.</div>
-  </form>
+  </div>
+  <div id="emailErr" class="email-err">Please enter a valid email address.</div>
+</form>
+
 </div>
 
 <script>
@@ -569,28 +594,44 @@
 
   /* Modal + PDF */
 /* Inline email swap (replaces the bottom button) */
+/* Inline email swap (replaces the bottom button) */
 const downloadBtn = $("#downloadBtn");
 const emailBox    = $("#emailInline");
 const emailInput  = $("#emailInput");
 const emailErr    = $("#emailErr");
-const emailCancel = $("#emailCancel");
 
 function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e||"").trim()); }
 
 function openInline(){
   downloadBtn.style.display = "none";
-  emailBox.style.display = "inline-flex";
+  emailBox.style.display = "flex";
+  // prevent outside-click from closing immediately when we just opened
+  setTimeout(() => { document.addEventListener("click", outsideClose, { capture:true }); }, 0);
   emailInput.focus();
 }
+
 function closeInline(){
   emailBox.style.display = "none";
   emailErr.style.display = "none";
   emailInput.value = "";
   downloadBtn.style.display = "inline-flex";
+  document.removeEventListener("click", outsideClose, { capture:true });
 }
 
-downloadBtn.addEventListener("click", openInline);
-emailCancel.addEventListener("click", closeInline);
+// if click happens outside the email form, close it
+function outsideClose(e){
+  if (!emailBox.contains(e.target)) {
+    closeInline();
+  }
+}
+
+// prevent clicks inside the form from bubbling to outsideClose
+emailBox.addEventListener("click", (e)=> e.stopPropagation());
+
+downloadBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // don't trigger outsideClose
+  openInline();
+});
 
 document.getElementById("emailInline").addEventListener("submit", async (e)=>{
   e.preventDefault();
@@ -600,9 +641,10 @@ document.getElementById("emailInline").addEventListener("submit", async (e)=>{
     return;
   }
   emailErr.style.display = "none";
-  await generatePDF("Report", demo);   // uses your existing generatePDF()
+  await generatePDF("Report", demo);
   closeInline();
 });
+
 
 
   async function generatePDF(title, d){
