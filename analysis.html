@@ -1048,21 +1048,21 @@ if (raw) {
   normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
   normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
 
-  normalized.risk = {
-    value: normalized.analysis.risk || 0,
-    note: "The contract risk score is based on the clauses' fairness and obligations."
-  };
-  normalized.clarity = {
-    value: normalized.analysis.clarity || 0,
-    note: "The clarity score reflects how easy it is to understand the terms."
-  };
+normalized.risk = {
+  value: Number(normalized.analysis.risk) || 0,
+  note: "The contract risk score is based on the clauses' fairness and obligations."
+};
+normalized.clarity = {
+  value: Number(normalized.analysis.clarity) || 0,
+  note: "The clarity score reflects how easy it is to understand the terms."
+};
+normalized.meters = {
+  professionalism: Number(normalized.analysis.compliance) || 0,
+  favorability: 50,
+  deadline: 50,
+  confidence: 70
+};
 
-  normalized.meters = {
-    professionalism: normalized.analysis.compliance || 0,
-    favorability: 50,
-    deadline: 50,
-    confidence: 70
-  };
 }
 
 
@@ -1102,7 +1102,8 @@ if (raw) {
             : cssVar("--red");
         };
 
-        const currentLang = "en";
+       let currentLang = normalized.meta.detectedLang || "en";
+
         function renderUILabels(lang) {
           const t = UI[lang] || UI.en;
           $("#uiOverview").textContent = t.overview;
@@ -1223,6 +1224,25 @@ if (raw) {
 
         /* ======= Init render ======= */
         renderAll(currentLang);
+        // === Language switching ===
+document.querySelectorAll(".lang-item").forEach(item => {
+  item.addEventListener("click", e => {
+    const newLang = e.target.getAttribute("data-code");
+    // check if we have translation data for that language
+    const tr = normalized.analysis.translations || normalized.translations || {};
+    if (newLang && tr[newLang]) {
+      normalized.summary = tr[newLang].summary || normalized.summary;
+      normalized.clauses = tr[newLang].keyClauses || normalized.clauses;
+      normalized.issues = tr[newLang].potentialIssues || normalized.issues;
+      normalized.suggestions = tr[newLang].smartSuggestions || normalized.suggestions;
+      currentLang = newLang;
+      renderAll(currentLang);
+    } else {
+      alert("Translation not available for " + newLang.toUpperCase());
+    }
+  });
+});
+
 
         /* ======= HOVER DROPDOWN ======= */
         const langBox = document.getElementById("lang");
