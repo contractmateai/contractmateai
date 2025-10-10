@@ -1,6 +1,10 @@
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
+
   <head>
-    <meta charset="utf-8" />
+   <meta charset="utf-8" />
+<meta name="google" content="notranslate" />
+<meta http-equiv="Content-Language" content="x-default" />
+
     <title>SignSense — Analysis</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -946,37 +950,21 @@
        const mode = localStorage.getItem("analysisMode") || "live";
 
         /* ================= UI LABELS (i18n) ================= */
-        const UI = {
-          en: {
-            overview: "Overview",
-            title: "Title:",
-            summary: "Summary",
-            prof: "Professionalism",
-            fav: "Favorability Index",
-            deadline: "Deadline pressure",
-            issues: "Potential Issues",
-            suggestions: "Smart Suggestions",
-            risk: "Risk Level",
-            clarity: "Clause Clarity",
-            clauses: "Main Clauses",
-            score: "Score Checker",
-            unsafe: "Unsafe",
-            safe: "Safe",
-            verysafe: "Very Safe",
-            conf: "Confidence to sign freely",
-            remark: {
-              green: "The contract is nearly perfectly done.",
-              orange: "The contract is done well.",
-              red: "The contract isn’t done well.",
-            },
-            band: {
-              green: "Totally safe",
-              orange: "Generally safe",
-              red: "Not safe",
-            },
-          },
-          // (other languages omitted here for brevity — they’re not used by the PDF code)
-        };
+       const UI = {
+  en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",conf:"Confidence to sign freely"},
+  it:{overview:"Panoramica",title:"Titolo:",summary:"Sommario",prof:"Professionalità",fav:"Indice di favorevolezza",deadline:"Pressione della scadenza",issues:"Problemi potenziali",suggestions:"Suggerimenti intelligenti",risk:"Livello di rischio",clarity:"Chiarezza delle clausole",clauses:"Clausole principali",score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",conf:"Fiducia a firmare liberamente"},
+  de:{overview:"Übersicht",title:"Titel:",summary:"Zusammenfassung",prof:"Professionalität",fav:"Günstigkeitsindex",deadline:"Termindruck",issues:"Mögliche Probleme",suggestions:"Smarte Vorschläge",risk:"Risikostufe",clarity:"Klauselklarheit",clauses:"Hauptklauseln",score:"Punktzahlprüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",conf:"Zuversicht frei zu unterschreiben"},
+  es:{overview:"Resumen",title:"Título:",summary:"Resumen",prof:"Profesionalidad",fav:"Índice de favorabilidad",deadline:"Presión de plazo",issues:"Posibles problemas",suggestions:"Sugerencias inteligentes",risk:"Nivel de riesgo",clarity:"Claridad de cláusulas",clauses:"Cláusulas principales",score:"Verificador de puntuación",unsafe:"Riesgoso",safe:"Seguro",verysafe:"Muy seguro",conf:"Confianza para firmar libremente"},
+  fr:{overview:"Aperçu",title:"Titre :",summary:"Résumé",prof:"Professionnalisme",fav:"Indice de favorabilité",deadline:"Pression d’échéance",issues:"Problèmes potentiels",suggestions:"Suggestions intelligentes",risk:"Niveau de risque",clarity:"Clarté des clauses",clauses:"Clauses principales",score:"Vérificateur de score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",conf:"Confiance pour signer librement"},
+  pt:{overview:"Visão geral",title:"Título:",summary:"Resumo",prof:"Profissionalismo",fav:"Índice de favorabilidade",deadline:"Pressão do prazo",issues:"Problemas potenciais",suggestions:"Sugestões inteligentes",risk:"Nível de risco",clarity:"Clareza das cláusulas",clauses:"Cláusulas principais",score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",conf:"Confiança para assinar livremente"},
+  nl:{overview:"Overzicht",title:"Titel:",summary:"Samenvatting",prof:"Professionaliteit",fav:"Voordeligheidsindex",deadline:"Deadline-druk",issues:"Potentiële problemen",suggestions:"Slimme suggesties",risk:"Risiconiveau",clarity:"Clausuleduidelijkheid",clauses:"Belangrijkste clausules",score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",conf:"Vertrouwen om vrij te tekenen"},
+  ro:{overview:"Prezentare generală",title:"Titlu:",summary:"Rezumat",prof:"Profesionalism",fav:"Indice de favorabilitate",deadline:"Presiunea termenului",issues:"Probleme potențiale",suggestions:"Sugestii inteligente",risk:"Nivel de risc",clarity:"Claritatea clauzelor",clauses:"Clauze principale",score:"Verificator scor",unsafe:"Riscant",safe:"Sigur",verysafe:"Foarte sigur",conf:"Încredere de a semna liber"},
+  sq:{overview:"Përmbledhje",title:"Titulli:",summary:"Përmbledhje",prof:"Profesionalizmi",fav:"Indeksi i favorshmërisë",deadline:"Presioni i afatit",issues:"Çështje të mundshme",suggestions:"Sugjerime të zgjuara",risk:"Niveli i rrezikut",clarity:"Qartësia e klauzolave",clauses:"Klauzolat kryesore",score:"Kontrolli i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",conf:"Besim për të firmosur lirisht"},
+  tr:{overview:"Genel bakış",title:"Başlık:",summary:"Özet",prof:"Profesyonellik",fav:"Olumluluk endeksi",deadline:"Son tarih baskısı",issues:"Olası sorunlar",suggestions:"Akıllı öneriler",risk:"Risk seviyesi",clarity:"Hüküm açıklığı",clauses:"Ana hükümler",score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",conf:"Özgürce imzalama güveni"},
+  zh:{overview:"概览",title:"标题：",summary:"摘要",prof:"专业性",fav:"有利指数",deadline:"截止压力",issues:"潜在问题",suggestions:"智能建议",risk:"风险等级",clarity:"条款清晰度",clauses:"主要条款",score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",conf:"放心签署的信心"},
+  ja:{overview:"概要",title:"タイトル：",summary:"要約",prof:"プロフェッショナリズム",fav:"好ましさ指数",deadline:"締切プレッシャー",issues:"潜在的な問題",suggestions:"スマート提案",risk:"リスクレベル",clarity:"条項の明確さ",clauses:"主要条項",score:"スコアチェッカー",unsafe:"危険",safe:"安全",verysafe:"非常に安全",conf:"自由に署名する自信"}
+};
+
 
         /* ===== Demo data ===== */
         const fallbackDemo = {
@@ -1022,7 +1010,7 @@
           translations: {},
         };
 
-        let raw = localStorage.getItem("analysisRaw");
+let raw = localStorage.getItem("analysisRaw");
 let normalized;
 
 if (raw) {
@@ -1031,9 +1019,10 @@ if (raw) {
     normalized = {
       meta: {
         title: parsed.contractName || "Untitled Contract",
-        detectedLang: parsed.detectedLang || "en"
+        detectedLang: parsed.detectedLang || "en",
       },
-      analysis: parsed.analysis || {}
+      analysis: parsed.analysis || {},
+      translations: parsed.translations || {}
     };
   } catch {
     normalized = fallbackDemo;
@@ -1042,7 +1031,10 @@ if (raw) {
   normalized = fallbackDemo;
 }
 
-     if (normalized.analysis) {
+
+
+
+ if (normalized.analysis) {
   normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
   normalized.clauses = normalized.analysis.keyClauses || fallbackDemo.clauses;
   normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
@@ -1064,6 +1056,7 @@ normalized.meters = {
 };
 
 }
+
 
 
         /* ================= Helpers ================= */
@@ -1104,35 +1097,43 @@ normalized.meters = {
 
        let currentLang = normalized.meta.detectedLang || "en";
 
-        function renderUILabels(lang) {
-          const t = UI[lang] || UI.en;
-          $("#uiOverview").textContent = t.overview;
-          $("#uiTitleLabel").textContent = t.title;
-          $("#uiSummary").textContent = t.summary;
-          $("#uiProfessionalism").textContent = t.prof;
-          $("#uiFavorability").textContent = t.fav;
-          $("#uiDeadline").textContent = t.deadline;
-          $("#uiIssues").textContent = t.issues;
-          $("#uiSuggestions").textContent = t.suggestions;
-          $("#uiRisk").textContent = t.risk;
-          $("#uiClarity").textContent = t.clarity;
-          $("#uiClauses").textContent = t.clauses;
-          $("#uiScoreChecker").textContent = t.score;
-        }
+      function renderUILabels(lang) {
+  const t = UI[lang] || UI.en;
+  $("#uiOverview").textContent = t.overview;
+  $("#uiTitleLabel").textContent = t.title;
+  $("#uiSummary").textContent = t.summary;
+  $("#uiProfessionalism").textContent = t.prof;
+  $("#uiFavorability").textContent = t.fav;
+  $("#uiDeadline").textContent = t.deadline;
+  $("#uiIssues").textContent = t.issues;
+  $("#uiSuggestions").textContent = t.suggestions;
+  $("#uiRisk").textContent = t.risk;
+  $("#uiClarity").textContent = t.clarity;
+  $("#uiClauses").textContent = t.clauses;
+  $("#uiScoreChecker").textContent = t.score;
+  $("#uiUnsafe").textContent = t.unsafe;
+  $("#uiSafe").textContent = t.safe;
+  $("#uiVerySafe").textContent = t.verysafe;
+  $("#uiConfidence").textContent = t.conf;
+}
 
-        function getLocalizedContent(lang) {
-          return {
-            title: normalized.meta.title,
-            summary: normalized.summary,
-            clauses: normalized.clauses,
-            issues: normalized.issues,
-            suggestions: normalized.suggestions,
-            risk: { value: normalized.risk.value, note: normalized.risk.note },
-            clarity: {
-              value: normalized.clarity.value,
-              note: normalized.clarity.note,
-            },
-          };
+
+      function getLocalizedContent(lang) {
+  const origLang = normalized.meta.detectedLang || "en";
+  const tr = normalized.translations || {};
+  const useTr = lang !== origLang && tr[lang];
+
+  return {
+    title: normalized.meta.title,
+    summary: useTr ? (tr[lang].summary || normalized.analysis.summary || []) : (normalized.analysis.summary || normalized.summary || []),
+    clauses: useTr ? (tr[lang].keyClauses || normalized.analysis.keyClauses || []) : (normalized.analysis.keyClauses || normalized.clauses || []),
+    issues: useTr ? (tr[lang].potentialIssues || normalized.analysis.potentialIssues || []) : (normalized.analysis.potentialIssues || normalized.issues || []),
+    suggestions: useTr ? (tr[lang].smartSuggestions || normalized.analysis.smartSuggestions || []) : (normalized.analysis.smartSuggestions || normalized.suggestions || []),
+    risk: { value: Number(normalized.risk.value) || 0, note: normalized.risk.note },
+    clarity: { value: Number(normalized.clarity.value) || 0, note: normalized.clarity.note },
+  };
+}
+
         }
 
         function setArc(arcEl, metric, value, valEl) {
@@ -1185,8 +1186,9 @@ normalized.meters = {
           sl.innerHTML = "";
           (data.suggestions || []).forEach((t) => addP(sl, t));
 
-          const riskVal = clamp01(data.risk.value),
-            clarVal = clamp01(data.clarity.value);
+       const riskVal = clamp01(Number(data.risk.value)),
+      clarVal = clamp01(Number(data.clarity.value));
+
           setArc($("#riskArc"), "risk", riskVal, $("#riskVal"));
           setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
           $("#riskNote").textContent = data.risk.note || "";
@@ -1225,35 +1227,16 @@ normalized.meters = {
         /* ======= Init render ======= */
         renderAll(currentLang);
         // === Language switching ===
+// === Language switching (single clean handler) ===
 document.querySelectorAll(".lang-item").forEach(item => {
   item.addEventListener("click", e => {
-    const newLang = e.target.getAttribute("data-code");
-    // check if we have translation data for that language
-  // === Language switching ===
-document.querySelectorAll(".lang-item").forEach(item => {
-  item.addEventListener("click", e => {
-    const newLang = e.target.getAttribute("data-code");
-    const tr = normalized.translations || {};
-    
-    if (newLang && tr[newLang]) {
-      // swap all translated parts
-      normalized.summary = tr[newLang].summary || normalized.summary;
-      normalized.clauses = tr[newLang].keyClauses || normalized.clauses;
-      normalized.issues = tr[newLang].potentialIssues || normalized.issues;
-      normalized.suggestions = tr[newLang].smartSuggestions || normalized.suggestions;
-
-      // switch to new language
-      currentLang = newLang;
-      $("#langNow").textContent = newLang.toUpperCase();
-      renderAll(currentLang);
-    } else {
-      alert("No translation data available for " + newLang.toUpperCase());
-    }
+    const newLang = e.currentTarget.getAttribute("data-code");
+    currentLang = newLang;
+    $("#langNow").textContent = newLang.toUpperCase();
+    renderAll(currentLang);
   });
 });
 
-  });
-});
 
 
         /* ======= HOVER DROPDOWN ======= */
