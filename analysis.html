@@ -944,8 +944,8 @@
     <script>
       (() => {
         // FORCE DEMO MODE (no live payload)
-        localStorage.setItem("analysisMode", "demo");
-        localStorage.removeItem("analysisRaw");
+     //   localStorage.setItem("analysisMode", "demo");
+   //     localStorage.removeItem("analysisRaw");
 
         /* ================= UI LABELS (i18n) ================= */
         const UI = {
@@ -1024,7 +1024,7 @@
           translations: {},
         };
 
-        const normalized = fallbackDemo;
+        const normalized = JSON.parse(localStorage.getItem("analysisRaw")) || fallbackDemo;
 
         /* ================= Helpers ================= */
         const $ = (s) => document.querySelector(s);
