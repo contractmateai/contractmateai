@@ -1025,6 +1025,15 @@
         };
 
         const normalized = JSON.parse(localStorage.getItem("analysisRaw")) || fallbackDemo;
+        if (normalized.analysis) {
+  normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
+  normalized.clauses = normalized.analysis.mainClauses || fallbackDemo.clauses;
+  normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
+  normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
+  normalized.risk = normalized.analysis.risk || fallbackDemo.risk;
+  normalized.clarity = normalized.analysis.clarity || fallbackDemo.clarity;
+  normalized.meters = normalized.analysis.bars || fallbackDemo.meters;
+}
 
         /* ================= Helpers ================= */
         const $ = (s) => document.querySelector(s);
