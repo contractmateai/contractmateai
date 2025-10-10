@@ -1229,17 +1229,29 @@ document.querySelectorAll(".lang-item").forEach(item => {
   item.addEventListener("click", e => {
     const newLang = e.target.getAttribute("data-code");
     // check if we have translation data for that language
-    const tr = normalized.analysis.translations || normalized.translations || {};
+  // === Language switching ===
+document.querySelectorAll(".lang-item").forEach(item => {
+  item.addEventListener("click", e => {
+    const newLang = e.target.getAttribute("data-code");
+    const tr = normalized.translations || {};
+    
     if (newLang && tr[newLang]) {
+      // swap all translated parts
       normalized.summary = tr[newLang].summary || normalized.summary;
       normalized.clauses = tr[newLang].keyClauses || normalized.clauses;
       normalized.issues = tr[newLang].potentialIssues || normalized.issues;
       normalized.suggestions = tr[newLang].smartSuggestions || normalized.suggestions;
+
+      // switch to new language
       currentLang = newLang;
+      $("#langNow").textContent = newLang.toUpperCase();
       renderAll(currentLang);
     } else {
-      alert("Translation not available for " + newLang.toUpperCase());
+      alert("No translation data available for " + newLang.toUpperCase());
     }
+  });
+});
+
   });
 });
 
