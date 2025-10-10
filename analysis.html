@@ -943,9 +943,7 @@
 
     <script>
       (() => {
-        // FORCE DEMO MODE (no live payload)
-     //   localStorage.setItem("analysisMode", "demo");
-   //     localStorage.removeItem("analysisRaw");
+       const mode = localStorage.getItem("analysisMode") || "live";
 
         /* ================= UI LABELS (i18n) ================= */
         const UI = {
