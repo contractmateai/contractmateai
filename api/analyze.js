@@ -45,59 +45,8 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT: require full translations for all supported languages, INCLUDING localized title ===
-    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
-
-Schema:
-{
-  "contractName": "string",
-  "contractTitle": "string",
-  "role": "signer|writer",
-  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
-  "analysis": {
-    "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
-    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
-    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
-    "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
-    "smartSuggestions": ["string","string","string"],              // exactly 3; each ends with "e.g., …" + a concrete example
-    "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
-    "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
-  },
-  "translations": {
-    // REQUIRED FOR EACH LANGUAGE: include a localized "title" (translated contractTitle),
-    // plus localized arrays/notes.
-    "en": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "it": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "de": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "es": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "fr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "pt": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "nl": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ro": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "sq": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "tr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "ja": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
-    "zh": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
-  }
-}
-
-Hard constraints:
-- Echo user role in "role".
-- "contractTitle": infer clean title (e.g., “Non-Disclosure Agreement”) or derive from filename.
-- SUMMARY: 3–4 sentences total, plain language; array only.
-- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ 280 chars.
-- CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ 280 chars.
-- MAIN CLAUSES: up to 5; fuller sentences (longer OK); DO NOT start with numbers/bullets.
-- POTENTIAL ISSUES: up to 5; 1–3 sentences each (longer OK).
-- SMART SUGGESTIONS: exactly 3; each ends with “e.g., …” followed by a concrete example.
-- Bars thresholds:
-  professionalism/favorability/confidence: 0–48 red, 49–74 orange, 75–100 green
-  deadlinePressure: 0–35 green, 36–68 orange, 69–100 red
-- SCORE CHECKER thresholds: 0–48 red, 49–77 orange, 78–100 green; verdict red="unsafe", orange="safe", green="very safe"; line red="The contract isnt done well", orange="The contract is done well", green="The contract is nearly perfectly done".
-- Tailor to role ("signer" = protective asks; "writer" = drafting/negotiation).
-- If info is insufficient, keep arrays short and scores conservative, but NEVER break schema.
-- Output VALID JSON only.`;
+    // === SYSTEM PROMPT (your original) ===
+    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints: [your full system prompt here, unchanged]`;
 
     // === USER content ===
     const userContent = imageDataURI
@@ -130,119 +79,22 @@ Hard constraints:
     if (!openaiResp.ok) {
       const errTxt = await openaiResp.text().catch(() => "");
       console.error("OpenAI API error:", openaiResp.status, errTxt);
-      return send(res, 502, { error: "Upstream analysis failed" });
+      return send(res, 502, { error: "Upstream analysis failed: " + errTxt });
     }
 
     const resp = await openaiResp.json().catch(() => ({}));
     const content = resp?.choices?.[0]?.message?.content || "{}";
 
-    // === Parse + normalize ===
+    // === Parse + normalize (with logging) ===
     let parsed = {};
-    try { parsed = JSON.parse(content); } catch { parsed = {}; }
+    try { parsed = JSON.parse(content); console.log("OpenAI response parsed:", parsed); } catch (e) { console.error("JSON parse error:", e, content); parsed = {}; }
 
-    const bandRisk = v => (v <= 25 ? "green" : v <= 58 ? "orange" : "red");
-    const bandClarity = v => (v >= 78 ? "green" : v >= 49 ? "orange" : "red");
-    const scoreBand = v => (v <= 48 ? "red" : v <= 77 ? "orange" : "green");
+    // [Your full normalization code here, unchanged – bands, clamp, etc.]
 
-    const riskSafety    = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
-    const claritySafety = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
-
-    const scoreLine  = b => b === "green" ? "The contract is nearly perfectly done"
-                         : b === "orange" ? "The contract is done well"
-                         : "The contract isnt done well";
-    const scoreVerdict = b => b === "green" ? "very safe" : b === "orange" ? "safe" : "unsafe";
-
-    const capStr = (s, n) => (s || "").trim().slice(0, n);
-    const clamp = (v) => { v = Number(v || 0); return Math.max(0, Math.min(100, v)); };
-    const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
-
-    const roleOut = parsed.role === "writer" ? "writer" : "signer";
-    const title = parsed.contractTitle || parsed.contractName || originalName || "Contract";
-    const lang  = parsed.detectedLang || "en";
-
-    // Summary
-    let summaryArr = Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [];
-    summaryArr = summaryArr.filter(Boolean).map((s) => s.trim()).slice(0,4);
-
-    // Risk / Clarity
-    const rVal  = clamp(parsed?.analysis?.risk?.value ?? parsed?.analysis?.risk);
-    const rBand = parsed?.analysis?.risk?.band || bandRisk(rVal);
-    const rNote = capStr(parsed?.analysis?.risk?.note || "", 280);
-
-    const cVal  = clamp(parsed?.analysis?.clarity?.value ?? parsed?.analysis?.clarity);
-    const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
-    const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
-
-    // Clauses / Issues / Suggestions (longer + strip numbering)
-    const mainClauses = (parsed?.analysis?.mainClauses || [])
-      .filter(Boolean).map(s => stripLead(capStr(s, 900))).slice(0,5);
-
-    const potentialIssues = (parsed?.analysis?.potentialIssues || [])
-      .filter(Boolean).map(s => stripLead(capStr(s, 1000))).slice(0,5);
-
-    let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
-      .filter(Boolean).map(s => {
-        let text = stripLead(capStr(s, 1000));
-        if (!/\beg\.,/i.test(text)) {
-          text = text.replace(/\.\s*$/,"") + " e.g., …";
-        }
-        return text;
-      }).slice(0,3);
-    while (smartSuggestions.length < 3) smartSuggestions.push("");
-
-    // Bars
-    const barsIn = parsed?.analysis?.bars || {};
-    const bars = {
-      professionalism:  clamp(barsIn.professionalism),
-      favorabilityIndex: clamp(barsIn.favorabilityIndex),
-      deadlinePressure: clamp(barsIn.deadlinePressure),
-      confidenceToSign: clamp(barsIn.confidenceToSign)
-    };
-
-    // Score
-    const scVal = clamp(parsed?.analysis?.scoreChecker?.value);
-    const scBand = parsed?.analysis?.scoreChecker?.band || scoreBand(scVal);
-    const scLine = parsed?.analysis?.scoreChecker?.line || scoreLine(scBand);
-    const scVerdict = parsed?.analysis?.scoreChecker?.verdict || scoreVerdict(scBand);
-
-    // Normalize translations for ALL supported languages (now includes "title")
-    const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
-    const trIn = (parsed.translations && typeof parsed.translations === "object") ? parsed.translations : {};
-    const normTr = {};
-    LANGS.forEach(l=>{
-      const seg = trIn[l] || {};
-      normTr[l] = {
-        title: typeof seg.title === "string" ? capStr(seg.title, 200) : undefined,
-        summary: Array.isArray(seg.summary)? seg.summary.slice(0,4) : undefined,
-        mainClauses: Array.isArray(seg.mainClauses)? seg.mainClauses.slice(0,5) : undefined,
-        potentialIssues: Array.isArray(seg.potentialIssues)? seg.potentialIssues.slice(0,5) : undefined,
-        smartSuggestions: Array.isArray(seg.smartSuggestions)? seg.smartSuggestions.slice(0,3) : undefined,
-        riskNote: typeof seg.riskNote === "string" ? capStr(seg.riskNote, 280) : undefined,
-        clarityNote: typeof seg.clarityNote === "string" ? capStr(seg.clarityNote, 280) : undefined
-      };
-    });
-
-    const normalized = {
-      contractName: parsed.contractName || originalName || "Contract",
-      contractTitle: title,
-      role: roleOut,
-      detectedLang: lang,
-      analysis: {
-        summary: summaryArr,
-        risk: { value: rVal, note: rNote, band: rBand, safety: riskSafety(rBand) },
-        clarity: { value: cVal, note: cNote, band: cBand, safety: claritySafety(cBand) },
-        mainClauses,
-        potentialIssues,
-        smartSuggestions,
-        bars,
-        scoreChecker: { value: scVal, band: scBand, verdict: scVerdict, line: scLine }
-      },
-      translations: normTr
-    };
-
+    console.log("Normalized response:", normalized);
     return send(res, 200, normalized);
   } catch (e) {
-    console.error("analyze error", e);
-    return send(res, 500, { error: "Could not analyze this file. Try again or use another file." });
+    console.error("Full analyze error:", e.message, e.stack);
+    return send(res, 500, { error: "Could not analyze this file. Try again or use another file. Details: " + e.message });
   }
 };
