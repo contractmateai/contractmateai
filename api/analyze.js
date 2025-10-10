@@ -50,7 +50,7 @@ export default async (req, res) => {
     }
 
     // === SYSTEM PROMPT ===
-    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
+   const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 {
   "contractName": "string",
   "detectedLang": "string",
@@ -71,7 +71,13 @@ export default async (req, res) => {
       "smartSuggestions": ["string"]
     }
   }
-}`;
+}
+Rules:
+- Detect the original language and write the 'analysis' in that original language (no English unless the contract is English).
+- Then fill 'translations' for ALL of these codes: en, it, de, es, fr, pt, nl, ro, sq, tr, zh, ja.
+- The translations must cover ALL fields: summary, keyClauses, potentialIssues, smartSuggestions.
+- Numbers (risk, clarity, compliance) remain the same across languages.`;
+
 
     // === USER content ===
     const userContent = imageDataURI
