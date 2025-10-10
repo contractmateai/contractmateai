@@ -945,7 +945,7 @@
     <script>
       (() => {
         // FORCE DEMO MODE (no live payload)
-        localStorage.setItem("analysisMode", "demo");
+        localStorage.setItem("analysisMode", "live");
         localStorage.removeItem("analysisRaw");
 
         /* ================= UI LABELS (i18n) ================= */
@@ -1024,6 +1024,42 @@
           },
           translations: {},
         };
+        // ⬇️ add this right after fallbackDemo
+(function () {
+  try {
+    const mode = localStorage.getItem("analysisMode");
+    const raw = localStorage.getItem("analysisRaw");
+    if (mode === "live" && raw) {
+      const api = JSON.parse(raw);
+      // adapt minimal fields your UI reads
+      window.normalized = {
+        meta: {
+          title: api.contractTitle || api.contractName || "Contract",
+          detectedLang: api.detectedLang || "en",
+        },
+        summary: api.analysis?.summary || [],
+        risk: { value: api.analysis?.risk?.value ?? 0, note: api.analysis?.risk?.note || "" },
+        clarity: { value: api.analysis?.clarity?.value ?? 0, note: api.analysis?.clarity?.note || "" },
+        clauses: api.analysis?.mainClauses || [],
+        issues: api.analysis?.potentialIssues || [],
+        suggestions: api.analysis?.smartSuggestions || [],
+        meters: {
+          professionalism: api.analysis?.bars?.professionalism ?? 0,
+          favorability: api.analysis?.bars?.favorabilityIndex ?? 0,
+          deadline: api.analysis?.bars?.deadlinePressure ?? 0,
+          confidence: api.analysis?.bars?.confidenceToSign ?? 0,
+        },
+        translations: api.translations || {},
+      };
+      return; // use live data
+    }
+  } catch (e) {
+    console.warn("Live parse failed, using demo.", e);
+  }
+  // fallback to demo if no live
+  window.normalized = fallbackDemo;
+})();
+
 
         const normalized = fallbackDemo;
 
