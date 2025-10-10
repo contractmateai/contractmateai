@@ -1022,7 +1022,26 @@
           translations: {},
         };
 
-        const normalized = JSON.parse(localStorage.getItem("analysisRaw")) || fallbackDemo;
+        let raw = localStorage.getItem("analysisRaw");
+let normalized;
+
+if (raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    normalized = {
+      meta: {
+        title: parsed.contractName || "Untitled Contract",
+        detectedLang: parsed.detectedLang || "en"
+      },
+      analysis: parsed.analysis || {}
+    };
+  } catch {
+    normalized = fallbackDemo;
+  }
+} else {
+  normalized = fallbackDemo;
+}
+
      if (normalized.analysis) {
   normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
   normalized.clauses = normalized.analysis.keyClauses || fallbackDemo.clauses;
