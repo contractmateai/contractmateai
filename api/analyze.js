@@ -1,4 +1,4 @@
-// api/analyze.js — Serverless (Vercel/Netlify) JSON endpoint
+// api/analyze.js — Serverless (Vercel) JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
 
@@ -8,7 +8,8 @@ function send(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
-module.exports = async (req, res) => {
+// Default export for ES Modules
+export default async (req, res) => {
   // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -30,8 +31,11 @@ module.exports = async (req, res) => {
     }
 
     let body = {};
-    try { body = raw ? JSON.parse(raw) : {}; }
-    catch { return send(res, 400, { error: "Invalid JSON body" }); }
+    try {
+      body = raw ? JSON.parse(raw) : {};
+    } catch {
+      return send(res, 400, { error: "Invalid JSON body" });
+    }
 
     const {
       text = "",
@@ -45,8 +49,29 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT (your original) ===
-    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints: [your full system prompt here, unchanged]`;
+    // === SYSTEM PROMPT ===
+    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
+{
+  "contractName": "string",
+  "detectedLang": "string",
+  "analysis": {
+    "summary": ["string"],
+    "risk": "number:0-100",
+    "clarity": "number:0-100",
+    "compliance": "number:0-100",
+    "keyClauses": ["string"],
+    "potentialIssues": ["string"],
+    "smartSuggestions": ["string"]
+  },
+  "translations": {
+    "langCode": {
+      "summary": ["string"],
+      "keyClauses": ["string"],
+      "potentialIssues": ["string"],
+      "smartSuggestions": ["string"]
+    }
+  }
+}`;
 
     // === USER content ===
     const userContent = imageDataURI
@@ -85,11 +110,33 @@ module.exports = async (req, res) => {
     const resp = await openaiResp.json().catch(() => ({}));
     const content = resp?.choices?.[0]?.message?.content || "{}";
 
-    // === Parse + normalize (with logging) ===
+    // === Parse + normalize ===
     let parsed = {};
-    try { parsed = JSON.parse(content); console.log("OpenAI response parsed:", parsed); } catch (e) { console.error("JSON parse error:", e, content); parsed = {}; }
+    try {
+      parsed = JSON.parse(content);
+      console.log("OpenAI response parsed:", parsed);
+    } catch (e) {
+      console.error("JSON parse error:", e, content);
+      return send(res, 500, { error: "Invalid JSON response from analysis" });
+    }
 
-    // [Your full normalization code here, unchanged – bands, clamp, etc.]
+    // Basic normalization
+    const normalized = {
+      contractName: parsed.contractName || originalName,
+      detectedLang: parsed.detectedLang || "en",
+      analysis: {
+        summary: Array.isArray(parsed.analysis?.summary)
+          ? parsed.analysis.summary
+          : [String(parsed.analysis?.summary || "")],
+        risk: Math.max(0, Math.min(100, Number(parsed.analysis?.risk || 0))),
+        clarity: Math.max(0, Math.min(100, Number(parsed.analysis?.clarity || 0))),
+        compliance: Math.max(0, Math.min(100, Number(parsed.analysis?.compliance || 0))),
+        keyClauses: Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [],
+        potentialIssues: Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [],
+        smartSuggestions: Array.isArray(parsed.analysis?.smartSuggestions) ? parsed.analysis.smartSuggestions : []
+      },
+      translations: parsed.translations || {}
+    };
 
     console.log("Normalized response:", normalized);
     return send(res, 200, normalized);
