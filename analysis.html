@@ -1133,9 +1133,6 @@ normalized.meters = {
     clarity: { value: Number(normalized.clarity.value) || 0, note: normalized.clarity.note },
   };
 }
-
-        }
-
         function setArc(arcEl, metric, value, valEl) {
           const v = clamp01(value);
           const rr = parseFloat(arcEl.getAttribute("r")) || 74;
