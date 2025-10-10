@@ -2195,50 +2195,194 @@ window.addEventListener('load', () => {
       style="display: none"
     />
     <script>
+<script>
 async function fileToPayload(file) {
-  const name = file.name || "file";
-  const mime = file.type || "application/octet-stream";
-  const ext = name.toLowerCase();
+  try {
+    const name = file.name || "file";
+    const mime = file.type || "application/octet-stream";
+    const ext = name.toLowerCase();
 
-  // TXT
-  if (mime === "text/plain" || ext.endsWith(".txt")) {
-    const text = await file.text();
-    return { text, originalName: name, mime };
-  }
+    console.log("Processing file:", { name, mime, ext });
 
-  // PDF → text (PDF.js)
-  if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-    let full = "";
-    for (let p = 1; p <= pdf.numPages; p++) {
-      const page = await pdf.getPage(p);
-      const content = await page.getTextContent();
-      const strings = content.items.map(i => i.str).join(" ");
-      full += strings + "\n";
+    // TXT
+    if (mime === "text/plain" || ext.endsWith(".txt")) {
+      const text = await file.text();
+      return { text, originalName: name, mime };
     }
-    return { text: full, originalName: name, mime };
-  }
 
-  // DOCX → text (Mammoth)
-  if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-    const buf = await file.arrayBuffer();
-    const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-    return { text: res.value || "", originalName: name, mime };
-  }
+    // PDF → text (PDF.js)
+    if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+      const buf = await file.arrayBuffer();
+      console.log("PDF buffer size:", buf.byteLength);
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let full = "";
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const content = await page.getTextContent();
+        const strings = content.items.map(i => i.str).join(" ");
+        full += strings + "\n";
+      }
+      console.log("Extracted PDF text length:", full.length);
+      return { text: full, originalName: name, mime };
+    }
 
-  // Images → Vision (send data URL)
-  if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-    const dataUrl = await new Promise((resolve) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.readAsDataURL(file);
-    });
-    return { imageDataURI: dataUrl, originalName: name, mime };
-  }
+    // DOCX → text (Mammoth)
+    if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+      const buf = await file.arrayBuffer();
+      console.log("DOCX buffer size:", buf.byteLength);
+      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+      console.log("Extracted DOCX text length:", res.value.length);
+      return { text: res.value || "", originalName: name, mime };
+    }
 
-  throw new Error("Unsupported file type");
+    // Images → Vision (send data URL)
+    if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+      const dataUrl = await new Promise((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.readAsDataURL(file);
+      });
+      console.log("Image data URL length:", dataUrl.length);
+      return { imageDataURI: dataUrl, originalName: name, mime };
+    }
+
+    throw new Error("Unsupported file type: " + mime);
+  } catch (e) {
+    console.error("fileToPayload error:", e.message);
+    throw e;
+  }
 }
+</script>
+
+<script>
+(() => {
+  const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
+  const input = document.getElementById("contractFile");
+  const roleUI = document.getElementById("rolePicker");
+  const reviewBtn = document.getElementById("reviewBtn");
+
+  let chosenRole = null;
+  let lastTrigger = null;
+  let pickedFile = null;
+
+  triggers.forEach((t) =>
+    t.addEventListener("click", (e) => {
+      e.preventDefault();
+      lastTrigger = t;
+      input.value = "";
+      input.click();
+    })
+  );
+
+  input.addEventListener("change", () => {
+    if (!input.files || !input.files.length) {
+      lastTrigger = null;
+      return;
+    }
+
+    pickedFile = input.files[0];
+    console.log("Selected file:", pickedFile.name, pickedFile.size, pickedFile.type);
+
+    const ctaWrap = document.getElementById("ctaWrap");
+    if (ctaWrap) ctaWrap.style.display = "none";
+    roleUI.hidden = false;
+
+    if (lastTrigger && lastTrigger.id === "insightReviewBtn") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    lastTrigger = null;
+  });
+
+  roleUI?.querySelectorAll(".role-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      roleUI.querySelectorAll(".role-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      chosenRole = btn.dataset.role;
+
+      if (!pickedFile) {
+        alert("Please choose a contract file first.");
+        return;
+      }
+
+      let payload;
+      try {
+        const payloadObj = await fileToPayload(pickedFile);
+        payloadObj.role = chosenRole || "signer";
+        console.log("Sending payload to /api/analyze:", payloadObj);
+
+        const resp = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadObj)
+        });
+
+        console.log("API response status:", resp.status);
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          console.error("API error response:", err);
+          throw new Error(err?.error || "Analysis failed");
+        }
+        payload = await resp.json();
+        console.log("API response payload:", payload);
+      } catch (e) {
+        console.error("Analysis error:", e);
+        alert("Could not analyze this file. Try again or use another file.");
+        return;
+      }
+
+      const { contractName, detectedLang, analysis, translations = {} } = payload || {};
+      if (!analysis) {
+        console.error("Empty analysis in response:", payload);
+        alert("Analysis came back empty. Please try again with a different file.");
+        return;
+      }
+
+      const summaryArr = Array.isArray(analysis.summary)
+        ? analysis.summary
+        : analysis.summary ? [analysis.summary] : [];
+      const summaryStr = summaryArr.join("\n\n");
+
+      localStorage.setItem("contractName", contractName || pickedFile.name || "Contract");
+      localStorage.setItem("detectedLang", detectedLang || "en");
+      localStorage.setItem("role", chosenRole || "signer");
+
+      if ((chosenRole || "signer") === "writer") {
+        localStorage.setItem("hideConfidence", "1");
+      } else {
+        localStorage.removeItem("hideConfidence");
+      }
+
+      localStorage.setItem("summary", summaryStr);
+      localStorage.setItem("risk", String(analysis.risk ?? 0));
+      localStorage.setItem("clarity", String(analysis.clarity ?? 0));
+      localStorage.setItem("compliance", String(analysis.compliance ?? 0));
+      localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
+      localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
+      localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
+
+      localStorage.setItem(
+        "analysisData",
+        JSON.stringify({
+          languageOriginal: detectedLang || "en",
+          summary: summaryArr,
+          risk: { value: analysis.risk ?? 0, note: "" },
+          clarity: { value: analysis.clarity ?? 0, note: "" },
+          clauses: analysis.keyClauses || [],
+          issues: analysis.potentialIssues || [],
+          suggestions: analysis.smartSuggestions || [],
+          meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 },
+          translations
+        })
+      );
+      localStorage.setItem("translations", JSON.stringify(translations));
+
+      localStorage.setItem("analysisMode", "live");
+      localStorage.setItem("analysisRaw", JSON.stringify(payload));
+      window.location.href = "analysis.html?ts=" + Date.now();
+    });
+  });
+})();
+</script>
 </script>
 
 
