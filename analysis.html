@@ -1048,12 +1048,30 @@ normalized.clarity = {
   value: Number(normalized.analysis.clarity) || 0,
   note: "The clarity score reflects how easy it is to understand the terms."
 };
+// Derive meters from analysis numbers so bars react to real scores
+const riskV = clamp01(Number(normalized.analysis.risk));
+const clarV = clamp01(Number(normalized.analysis.clarity));
+const compV = clamp01(Number(normalized.analysis.compliance));
+
+// Favorability: combine "low risk" + "high clarity"
+const favorability = Math.round(( (100 - riskV) + clarV ) / 2);
+
+// Deadline pressure: if you have a dedicated value, use it (e.g. normalized.analysis.deadline)
+// otherwise derive gently from risk (more risk ⇒ more pressure)
+const deadline = clamp01(normalized.analysis.deadline != null
+  ? Number(normalized.analysis.deadline)
+  : Math.round(40 + (riskV * 0.4))); // 40..80 banded by risk
+
+// Confidence to sign: reward clarity + low risk, with a bias towards clarity
+const confidence = clamp01(Math.round((clarV * 0.6) + ((100 - riskV) * 0.4)));
+
 normalized.meters = {
-  professionalism: Number(normalized.analysis.compliance) || 0,
-  favorability: 50,
-  deadline: 50,
-  confidence: 70
+  professionalism: compV,
+  favorability,
+  deadline,
+  confidence
 };
+
 
 }
 
@@ -1094,6 +1112,42 @@ normalized.meters = {
             ? cssVar("--orange")
             : cssVar("--red");
         };
+        /* === Fixed note text (translatable) === */
+const NOTE_BY_LANG = {
+  en: "The contract risk score is based on the clauses' fairness and obligations.",
+  it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
+  de: "Die Vertragsrisikobewertung basiert auf der Fairness und den Verpflichtungen der Klauseln.",
+  fr: "Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
+  es: "La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
+  pt: "A pontuação de risco do contrato baseia-se na justiça e nas obrigações das cláusulas.",
+  nl: "De contractrisicoscore is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
+  ro: "Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
+  sq: "Vlerësimi i rrezikut të kontratës bazohet në drejtësinë dhe detyrimet e klauzolave.",
+  tr: "Sözleşme risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
+  zh: "合同风险评分基于条款的公平性和义务。",
+  ja: "契約リスクスコアは条項の公平性と義務に基づいています。"
+};
+
+/* === Safety badge + colored square (dot) === */
+function setSafetyStatus(metric, value) {
+  const dot = metric === "risk" ? $("#riskDot") : $("#clarDot");
+  const badge = metric === "risk" ? $("#riskBadge") : $("#clarBadge");
+
+  let color, label;
+  if (metric === "risk") {
+    if (value <= 25) { color = "#00ff65"; label = "Generally Safe"; }
+    else if (value <= 58) { color = "#df911a"; label = "Not That Safe"; }
+    else { color = "#fe0000"; label = "Not Safe"; }
+  } else { // clarity → higher is better
+    if (value >= 78) { color = "#00ff65"; label = "Generally Safe"; }
+    else if (value >= 49) { color = "#df911a"; label = "Not That Safe"; }
+    else { color = "#fe0000"; label = "Not Safe"; }
+  }
+  dot.style.background = color;
+  dot.style.border = "1px solid #000"; // thin black border
+  badge.textContent = label;
+}
+
 
        let currentLang = normalized.meta.detectedLang || "en";
 
@@ -1155,71 +1209,61 @@ normalized.meters = {
           });
         }
 
-        function renderAll(lang) {
-          renderUILabels(lang);
-          $("#langNow").textContent = lang.toUpperCase();
-          const data = getLocalizedContent(lang);
+      function renderAll(lang) {
+  renderUILabels(lang);
+  $("#langNow").textContent = lang.toUpperCase();
+  const data = getLocalizedContent(lang);
 
-          $("#uiTitleValue").textContent = data.title || "—";
+  $("#uiTitleValue").textContent = data.title || "—";
 
-          const sBox = $("#summaryText");
-          sBox.innerHTML = "";
-          (Array.isArray(data.summary)
-            ? data.summary
-            : [String(data.summary)]
-          ).forEach((t) => addP(sBox, t));
+  const sBox = $("#summaryText");
+  sBox.innerHTML = "";
+  (Array.isArray(data.summary) ? data.summary : [String(data.summary)]).forEach((t) => addP(sBox, t));
 
-          const cl = $("#clausesList");
-          cl.innerHTML = "";
-          (data.clauses || []).forEach((t) => addP(cl, t));
-          const il = $("#issuesList");
-          il.innerHTML = "";
-          (data.issues || []).forEach((t) => {
-            const li = document.createElement("li");
-            li.textContent = t;
-            il.appendChild(li);
-          });
-          const sl = $("#suggestionsList");
-          sl.innerHTML = "";
-          (data.suggestions || []).forEach((t) => addP(sl, t));
+  const cl = $("#clausesList");
+  cl.innerHTML = "";
+  (data.clauses || []).forEach((t) => addP(cl, t));
 
-       const riskVal = clamp01(Number(data.risk.value)),
-      clarVal = clamp01(Number(data.clarity.value));
+  const il = $("#issuesList");
+  il.innerHTML = "";
+  (data.issues || []).forEach((t) => {
+    const li = document.createElement("li");
+    li.textContent = t;
+    il.appendChild(li);
+  });
 
-          setArc($("#riskArc"), "risk", riskVal, $("#riskVal"));
-          setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
-          $("#riskNote").textContent = data.risk.note || "";
-          $("#clarNote").textContent = data.clarity.note || "";
+  const sl = $("#suggestionsList");
+  sl.innerHTML = "";
+  (data.suggestions || []).forEach((t) => addP(sl, t));
 
-          setArc($("#scoreArc"), "clarity", clarVal);
-          $("#scorePct").textContent = clarVal + "%";
-          $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
+  const riskVal = clamp01(Number(data.risk.value)),
+        clarVal = clamp01(Number(data.clarity.value));
 
-          setMeter(
-            $("#confFill"),
-            $("#confVal"),
-            "professionalism",
-            normalized.meters.professionalism
-          );
-          setMeter(
-            $("#favFill"),
-            $("#favVal"),
-            "favorability",
-            normalized.meters.favorability
-          );
-          setMeter(
-            $("#deadFill"),
-            $("#deadVal"),
-            "deadline",
-            normalized.meters.deadline
-          );
-          setMeter(
-            $("#conf2Fill"),
-            $("#conf2Val"),
-            "confidence",
-            normalized.meters.confidence
-          );
-        }
+  // Donuts
+  setArc($("#riskArc"), "risk", riskVal, $("#riskVal"));
+  setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
+
+  // Fixed notes (translatable)
+  const note = NOTE_BY_LANG[lang] || NOTE_BY_LANG.en;
+  $("#riskNote").textContent = note;
+  $("#clarNote").textContent = note;
+
+  // Score checker mirrors clarity percentage (your current UI)
+  setArc($("#scoreArc"), "clarity", clarVal);
+  $("#scorePct").textContent = clarVal + "%";
+  $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
+
+  // Safety badges + colored squares
+  setSafetyStatus("risk", riskVal);
+  setSafetyStatus("clarity", clarVal);
+
+  // Meters (bars)
+  setMeter($("#confFill"), $("#confVal"), "professionalism", normalized.meters.professionalism);
+  setMeter($("#favFill"),  $("#favVal"),  "favorability",   normalized.meters.favorability);
+  setMeter($("#deadFill"), $("#deadVal"), "deadline",       normalized.meters.deadline);
+  setMeter($("#conf2Fill"),$("#conf2Val"),"confidence",     normalized.meters.confidence);
+}
+
 
         /* ======= Init render ======= */
         renderAll(currentLang);
