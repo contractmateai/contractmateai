@@ -1031,7 +1031,41 @@ if (raw) {
   normalized = fallbackDemo;
 }
 
-
+ /* ================= Helpers ================= */
+        const $ = (s) => document.querySelector(s);
+        const cssVar = (v) =>
+          getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+        const clamp01 = (v) => Math.max(0, Math.min(100, Number(v || 0)));
+        const addP = (el, t) => {
+          const p = document.createElement("p");
+          p.textContent = t;
+          el.appendChild(p);
+        };
+        const colorFor = (metric, v) => {
+          if (metric === "risk")
+            return v <= 25
+              ? cssVar("--green")
+              : v <= 58
+              ? cssVar("--orange")
+              : cssVar("--red");
+          if (metric === "clarity")
+            return v >= 78
+              ? cssVar("--green")
+              : v >= 49
+              ? cssVar("--orange")
+              : cssVar("--red");
+          if (metric === "deadline")
+            return v <= 35
+              ? cssVar("--green")
+              : v <= 68
+              ? cssVar("--orange")
+              : cssVar("--red");
+          return v >= 75
+            ? cssVar("--green")
+            : v >= 49
+            ? cssVar("--orange")
+            : cssVar("--red");
+        };
 
 
  if (normalized.analysis) {
@@ -1075,43 +1109,6 @@ normalized.meters = {
 
 }
 
-
-
-        /* ================= Helpers ================= */
-        const $ = (s) => document.querySelector(s);
-        const cssVar = (v) =>
-          getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-        const clamp01 = (v) => Math.max(0, Math.min(100, Number(v || 0)));
-        const addP = (el, t) => {
-          const p = document.createElement("p");
-          p.textContent = t;
-          el.appendChild(p);
-        };
-        const colorFor = (metric, v) => {
-          if (metric === "risk")
-            return v <= 25
-              ? cssVar("--green")
-              : v <= 58
-              ? cssVar("--orange")
-              : cssVar("--red");
-          if (metric === "clarity")
-            return v >= 78
-              ? cssVar("--green")
-              : v >= 49
-              ? cssVar("--orange")
-              : cssVar("--red");
-          if (metric === "deadline")
-            return v <= 35
-              ? cssVar("--green")
-              : v <= 68
-              ? cssVar("--orange")
-              : cssVar("--red");
-          return v >= 75
-            ? cssVar("--green")
-            : v >= 49
-            ? cssVar("--orange")
-            : cssVar("--red");
-        };
         /* === Fixed note text (translatable) === */
 const NOTE_BY_LANG = {
   en: "The contract risk score is based on the clauses' fairness and obligations.",
