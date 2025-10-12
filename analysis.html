@@ -1110,6 +1110,7 @@ normalized.meters = {
 }
 
         /* === Fixed note text (translatable) === */
+/* === Fixed note text (translatable) === */
 const NOTE_BY_LANG = {
   en: "The contract risk score is based on the clauses' fairness and obligations.",
   it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
@@ -1125,25 +1126,56 @@ const NOTE_BY_LANG = {
   ja: "契約リスクスコアは条項の公平性と義務に基づいています。"
 };
 
+/* === Safety labels (translatable) === */
+const SAFETY_LABELS = {
+  en: { green: "Generally Safe", orange: "Not That Safe", red: "Not Safe" },
+  it: { green: "Generalmente sicuro", orange: "Non molto sicuro", red: "Non sicuro" },
+  de: { green: "Im Allgemeinen sicher", orange: "Nicht besonders sicher", red: "Nicht sicher" },
+  fr: { green: "Généralement sûr", orange: "Peu sûr", red: "Pas sûr" },
+  es: { green: "Generalmente seguro", orange: "No tan seguro", red: "No seguro" },
+  pt: { green: "Geralmente seguro", orange: "Não tão seguro", red: "Inseguro" },
+  nl: { green: "Over het algemeen veilig", orange: "Niet zo veilig", red: "Onveilig" },
+  ro: { green: "În general sigur", orange: "Nu prea sigur", red: "Nesigur" },
+  sq: { green: "Në përgjithësi i sigurt", orange: "Jo edhe aq i sigurt", red: "Jo i sigurt" },
+  tr: { green: "Genel olarak güvenli", orange: "Çok da güvenli değil", red: "Güvenli değil" },
+  zh: { green: "总体安全", orange: "不太安全", red: "不安全" },
+  ja: { green: "概ね安全", orange: "あまり安全ではない", red: "安全ではない" }
+};
+
+/* === Score Checker remark (translatable) === */
+const SCORE_REMARK_BY_LANG = {
+  en: "This helps you to come to a conclusion",
+  it: "Questo ti aiuta a giungere a una conclusione",
+  de: "Dies hilft Ihnen, zu einem Schluss zu kommen",
+  fr: "Cela vous aide à parvenir à une conclusion",
+  es: "Esto te ayuda a llegar a una conclusión",
+  pt: "Isso ajuda você a chegar a uma conclusão",
+  nl: "Dit helpt je tot een conclusie te komen",
+  ro: "Acest lucru te ajută să ajungi la o concluzie",
+  sq: "Kjo të ndihmon të arrish në një përfundim",
+  tr: "Bu, bir sonuca varmana yardımcı olur",
+  zh: "这有助于你得出结论",
+  ja: "結論に至るのに役立ちます"
+};
+
+
 /* === Safety badge + colored square (dot) === */
-function setSafetyStatus(metric, value) {
+function setSafetyStatus(metric, value, lang) {
   const dot = metric === "risk" ? $("#riskDot") : $("#clarDot");
   const badge = metric === "risk" ? $("#riskBadge") : $("#clarBadge");
 
-  let color, label;
-  if (metric === "risk") {
-    if (value <= 25) { color = "#00ff65"; label = "Generally Safe"; }
-    else if (value <= 58) { color = "#df911a"; label = "Not That Safe"; }
-    else { color = "#fe0000"; label = "Not Safe"; }
-  } else { // clarity → higher is better
-    if (value >= 78) { color = "#00ff65"; label = "Generally Safe"; }
-    else if (value >= 49) { color = "#df911a"; label = "Not That Safe"; }
-    else { color = "#fe0000"; label = "Not Safe"; }
-  }
+  let band;
+  if (metric === "risk") { band = value <= 25 ? "green" : value <= 58 ? "orange" : "red"; }
+  else { band = value >= 78 ? "green" : value >= 49 ? "orange" : "red"; }
+
+  const color = band === "green" ? "#00ff65" : band === "orange" ? "#df911a" : "#fe0000";
+  const dict = SAFETY_LABELS[lang] || SAFETY_LABELS.en;
+
   dot.style.background = color;
-  dot.style.border = "1px solid #000"; // thin black border
-  badge.textContent = label;
+  dot.style.border = "1px solid #000";
+  badge.textContent = dict[band] || SAFETY_LABELS.en[band];
 }
+
 
 
        let currentLang = normalized.meta.detectedLang || "en";
@@ -1250,6 +1282,8 @@ function setSafetyStatus(metric, value) {
   $("#scorePct").textContent = clarVal + "%";
   $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
 
+  $("#scoreRemark").textContent = SCORE_REMARK_BY_LANG[lang] || SCORE_REMARK_BY_LANG.en;
+        
   // Safety badges + colored squares
   setSafetyStatus("risk", riskVal);
   setSafetyStatus("clarity", clarVal);
