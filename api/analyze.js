@@ -165,8 +165,16 @@ QUALITY RULES:
 // Expect the model to produce exact lengths and complete sentences; do NOT trim/slice here.
 function asArray(x) { return Array.isArray(x) ? x : (x ? [String(x)] : []); }
 
-// Keep summary as a one-element array (UI splits on \n)
-normalized.analysis.summary = asArray(parsed.analysis?.summary).slice(0, 1);
+// Summary: enforce exact 438 chars like before (UI splits on \n)
+function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
+function trimTo(s, n){ s = String(s||""); return s.length > n ? s.slice(0, n) : s; }
+const SUMMARY_LIMIT = 438;
+{
+  const parts = ensureArray(parsed.analysis?.summary);
+  const str = String(parts[0] ?? "");
+  normalized.analysis.summary = [ trimTo(str, SUMMARY_LIMIT) ];
+}
+
 
 // Pass lists through untouched so items remain complete sentences.
 normalized.analysis.keyClauses = Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [];
