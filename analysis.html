@@ -1207,7 +1207,7 @@ function setSafetyStatus(metric, value, lang) {
   const useTr = lang !== origLang && tr[lang];
 
   return {
-    title: normalized.meta.title,
+    title: (lang !== origLang && tr[lang] && tr[lang].title) ? tr[lang].title : (normalized.meta.title || ""),
     summary: useTr ? (tr[lang].summary || normalized.analysis.summary || []) : (normalized.analysis.summary || normalized.summary || []),
     clauses: useTr ? (tr[lang].keyClauses || normalized.analysis.keyClauses || []) : (normalized.analysis.keyClauses || normalized.clauses || []),
     issues: useTr ? (tr[lang].potentialIssues || normalized.analysis.potentialIssues || []) : (normalized.analysis.potentialIssues || normalized.issues || []),
@@ -1245,9 +1245,12 @@ function setSafetyStatus(metric, value, lang) {
 
   $("#uiTitleValue").textContent = data.title || "—";
 
-  const sBox = $("#summaryText");
-  sBox.innerHTML = "";
-  (Array.isArray(data.summary) ? data.summary : [String(data.summary)]).forEach((t) => addP(sBox, t));
+ const sBox = $("#summaryText");
+sBox.innerHTML = "";
+const sArr = Array.isArray(data.summary) ? data.summary : [String(data.summary)];
+const single = String(sArr[0] || "");
+(single.split(/\n+/).filter(Boolean)).forEach(line => addP(sBox, line));
+
 
   const cl = $("#clausesList");
   cl.innerHTML = "";
@@ -1285,8 +1288,9 @@ function setSafetyStatus(metric, value, lang) {
   $("#scoreRemark").textContent = SCORE_REMARK_BY_LANG[lang] || SCORE_REMARK_BY_LANG.en;
         
   // Safety badges + colored squares
-  setSafetyStatus("risk", riskVal);
-  setSafetyStatus("clarity", clarVal);
+setSafetyStatus("risk", riskVal, lang);
+setSafetyStatus("clarity", clarVal, lang);
+
 
   // Meters (bars)
   setMeter($("#confFill"), $("#confVal"), "professionalism", normalized.meters.professionalism);
