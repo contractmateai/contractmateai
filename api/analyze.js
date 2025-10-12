@@ -127,25 +127,76 @@ Rules:
     }
 
     // Basic normalization
-    const normalized = {
-      contractName: parsed.contractName || originalName,
-      detectedLang: parsed.detectedLang || "en",
-      analysis: {
-        summary: Array.isArray(parsed.analysis?.summary)
-          ? parsed.analysis.summary
-          : [String(parsed.analysis?.summary || "")],
-        risk: Math.max(0, Math.min(100, Number(parsed.analysis?.risk || 0))),
-        clarity: Math.max(0, Math.min(100, Number(parsed.analysis?.clarity || 0))),
-        compliance: Math.max(0, Math.min(100, Number(parsed.analysis?.compliance || 0))),
-        keyClauses: Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [],
-        potentialIssues: Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [],
-        smartSuggestions: Array.isArray(parsed.analysis?.smartSuggestions) ? parsed.analysis.smartSuggestions : []
-      },
-      translations: parsed.translations || {}
-    };
+   const normalized = {
+  contractName: parsed.contractName || originalName,
+  detectedLang: parsed.detectedLang || "en",
+  analysis: {
+    summary: Array.isArray(parsed.analysis?.summary)
+      ? parsed.analysis.summary
+      : [String(parsed.analysis?.summary || "")],
+    risk: Math.max(0, Math.min(100, Number(parsed.analysis?.risk || 0))),
+    clarity: Math.max(0, Math.min(100, Number(parsed.analysis?.clarity || 0))),
+    compliance: Math.max(0, Math.min(100, Number(parsed.analysis?.compliance || 0))),
+    keyClauses: Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [],
+    potentialIssues: Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [],
+    smartSuggestions: Array.isArray(parsed.analysis?.smartSuggestions) ? parsed.analysis.smartSuggestions : []
+  },
+  translations: parsed.translations || {}
+};
 
-    console.log("Normalized response:", normalized);
-    return send(res, 200, normalized);
+/* ===== Length enforcement (as per your exact specs) ===== */
+function trimTo(s, n){ s = String(s||""); return s.length <= n ? s : s.slice(0, n); }
+function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
+
+const LIMITS = {
+  summaryTotal: 438, // full summary box
+  clauseLen: 127,    // 4 items
+  issuesLen: 104,    // 5 items
+  sugg1Len: 139,
+  sugg2Len: 161,
+  sugg3Len: 284      // duplicated sentence length
+};
+
+// SUMMARY → single string trimmed to 438 chars
+{
+  const parts = ensureArray(normalized.analysis.summary);
+  const joined = parts.join(" ").replace(/\s+/g, " ");
+  normalized.analysis.summary = [ trimTo(joined, LIMITS.summaryTotal) ];
+}
+
+// MAIN CLAUSES → exactly 4, each trimmed to 127 chars
+{
+  const src = ensureArray(normalized.analysis.keyClauses);
+  const out = [];
+  for (let i = 0; i < 4; i++){
+    out.push(trimTo(src[i] || "", LIMITS.clauseLen));
+  }
+  normalized.analysis.keyClauses = out;
+}
+
+// POTENTIAL ISSUES → exactly 5, each trimmed to 104 chars
+{
+  const src = ensureArray(normalized.analysis.potentialIssues);
+  const out = [];
+  for (let i = 0; i < 5; i++){
+    out.push(trimTo(src[i] || "", LIMITS.issuesLen));
+  }
+  normalized.analysis.potentialIssues = out;
+}
+
+// SMART SUGGESTIONS → exactly 3 with per-item limits (note: #3 has duplicated sentence length)
+{
+  const src = ensureArray(normalized.analysis.smartSuggestions);
+  const out = [];
+  out.push(trimTo(src[0] || "", LIMITS.sugg1Len));
+  out.push(trimTo(src[1] || "", LIMITS.sugg2Len));
+  out.push(trimTo(src[2] || "", LIMITS.sugg3Len));
+  normalized.analysis.smartSuggestions = out;
+}
+
+console.log("Normalized response (length-limited):", normalized);
+return send(res, 200, normalized);
+
   } catch (e) {
     console.error("Full analyze error:", e.message, e.stack);
     return send(res, 500, { error: "Could not analyze this file. Try again or use another file. Details: " + e.message });
