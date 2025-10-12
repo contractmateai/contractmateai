@@ -49,20 +49,20 @@ export default async (req, res) => {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // === SYSTEM PROMPT ===
+// === SYSTEM PROMPT ===
 const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema:
 
 {
   "contractName": "string",
   "detectedLang": "string",
   "analysis": {
-    "summary": ["string"],            // one string; use "\\n" between sentences so they render on separate lines
+    "summary": ["string"],            // one string; use "\\n" between sentences so the UI renders each on its own line
     "risk": "number:0-100",
     "clarity": "number:0-100",
     "compliance": "number:0-100",
     "keyClauses": ["string"],         // 4 items
     "potentialIssues": ["string"],    // 5 items
-    "smartSuggestions": ["string"]    // 3 items
+    "smartSuggestions": ["string"]    // 4 items
   },
   "translations": {
     "langCode": {
@@ -75,18 +75,19 @@ const system = `You are a contract analyst. Return STRICT JSON only — no prose
   }
 }
 
-LENGTH RULES (must be met WITHOUT padding, filler, or repetition):
-- summary[0] length = 438 characters EXACTLY; write multiple sentences separated by "\\n" (newline). No duplicated phrases.
-- keyClauses length = 4 items; each item length = 127 chars EXACTLY, concise and non-repetitive.
+LENGTH RULES (must be met WITHOUT padding, filler, numbers, bullets, or repetition):
+- summary[0] length = 438 characters EXACTLY; write multiple complete sentences separated by "\\n". Do not duplicate phrases.
+- keyClauses length = 4 items; each item length = 152 chars EXACTLY (about 25 chars longer than before). Write plain sentences; DO NOT prefix with “Article”, numbers, bullets, or labels.
 - potentialIssues length = 5 items; each item length = 104 chars EXACTLY, concise and non-repetitive.
-- smartSuggestions length = 3 items; with exact lengths: [139, 161, 284] characters respectively, concise and non-repetitive.
+- smartSuggestions length = 4 items; exact lengths per item: [139, 161, 284, 123] characters respectively, concise and non-repetitive.
 
 QUALITY RULES:
-- If source text is short, synthesize plausible, accurate legal content to meet the exact lengths. No "..." or repeated words to pad.
-- Keep grammar correct; avoid wording repetition across items.
+- If source text is short, synthesize plausible, accurate legal content to meet the exact lengths. No "..." and no repeated words to pad.
+- Keep grammar and semantics solid; avoid wording repetition across items.
 - The 'analysis' must be in the detected original language.
 - Provide 'translations' for ALL of: en,it,de,es,fr,pt,nl,ro,sq,tr,zh,ja (including "title").
 - Numbers (risk, clarity, compliance) remain the same across languages.`;
+
 
 
 
@@ -156,18 +157,28 @@ QUALITY RULES:
 };
 
 /* ===== Trim-only guards (no padding; model must satisfy exact lengths) ===== */
+/* ===== Trim-only guards (no padding; model must satisfy exact lengths) ===== */
 function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
 function trimTo(s, n){ s = String(s||""); return s.length > n ? s.slice(0, n) : s; }
-const LIMITS = { summaryTotal: 438, clauseLen: 127, issuesLen: 104, sugg1Len: 139, sugg2Len: 161, sugg3Len: 284 };
 
-// SUMMARY (keep as a single string; the UI will render each sentence on a new line)
+const LIMITS = {
+  summaryTotal: 438,
+  clauseLen: 152,     // +25 chars vs before
+  issuesLen: 104,
+  sugg1Len: 139,
+  sugg2Len: 161,
+  sugg3Len: 284,
+  sugg4Len: 123       // new 4th suggestion
+};
+
+// SUMMARY (single string; UI splits by \n)
 {
   const parts = ensureArray(parsed.analysis?.summary);
   const str = String(parts[0] ?? "");
   normalized.analysis.summary = [ trimTo(str, LIMITS.summaryTotal) ];
 }
 
-// 4 CLAUSES
+// 4 CLAUSES (plain sentences; no numbering)
 {
   const src = ensureArray(parsed.analysis?.keyClauses);
   normalized.analysis.keyClauses = [
@@ -190,13 +201,14 @@ const LIMITS = { summaryTotal: 438, clauseLen: 127, issuesLen: 104, sugg1Len: 13
   ];
 }
 
-// 3 SUGGESTIONS
+// 4 SUGGESTIONS (with exact per-item limits)
 {
   const src = ensureArray(parsed.analysis?.smartSuggestions);
   normalized.analysis.smartSuggestions = [
     trimTo(src[0] || "", LIMITS.sugg1Len),
     trimTo(src[1] || "", LIMITS.sugg2Len),
     trimTo(src[2] || "", LIMITS.sugg3Len),
+    trimTo(src[3] || "", LIMITS.sugg4Len),
   ];
 }
 
@@ -205,7 +217,7 @@ const LIMITS = { summaryTotal: 438, clauseLen: 127, issuesLen: 104, sugg1Len: 13
   const tr = normalized.translations || {};
   for (const code of Object.keys(tr)) {
     const pack = tr[code] || {};
-    // title (added to schema)
+    // title
     pack.title = String(pack.title || "");
     // summary (single string)
     {
@@ -222,11 +234,13 @@ const LIMITS = { summaryTotal: 438, clauseLen: 127, issuesLen: 104, sugg1Len: 13
       trimTo(ss[0] || "", LIMITS.sugg1Len),
       trimTo(ss[1] || "", LIMITS.sugg2Len),
       trimTo(ss[2] || "", LIMITS.sugg3Len),
+      trimTo(ss[3] || "", LIMITS.sugg4Len),
     ];
     tr[code] = pack;
   }
   normalized.translations = tr;
 })();
+
 
 console.log("Normalized response (trim-only):", normalized);
 return send(res, 200, normalized);
