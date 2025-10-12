@@ -77,9 +77,15 @@ const system = `You are a contract analyst. Return STRICT JSON only — no prose
 
 LENGTH RULES (must be met WITHOUT padding, filler, numbers, bullets, or repetition):
 - summary[0] length = 438 characters EXACTLY; write multiple complete sentences separated by "\\n". Do not duplicate phrases.
-- keyClauses length = 4 items; each item length = 152 chars EXACTLY (about 25 chars longer than before). Write plain sentences; DO NOT prefix with “Article”, numbers, bullets, or labels.
+- keyClauses length = 4 items; each item length = 152 chars EXACTLY. Write plain sentences; DO NOT prefix with “Article”, numbers, bullets, or labels.
 - potentialIssues length = 5 items; each item length = 104 chars EXACTLY, concise and non-repetitive.
 - smartSuggestions length = 4 items; exact lengths per item: [139, 161, 284, 123] characters respectively, concise and non-repetitive.
+
+CLOSURE & STYLE RULES (apply to ALL list items):
+- Each item MUST end with a complete, grammatical sentence and natural punctuation (., ?, or !).
+- Do NOT cut words mid-word; do NOT leave thoughts unfinished.
+- For main clauses: write the clauses only (no “Article …”, numbers, or labels).
+
 
 QUALITY RULES:
 - If source text is short, synthesize plausible, accurate legal content to meet the exact lengths. No "..." and no repeated words to pad.
@@ -156,90 +162,34 @@ QUALITY RULES:
   translations: parsed.translations || {}
 };
 
-/* ===== Trim-only guards (no padding; model must satisfy exact lengths) ===== */
-/* ===== Trim-only guards (no padding; model must satisfy exact lengths) ===== */
-function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
-function trimTo(s, n){ s = String(s||""); return s.length > n ? s.slice(0, n) : s; }
+// Expect the model to produce exact lengths and complete sentences; do NOT trim/slice here.
+function asArray(x) { return Array.isArray(x) ? x : (x ? [String(x)] : []); }
 
-const LIMITS = {
-  summaryTotal: 438,
-  clauseLen: 152,     // +25 chars vs before
-  issuesLen: 104,
-  sugg1Len: 139,
-  sugg2Len: 161,
-  sugg3Len: 284,
-  sugg4Len: 123       // new 4th suggestion
-};
+// Keep summary as a one-element array (UI splits on \n)
+normalized.analysis.summary = asArray(parsed.analysis?.summary).slice(0, 1);
 
-// SUMMARY (single string; UI splits by \n)
-{
-  const parts = ensureArray(parsed.analysis?.summary);
-  const str = String(parts[0] ?? "");
-  normalized.analysis.summary = [ trimTo(str, LIMITS.summaryTotal) ];
-}
+// Pass lists through untouched so items remain complete sentences.
+normalized.analysis.keyClauses = Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [];
+normalized.analysis.potentialIssues = Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [];
+normalized.analysis.smartSuggestions = Array.isArray(parsed.analysis?.smartSuggestions) ? parsed.analysis.smartSuggestions : [];
 
-// 4 CLAUSES (plain sentences; no numbering)
-{
-  const src = ensureArray(parsed.analysis?.keyClauses);
-  normalized.analysis.keyClauses = [
-    trimTo(src[0] || "", LIMITS.clauseLen),
-    trimTo(src[1] || "", LIMITS.clauseLen),
-    trimTo(src[2] || "", LIMITS.clauseLen),
-    trimTo(src[3] || "", LIMITS.clauseLen),
-  ];
-}
-
-// 5 ISSUES
-{
-  const src = ensureArray(parsed.analysis?.potentialIssues);
-  normalized.analysis.potentialIssues = [
-    trimTo(src[0] || "", LIMITS.issuesLen),
-    trimTo(src[1] || "", LIMITS.issuesLen),
-    trimTo(src[2] || "", LIMITS.issuesLen),
-    trimTo(src[3] || "", LIMITS.issuesLen),
-    trimTo(src[4] || "", LIMITS.issuesLen),
-  ];
-}
-
-// 4 SUGGESTIONS (with exact per-item limits)
-{
-  const src = ensureArray(parsed.analysis?.smartSuggestions);
-  normalized.analysis.smartSuggestions = [
-    trimTo(src[0] || "", LIMITS.sugg1Len),
-    trimTo(src[1] || "", LIMITS.sugg2Len),
-    trimTo(src[2] || "", LIMITS.sugg3Len),
-    trimTo(src[3] || "", LIMITS.sugg4Len),
-  ];
-}
-
-/* ===== Also trim translations; rely on model for exactness/no repetition ===== */
+// Pass translations through untouched as well.
 (() => {
-  const tr = normalized.translations || {};
-  for (const code of Object.keys(tr)) {
-    const pack = tr[code] || {};
-    // title
-    pack.title = String(pack.title || "");
-    // summary (single string)
-    {
-      const parts = ensureArray(pack.summary);
-      pack.summary = [ trimTo(String(parts[0] || ""), LIMITS.summaryTotal) ];
-    }
-    // arrays
-    const kc = ensureArray(pack.keyClauses);
-    pack.keyClauses = [0,1,2,3].map(i => trimTo(kc[i] || "", LIMITS.clauseLen));
-    const pi = ensureArray(pack.potentialIssues);
-    pack.potentialIssues = [0,1,2,3,4].map(i => trimTo(pi[i] || "", LIMITS.issuesLen));
-    const ss = ensureArray(pack.smartSuggestions);
-    pack.smartSuggestions = [
-      trimTo(ss[0] || "", LIMITS.sugg1Len),
-      trimTo(ss[1] || "", LIMITS.sugg2Len),
-      trimTo(ss[2] || "", LIMITS.sugg3Len),
-      trimTo(ss[3] || "", LIMITS.sugg4Len),
-    ];
-    tr[code] = pack;
+  const trIn = parsed.translations || {};
+  const trOut = {};
+  for (const code of Object.keys(trIn)) {
+    const pack = trIn[code] || {};
+    trOut[code] = {
+      title: String(pack.title || ""),
+      summary: asArray(pack.summary).slice(0, 1),
+      keyClauses: Array.isArray(pack.keyClauses) ? pack.keyClauses : [],
+      potentialIssues: Array.isArray(pack.potentialIssues) ? pack.potentialIssues : [],
+      smartSuggestions: Array.isArray(pack.smartSuggestions) ? pack.smartSuggestions : []
+    };
   }
-  normalized.translations = tr;
+  normalized.translations = trOut;
 })();
+
 
 
 console.log("Normalized response (trim-only):", normalized);
