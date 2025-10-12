@@ -1111,20 +1111,37 @@ normalized.meters = {
 
         /* === Fixed note text (translatable) === */
 /* === Fixed note text (translatable) === */
-const NOTE_BY_LANG = {
-  en: "The contract risk score is based on the clauses' fairness and obligations.",
-  it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
-  de: "Die Vertragsrisikobewertung basiert auf der Fairness und den Verpflichtungen der Klauseln.",
-  fr: "Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
-  es: "La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
-  pt: "A pontuação de risco do contrato baseia-se na justiça e nas obrigações das cláusulas.",
-  nl: "De contractrisicoscore is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
-  ro: "Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
-  sq: "Vlerësimi i rrezikut të kontratës bazohet në drejtësinë dhe detyrimet e klauzolave.",
-  tr: "Sözleşme risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
-  zh: "合同风险评分基于条款的公平性和义务。",
-  ja: "契約リスクスコアは条項の公平性と義務に基づいています。"
+/* === Fixed notes (translatable) === */
+const RISK_NOTE_BY_LANG = {
+  en:"The contract risk score is based on the clauses' fairness and obligations.",
+  it:"Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
+  de:"Die Vertragsrisikobewertung basiert auf der Fairness und den Verpflichtungen der Klauseln.",
+  fr:"Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
+  es:"La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
+  pt:"A pontuação de risco do contrato baseia-se na justiça e nas obrigações das cláusulas.",
+  nl:"De contractrisicoscore is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
+  ro:"Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
+  sq:"Vlerësimi i rrezikut të kontratës bazohet në drejtësinë dhe detyrimet e klauzolave.",
+  tr:"Sözleşme risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
+  zh:"合同风险评分基于条款的公平性和义务。",
+  ja:"契約リスクスコアは条項の公平性と義務に基づいています。"
 };
+
+const CLAR_NOTE_BY_LANG = {
+  en:"The clarity score reflects how easy it is to understand the terms.",
+  it:"Il punteggio di chiarezza riflette quanto sia facile comprendere i termini.",
+  de:"Die Klarheitsbewertung spiegelt wider, wie leicht die Bedingungen zu verstehen sind.",
+  fr:"Le score de clarté reflète la facilité de compréhension des conditions.",
+  es:"La puntuación de claridad refleja lo fácil que es entender los términos.",
+  pt:"A pontuação de clareza reflete a facilidade de compreender os termos.",
+  nl:"De duidelijkheidsscore weerspiegelt hoe gemakkelijk de voorwaarden te begrijpen zijn.",
+  ro:"Scorul de claritate reflectă cât de ușor sunt de înțeles termenii.",
+  sq:"Vlerësimi i qartësisë pasqyron sa lehtë kuptohen kushtet.",
+  tr:"Açıklık puanı, şartların ne kadar kolay anlaşılabildiğini yansıtır.",
+  zh:"清晰度评分反映了条款的易懂程度。",
+  ja:"明確さのスコアは、条項の理解しやすさを反映します。"
+};
+
 
 /* === Safety labels (translatable) === */
 const SAFETY_LABELS = {
@@ -1276,9 +1293,9 @@ const single = String(sArr[0] || "");
   setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
 
   // Fixed notes (translatable)
-  const note = NOTE_BY_LANG[lang] || NOTE_BY_LANG.en;
-  $("#riskNote").textContent = note;
-  $("#clarNote").textContent = note;
+$("#riskNote").textContent = (RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en);
+$("#clarNote").textContent = (CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en);
+
 
   // Score checker mirrors clarity percentage (your current UI)
   setArc($("#scoreArc"), "clarity", clarVal);
