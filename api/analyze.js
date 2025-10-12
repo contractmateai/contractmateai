@@ -144,58 +144,113 @@ Rules:
   translations: parsed.translations || {}
 };
 
-/* ===== Length enforcement (as per your exact specs) ===== */
-function trimTo(s, n){ s = String(s||""); return s.length <= n ? s : s.slice(0, n); }
+/* ===== Exact-length enforcement ===== */
 function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
-
-const LIMITS = {
-  summaryTotal: 438, // full summary box
-  clauseLen: 127,    // 4 items
-  issuesLen: 104,    // 5 items
-  sugg1Len: 139,
-  sugg2Len: 161,
-  sugg3Len: 284      // duplicated sentence length
-};
-
-// SUMMARY → single string trimmed to 438 chars
-{
-  const parts = ensureArray(normalized.analysis.summary);
-  const joined = parts.join(" ").replace(/\s+/g, " ");
-  normalized.analysis.summary = [ trimTo(joined, LIMITS.summaryTotal) ];
+function fitTo(s, n, seed="X"){
+  s = String(s || "");
+  seed = String(seed || "X");
+  if (s.length >= n) return s.slice(0, n);
+  let buf = s;
+  while (buf.length < n) {
+    buf += (buf ? " " : "") + seed;
+  }
+  return buf.slice(0, n);
 }
 
-// MAIN CLAUSES → exactly 4, each trimmed to 127 chars
+const LIMITS = {
+  summaryTotal: 438, // exact length
+  clauseLen: 127,    // exact length x4
+  issuesLen: 104,    // exact length x5
+  sugg1Len: 139,
+  sugg2Len: 161,
+  sugg3Len: 284
+};
+
+// SUMMARY → exactly N chars (single string)
 {
-  const src = ensureArray(normalized.analysis.keyClauses);
+  const parts = ensureArray(normalized.analysis.summary);
+  // If you want to keep line breaks, remove the .replace below
+  const joined = parts.join(" ").replace(/\s+/g, " ");
+  const seed = (joined && joined.trim()) || "Summary";
+  normalized.analysis.summary = [ fitTo(joined, LIMITS.summaryTotal, seed) ];
+}
+
+// MAIN CLAUSES → exactly 4 items, each exactly N chars (backfill from first non-empty)
+{
+  let src = ensureArray(normalized.analysis.keyClauses).map(String);
+  const seed = (src.find(s => s && s.trim()) || "Clause").trim();
   const out = [];
-  for (let i = 0; i < 4; i++){
-    out.push(trimTo(src[i] || "", LIMITS.clauseLen));
+  for (let i = 0; i < 4; i++) {
+    out.push(fitTo(src[i] || "", LIMITS.clauseLen, seed));
   }
   normalized.analysis.keyClauses = out;
 }
 
-// POTENTIAL ISSUES → exactly 5, each trimmed to 104 chars
+// POTENTIAL ISSUES → exactly 5 items, each exactly N chars (backfill)
 {
-  const src = ensureArray(normalized.analysis.potentialIssues);
+  let src = ensureArray(normalized.analysis.potentialIssues).map(String);
+  const seed = (src.find(s => s && s.trim()) || "Issue").trim();
   const out = [];
-  for (let i = 0; i < 5; i++){
-    out.push(trimTo(src[i] || "", LIMITS.issuesLen));
+  for (let i = 0; i < 5; i++) {
+    out.push(fitTo(src[i] || "", LIMITS.issuesLen, seed));
   }
   normalized.analysis.potentialIssues = out;
 }
 
-// SMART SUGGESTIONS → exactly 3 with per-item limits (note: #3 has duplicated sentence length)
+// SMART SUGGESTIONS → exactly 3 items with per-item exact lengths (backfill)
 {
-  const src = ensureArray(normalized.analysis.smartSuggestions);
-  const out = [];
-  out.push(trimTo(src[0] || "", LIMITS.sugg1Len));
-  out.push(trimTo(src[1] || "", LIMITS.sugg2Len));
-  out.push(trimTo(src[2] || "", LIMITS.sugg3Len));
-  normalized.analysis.smartSuggestions = out;
+  let src = ensureArray(normalized.analysis.smartSuggestions).map(String);
+  const seed = (src.find(s => s && s.trim()) || "Suggestion").trim();
+  normalized.analysis.smartSuggestions = [
+    fitTo(src[0] || "", LIMITS.sugg1Len, seed),
+    fitTo(src[1] || "", LIMITS.sugg2Len, seed),
+    fitTo(src[2] || "", LIMITS.sugg3Len, seed)
+  ];
 }
 
-console.log("Normalized response (length-limited):", normalized);
+/* ===== Exact-length enforcement for translations ===== */
+(() => {
+  const tr = normalized.translations || {};
+  for (const code of Object.keys(tr)) {
+    const pack = tr[code] || {};
+
+    // summary
+    {
+      const parts = ensureArray(pack.summary);
+      const joined = parts.join(" ").replace(/\s+/g, " ");
+      const seed = (joined && joined.trim()) || "Summary";
+      pack.summary = [ fitTo(joined, LIMITS.summaryTotal, seed) ];
+    }
+    // keyClauses x4
+    {
+      const src = ensureArray(pack.keyClauses).map(String);
+      const seed = (src.find(s => s && s.trim()) || "Clause").trim();
+      pack.keyClauses = Array.from({length:4}, (_,i)=> fitTo(src[i] || "", LIMITS.clauseLen, seed));
+    }
+    // potentialIssues x5
+    {
+      const src = ensureArray(pack.potentialIssues).map(String);
+      const seed = (src.find(s => s && s.trim()) || "Issue").trim();
+      pack.potentialIssues = Array.from({length:5}, (_,i)=> fitTo(src[i] || "", LIMITS.issuesLen, seed));
+    }
+    // smartSuggestions (3)
+    {
+      const src = ensureArray(pack.smartSuggestions).map(String);
+      const seed = (src.find(s => s && s.trim()) || "Suggestion").trim();
+      pack.smartSuggestions = [
+        fitTo(src[0] || "", LIMITS.sugg1Len, seed),
+        fitTo(src[1] || "", LIMITS.sugg2Len, seed),
+        fitTo(src[2] || "", LIMITS.sugg3Len, seed)
+      ];
+    }
+    tr[code] = pack;
+  }
+  normalized.translations = tr;
+})();
+
+console.log("Normalized response (exact-length):", normalized);
 return send(res, 200, normalized);
+
 
   } catch (e) {
     console.error("Full analyze error:", e.message, e.stack);
