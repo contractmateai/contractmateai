@@ -377,17 +377,11 @@
 
       <!-- CTA area (button → replaced by role picker after file chosen) -->
       <div class="cta-area">
-      <div id="ctaWrap">
-  <button class="cta-btn" id="ctaBtn">
-    Review A Contract <span aria-hidden="true">↗</span>
-  </button>
-
-  <!-- New: camera-only path -->
-  <button class="cta-btn" id="ctaCameraBtn" style="margin-top:8px; background:#a7fd3c; border-color:#a7fd3c;">
-    Take Photos
-  </button>
-</div>
-
+        <div id="ctaWrap">
+          <button class="cta-btn" id="ctaBtn">
+            Review A Contract <span aria-hidden="true">↗</span>
+          </button>
+        </div>
 
         <!-- Hidden Role Picker (appears where CTA was) -->
         <div id="rolePicker" class="role-picker" hidden>
@@ -908,17 +902,6 @@
   // two inputs: generic (shows sheet), camera (opens camera directly)
   const inputGeneric = document.getElementById('contractFile');
   const inputCamera  = document.getElementById('contractCamera');
-  // New camera-only button handler
-const takePhotoBtn = document.getElementById('ctaCameraBtn');
-takePhotoBtn?.addEventListener('click', (e)=>{
-  e.preventDefault();
-  finished = false;
-  pickedFiles = [];
-  updateCounter();
-  resetPicker(inputCamera);
-  inputCamera.click(); // opens camera directly; will show "Add more?" loop
-});
-
 
   // simple counter under the button
   const counterEl = document.createElement('div');
