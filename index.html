@@ -989,13 +989,24 @@ function askAddMore(msg = 'Add more photos?'){
   });
 
   // Returned from the 3-option picker (Photo Library / Take Photo / Files)
- // Returned from the 3-option picker (Photo Library / Take Photo / Files)
+// Returned from the 3-option picker (Photo Library / Take Photo / Files)
 inputGeneric.addEventListener('change', ()=>{
   if (!inputGeneric.files || !inputGeneric.files.length) return; // user cancelled
+
   addFiles(inputGeneric.files);
-  // ✅ Do NOT ask "Add more?" here — just finish
-  finishPicking();
+
+  // ✅ Detect if user used "Take Photo" mode (iOS/Android camera in file picker)
+  const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
+
+  if (usedCamera) {
+    // Only if camera was used → show Add More banner
+    maybeAddMoreAndReopenCamera();
+  } else {
+    // Photo library or file upload → no banner
+    finishPicking();
+  }
 });
+
 
 
   // Returned from camera-only input
