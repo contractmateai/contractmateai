@@ -1,4 +1,4 @@
-// api/analyze.js — Serverless (Vercel) JSON endpoint
+just keep this here // api/analyze.js — Serverless (Vercel) JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
 
@@ -76,7 +76,7 @@ const system = `You are a contract analyst. Return STRICT JSON only — no prose
 }
 
 LENGTH RULES (must be met WITHOUT padding, filler, numbers, bullets, or repetition):
-- summary[0] length = 600 characters EXACTLY; write at least 4 complete sentences, separated by "\\n" (include at least two "\\n"). Do not duplicate phrases.
+- summary[0] length = 438 characters EXACTLY; write multiple complete sentences separated by "\\n". Do not duplicate phrases.
 - keyClauses length = 4 items; each item length = 152 chars EXACTLY. Write plain sentences; DO NOT prefix with “Article”, numbers, bullets, or labels.
 - potentialIssues length = 5 items; each item length = 104 chars EXACTLY, concise and non-repetitive.
 - smartSuggestions length = 4 items; exact lengths per item: [139, 161, 284, 123] characters respectively, concise and non-repetitive.
@@ -168,8 +168,7 @@ function asArray(x) { return Array.isArray(x) ? x : (x ? [String(x)] : []); }
 // Summary: enforce exact 438 chars like before (UI splits on \n)
 function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
 function trimTo(s, n){ s = String(s||""); return s.length > n ? s.slice(0, n) : s; }
-const SUMMARY_LIMIT = 600;
-
+const SUMMARY_LIMIT = 438;
 {
   const parts = ensureArray(parsed.analysis?.summary);
   const str = String(parts[0] ?? "");
@@ -201,18 +200,7 @@ normalized.analysis.smartSuggestions = Array.isArray(parsed.analysis?.smartSugge
 
 
 
-// Hard guard: enforce SUMMARY_LIMIT and multi-sentence with \n
-{
-  const sum = String(normalized.analysis.summary?.[0] || "");
-  const nlCount = (sum.match(/\n/g) || []).length;
-  if (sum.length !== SUMMARY_LIMIT || nlCount < 2) {
-    return send(res, 502, {
-      error: "Summary length/format invalid",
-      details: { gotLength: sum.length, needsLength: SUMMARY_LIMIT, newlines: nlCount }
-    });
-  }
-}
-
+console.log("Normalized response (trim-only):", normalized);
 return send(res, 200, normalized);
 
 
