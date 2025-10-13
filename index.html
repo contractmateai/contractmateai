@@ -989,11 +989,13 @@ function askAddMore(msg = 'Add more photos?'){
   });
 
   // Returned from the 3-option picker (Photo Library / Take Photo / Files)
-  inputGeneric.addEventListener('change', ()=>{
-    if (!inputGeneric.files || !inputGeneric.files.length) return; // user cancelled
-    addFiles(inputGeneric.files);
-    maybeAddMoreAndReopenCamera();  // Yes → jump straight to CAMERA
-  });
+inputGeneric.addEventListener('change', ()=>{
+  if (!inputGeneric.files || !inputGeneric.files.length) return; // user cancelled
+  addFiles(inputGeneric.files);
+  // No "Add more?" prompt for Library/Files — just proceed
+  finishPicking();
+});
+
 
   // Returned from camera-only input
   inputCamera.addEventListener('change', ()=>{
