@@ -108,13 +108,13 @@
   --bar-border:#3f3f3f;
 }
 
-.reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .2s ease, transform .2s ease;}
+.reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
 body.stage1 .reveal-on-load{opacity:1; transform:none;}
 
-body::before{opacity:0; transition:opacity .2s ease;}
+body::before{opacity:0; transition:opacity .6s ease;}
 body.stage2::before{opacity:1;}
 
-.particle-container{opacity:0; transition:opacity .2s ease;}
+.particle-container{opacity:0; transition:opacity .6s ease;}
 body.stage3 .particle-container{opacity:1;}
 
    * {
@@ -1176,19 +1176,20 @@ transition: opacity .6s ease;
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init({ once: true });
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.body.classList.add('stage1'); // show hero content first
+  document.body.classList.add('stage1'); 
 
   if (reduce) {
     document.body.classList.add('stage2','stage3');
     return;
   }
 
-  setTimeout(() => document.body.classList.add('stage2'), 220); // bg image fades in
-  setTimeout(() => document.body.classList.add('stage3'), 440); // particles fade in last
+  setTimeout(() => document.body.classList.add('stage2'), 80);   
+  setTimeout(() => document.body.classList.add('stage3'), 160);  
 });
+
 
 
 
