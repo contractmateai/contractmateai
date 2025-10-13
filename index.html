@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="icon" type="image/png" href="https://imgur.com/VFu8eyq.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
   <style>
@@ -25,7 +25,6 @@
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; }
     body{
       font-family: "Inter",system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
@@ -67,7 +66,6 @@
     .topbar-nav a{ color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400; }
     .topbar-nav a:hover{ opacity:.85; }
 
-    /* burger */
     .menu-toggle{
       display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer;
     }
@@ -81,7 +79,6 @@
     .menu-toggle.open .b2{ opacity:0; }
     .menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
 
-    /* attached dropdown */
     .menu-overlay{
       position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease;
       z-index:999;
@@ -177,7 +174,7 @@
 
     .section-badge{
       background:#090922; color:#bdb7ff;
- padding:6px 14px; border-radius:53px; display:inline-flex; align-items:center; gap:6px;
+      padding:6px 14px; border-radius:53px; display:inline-flex; align-items:center; gap:6px;
       box-shadow:0 0 0 transparent; font-size:15px;
     }
 
@@ -226,7 +223,7 @@
       position:relative; padding:22px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304);
       border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:28px auto 0; overflow:hidden; max-width:1280px; transform:scale(.88);
     }
-    /* ↓ a bit smaller per request (was 22px) */
+    
     .scroll-section h3{ text-align:center; font-size:20px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
     .scroll-strip{ display:flex; gap:22px; padding:12px 0; white-space:nowrap; flex-shrink:0; will-change:transform; }
     .scroll-item{ background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:42px; padding:12px 20px; display:inline-flex; align-items:center; gap:14px; }
@@ -280,8 +277,7 @@
     }
     .faq-item.open .faq-a{ padding:14px 20px 20px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
 
-    /* ===== Footer ===== */
- /* ===== FOOTER (from contact page) ===== */
+ /* ===== FOOTER ===== */
 .site-footer{
   background:#0a0a0a;
   border-top:1px solid var(--bar-border);
@@ -313,10 +309,10 @@
   .footer-copy{ font-size:14px; }
   .footer-link{ font-size:13px; }
 }
-/* Mobile: match Contact page behavior */
+
 @media (max-width:980px){
-  .topbar-nav{ display:none; }   /* hide links on small screens */
-  .menu-toggle{ display:block; } /* show burger */
+  .topbar-nav{ display:none; }  
+  .menu-toggle{ display:block; } 
 }
 
   </style>
@@ -375,7 +371,7 @@
        Free contract reviewing and no need for an account creation or sign up.
       </p>
 
-      <!-- CTA area (button → replaced by role picker after file chosen) -->
+      <!-- CTA area -->
       <div class="cta-area">
         <div id="ctaWrap">
           <button class="cta-btn" id="ctaBtn">
@@ -383,7 +379,7 @@
           </button>
         </div>
 
-        <!-- Hidden Role Picker (appears where CTA was) -->
+        <!-- Hidden Role Picker -->
         <div id="rolePicker" class="role-picker" hidden>
           <span class="role-title">You are:</span>
           <div class="role-buttons">
@@ -451,8 +447,6 @@
 
           <div class="scroll-strip top-row"></div>
           <div class="scroll-strip bottom-row"></div>
-          <div class="scroll-shadow-left"></div>
-          <div class="scroll-shadow-right"></div>
         </section>
       </div>
     </div>
@@ -484,7 +478,7 @@
       </div>
     </section>
 
-    <!-- ===== FAQ (unchanged) ===== -->
+    <!-- ===== FAQ ===== -->
     <section class="faq-section" data-aos="fade-up">
       <h2 class="faq-title">Frequently Asked Questions</h2>
       <div class="faq-list">
@@ -595,8 +589,6 @@
   multiple
   style="display:none"
 />
-
-
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
@@ -908,7 +900,7 @@
   counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
   ctaWrap?.appendChild(counterEl);
 
-  let pickedFiles = [];  // up to 10
+  let pickedFiles = [];  
   let chosenRole  = null;
   let finished    = false;
 
@@ -931,7 +923,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Custom "Add more?" modal with Cancel / Yes (returns Promise<boolean>)
  // Custom "Add more?" modal with Yes (left) / No (right) → Promise<boolean>
 function askAddMore(msg = 'Add more photos?'){
   return new Promise(resolve => {
@@ -965,7 +956,6 @@ function askAddMore(msg = 'Add more photos?'){
   });
 }
 
-
   async function maybeAddMoreAndReopenCamera(){
     if (pickedFiles.length >= 10) { finishPicking(); return; }
     const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
@@ -988,14 +978,13 @@ function askAddMore(msg = 'Add more photos?'){
     inputGeneric.click();
   });
 
-  // Returned from the 3-option picker (Photo Library / Take Photo / Files)
 // Returned from the 3-option picker (Photo Library / Take Photo / Files)
 inputGeneric.addEventListener('change', ()=>{
   if (!inputGeneric.files || !inputGeneric.files.length) return; // user cancelled
 
   addFiles(inputGeneric.files);
 
-  // ✅ Detect if user used "Take Photo" mode (iOS/Android camera in file picker)
+  //  Detect if user used "Take Photo" mode (iOS/Android camera in file picker)
   const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
 
   if (usedCamera) {
@@ -1006,18 +995,16 @@ inputGeneric.addEventListener('change', ()=>{
     finishPicking();
   }
 });
-
-
-
+  
   // Returned from camera-only input
   inputCamera.addEventListener('change', ()=>{
     // If user cancels camera, FileList is empty or no change event—just finish
     if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; }
     addFiles(inputCamera.files);
-    maybeAddMoreAndReopenCamera();  // loop until 10 or Cancel
+    maybeAddMoreAndReopenCamera();  
   });
 
-  // Role selection (unchanged except we guard for at least one file)
+  // Role selection 
   roleUI?.querySelectorAll('.role-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
@@ -1029,7 +1016,7 @@ inputGeneric.addEventListener('change', ()=>{
         return;
       }
 
-      // ---- MOCK ANALYSIS (unchanged) ----
+      // ---- MOCK ANALYSIS ----
       const mock = {
         languageOriginal: "en",
         summary: [
@@ -1078,15 +1065,13 @@ inputGeneric.addEventListener('change', ()=>{
     });
   });
 
-  // Leave a Review (unchanged)
+  // Leave a Review 
   const leaveBtn = document.getElementById('leaveReview');
   if (leaveBtn){
     leaveBtn.addEventListener('click', ()=>{
       window.open('https://tally.so/r/3EGJpA', '_blank', 'noopener');
     });
   }
-  const footerLeave = document.getElementById('footerLeaveReview');
-  footerLeave?.addEventListener('click', (e)=>{ /* anchor has href already */ });
 })();
 
   </script>
