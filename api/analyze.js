@@ -86,16 +86,12 @@ CLOSURE & STYLE RULES (apply to ALL list items):
 - Do NOT cut words mid-word; do NOT leave thoughts unfinished.
 - For main clauses: write the clauses only (no “Article …”, numbers, or labels).
 
-
 QUALITY RULES:
 - If source text is short, synthesize plausible, accurate legal content to meet the exact lengths. No "..." and no repeated words to pad.
 - Keep grammar and semantics solid; avoid wording repetition across items.
 - The 'analysis' must be in the detected original language.
 - Provide 'translations' for ALL of: en,it,de,es,fr,pt,nl,ro,sq,tr,zh,ja (including "title").
 - Numbers (risk, clarity, compliance) remain the same across languages.`;
-
-
-
 
     // === USER content ===
     const userContent = imageDataURI
@@ -173,8 +169,6 @@ function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
   normalized.analysis.summary = [ str ];
 }
 
-
-
 // Pass lists through untouched so items remain complete sentences.
 normalized.analysis.keyClauses = Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [];
 normalized.analysis.potentialIssues = Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [];
@@ -197,12 +191,8 @@ normalized.analysis.smartSuggestions = Array.isArray(parsed.analysis?.smartSugge
   normalized.translations = trOut;
 })();
 
-
-
 console.log("Normalized response (trim-only):", normalized);
 return send(res, 200, normalized);
-
-
 
   } catch (e) {
     console.error("Full analyze error:", e.message, e.stack);
