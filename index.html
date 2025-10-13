@@ -1176,19 +1176,20 @@ transition: opacity .6s ease;
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init({ once: true });
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.body.classList.add('stage1'); // show hero content first
+  document.body.classList.add('stage1'); // hero now
 
   if (reduce) {
     document.body.classList.add('stage2','stage3');
     return;
   }
 
-  setTimeout(() => document.body.classList.add('stage2'), 220); // bg image fades in
-  setTimeout(() => document.body.classList.add('stage3'), 440); // particles fade in last
+  setTimeout(() => document.body.classList.add('stage2'), 80);   // was 220
+  setTimeout(() => document.body.classList.add('stage3'), 160);  // was 440
 });
+
 
       const container = document.getElementById("particles");
       if (container) {
