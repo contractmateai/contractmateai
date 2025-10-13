@@ -1,4 +1,4 @@
-just keep this here // api/analyze.js — Serverless (Vercel) JSON endpoint
+just keep this here// api/analyze.js — Serverless (Vercel) JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
 
@@ -76,7 +76,7 @@ const system = `You are a contract analyst. Return STRICT JSON only — no prose
 }
 
 LENGTH RULES (must be met WITHOUT padding, filler, numbers, bullets, or repetition):
-- summary[0] length = 540–660 characters; write at least 4 complete sentences separated by "\\n" (include at least three "\\n"). End with a complete sentence. Do not duplicate phrases.
+- summary[0] length = 438 characters EXACTLY; write multiple complete sentences separated by "\\n". Do not duplicate phrases.
 - keyClauses length = 4 items; each item length = 152 chars EXACTLY. Write plain sentences; DO NOT prefix with “Article”, numbers, bullets, or labels.
 - potentialIssues length = 5 items; each item length = 104 chars EXACTLY, concise and non-repetitive.
 - smartSuggestions length = 4 items; exact lengths per item: [139, 161, 284, 123] characters respectively, concise and non-repetitive.
@@ -165,14 +165,15 @@ QUALITY RULES:
 // Expect the model to produce exact lengths and complete sentences; do NOT trim/slice here.
 function asArray(x) { return Array.isArray(x) ? x : (x ? [String(x)] : []); }
 
-// Summary: keep full multi-sentence text (UI splits on \n); no trimming
+// Summary: enforce exact 438 chars like before (UI splits on \n)
 function ensureArray(a){ return Array.isArray(a) ? a : (a ? [String(a)] : []); }
+function trimTo(s, n){ s = String(s||""); return s.length > n ? s.slice(0, n) : s; }
+const SUMMARY_LIMIT = 438;
 {
   const parts = ensureArray(parsed.analysis?.summary);
-  const str = String(parts[0] ?? "").trim();
-  normalized.analysis.summary = [ str ];
+  const str = String(parts[0] ?? "");
+  normalized.analysis.summary = [ trimTo(str, SUMMARY_LIMIT) ];
 }
-
 
 
 // Pass lists through untouched so items remain complete sentences.
