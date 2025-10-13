@@ -22,7 +22,7 @@
     /><!-- PDF.js (browser global build) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-  // Expose as pdfjsLib and set the worker URL so your code can call pdfjsLib.getDocument(...)
+ 
   if (window['pdfjs-dist/build/pdf']) {
     window.pdfjsLib = window['pdfjs-dist/build/pdf'];
   }
@@ -30,20 +30,20 @@
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 </script>
 
-<!-- Mammoth.js for DOCX -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
     <style>
-      /* === FLOATING TOP BAR === */
+   
       .topbar-wrap {
         position: fixed;
-        top: 18px; /* not touching the very top */
+        top: 18px; 
         left: 0;
         right: 0;
         z-index: 1000;
         display: flex;
         justify-content: center;
-        pointer-events: none; /* so only the bar is clickable */
+        pointer-events: none; 
         transition: transform 0.28s ease, opacity 0.25s ease;
       }
       .topbar-wrap.hide {
@@ -53,7 +53,7 @@
 
      .topbar {
   pointer-events: auto;
-  background: var(--bar); /* same as contact page */
+  background: var(--bar); 
   border: 1px solid var(--bar-border);
   border-radius: 16px;
   min-height: 72px;
@@ -93,30 +93,21 @@
 }
 .topbar-nav a:hover { opacity:.85 }
 
-
-      /* push content down so bar doesn’t overlap hero */
-      .hero-wrapper {
+.hero-wrapper {
         margin-top: 120px;
-      } /* REPLACES your -40px rule */
+      } 
 
      :root{
   --bg-dark:#01040b;
   --text-light:#fff9f9;
   --text-muted:#d8cccc;
-  --highlight-green:#bff611;
   --badge-glow: rgba(191, 255, 60, 0.55);
-  --badge-purple:#1f1a34;
   --badge-lime:#adff00;
-  --badge-gray:#2e2b3a;
   --particle-color:#682fd8;
-  --purple-border:#4a2d91;
-  --purple-hover:#2a1f4a;
   --bar:#04040e;
   --bar-border:#3f3f3f;
-  --badge-bg:#1f1a34;
-  --badge-text:#c8acff;
 }
-/* === staged on-load sequence (hero → bg → particles) === */
+
 .reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
 body.stage1 .reveal-on-load{opacity:1; transform:none;}
 
@@ -126,8 +117,7 @@ body.stage2::before{opacity:1;}
 .particle-container{opacity:0; transition:opacity .6s ease;}
 body.stage3 .particle-container{opacity:1;}
 
-
-      * {
+   * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -150,8 +140,8 @@ body.stage3 .particle-container{opacity:1;}
         background: url("https://imgur.com/tEj2TUl.png") no-repeat center bottom;
         background-size: 100% 1600px;
         z-index: -2;
-        opacity: 0;                 /* add */
-transition: opacity .6s ease;/* add */
+        opacity: 0;                 
+transition: opacity .6s ease;
 
       }
 
@@ -186,35 +176,8 @@ transition: opacity .6s ease;/* add */
           opacity: 0;
         }
       }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        max-width: 1200px;
-        margin: 0 auto;
-        font-size: 22px;
-        position: relative;
-        z-index: 2;
-      }
-
-      header img {
-        height: 44px;
-        margin-right: 14px;
-        border-radius: 50%;
-      }
-
-      .logo-wrap {
-        display: flex;
-        align-items: center;
-        font-size: 24px;
-        font-weight: 500;
-        color: white;
-      }
-
       .tagline-absolute {
-        background-color: #090823; /* bluish-purple field */
+        background-color: #090823; 
         color: #a7fd3c;
         display: inline-flex;
         align-items: center;
@@ -223,13 +186,12 @@ transition: opacity .6s ease;/* add */
         font-size: 15px;
         border-radius: 53px;
         position: relative;
-        top: -17px;            /* ⬅️ moves the badge higher */
-        margin-bottom: 14px;   /* optional: keeps the badge-to-title gap similar */
+        top: -17px;     
+        margin-bottom: 14px;   
         transition: none;
         box-shadow: 0 0 20px var(--badge-glow);
       }
 
-      /* only style the AI chip, not the arrow */
 .tagline-absolute .chip {
   background-color: var(--badge-lime);
   color: black;
@@ -292,7 +254,6 @@ transition: opacity .6s ease;/* add */
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         transition: box-shadow 0.3s ease;
       }
-      /* === ROLE PICKER === */
 .role-picker {
   margin-top: 22px;
   display: inline-flex;
@@ -300,7 +261,7 @@ transition: opacity .6s ease;/* add */
   gap: 14px;
 }
 .role-title {
-  color: #fff;            /* "You are:" in white */
+  color: #fff;            
   font-size: 22px;
   margin-right: 6px;
 }
@@ -309,19 +270,18 @@ transition: opacity .6s ease;/* add */
   gap: 14px; 
 }
 .role-btn {
-  background: #a7fd3c;    /* lime field */
-  color: #000;            /* black text */
+  background: #a7fd3c;    
+  color: #000;            
   border: 2px solid transparent;
   border-radius: 12px;
   padding: 12px 18px;
   font-size: 18px;
   cursor: pointer;
-  font-family: "Inter", sans-serif;  /* same site font */
+  font-family: "Inter", sans-serif;  
 }
 .role-btn.active { 
-  border-color: #fff;     /* clicked → white 2px border */
+  border-color: #fff;     
 }
-      /* Role picker stays completely invisible until JS unhides it */
 .role-picker[hidden] {
   display: none !important;
 }
@@ -345,29 +305,24 @@ transition: opacity .6s ease;/* add */
         position: relative;
         transition: transform 0.8s ease;
         transform: rotateX(12deg);
-         --app-raise: -20px; /* ⬅️ add this line */
       }
-      
 
-     /* App frame holds the image and the glint */
 .app-frame{
   position: relative;
-  overflow: hidden;                    /* clip the glint & keep corners clean */
+  overflow: hidden;                    
   border-radius: 24px;
   box-shadow: 0 8px 28px rgba(0,0,0,.6);
-  margin-top: -20px;                   /* replaces your old img top:-20px */
+  margin-top: -20px;                  
 }
 
-/* Your image: no manual offset (we moved it to the frame) */
 .app-preview{
   width: 100%;
   display: block;
-  border-radius: 24px;                 /* safe to keep; also on frame for backup */
-  box-shadow: none;                    /* shadow now lives on the frame */
-  position: static;                    /* remove the old relative/top offset */
+  border-radius: 24px;                
+  box-shadow: none;                 
+  position: static;                    
 }
 
-/* === APP PREVIEW GLINT (fast full-width sweep) === */
 .glint-line{
   position: absolute;
   top: 0;
@@ -384,8 +339,6 @@ transition: opacity .6s ease;/* add */
   border-radius: 2px;
   pointer-events: none;
   z-index: 3;
-
-  /* ⬇️ SLOW IT DOWN by upping the duration (try 3.2s–4s) */
   animation: glint-sweep 4s linear infinite,
              glint-fade  4s linear infinite;
 }
@@ -393,35 +346,18 @@ transition: opacity .6s ease;/* add */
 
 @keyframes glint-sweep{
   from { left: -140px; }
-  to   { left: calc(100% + 40px); }  /* small overshoot */
+  to   { left: calc(100% + 40px); }  
 }
 
-/* ⬇️ Fades in early, stays bright, then fades OUT BEFORE the edge reset */
 @keyframes glint-fade{
   0%   { opacity: 0; }
-  8%   { opacity: 1; }   /* fade IN */
-  78%  { opacity: 1; }   /* stay visible most of the run */
-  88%  { opacity: 0; }   /* fade OUT near the end */
+  8%   { opacity: 1; }   
+  78%  { opacity: 1; }   
+  88%  { opacity: 0; }   
   100% { opacity: 0; }
 }
 
-
-      /*@keyframes fadeOut {
-        0% {
-          opacity: 0;
-        }
-        5% {
-          opacity: 1;
-        }
-        70% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-      */
-      .section-title {
+     .section-title {
         text-align: center;
         font-size: 44px;
         color: var(--text-light);
@@ -440,7 +376,7 @@ transition: opacity .6s ease;/* add */
       }
 
       .section-badge {
-        background-color: #090823; /* bluish-purple field */
+        background-color: #090823; 
         color: #a7fd3c;
         padding: 6px 14px;
         border-radius: 53px;
@@ -481,11 +417,8 @@ transition: opacity .6s ease;/* add */
         overflow: hidden;
         z-index: 1 !important;
         background-color: black;
-        /* background-color: gray; */
-        /* background: transparent; */
         border-radius: 10px;
         padding: 2px;
-        /* aspect-ratio: 1/1; */
       }
 
       .moving-line-wrapper .moving-line-content {
@@ -500,8 +433,6 @@ transition: opacity .6s ease;/* add */
         background: inherit;
         border-radius: inherit;
         overflow: inherit;
-        /* aspect-ratio: inherit; */
-        /* background-color: green; */
       }
 
       @keyframes move-around {
@@ -555,24 +486,22 @@ transition: opacity .6s ease;/* add */
         margin-bottom: 30px;
         margin-left: -18px;
       }
-      /* row that replaces the single green icon */
 .insight-icon-row{
   display:flex;
   align-items:center;
-  gap:16px;                  /* space between the three */
-  margin-top:40px;           /* keep same spacing as old icon */
+  gap:16px;                  
+  margin-top:40px;          
   margin-bottom:30px;
-  margin-left:-18px;         /* matches your old .insight-icon offset */
+  margin-left:-18px;         
 }
 
-/* circle border style from earlier */
 .circle-icon{
-  width:90px;               /* same size as the old green icon */
+  width:90px;             
   height:90px;
   border-radius:50%;
   object-fit:cover;
-  background:#000;           /* clean edge inside the ring */
-  border:4px solid #93e533;  /* slightly gray → near white, a bit thicker */
+  background:#000;          
+  border:4px solid #93e533;  
 }
 
 
@@ -609,7 +538,6 @@ transition: opacity .6s ease;/* add */
         box-shadow: 0 0 16px #adff00;
       }
 
-      /* Scroll Section Styles START */
       .scroll-section {
         position: relative;
         padding: 30px 0;
@@ -648,8 +576,6 @@ transition: opacity .6s ease;/* add */
         margin-right: -50vw;
       }
 
-      /* === FEATURES STRIP (no keyframes; JS handles endless scroll) === */
-      /* === FEATURES STRIP (endless; JS drives movement) === */
       .scroll-strip {
         display: flex;
         gap: 28px;
@@ -657,12 +583,6 @@ transition: opacity .6s ease;/* add */
         white-space: nowrap;
         flex-shrink: 0;
         will-change: transform;
-      }
-
-      /* keep hooks, no CSS animations */
-      .top-row {
-      }
-      .bottom-row {
       }
 
       .scroll-item {
@@ -739,29 +659,24 @@ transition: opacity .6s ease;/* add */
           font-size: 20px;
         }
       }
-/* ===== Powered-by strip (ENDLESS, single set visible) ===== */
 .logo-strip{
-  /* ⬅️ KNOB #1: more side space by increasing this number */
-  --side-gap: 640px;                  /* total gap; ≈320px per side on desktop */
-
-  /* ⬅️ KNOB #2: push lower by increasing the top margin */
+  --side-gap: 640px;                
   margin: 62px auto 6px;
 
   width: min(1200px, calc(100vw - var(--side-gap)));
   padding: 0;
   overflow: hidden;
   position: relative;
-  transform: none;                    /* keep size precise for seamless loop */
+  transform: none;              
 }
 
 .logo-track{
   display: flex;
   align-items: center;
-  gap: 0;                             /* no gap so the seam is invisible */
+  gap: 0;               
   will-change: transform;
 }
 
-/* one full-width copy visible; second copy sits after it for seamless wrap */
 .logo-piece{
   flex: 0 0 100%;
   width: 100%;
@@ -771,7 +686,6 @@ transition: opacity .6s ease;/* add */
   -webkit-user-drag: none;
 }
 
-/* dark edge fades, but much more transparent */
 .logo-fade{
   position:absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none;
 }
@@ -796,12 +710,10 @@ transition: opacity .6s ease;/* add */
   );
 }
 
-/* responsive: reduce side gap so it still fits on small screens */
 @media (max-width: 1200px){ .logo-strip{ --side-gap: 420px; } }
 @media (max-width: 900px) { .logo-strip{ --side-gap: 260px; margin-top: 34px; } }
 @media (max-width: 640px) { .logo-strip{ --side-gap: 160px; margin-top: 28px; } .logo-fade{ width:120px; } }
 
-      /* === Arrow hover (match friend's effect) === */
 .animated-arrow-bttn { overflow: hidden; }
 
 .animated-arrow{
@@ -812,7 +724,7 @@ transition: opacity .6s ease;/* add */
 
 .animated-arrow,
 .animated-arrow::before{
-  color: currentColor;      /* arrow always matches the text color */
+  color: currentColor;    
 }
 
 .animated-arrow::before{
@@ -825,8 +737,6 @@ transition: opacity .6s ease;/* add */
   visibility:hidden;
 }
 
-
-/* Hover triggers for all the targets */
 .cta-btn:hover .animated-arrow.diag,
 .cta-outline:hover .animated-arrow.diag,
 .watch-btn:hover .animated-arrow.diag,
@@ -845,12 +755,6 @@ transition: opacity .6s ease;/* add */
   visibility: visible;
 }
 
-
-      /* === REVIEWS SECTION === */
-      /* === REVIEWS: CSS === */
-      /* === REVIEWS: CSS === */
-
-      /* === REVIEWS: CSS (drop-in replacement) === */
       .reviews-section {
         padding: 80px 40px 120px;
         background: transparent;
@@ -858,16 +762,15 @@ transition: opacity .6s ease;/* add */
         margin: 0 auto;
       }
 
-      /* header: center title/sub, arrows on the right */
       .reviews-header {
         display: grid;
-        grid-template-columns: 1fr auto 1fr; /* spacer | center | arrows */
+        grid-template-columns: 1fr auto 1fr; 
         align-items: center;
         gap: 24px;
       }
 
       .reviews-title {
-        grid-column: 2; /* exact middle */
+        grid-column: 2; 
         text-align: center;
       }
 
@@ -886,7 +789,6 @@ transition: opacity .6s ease;/* add */
         margin-top: 10px;
       }
 
-      /* arrows (top-right) */
       .review-nav {
         grid-column: 3;
         justify-self: end;
@@ -920,7 +822,7 @@ transition: opacity .6s ease;/* add */
         width: 22px;
         height: 22px;
         display: block;
-        pointer-events: none; /* click goes to button */
+        pointer-events: none; 
         transition: transform 0.18s ease;
       }
       .review-nav .nav.left:hover img {
@@ -930,7 +832,6 @@ transition: opacity .6s ease;/* add */
         transform: translateX(1px);
       }
 
-      /* carousel */
       .reviews-viewport {
         overflow: hidden;
         margin-top: 28px;
@@ -957,15 +858,15 @@ transition: opacity .6s ease;/* add */
 .review-dots{
   display:flex;
   justify-content:center;
-  gap:14px;                 /* a bit more space */
+  gap:14px;               
   margin:28px 0 26px;
 }
 .review-dot{
-  width:14px;               /* was 8px */
+  width:14px;         
   height:14px;
   border-radius:50%;
-  background:#777;          /* slightly brighter base */
-  opacity:1;                /* fully opaque so it’s easy to see/tap */
+  background:#777;        
+  opacity:1;                
   cursor:pointer;
   display:inline-block;
   border:none;
@@ -980,8 +881,6 @@ transition: opacity .6s ease;/* add */
   outline:none;
 }
 
-
-      /* button */
       .leave-review-wrap {
         display: flex;
         justify-content: center;
@@ -1001,7 +900,6 @@ transition: opacity .6s ease;/* add */
         box-shadow: 0 0 14px #adff00;
       }
 
-      /* responsive */
       @media (max-width: 1100px) {
         .review-card {
           flex-basis: calc((100% - 24px) / 2);
@@ -1022,18 +920,15 @@ transition: opacity .6s ease;/* add */
         }
       }
 
-      /* === FAQ STYLES === */
-      /* === FAQ STYLES (updated) === */
-      /* === FAQ (wider, bigger, only-open-colored) === */
       .faq-section {
-        max-width: 1200px; /* wider container */
+        max-width: 1200px; 
         margin: 0 auto;
         padding: 80px 24px;
         font-family: "Inter", sans-serif;
-        text-align: center; /* center title */
+        text-align: center; 
       }
       .faq-title {
-        font-size: 64px; /* bigger title */
+        font-size: 64px; 
         line-height: 1.1;
         color: #fff9f9;
         margin-bottom: 34px;
@@ -1041,23 +936,20 @@ transition: opacity .6s ease;/* add */
       }
 
       .faq-list {
-        max-width: 1100px; /* wider list so blocks start more left & end more right */
+        max-width: 1100px; 
         margin: 0 auto;
         display: flex;
         flex-direction: column;
         gap: 20px;
-        text-align: left; /* left-align the Q/A text inside */
+        text-align: left; 
       }
 
-      /* each item is a unified block */
-      /* === FAQ FIX: one-piece open block, color #191624 === */
       .faq-item {
         border-radius: 24px;
         overflow: hidden;
-        background: transparent; /* let states handle bg */
+        background: transparent; 
       }
 
-      /* Default (closed) question look */
       .faq-q {
         width: 100%;
         display: flex;
@@ -1067,7 +959,7 @@ transition: opacity .6s ease;/* add */
         padding: 30px 34px;
         border: none;
         cursor: pointer;
-        background: transparent; /* closed state color */
+        background: transparent; 
         color: #fff9f9;
         font-size: 26px;
         font-weight: 500;
@@ -1079,19 +971,18 @@ transition: opacity .6s ease;/* add */
         background: transparent;
       }
 
-      /* Opened state: question + answer appear as one block */
       .faq-item.open {
-        background: #191624; /* one unified bg */
+        background: #191624; 
         border-radius: 24px;
       }
 
       .faq-item.open .faq-q {
-        background: transparent; /* inherits from parent */
-        border-radius: 24px 24px 0 0; /* rounded only on top */
+        background: transparent;
+        border-radius: 24px 24px 0 0; 
       }
 
       .faq-a {
-        background: transparent; /* same as parent */
+        background: transparent; 
         color: #cfcbd6;
         font-size: 22px;
         line-height: 1.7;
@@ -1106,9 +997,8 @@ transition: opacity .6s ease;/* add */
         padding: 18px 34px 24px;
         max-height: 480px;
         opacity: 1;
-        border-radius: 0 0 24px 24px; /* bottom rounding */
+        border-radius: 0 0 24px 24px; 
       }
-/* === Tilted arrow animation for CTAs + badges === */
 .tilt-arrow{
   display:inline-block;
   margin-left:10px;
@@ -1118,20 +1008,17 @@ transition: opacity .6s ease;/* add */
 }
 .tilt-arrow.small{ margin-left:8px; font-size:.95em; }
 
-/* hover nudge on the two CTA buttons */
 .cta-btn:hover .tilt-arrow,
 .cta-outline:hover .tilt-arrow{
   transform: rotate(24deg);
-  translate: 3px -2px; /* gentle drift up-right */
+  translate: 3px -2px; 
 }
 
-/* badges: subtle continuous tilt/bob */
 .tagline-absolute .tilt-arrow,
 .section-badge .tilt-arrow{
   animation: arrow-float 1.8s ease-in-out infinite;
 }
 
-/* override the generic badge span styling inside .tagline-absolute */
 .tagline-absolute .tilt-arrow{
   background: none !important;
   color: inherit !important;
@@ -1144,7 +1031,6 @@ transition: opacity .6s ease;/* add */
   50%    { transform: rotate(28deg) translate(2px,-2px); }
 }
 
-/* respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .tagline-absolute .tilt-arrow,
   .section-badge .tilt-arrow{ animation: none; }
@@ -1154,7 +1040,6 @@ transition: opacity .6s ease;/* add */
     </style>
   </head>
   <body>
-    <!-- FLOATING TOP BAR -->
 <div class="topbar-wrap" id="topbarWrap">
   <div class="topbar">
     <div class="topbar-left">
@@ -1197,7 +1082,6 @@ transition: opacity .6s ease;/* add */
   </button>
 </div>
 
-       <!-- ROLE PICKER (hidden by default) -->
 <div id="rolePicker" class="role-picker" hidden>
   <span class="role-title">You are:</span>
   <div class="role-buttons">
@@ -1222,7 +1106,6 @@ transition: opacity .6s ease;/* add */
 
       </div>
     </div>
-<!-- POWERED BY STRIP (endless) -->
 <section class="logo-strip">
   <div class="logo-track" id="logoTrack"></div>
   <div class="logo-fade left"></div>
@@ -1259,7 +1142,6 @@ transition: opacity .6s ease;/* add */
   <img class="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield/Secure icon" loading="lazy" />
 </div>
 
-
           <h2>Understand Your Contract <br /><span>Instantly with AI</span></h2>
           <p>
            Reveal hidden risks and key terms so you can review contracts clearly, quickly, and without confusion.
@@ -1271,10 +1153,6 @@ transition: opacity .6s ease;/* add */
    class="cta-outline animated-arrow-bttn">
   Learn More <span class="animated-arrow diag" aria-hidden="true">↗</span>
 </a>
-
-
-
-
         </div>
       </div>
     </section>
@@ -1295,19 +1173,15 @@ transition: opacity .6s ease;/* add */
       </div>
     </div>
 
-    <!-- AOS + Particle + Scroll JS -->
-    <!-- AOS + Particle + Scroll JS -->
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init({ once: true });
-      // staged load: 1) hero content, 2) bg image, 3) particles
 window.addEventListener('load', () => {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.body.classList.add('stage1'); // show hero content first
 
   if (reduce) {
-    // accessibility: show everything at once
     document.body.classList.add('stage2','stage3');
     return;
   }
@@ -1316,8 +1190,6 @@ window.addEventListener('load', () => {
   setTimeout(() => document.body.classList.add('stage3'), 440); // particles fade in last
 });
 
-
-      /* particles */
       const container = document.getElementById("particles");
       if (container) {
         const num = 50;
@@ -1335,7 +1207,6 @@ window.addEventListener('load', () => {
         }
       }
 
-      /* app tilt */
       const wrapper = document.getElementById("appWrapper");
       if (wrapper) {
         window.addEventListener(
@@ -1349,7 +1220,6 @@ window.addEventListener('load', () => {
         );
       }
 
-      /* features rows */
       const topRow = document.querySelector(".top-row");
       const bottomRow = document.querySelector(".bottom-row");
 
@@ -1389,13 +1259,12 @@ window.addEventListener('load', () => {
           });
           return frag;
         };
-        row.appendChild(makeSet()); // copy 1
-        row.appendChild(makeSet()); // copy 2 (for seamless loop)
+        row.appendChild(makeSet()); 
+        row.appendChild(makeSet()); 
       }
       populateRow(topRow, featuresTop);
       populateRow(bottomRow, featuresBottom);
 
-      /* === Endless ticker (no visible reset) === */
       function makeTicker(row, { pxPerSecond = 36, direction = "left" } = {}) {
         if (!row) return;
 
@@ -1406,7 +1275,6 @@ window.addEventListener('load', () => {
           last = performance.now();
 
         function measure() {
-          // two copies -> one set is exactly half width; if 0, retry shortly
           w = row.scrollWidth / 2;
           if (!w) {
             setTimeout(measure, 60);
@@ -1419,7 +1287,6 @@ window.addEventListener('load', () => {
 
           x += speed * dt;
 
-          // wrap into [-w, 0) without jump
           if (x <= -w) x += w;
           if (x > 0) x -= w;
 
@@ -1449,7 +1316,6 @@ window.addEventListener('load', () => {
         start();
       }
 
-      /* start once everything is laid out */
       window.addEventListener("load", () => {
         makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
         makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
@@ -1457,15 +1323,13 @@ window.addEventListener('load', () => {
     </script>
 
 <script>
-  // === POWERED-BY STRIP: much longer pass + ~0.3s faster ===
   (function () {
     const track = document.getElementById('logoTrack');
     if (!track) return;
 
     const src = 'https://i.imgur.com/2SUo8mv.png';
 
-    // Longer pass: show 1 set in view but build 4 copies in the track
-    const COPIES = 12; // make 5–6 if you want an even longer run
+    const COPIES = 12; 
     for (let i = 0; i < COPIES; i++) {
       const img = document.createElement('img');
       img.src = src;
@@ -1475,8 +1339,7 @@ window.addEventListener('load', () => {
       track.appendChild(img);
     }
 
-    // Loop time: ~0.3s faster than a 12.0s baseline
-    const SECONDS_PER_LOOP = 150; // smaller = faster, larger = slower
+    const SECONDS_PER_LOOP = 150; 
 
     function run() {
       let x = 0, pieceW = 0, last = performance.now();
@@ -1487,16 +1350,15 @@ window.addEventListener('load', () => {
           setTimeout(measure, 50);
           return;
         }
-        // width of one strip image at current layout
         pieceW = first.getBoundingClientRect().width || first.naturalWidth;
       }
 
       function tick(now) {
         const dt = (now - last) / 1000; last = now;
         const pxPerSecond = (pieceW * COPIES) / SECONDS_PER_LOOP;
-        x -= pxPerSecond * dt;                      // move left
-        const loop = pieceW * COPIES;               // total distance for full loop
-        if (x <= -loop) x += loop;                  // seamless wrap
+        x -= pxPerSecond * dt;                      
+        const loop = pieceW * COPIES;               
+        if (x <= -loop) x += loop;      
         track.style.transform = `translateX(${x}px)`;
         requestAnimationFrame(tick);
       }
@@ -1510,9 +1372,6 @@ window.addEventListener('load', () => {
   })();
 </script>
 
-
-    <!-- WATCH VIDEO SECTION -->
-  <!-- WATCH VIDEO SECTION -->
 <section class="watch-video-section" data-aos="fade-up">
   <div class="video-content">
     <div class="video-text">
@@ -1530,7 +1389,6 @@ window.addEventListener('load', () => {
 
     </div>
 
-    <!-- ✅ Only the YouTube player on the right -->
 <div class="video-box">
   <iframe
     class="video-embed"
@@ -1596,15 +1454,14 @@ window.addEventListener('load', () => {
         cursor: pointer;
         font-weight: 500;
         font-family: "Inter", sans-serif;
-        box-shadow: 0 0 18px #adff00; /* always glowing */
+        box-shadow: 0 0 18px #adff00; 
         transition: box-shadow 0.25s ease;
       }
 
       .watch-btn:hover {
-        box-shadow: 0 0 32px #adff00; /* stronger glow on hover */
+        box-shadow: 0 0 32px #adff00; 
       }
 
-   /* Right-aligned container (you already have this) */
 .video-box {
   position: relative;
   flex: 1;
@@ -1614,30 +1471,21 @@ window.addEventListener('load', () => {
   margin-right: 40px;
 }
 
-/* The YouTube iframe: bigger + rounded corners */
 .video-embed {
-  width: min(100%, 1100px);   /* ⬅️ make it bigger here; change 1100px if you want */
+  width: min(100%, 1100px);   
   aspect-ratio: 16 / 9;
   height: auto;
   display: block;
   border: 0;
-  border-radius: 16px;        /* ⬅️ rounded corners */
+  border-radius: 16px;  
 }
 
 @media (max-width: 900px){
   .video-embed { width: 100%; }
 }
 
-
-
-
-
-
     </style>
-    
-   
 
-    <!-- Reviews Section -->
     <!-- Reviews Section -->
     <section class="reviews-section" data-aos="fade-up">
       <div class="reviews-header">
@@ -1646,7 +1494,6 @@ window.addEventListener('load', () => {
           <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
         </div>
 
-        <!-- arrows (top-right, together) -->
         <div class="review-nav">
           <button
             class="nav left"
@@ -1710,9 +1557,9 @@ window.addEventListener('load', () => {
         function onScroll() {
           const y = window.scrollY;
           if (y > lastY && y > 80) {
-            bar.classList.add("hide"); // scrolling down
+            bar.classList.add("hide"); 
           } else {
-            bar.classList.remove("hide"); // scrolling up
+            bar.classList.remove("hide"); 
           }
           lastY = y <= 0 ? 0 : y;
           ticking = false;
@@ -1732,26 +1579,21 @@ window.addEventListener('load', () => {
     </script>
 
     <!-- REVIEWS SECTION -->
-    <!-- === REVIEWS: JS === -->
 <script>
-/* === REVIEWS: JS (seamless, 3-by-3 groups, dot logic) === */
 (function () {
   const track = document.getElementById("reviewsTrack");
   const prev  = document.getElementById("revPrev");
   const next  = document.getElementById("revNext");
   const dotsEl = document.getElementById("reviewDots");
 
-  // --- capture original cards BEFORE cloning ---
   const originals = Array.from(track.children);
   const TOTAL = originals.length;      // 5
 
-  // build 3 copies to allow seamless wrap in either direction
   track.innerHTML = "";
   for (let k = 0; k < 3; k++) {
     originals.forEach(n => track.appendChild(n.cloneNode(true)));
   }
 
-  // responsive "per page"
   let perPage = 3;
   function computePerPage() {
     const w = window.innerWidth;
@@ -1759,7 +1601,6 @@ window.addEventListener('load', () => {
   }
   computePerPage();
 
-  // measure one card width + gap so we can translate by item count
   let itemW = 0;
   function measure() {
     const c = track.querySelector(".review-card");
@@ -1768,8 +1609,7 @@ window.addEventListener('load', () => {
   }
   measure();
 
-  // index of the left-most visible card on the 3x track
-  let baseIndex = TOTAL; // start centered on the middle copy
+  let baseIndex = TOTAL; 
   function setTransform(i, animate) {
     if (!animate) track.style.transition = "none";
     track.style.transform = `translateX(${-i * itemW}px)`;
@@ -1777,14 +1617,11 @@ window.addEventListener('load', () => {
   }
   setTransform(baseIndex, false);
 
-  // helper
   const mod = (n,m) => ((n % m) + m) % m;
 
-  // === Two groups only: [0,1,2] and [2,3,4] ===
   const groupStarts = [0, 2];
   const toggleMode = () => (perPage === 3 && TOTAL === 5);
 
-  // --- DOTS ---
   function renderDots() {
     dotsEl.innerHTML = "";
     for (let i = 0; i < TOTAL; i++) {
@@ -1793,7 +1630,6 @@ window.addEventListener('load', () => {
       b.className = "review-dot";
       b.addEventListener("click", () => {
         if (toggleMode()) {
-          // map clicked dot to the nearest of our two groups
           let g = (i < 2) ? 0 : (i > 2) ? 1 : (currentGroup() === 0 ? 0 : 1);
           goGroup(g);
         } else {
@@ -1808,7 +1644,7 @@ window.addEventListener('load', () => {
 
   function currentGroup() {
     const p = mod(baseIndex, TOTAL);
-    return (p === groupStarts[1]) ? 1 : 0; // treat anything else as group 0
+    return (p === groupStarts[1]) ? 1 : 0; 
   }
 
   function updateDots() {
@@ -1816,11 +1652,9 @@ window.addEventListener('load', () => {
     const children = [...dotsEl.children];
 
     if (toggleMode()) {
-      // group 0 => dots 0,1,2 active ; group 1 => dots 2,3,4 active
       const active = g === 0 ? new Set([0,1,2]) : new Set([2,3,4]);
       children.forEach((d, i) => d.classList.toggle("active", active.has(i)));
     } else {
-      // fallback contiguous highlight for non-3-up layouts
       const start = mod(baseIndex, TOTAL);
       children.forEach((d, i) => {
         const k = (i - start + TOTAL) % TOTAL;
@@ -1829,13 +1663,11 @@ window.addEventListener('load', () => {
     }
   }
 
-  // keep us sitting on the middle copy after transitions
   function recenterIfNeeded() {
     if (baseIndex >= 2 * TOTAL) { baseIndex -= TOTAL; setTransform(baseIndex, false); }
     else if (baseIndex < TOTAL) { baseIndex += TOTAL; setTransform(baseIndex, false); }
   }
 
-  // generic delta move by item count
   function goDelta(delta) {
     baseIndex += delta;
     setTransform(baseIndex, true);
@@ -1845,22 +1677,20 @@ window.addEventListener('load', () => {
     }, { once: true });
   }
 
-  // move to group g (0 or 1) while always sliding "forward" (left)
   function goGroup(g) {
     const p = mod(baseIndex, TOTAL);
     if (g === 0) {
-      if (p === groupStarts[0]) return;   // already 123
-      goDelta(3);                          // 345 -> (next copy of) 123
+      if (p === groupStarts[0]) return;   
+      goDelta(3);                          
     } else {
-      if (p === groupStarts[1]) return;   // already 345
-      goDelta(2);                          // 123 -> 345
+      if (p === groupStarts[1]) return;   
+      goDelta(2);                   
     }
   }
 
-  // prev group (always slide the other way)
   function goPrevGroup() {
     const p = mod(baseIndex, TOTAL);
-    baseIndex += (p === groupStarts[0]) ? -3 : -2; // 123->(right)345 or 345->(right)123
+    baseIndex += (p === groupStarts[0]) ? -3 : -2; 
     setTransform(baseIndex, true);
     track.addEventListener("transitionend", () => {
       recenterIfNeeded();
@@ -1868,7 +1698,6 @@ window.addEventListener('load', () => {
     }, { once: true });
   }
 
-  // fallback: snap so a specific dot index becomes the left-most
   function goToStart(dotIdx) {
     const p = mod(baseIndex, TOTAL);
     baseIndex = baseIndex + ((dotIdx - p + TOTAL) % TOTAL);
@@ -1879,7 +1708,6 @@ window.addEventListener('load', () => {
     }, { once: true });
   }
 
-  // controls
   next.addEventListener("click", () => {
     if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0);
     else goDelta(perPage);
@@ -1891,7 +1719,6 @@ window.addEventListener('load', () => {
     restartAutoplay();
   });
 
-  // autoplay
   let timer = null;
   function startAutoplay() {
     stopAutoplay();
@@ -1903,11 +1730,9 @@ window.addEventListener('load', () => {
   function stopAutoplay() { if (timer) clearInterval(timer); timer = null; }
   function restartAutoplay() { stopAutoplay(); startAutoplay(); }
 
-  // init
   renderDots();
   startAutoplay();
 
-  // keep sizes in sync
   function snap() { setTransform(baseIndex, false); updateDots(); }
   window.addEventListener("resize", () => {
     computePerPage();
@@ -1918,7 +1743,6 @@ window.addEventListener('load', () => {
 </script>
 
 <script>
-/* === REVIEWS: mouse/touch drag-to-scroll === */
 (() => {
   const viewport = document.querySelector('.reviews-viewport');
   const track = document.getElementById('reviewsTrack');
@@ -1947,7 +1771,7 @@ window.addEventListener('load', () => {
     viewport.style.cursor = 'grab';
     track.offsetHeight; // reflow
     track.style.transition = 'transform .35s ease';
-    setTimeout(() => (moved = false), 0); // allow clicks again
+    setTimeout(() => (moved = false), 0); 
   }
 
   function start(clientX) {
@@ -1975,13 +1799,9 @@ window.addEventListener('load', () => {
   viewport.addEventListener('touchmove',  e => move(e.touches[0].clientX),   { passive: true });
   window.addEventListener('touchend', end);
 
-  // Prevent accidental click on images while dragging
   viewport.addEventListener('click', e => { if (moved) e.preventDefault(); }, true);
 })();
 </script>
-
-
-
 
     <!-- FAQ SECTION -->
     <section class="faq-section" data-aos="fade-up">
@@ -2008,7 +1828,6 @@ window.addEventListener('load', () => {
         </div>
 
         <div class="faq-item open">
-          <!-- OPEN BY DEFAULT -->
           <button class="faq-q" type="button">
             <span
               >Is SignSense legally binding or a replacement for a lawyer?</span
@@ -2082,8 +1901,6 @@ window.addEventListener('load', () => {
         });
       });
     </script>
-
-<!-- FOOTER -->
 <!-- FOOTER -->
 <div class="site-footer-wrap" data-aos="fade-in">
   <footer class="site-footer">
@@ -2140,7 +1957,6 @@ window.addEventListener('load', () => {
  
 
 <style>
-  /* exact contact-page footer styles */
   .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px;}
   .site-footer{
     background:transparent; border:none; box-shadow:none; padding:0;
@@ -2157,37 +1973,30 @@ window.addEventListener('load', () => {
   .footer-title{color:#fff; font-size:22px; font-weight:400;}
   .footer-links{display:flex; flex-direction:column; gap:8px;}
   .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400; margin:0;}
-  .site-footer .footer-links a{margin:0 !important;}
-
   .footer-bottom{margin-top:24px;}
   .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
   .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
   .footer-bottom-links a{color:#c5c5c5; text-decoration:none;}
   .footer-copy{margin-left:auto;}
-  /* Keep footer links the same color even after visiting */
-.footer-bottom-links a:visited { color: #c5c5c5; }
-.site-footer .footer-links a:visited { color: #c5c5c5; }
-
-/* (optional) do the same for the top bar */
-.topbar-nav a,
-.topbar-nav a:visited { color:#d8cccc; }
-/* Remove underline from CTA-style links */
 .watch-btn,
 .leave-review {
   text-decoration: none !important;
 }
 
-/* Ensure hover doesn’t add underline */
 .watch-btn:hover,
 .leave-review:hover {
   text-decoration: none !important;
 }
+.site-footer .footer-links a,
+.site-footer .footer-links a:visited,
+.footer-bottom-links a,
+.footer-bottom-links a:visited {
+  color: #c5c5c5;
+  text-decoration: none;
+}
 
 </style>
 
-
-
-    <!-- === FAKE RESULTS WIRING (paste before </body>) === -->
     <input
       id="contractFile"
       type="file"
@@ -2196,24 +2005,18 @@ window.addEventListener('load', () => {
     />
    <script>
 (async () => {
-  // File to payload converter
   async function fileToPayload(file) {
     try {
       const name = file.name || "file";
       const mime = file.type || "application/octet-stream";
       const ext = name.toLowerCase();
-      console.log("Processing file:", { name, mime, ext });
-
-      // TXT
       if (mime === "text/plain" || ext.endsWith(".txt")) {
         const text = await file.text();
         return { text, originalName: name, mime };
       }
 
-      // PDF
       if (mime === "application/pdf" || ext.endsWith(".pdf")) {
         const buf = await file.arrayBuffer();
-        console.log("PDF buffer size:", buf.byteLength);
         const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
         let full = "";
         for (let p = 1; p <= pdf.numPages; p++) {
@@ -2222,27 +2025,21 @@ window.addEventListener('load', () => {
           const strings = content.items.map((i) => i.str).join(" ");
           full += strings + "\n";
         }
-        console.log("Extracted PDF text length:", full.length);
         return { text: full, originalName: name, mime };
       }
 
-      // DOCX
       if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
         const buf = await file.arrayBuffer();
-        console.log("DOCX buffer size:", buf.byteLength);
         const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-        console.log("Extracted DOCX text length:", res.value.length);
         return { text: res.value || "", originalName: name, mime };
       }
 
-      // Images
       if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
         const dataUrl = await new Promise((resolve) => {
           const r = new FileReader();
           r.onload = () => resolve(r.result);
           r.readAsDataURL(file);
         });
-        console.log("Image data URL length:", dataUrl.length);
         return { imageDataURI: dataUrl, originalName: name, mime };
       }
 
@@ -2253,7 +2050,6 @@ window.addEventListener('load', () => {
     }
   }
 
-  // Event listeners
   const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
   const input = document.getElementById("contractFile");
   const roleUI = document.getElementById("rolePicker");
@@ -2264,7 +2060,7 @@ window.addEventListener('load', () => {
   triggers.forEach((t) =>
     t.addEventListener("click", (e) => {
       e.preventDefault();
-      input.value = ""; // Clear input to prevent re-trigger
+      input.value = ""; 
       input.click();
     })
   );
@@ -2272,7 +2068,6 @@ window.addEventListener('load', () => {
   input.addEventListener("change", () => {
     if (!input.files || !input.files.length) return;
     pickedFile = input.files[0];
-    console.log("Selected file:", pickedFile.name, pickedFile.size, pickedFile.type);
 
     const ctaWrap = document.getElementById("ctaWrap");
     if (ctaWrap) ctaWrap.style.display = "none";
@@ -2294,7 +2089,6 @@ window.addEventListener('load', () => {
       try {
         const payloadObj = await fileToPayload(pickedFile);
         payloadObj.role = chosenRole || "signer";
-        console.log("Sending payload to /api/analyze:", payloadObj);
 
         const resp = await fetch("/api/analyze", {
           method: "POST",
@@ -2302,16 +2096,12 @@ window.addEventListener('load', () => {
           body: JSON.stringify(payloadObj),
         });
 
-        console.log("API response status:", resp.status);
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({}));
-          console.error("API error response:", err);
           throw new Error(err?.error || "Analysis failed");
         }
         payload = await resp.json();
-        console.log("API response payload:", payload);
       } catch (e) {
-        console.error("Analysis error:", e);
         alert("Could not analyze this file. Try again or use another file.");
         return;
       }
