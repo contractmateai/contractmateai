@@ -12,314 +12,364 @@
   <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
-  <!-- PDF.js + Mammoth (kept) -->
+  <!-- PDF.js (desktop supports PDF/DOCX parsing; fine for mobile too) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    if (window['pdfjs-dist/build/pdf']) { window.pdfjsLib = window['pdfjs-dist/build/pdf']; }
+    if (window['pdfjs-dist/build/pdf']) {
+      window.pdfjsLib = window['pdfjs-dist/build/pdf'];
+    }
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
   <style>
-    :root{
-      --bg-dark:#01040b; --bg-deep:#0d011b; --bg-mid:#000;
-      --text:#fff9f9; --text-muted:#d8cccc;
-      --badge-glow:rgba(191,255,60,.55); --badge-lime:#adff00;
-      --lime:#aafe2a; --lime2:#bff611; --particle:#682fd8;
-      --bar:#04040e; --bar-border:#3f3f3f; --panel:#04040e;
+    :root {
+      --bg-dark: #01040b;
+      --bg-deep: #0d011b;
+      --bg-mid: #000000;
+      --text-light: #fff9f9;
+      --text: #fff9f9;
+      --text-muted: #d8cccc;
+      --muted: #d8cccc;
+      --badge-glow: rgba(191, 255, 60, 0.55);
+      --badge-lime: #adff00;
+      --lime: #aafe2a;
+      --lime2: #bff611;
+      --particle-color: #682fd8;
+      --bar: #04040e;
+      --bar-border: #3f3f3f;
+      --panel: #04040e;
     }
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;color:var(--text);background:var(--bg-dark);overflow-x:hidden}
 
-    /* PURPLE ART — TOUCHES TOP EDGE (no black gap) */
-    body::before{
-      content:""; position:absolute; top:0; left:0; right:0; height:1600px;
-      background:url("https://imgur.com/tEj2TUl.png") no-repeat center bottom / 100% 1600px;
-      z-index:-2; opacity:0; transition:opacity .6s ease;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text-light);
+      background: var(--bg-dark);
+      overflow-x: hidden;
     }
-    body.stage2::before{opacity:1}
-    .reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease}
-    body.stage1 .reveal-on-load{opacity:1; transform:none}
 
-    /* PARTICLES (preserved) */
-    .particle-container{position:absolute; top:0; left:0; width:100%; height:1600px; pointer-events:none; z-index:-1; opacity:0; transition:opacity .6s ease}
-    body.stage3 .particle-container{opacity:1}
-    .particle{position:absolute; background:var(--particle); border-radius:50%; width:3px; height:3px; box-shadow:0 0 6px var(--particle); animation:floatUp linear infinite; z-index:-1}
-    @keyframes floatUp{from{transform:translateY(0); opacity:1} to{transform:translateY(-1600px); opacity:0}}
-
-    /* TOPBAR */
-    .topbar-wrap{position:fixed; top:18px; left:0; right:0; z-index:1000; display:flex; justify-content:center; pointer-events:none; transition:transform .28s ease, opacity .25s ease}
-    .topbar-wrap.hide{transform:translateY(-140%); opacity:0}
-    .topbar{pointer-events:auto; background:var(--bar); border:1px solid var(--bar-border); border-radius:16px; min-height:72px; padding:12px 18px; width:min(1120px, calc(100% - 60px)); display:flex; align-items:center; justify-content:space-between; box-shadow:0 8px 30px rgba(0,0,0,.28); transition:border-radius .18s ease, border-color .18s ease}
-    .topbar.merged{border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent}
-    .topbar-left{display:flex; align-items:center; gap:10px}
-    .topbar-logo{height:38px; width:auto; border-radius:8px}
-    .topbar-brand{font-size:28px; color:#fff9f9; text-decoration:none; font-weight:400}
-    .topbar-nav a{color:#d8cccc; text-decoration:none; font-size:20px; margin-left:24px; font-weight:400}
-    .topbar-nav a:hover{opacity:.85}
-
-    /* BURGER */
-    .menu-toggle{display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer}
-    .menu-toggle .bar{position:absolute; left:0; right:0; height:2px; background:#fff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease}
-    .menu-toggle .b1{top:3px}.menu-toggle .b2{top:11px}.menu-toggle .b3{top:19px}
-    .menu-toggle.open .b1{top:11px; transform:rotate(45deg)}
-    .menu-toggle.open .b2{opacity:0}
-    .menu-toggle.open .b3{top:11px; transform:rotate(-45deg)}
-    .menu-overlay{position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:999}
-    .menu-panel{position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0; width:min(720px, calc(100% - 28px)); background:var(--panel); border:1px solid var(--bar-border); border-top:none; border-radius:0 0 16px 16px; padding:18px 22px 22px; box-shadow:0 20px 34px rgba(0,0,0,.55); z-index:1001; pointer-events:none; transition:transform .18s ease, opacity .18s ease}
-    .menu-panel.open{transform:translate(-50%,0); opacity:1; pointer-events:auto}
-    .menu-overlay.show{opacity:1; pointer-events:auto}
-    .menu-list{margin-top:2px}
-    .menu-item{display:flex; align-items:center; justify-content:space-between; padding:16px 4px; font-size:24px; color:#fff; text-decoration:none}
-    .menu-item .chev{opacity:.9}
-    .menu-disclaimer{text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6; font-size:16px}
-
-    /* HERO — LOWERED A FEW PIXELS (desktop) */
-    .hero-wrapper{margin-top:120px}
-    .hero{ text-align:center; padding:96px 20px 34px; }        /* ↑ was 80px */
-    .hero-upper{ margin-top:54px; }                           /* ↓ puts title/badge lower */
-    h1,h2{font-family:"Shoika",sans-serif; font-weight:400}
-    h1{font-size:68px; line-height:1.1; color:#fff}           /* white on desktop */
-    .subtext{color:var(--text-muted); margin:20px 0 32px; font-size:20px}
-
-    /* BADGE WITH ARROW */
-    .tagline-absolute{
-      display:inline-flex; align-items:center; gap:10px; padding:7px 12px; font-size:15px; border-radius:53px;
-      background:#090823; color:#a7fd3c; position:relative; top:-17px; margin-bottom:14px; box-shadow:0 0 20px var(--badge-glow);
+    /* Desktop background art & staged fade-in */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1600px;
+      background: url("https://imgur.com/tEj2TUl.png") no-repeat center bottom;
+      background-size: 100% 1600px;
+      z-index: -2;
+      opacity: 0;
+      transition: opacity .6s ease;
     }
-    .tagline-absolute .chip{background:var(--badge-lime); color:#000; padding:6px 12px; border-radius:53px; font-size:13px; font-weight:700}
-    .with-arrow .arrow{display:inline-block; transition:transform .18s ease}
-    .with-arrow:hover .arrow{transform:translate(3px,-3px)}
+    body.stage2::before { opacity: 1; }
+    .reveal-on-load { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+    body.stage1 .reveal-on-load { opacity: 1; transform: none; }
 
-    /* BUTTONS — SHINE + ARROW ANIM (like old code) */
-    .cta-wrapper{margin-top:48px}
-    .cta-btn,
-    .cta-outline,
-    .leave-review{
-      position:relative; overflow:hidden;
-      display:inline-flex; align-items:center; gap:10px; font-weight:500; border-radius:16px; cursor:pointer;
-      transition:box-shadow .25s ease, transform .08s ease;
+    /* Floating particles (desktop aesthetic) */
+    .particle-container {
+      position: absolute; top: 0; left: 0; width: 100%; height: 1600px;
+      pointer-events: none; z-index: -1; opacity: 0; transition: opacity .6s ease;
     }
-    .cta-btn{background:#fff; color:#000; border:2px solid #999; padding:16px 30px; box-shadow:0 0 10px rgba(255,255,255,.30)}
-    .cta-outline{background:#adff00; color:#000; border:none; padding:14px 24px; border-radius:12px}
-    .leave-review{background:#adff00; color:#000; border:none; padding:14px 26px; border-radius:12px}
-    .cta-btn:hover,
-    .cta-outline:hover,
-    .leave-review:hover{ box-shadow:0 0 18px rgba(255,255,255,.7), 0 0 22px rgba(191,246,17,.6) }
-    .cta-btn:active,
-    .cta-outline:active,
-    .leave-review:active{ transform:translateY(1px) }
-    /* shine sweep */
-    .cta-btn::before,
-    .cta-outline::before,
-    .leave-review::before{
-      content:""; position:absolute; top:-40%; left:-20%; width:40%; height:180%;
-      transform:rotate(25deg) translateX(-120%);
-      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.35), rgba(255,255,255,0));
-      filter:blur(1px); pointer-events:none; transition:transform .6s ease;
+    body.stage3 .particle-container { opacity: 1; }
+    .particle {
+      position: absolute; background-color: var(--particle-color); border-radius: 50%;
+      width: 3px; height: 3px; box-shadow: 0 0 6px var(--particle-color);
+      animation: floatUp linear infinite; z-index: -1;
     }
-    .cta-btn:hover::before,
-    .cta-outline:hover::before,
-    .leave-review:hover::before{ transform:rotate(25deg) translateX(420%); }
-    /* arrow wiggle */
-    .with-arrow .arrow{transition:transform .18s ease}
-    .with-arrow:hover .arrow{transform:translate(3px,-3px)}
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(-1600px); opacity: 0; }
+    }
 
-    /* ROLE PICKER (kept) */
-    .role-picker{margin-top:22px; display:inline-flex; align-items:center; gap:14px}
-    .role-title{color:#fff; font-size:22px}
-    .role-buttons{display:inline-flex; gap:14px}
-    .role-btn{background:#a7fd3c; color:#000; border:2px solid transparent; border-radius:12px; padding:12px 18px; font-size:18px; cursor:pointer}
-    .role-btn.active{border-color:#fff}
-    .role-picker[hidden]{display:none !important}
+    /* Topbar */
+    .topbar-wrap {
+      position: fixed; top: 18px; left: 0; right: 0; z-index: 1000;
+      display: flex; justify-content: center; pointer-events: none;
+      transition: transform 0.28s ease, opacity 0.25s ease;
+    }
+    .topbar-wrap.hide { transform: translateY(-140%); opacity: 0; }
+    .topbar {
+      pointer-events: auto;
+      background: var(--bar); border: 1px solid var(--bar-border);
+      border-radius: 16px; min-height: 72px; padding: 12px 18px;
+      width: min(1120px, calc(100% - 60px));
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 8px 30px rgba(0,0,0,.28);
+      transition: border-radius .18s ease, border-color .18s ease;
+    }
+    .topbar.merged { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo { height: 38px; width: auto; border-radius: 8px; }
+    .topbar-brand { font-size: 28px; color: #fff9f9; text-decoration: none; font-weight: 400; }
+    .topbar-nav a { color: #d8cccc; text-decoration: none; font-size: 20px; margin-left: 24px; font-weight: 400; }
+    .topbar-nav a:hover { opacity: .85; }
 
-    /* APP PREVIEW — lowered slightly & tilt */
-    .app-container{position:relative; width:min(1050px,92vw); margin:44px auto 0; perspective:1000px;} /* ↑ a bit lower */
-    .app-wrapper{position:relative; transition:transform .8s ease; transform:rotateX(12deg)}
-    .app-frame{position:relative; overflow:hidden; border-radius:24px; box-shadow:0 8px 28px rgba(0,0,0,.6)}
-    .app-preview{width:100%; display:block; border-radius:24px}
-    .glint-line{position:absolute; top:0; left:-140px; width:140px; height:3px; background:linear-gradient(90deg, rgba(191,246,17,.12), rgba(191,246,17,.90), rgba(191,246,17,0)); box-shadow:0 0 22px rgba(191,246,17,.6); border-radius:2px; pointer-events:none; z-index:3; animation:glint-sweep 4s linear infinite, glint-fade 4s linear infinite}
-    @keyframes glint-sweep{from{left:-140px} to{left:calc(100% + 40px)}}
-    @keyframes glint-fade{0%{opacity:0} 8%{opacity:1} 78%{opacity:1} 88%{opacity:0} 100%{opacity:0}}
+    /* Burger menu */
+    .menu-toggle { display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer; }
+    .menu-toggle .bar { position:absolute; left:0; right:0; height:2px; background:#ffffff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease; }
+    .menu-toggle .b1{ top:3px; } .menu-toggle .b2{ top:11px; } .menu-toggle .b3{ top:19px; }
+    .menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
+    .menu-toggle.open .b2{ opacity:0; }
+    .menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
 
-    /* SECTION HEADERS — white on desktop */
-    .section-title{ text-align:center; font-size:44px; line-height:1.25; margin-top:14px; color:#fff; }
-    .section-sub{ text-align:center; color:var(--text-muted); margin-top:12px; font-size:21px; line-height:1.4 }
-    .section-badge{ display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:53px; background:#090823; color:#a7fd3c; box-shadow:0 0 18px var(--badge-glow); font-size:15px }
+    .menu-overlay{ position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:999; }
+    .menu-panel{
+      position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
+      width:min(720px, calc(100% - 28px));
+      background:var(--panel);
+      border:1px solid var(--bar-border); border-top:none;
+      border-radius:0 0 16px 16px; padding:18px 22px 22px;
+      box-shadow:0 20px 34px rgba(0,0,0,.55); z-index:1001; pointer-events:none;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+    .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
+    .menu-overlay.show{ opacity:1; pointer-events:auto; }
+    .menu-list{ margin-top:2px; }
+    .menu-item{ display:flex; align-items:center; justify-content:space-between; padding:16px 4px; font-size:24px; color:#fff; text-decoration:none; }
+    .menu-item .chev{ opacity:.9; }
+    .menu-disclaimer{ text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6; font-size:16px; }
 
-    /* INSIGHTS */
-    .insight-section{padding:60px 20px 60px}
-    .insight-content{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:80px; max-width:1300px; margin:0 auto}
-    .moving-line-wrapper{position:relative; overflow:hidden; z-index:1 !important; background:#000; border-radius:10px; padding:2px; min-width:200px; min-height:200px}
-    .moving-line-content{min-width:inherit; min-height:inherit; padding:10px; z-index:2 !important; position:relative; width:100%; height:100%; background:inherit; border-radius:inherit; overflow:inherit}
-    .yellow-line{position:absolute; width:30px; height:30px; border-radius:50%; background:rgba(191,246,17,.8); box-shadow:0 0 40px 30px rgba(191,246,17,.8); animation:move-around 8s linear infinite; z-index:0 !important}
-    @keyframes move-around{0%{top:-20px;left:-20px}25%{top:-20px;left:calc(100% - 20px)}50%{top:calc(100% - 20px);left:calc(100% - 20px)}75%{top:calc(100% - 20px);left:-20px}100%{top:-20px;left:-20px}}
-    .moving-line-content img{display:block; width:520px; border-radius:20px}
-    .insight-right{max-width:560px}
-    .insight-icon-row{display:flex; align-items:center; gap:16px; margin:40px 0 30px -18px}
-    .circle-icon{width:90px; height:90px; border-radius:50%; object-fit:cover; background:#000; border:4px solid #93e533}
-    .insight-right h2{font-size:44px; color:#fff; margin:0 0 18px}
-    .insight-right p{color:#d8cccc; font-size:20px; margin:0 0 28px}
+    /* Hero */
+    .hero-wrapper { margin-top: 120px; }
+    .hero { text-align: center; padding: 80px 20px 30px; }
+    .hero-upper { margin-top: 40px; }
+    h1, h2 { font-family: "Shoika", sans-serif; font-weight: 400; }
+    h1 { font-size: 68px; color: var(--text-light); line-height: 1.1; }
+    .hero h1 span { display: block; margin-top: 8px; }
+    .subtext { color: var(--text-muted); margin: 18px 0 30px; font-size: 20px; }
 
-    /* FEATURES STRIPS + HOVER LIFT (desktop) */
-    .scroll-full{width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw}
-    .scroll-wrapper{max-width:1600px; margin:0 auto; padding:0 30px}
-    .scroll-section{position:relative; padding:30px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304); border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:40px auto 0; overflow:hidden; max-width:1360px; transform:scale(.94)}
-    .scroll-section h3{text-align:center; font-size:25px; line-height:1.4; color:#fff; margin:40px 0 50px; font-weight:400}
-    .scroll-strip{display:flex; gap:28px; padding:14px 0; white-space:nowrap; flex-shrink:0; will-change:transform}
-    .scroll-item{background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:48px; padding:16px 28px; display:inline-flex; align-items:center; gap:18px; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
-    .scroll-item img{width:48px; height:48px; border-radius:50%; object-fit:cover; background:#101010; box-shadow:0 0 8px rgba(191,246,17,.4)}
-    .scroll-item span{font-size:17px}
-    .scroll-item:hover{ transform:translateY(-6px); border-color:#6d6d6d; box-shadow:0 10px 24px rgba(0,0,0,.35), 0 0 14px rgba(191,246,17,.35) }
+    .tagline-absolute {
+      background-color: #090823; color: #a7fd3c; display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 12px; font-size: 15px; border-radius: 53px; position: relative; top: -17px; margin-bottom: 14px;
+      box-shadow: 0 0 20px var(--badge-glow);
+    }
+    .tagline-absolute .chip { background-color: var(--badge-lime); color: black; padding: 6px 12px; border-radius: 53px; font-size: 13px; font-weight: bold; }
 
-    .scroll-shadow-left,.scroll-shadow-right{position:absolute; top:0; bottom:0; width:100px; z-index:3; pointer-events:none}
-    .scroll-shadow-left{left:0; background:linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.6), transparent)}
-    .scroll-shadow-right{right:0; background:linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.6), transparent)}
+    .cta-wrapper { margin-top: 48px; }
+    .cta-btn {
+      background: white; color: black; border: 2px solid #999; padding: 16px 30px; border-radius: 16px; font-size: 18px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); transition: box-shadow 0.3s ease; font-weight: 500;
+    }
+    .cta-btn:hover { box-shadow: 0 0 15px rgba(255,255,255,.7); }
 
-    /* POWERED-BY STRIP */
-    .logo-strip{margin:62px auto 6px; width:min(1200px, calc(100vw - 640px)); overflow:hidden; position:relative}
-    .logo-track{display:flex; align-items:center; gap:0; will-change:transform}
-    .logo-piece{flex:0 0 100%; width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none}
-    .logo-fade{position:absolute; top:0; bottom:0; width:160px; z-index:2; pointer-events:none}
-    .logo-fade.left{left:0; background:linear-gradient(to right, rgba(0,0,0,.50), rgba(0,0,0,.22), rgba(0,0,0,.08), transparent)}
-    .logo-fade.right{right:0; background:linear-gradient(to left, rgba(0,0,0,.50), rgba(0,0,0,.22), rgba(0,0,0,.08), transparent)}
+    .role-picker { margin-top: 22px; display: inline-flex; align-items: center; gap: 14px; }
+    .role-title { color: #fff; font-size: 22px; margin-right: 6px; }
+    .role-buttons { display: inline-flex; gap: 14px; }
+    .role-btn { background: #a7fd3c; color: #000; border: 2px solid transparent; border-radius: 12px; padding: 12px 18px; font-size: 18px; cursor: pointer; }
+    .role-btn.active { border-color: #fff; }
+    .role-picker[hidden] { display:none !important; }
 
-    /* REVIEWS (kept; buttons gain shine/arrow via shared CSS) */
-    .reviews-section{padding:80px 40px 120px; max-width:1400px; margin:0 auto}
-    .reviews-header{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:24px}
-    .reviews-title{grid-column:2; text-align:center}
-    .reviews-title h2{font-size:44px; font-family:"Shoika",sans-serif; font-weight:400; color:#fff}
-    .reviews-title .green{color:var(--lime2)}
-    .reviews-sub{font-size:20px; color:#a8a8a8; margin-top:10px}
-    .review-nav{grid-column:3; justify-self:end; display:flex; gap:14px}
-    .review-nav .nav{width:52px; height:52px; border:none; border-radius:50%; cursor:pointer; display:grid; place-items:center; box-shadow:0 0 0 2px rgba(255,255,255,.06) inset; transition:box-shadow .2s ease, transform .05s ease}
-    .review-nav .nav.left{background:#fff}
-    .review-nav .nav.right{background:#bff611}
-    .review-nav .nav:hover{box-shadow:0 0 14px rgba(191,246,17,.6)}
-    .review-nav .nav:active{transform:scale(.98)}
-    .review-nav .nav img{width:22px; height:22px; display:block; pointer-events:none}
-    .reviews-viewport{overflow:hidden; margin-top:28px; position:relative}
-    .reviews-track{display:flex; gap:24px; transition:transform .35s ease}
-    .review-card{flex:0 0 calc((100% - 48px) / 3); border:1px solid #262626; border-radius:23px; padding:10px; background:#000}
-    .review-card img{width:100%; display:block; border-radius:17px}
-    .review-dots{display:flex; justify-content:center; gap:14px; margin:28px 0 26px}
-    .review-dot{width:14px; height:14px; border-radius:50%; background:#777; border:none; cursor:pointer}
-    .review-dot.active{background:#b9f03d}
-    .leave-review-wrap{display:flex; justify-content:center}
+    /* Desktop app preview */
+    .app-container { position: relative; width: 100%; max-width: 1050px; margin: 30px auto 0; perspective: 1000px; }
+    .app-wrapper { position: relative; transition: transform 0.8s ease; transform: rotateX(12deg); }
+    .app-frame { position: relative; overflow: hidden; border-radius: 24px; box-shadow: 0 8px 28px rgba(0,0,0,.6); margin-top: -20px; }
+    .app-preview { width: 100%; display: block; border-radius: 24px; }
 
-    /* DESKTOP FOOTER (kept) */
-    .site-footer-wrap{max-width:1400px; margin:90px auto 0; padding:0 24px 35px}
-    .site-footer{background:transparent; border:none; box-shadow:none; padding:0; display:grid;
-      grid-template-columns:minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
-      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important}
-    .footer-left{display:flex; align-items:flex-start; gap:12px}
-    .footer-logo{width:32px; height:32px; object-fit:contain}
-    .footer-brand{color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400}
-    .footer-tagline{color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px}
-    .footer-col{display:flex; flex-direction:column; gap:10px}
-    .footer-title{color:#fff; font-size:22px}
-    .footer-links{display:flex; flex-direction:column; gap:8px}
-    .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px}
-    .footer-bottom{margin-top:24px}
-    .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px}
-    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px}
-    .footer-bottom-links a{color:#c5c5c5; text-decoration:none}
-    .footer-copy{margin-left:auto}
+    /* Glint */
+    .glint-line {
+      position: absolute; top: 0; left: -140px; width: 140px; height: 3px;
+      background: linear-gradient(90deg, rgba(191,246,17,.12), rgba(191,246,17,.90), rgba(191,246,17,0));
+      box-shadow: 0 0 22px rgba(191,246,17,.6); border-radius: 2px; pointer-events:none; z-index:3;
+      animation: glint-sweep 4s linear infinite, glint-fade 4s linear infinite;
+    }
+    @keyframes glint-sweep { from{left: -140px;} to{left: calc(100% + 40px);} }
+    @keyframes glint-fade { 0%{opacity:0} 8%{opacity:1} 78%{opacity:1} 88%{opacity:0} 100%{opacity:0} }
 
-    /* MOBILE (unchanged behavior, only overrides) */
-    .yt-wrap{display:none; margin:22px auto 0; width:min(760px, 92vw); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.06); background:#0a0a0a}
-    .yt-box{position:relative; width:100%; aspect-ratio:16/9}
-    .yt-box iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+    /* Section headers */
+    .section-title { text-align:center; font-size:44px; color:var(--text-light); line-height:1.4; margin-top:14px; }
+    .section-sub { text-align:center; color:var(--text-muted); margin-top:12px; font-size:21px; line-height:1.4; }
+    .section-badge {
+      background-color: #090823; color: #a7fd3c; padding: 6px 14px; border-radius: 53px; font-size: 15px;
+      display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 0 18px var(--badge-glow);
+    }
 
-    @media (max-width:980px){
-      body{
+    /* Insight block */
+    .insight-section { padding: 60px 20px 60px; }
+    .insight-content { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; max-width:1300px; margin:0 auto; gap:80px; }
+    .insight-left { position: relative; margin-left: -120px; }
+    .moving-line-wrapper { min-width:200px; min-height:200px; position:relative; overflow:hidden; z-index:1 !important; background-color:black; border-radius:10px; padding:2px; }
+    .moving-line-wrapper .moving-line-content { min-width: inherit; min-height: inherit; padding:10px; z-index:2 !important; position:relative; width:100%; height:100%; transform-origin:center; background:inherit; border-radius:inherit; overflow:inherit; }
+    .yellow-line { position:absolute; width:30px; height:30px; background:rgba(191,246,17,.8); box-shadow:0 0 40px 30px rgba(191,246,17,.8); border-radius:50%; animation: move-around 8s linear infinite; z-index:0 !important; }
+    @keyframes move-around{ 0%{top:-20px;left:-20px}25%{top:-20px;left:calc(100% - 20px)}50%{top:calc(100% - 20px);left:calc(100% - 20px)}75%{top:calc(100% - 20px);left:-20px}100%{top:-20px;left:-20px}}
+    .insight-left img { width: 520px; border-radius: 20px; display: block; }
+    .insight-right { /* hidden on mobile via media query */ }
+    .insight-icon-row { display:flex; align-items:center; gap:16px; margin:40px 0 30px -18px; }
+    .circle-icon { width:90px; height:90px; border-radius:50%; object-fit:cover; background:#000; border:4px solid #93e533; }
+    .insight-right h2 { font-size:44px; color:#fff9f9; margin-bottom:26px; }
+    .insight-right p { color:#d8cccc; font-size:22px; margin-bottom:38px; }
+    .cta-outline { display:inline-flex; align-items:center; gap:10px; padding:14px 24px; font-size:20px; background:#adff00; color:black; border:none; border-radius:12px; text-decoration:none; font-weight:500; }
+
+    /* Scrolling features */
+    .scroll-full { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
+    .scroll-wrapper { max-width: 1600px; margin: 0 auto; padding: 0 30px; }
+    .scroll-section {
+      position: relative; padding: 30px 0; background: linear-gradient(to bottom, #0e0c13, #181522, #040304);
+      border: 1px solid rgba(36,36,37,.78); border-radius: 18px; margin: 40px auto 0; overflow: hidden; max-width:1360px; transform: scale(0.94);
+    }
+    .scroll-section h3 { text-align:center; font-size:25px; line-height:1.4; color:#fff9f9; margin:40px 0 50px; font-weight:400; }
+    .scroll-strip { display:flex; gap:28px; padding:14px 0; white-space:nowrap; flex-shrink:0; will-change:transform; }
+    .scroll-item { background: rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:48px; padding:16px 28px; display:inline-flex; align-items:center; gap:18px; }
+    .scroll-item img { width:48px; height:48px; border-radius:50%; object-fit:cover; background:#101010; box-shadow:0 0 8px rgba(191,246,17,.4); }
+    .scroll-item span { font-size:17px; }
+
+    .scroll-shadow-left,.scroll-shadow-right { position:absolute; top:0; bottom:0; width:100px; z-index:3; pointer-events:none; }
+    .scroll-shadow-left { left:0; background: linear-gradient(to right, rgba(14,12,19,1), rgba(14,12,19,.6), transparent); }
+    .scroll-shadow-right{ right:0; background: linear-gradient(to left, rgba(14,12,19,1), rgba(14,12,19,.6), transparent); }
+
+    /* Powered-by logos */
+    .logo-strip { margin: 62px auto 6px; width: min(1200px, calc(100vw - 640px)); padding:0; overflow:hidden; position:relative; transform:none; }
+    .logo-track { display:flex; align-items:center; gap:0; will-change:transform; }
+    .logo-piece { flex: 0 0 100%; width: 100%; height: auto; display: block; user-select: none; -webkit-user-drag: none; }
+    .logo-fade { position: absolute; top: 0; bottom: 0; width: 160px; z-index: 2; pointer-events: none; }
+    .logo-fade.left  { left:0;  background:linear-gradient(to right, rgba(0,0,0,.50), rgba(0,0,0,.22), rgba(0,0,0,.08), transparent); }
+    .logo-fade.right { right:0; background:linear-gradient(to left,  rgba(0,0,0,.50), rgba(0,0,0,.22), rgba(0,0,0,.08), transparent); }
+
+    /* Reviews */
+    .reviews-section { padding: 80px 40px 120px; background: transparent; max-width: 1400px; margin: 0 auto; }
+    .reviews-header { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:24px; }
+    .reviews-title { grid-column:2; text-align:center; }
+    .reviews-title h2 { font-size:44px; font-family:"Shoika",sans-serif; font-weight:400; color:#fff9f9; }
+    .reviews-title .green { color: #bff611; }
+    .reviews-sub { font-size:20px; color:#a8a8a8; margin-top:10px; }
+    .review-nav { grid-column:3; justify-self:end; display:flex; gap:14px; }
+    .review-nav .nav { width:52px; height:52px; border:none; border-radius:50%; cursor:pointer; display:grid; place-items:center; box-shadow:0 0 0 2px rgba(255,255,255,.06) inset; transition: box-shadow .2s ease, transform .05s ease; }
+    .review-nav .nav.left  { background:#ffffff; }
+    .review-nav .nav.right { background:#bff611; }
+    .review-nav .nav:hover { box-shadow:0 0 14px rgba(191,246,17,.6); }
+    .review-nav .nav:active { transform: scale(.98); }
+    .review-nav .nav img { width:22px; height:22px; display:block; pointer-events:none; }
+
+    .reviews-viewport { overflow:hidden; margin-top:28px; position:relative; }
+    .reviews-track { display:flex; gap:24px; transition: transform .35s ease; }
+    .review-card { flex: 0 0 calc((100% - 48px) / 3); border:1px solid #262626; border-radius:23px; padding:10px; background:#000; }
+    .review-card img { width:100%; display:block; border-radius:17px; }
+
+    .review-dots { display:flex; justify-content:center; gap:14px; margin:28px 0 26px; }
+    .review-dot { width:14px; height:14px; border-radius:50%; background:#777; border:none; cursor:pointer; }
+    .review-dot.active { background:#b9f03d; }
+
+    .leave-review-wrap { display:flex; justify-content:center; }
+    .leave-review { background:#adff00; color:#000; font-size:18px; border:none; border-radius:12px; padding:14px 26px; cursor:pointer; font-weight:500; }
+
+    /* Desktop footer (big) */
+    .site-footer-wrap { max-width:1400px; margin:90px auto 0; padding:0 24px 35px; }
+    .site-footer { background:transparent; border:none; box-shadow:none; padding:0; display:grid;
+      grid-template-columns: minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content);
+      column-gap:88px; align-items:start; justify-items:start; padding-left:40px !important; }
+    .footer-left { display:flex; align-items:flex-start; gap:12px; }
+    .footer-logo { width:32px; height:32px; object-fit:contain; border-radius:0 !important; }
+    .footer-brand { color:#e1e1e1; font-size:26px; line-height:1.1; text-decoration:none; font-weight:400; }
+    .footer-tagline { color:#c5c5c5; margin-top:18px; font-size:18px; line-height:1.5; position:relative; left:-40px; }
+    .footer-col { display:flex; flex-direction:column; gap:10px; }
+    .footer-title { color:#fff; font-size:22px; }
+    .footer-links { display:flex; flex-direction:column; gap:8px; }
+    .footer-links a { color:#c5c5c5; text-decoration:none; font-size:18px; }
+    .footer-bottom { margin-top:24px; }
+    .footer-divider { width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px; }
+    .footer-bottom-links { display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; }
+    .footer-bottom-links a { color:#c5c5c5; text-decoration:none; }
+    .footer-copy { margin-left:auto; }
+
+    /* Mobile-only YouTube hero embed (hidden on desktop) */
+    .yt-wrap { display:none; margin:22px auto 0; width:min(760px, 92vw); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.06); background:#0a0a0a; }
+    .yt-box { position:relative; width:100%; aspect-ratio:16/9; }
+    .yt-box iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+    /* ===== Mobile styles (≤980px) ===== */
+    @media (max-width: 980px) {
+      body {
         background:
           radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
           linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
-        background-attachment:fixed,fixed;
+        background-attachment: fixed, fixed;
       }
-      body::before{display:none}
-      .particle-container{display:none}
 
-      .topbar{width:min(1120px, calc(100% - 28px)); min-height:68px; padding:10px 16px}
-      .topbar-logo{height:34px}
-      .topbar-brand{font-size:26px}
-      .topbar-nav{display:none}
-      .menu-toggle{display:block}
+      .topbar { width: min(1120px, calc(100% - 28px)); min-height: 68px; padding: 10px 16px; }
+      .topbar-logo { height: 34px; }
+      .topbar-brand { font-size: 26px; }
+      .topbar-nav { display:none; }
+      .menu-toggle { display:block; }
 
-      .hero-wrapper{margin-top:82px}
-      .hero{padding:64px 16px 18px}
-      .hero-upper{margin-top:24px}
-      .tagline-absolute{background:#090922; color:#bdb7ff; padding:6px 12px; top:-6px; margin-bottom:10px; box-shadow:none; font-size:13px}
-      .tagline-absolute .chip{padding:5px 10px; font-size:12px; font-weight:700}
-      h1{font-size:clamp(36px, 8.6vw, 68px); letter-spacing:-0.4px}
-      .subtext{margin:16px auto 26px; font-size:18px; line-height:1.45; max-width:680px}
+      .hero-wrapper { margin-top: 82px; }
+      .hero { padding: 64px 16px 18px; }
+      .tagline-absolute { background:#090922; color:#bdb7ff; padding:6px 12px; top:-6px; margin-bottom:10px; box-shadow:none; font-size:13px; }
+      .tagline-absolute .chip { padding:5px 10px; font-size:12px; font-weight:700; }
+      h1 { font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing:-0.4px; }
+      .hero h1 .lime { color: var(--lime); }
+      .subtext { margin: 16px auto 26px; font-size: 18px; line-height: 1.45; max-width: 680px; }
 
-      .cta-btn{padding:14px 26px}
-      .role-title{font-size:18px}
-      .role-btn{padding:10px 14px; font-size:16px}
+      .cta-btn { padding:14px 26px; }
+      .role-title { font-size:18px; }
+      .role-btn { padding:10px 14px; font-size:16px; }
 
-      .app-container{display:none}
-      .yt-wrap{display:block}
+      .app-container { display:none; }              /* hide desktop app preview */
+      .yt-wrap { display:block; }                   /* show mobile YouTube */
 
-      .logo-strip{margin:46px auto 10px; width:99.5vw}
-      .logo-piece{flex:0 0 200%; width:200%}
-      .logo-fade{width:110px}
-      .logo-fade.left{background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent)}
-      .logo-fade.right{background:linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent)}
+      .logo-strip { margin: 46px auto 10px; width: 99.5vw; }
+      .logo-piece { flex: 0 0 200%; width: 200%; }
+      .logo-fade { width: 110px; }
+      .logo-fade.left  { background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+      .logo-fade.right { background:linear-gradient(to left,  rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
 
-      .section-badge{background:#090922; color:#bdb7ff; box-shadow:none}
-      .section-title{font-size:clamp(34px, 6.2vw, 50px)}
-      .section-sub{margin-top:10px; font-size:19px; max-width:860px; margin-left:auto; margin-right:auto}
+      .section-badge { background:#090922; color:#bdb7ff; box-shadow:none; }
+      .section-title { font-size: clamp(34px, 6.2vw, 50px); line-height:1.25; }
+      .section-title .lime { color: var(--lime); }
+      .section-sub { margin-top:10px; font-size:19px; max-width:860px; margin-left:auto; margin-right:auto; }
 
-      .insight-section{padding:38px 16px 40px}
-      .insight-content{gap:54px; max-width:1100px}
-      .moving-line-content img{width:min(420px, 80vw); border-radius:16px}
-      .insight-right{display:none}
+      .insight-section { padding: 38px 16px 40px; }
+      .insight-content { gap:54px; max-width:1100px; }
+      .insight-left { margin-left: 0; }
+      .moving-line-wrapper { border-radius:12px; }
+      .moving-line-content img { width: min(420px, 80vw); border-radius:16px; }
+      .insight-right { display:none; } /* hide desktop text block */
 
-      .scroll-wrapper{padding:0 18px}
-      .scroll-section{padding:22px 0; margin:28px auto 0; transform:scale(.88)}
-      .scroll-section h3{font-size:20px; margin:28px 0 36px}
-      .scroll-strip{gap:22px; padding:12px 0}
-      .scroll-item{border-radius:42px; padding:12px 20px; gap:14px}
-      .scroll-item img{width:40px; height:40px}
-      .scroll-item span{font-size:16px}
+      .scroll-wrapper { padding: 0 18px; }
+      .scroll-section { padding: 22px 0; margin: 28px auto 0; transform: scale(0.88); }
+      .scroll-section h3 { font-size: 20px; margin: 28px 0 36px; }
+      .scroll-strip { gap: 22px; padding: 12px 0; }
+      .scroll-item { padding: 12px 20px; gap: 14px; border-radius: 42px; }
+      .scroll-item img { width: 40px; height: 40px; }
+      .scroll-item span { font-size: 16px; }
 
-      .reviews-section{padding:60px 16px 92px; max-width:1000px; margin:64px auto 0}
-      .reviews-title h2{font-size:clamp(30px, 5.6vw, 44px)}
-      .reviews-sub{font-size:18px; margin-top:8px}
-      .review-nav{display:none}
-      .reviews-viewport{margin-top:18px}
-      .reviews-track{gap:18px}
-      .review-card{border-radius:20px; flex:0 0 100%}
-      .review-card img{border-radius:16px}
-      .review-dots{gap:12px; margin:18px 0 22px}
-      .review-dot{width:12px; height:12px}
+      .reviews-section { padding: 60px 16px 92px; max-width: 1000px; margin: 64px auto 0; }
+      .reviews-title h2 { font-size: clamp(30px, 5.6vw, 44px); }
+      .reviews-sub { font-size: 18px; margin-top: 8px; }
+      .review-nav { display:none; } /* hide desktop arrow buttons */
+      .reviews-viewport { margin-top: 18px; }
+      .reviews-track { gap: 18px; }
+      .review-card { border-radius: 20px; flex:0 0 100%; }
+      .review-card img { border-radius: 16px; }
 
-      /* mobile footer (compact) */
-      .site-footer-wrap{display:none}
-      .site-footer{background:#0a0a0a; border-top:1px solid var(--bar-border); padding:22px 14px 30px; display:block}
-      .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom{display:none}
-      .footer-brandrow{display:grid}
-      .footer-logo{display:flex; align-items:flex-start; gap:6px; border-radius:8px; margin-top:-4px}
-      .footer-logo span{font-size:22px; font-weight:400}
-      .footer-copy{font-size:15px; color:#fff; white-space:nowrap; line-height:1.3}
-      .footer-disclaimer{font-size:12px; color:#bdbdbd}
-      .footer-socials{display:flex; gap:12px; margin:18px 0 24px}
-      .footer-cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px}
-      .footer-col h4{font-size:15px; font-weight:400; margin-bottom:8px; color:#fff}
-      .footer-link{display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap}
-      .footer-bottom-space{height:2px}
+      .review-dots { gap:12px; margin:18px 0 22px; }
+      .review-dot { width:12px; height:12px; }
+
+      /* Replace big desktop footer with compact mobile footer */
+      .site-footer-wrap { display:none; }
+      .site-footer {
+        background:#0a0a0a; border-top:1px solid var(--bar-border);
+        padding:22px 14px 30px; display:block;
+      }
+      .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display:none; }
+      .footer-brandrow { display:grid; }
+      .footer-logo { display:flex; align-items:flex-start; gap:6px; border-radius:8px; margin-top:-4px; }
+      .footer-logo span { font-size:22px; font-weight:400; }
+      .footer-copy { font-size:15px; color:#fff; white-space:nowrap; line-height:1.3; }
+      .footer-disclaimer { font-size:12px; color:#bdbdbd; }
+      .footer-socials { display:flex; gap:12px; margin:18px 0 24px; }
+      .footer-cols { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+      .footer-col h4 { font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+      .footer-link { display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
+      .footer-bottom-space { height:2px; }
     }
-    @media (max-width:1100px){ .review-card{flex-basis:calc((100% - 24px) / 2)} }
-    @media (max-width:640px){ .review-card{flex-basis:100%} .logo-fade{width:120px} }
+
+    @media (max-width: 1100px) { .review-card { flex-basis: calc((100% - 24px) / 2); } }
+    @media (max-width: 700px)  { .reviews-header { grid-template-columns:1fr; } .review-nav { grid-column:auto; justify-self:center; } }
+    @media (max-width: 640px)  { .review-card { flex-basis: 100%; } .logo-fade { width:120px; } }
   </style>
 </head>
 <body>
-  <!-- PARTICLES -->
-  <div class="particle-container" id="particles"></div>
-
-  <!-- TOPBAR -->
+  <!-- Topbar -->
   <div class="topbar-wrap" id="topbarWrap">
     <div class="topbar" id="topbar">
       <div class="topbar-left">
@@ -327,7 +377,7 @@
         <a href="index.html" class="topbar-brand">SignSense</a>
       </div>
       <nav class="topbar-nav">
-        <a href="https://youtube.com" target="_blank" rel="noopener">See How It Works</a>
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
         <a href="index.html">Home</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -337,7 +387,7 @@
     </div>
   </div>
 
-  <!-- MENU PANEL -->
+  <!-- Overlay + attached dropdown panel -->
   <div class="menu-overlay" id="menuOverlay"></div>
   <div class="menu-panel" id="menuPanel" aria-hidden="true">
     <nav class="menu-list">
@@ -351,23 +401,25 @@
     </div>
   </div>
 
+  <!-- Particles (desktop aesthetic) -->
+  <div class="particle-container" id="particles"></div>
+
   <!-- HERO -->
   <div class="hero-wrapper">
     <section class="hero reveal-on-load" data-aos="fade-up">
       <div class="hero-upper">
-        <div class="tagline-absolute with-arrow">
+        <div class="tagline-absolute">
           <span class="chip">AI</span>
-          Legal DocReview Tool <span class="arrow" aria-hidden="true">↗</span>
+          Legal DocReview Tool
         </div>
-
         <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
         <p class="subtext">Free contract reviewing and no need at all for any account creation or sign up.</p>
 
         <div id="ctaWrap" class="cta-wrapper">
-          <button id="reviewBtn" class="cta-btn with-arrow">Review A Contract <span class="arrow" aria-hidden="true">↗</span></button>
+          <button id="reviewBtn" class="cta-btn">Review A Contract <span aria-hidden="true">↗</span></button>
         </div>
 
-        <!-- Role picker -->
+        <!-- Role picker (hidden until after choosing file/photos) -->
         <div id="rolePicker" class="role-picker" hidden>
           <span class="role-title">You are:</span>
           <div class="role-buttons">
@@ -377,7 +429,7 @@
         </div>
       </div>
 
-      <!-- Desktop app preview (tilt) -->
+      <!-- Desktop app preview -->
       <div class="app-container">
         <div class="app-wrapper" id="appWrapper">
           <div class="app-frame">
@@ -387,7 +439,7 @@
         </div>
       </div>
 
-      <!-- Mobile YouTube (hidden on desktop) -->
+      <!-- Mobile YouTube in-hero (hidden on desktop via CSS) -->
       <div class="yt-wrap">
         <div class="yt-box">
           <iframe
@@ -400,25 +452,25 @@
     </section>
   </div>
 
-  <!-- POWERED BY -->
+  <!-- Powered-by marquee -->
   <section class="logo-strip">
     <div class="logo-track" id="logoTrack"></div>
     <div class="logo-fade left"></div>
     <div class="logo-fade right"></div>
   </section>
 
-  <div style="text-align:center; margin-top:80px; margin-bottom:24px">
-    <div class="section-badge with-arrow">Instant Clarity Engine <span class="arrow" aria-hidden="true">↗</span></div>
+  <div style="text-align: center; margin-top: 80px; margin-bottom: 24px">
+    <div class="section-badge">Instant Clarity Engine ↗</div>
   </div>
 
   <h2 class="section-title">Smarter Reviews,<br />Faster Decisions</h2>
   <p class="section-sub">AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.</p>
 
-  <!-- INSIGHTS -->
+  <!-- Insight image + (desktop) text -->
   <section class="insight-section" data-aos="fade-up">
     <div class="insight-content">
-      <div class="moving-line-wrapper">
-        <span class="yellow-line"></span>
+      <div class="insight-left moving-line-wrapper">
+        <span class="yellow-line" id="yellowLine"></span>
         <div class="moving-line-content">
           <img src="https://i.imgur.com/a6QxhzQ.png" alt="Insights UI" />
         </div>
@@ -428,16 +480,16 @@
         <div class="insight-icon-row">
           <img class="circle-icon" src="https://i.imgur.com/VVGvghi.png" alt="AI icon" loading="lazy" />
           <img class="circle-icon" src="https://i.imgur.com/woCjWUt.png" alt="Speed icon" loading="lazy" />
-          <img class="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield icon" loading="lazy" />
+          <img class="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield/Secure icon" loading="lazy" />
         </div>
-        <h2>Understand Your Contract <br />Instantly with AI</h2>
+        <h2>Understand Your Contract <br /><span>Instantly with AI</span></h2>
         <p>Reveal hidden risks and key terms so you can review contracts clearly, quickly, and without confusion.</p>
-        <a id="insightReviewBtn" href="https://youtube.com" target="_blank" rel="noopener" class="cta-outline with-arrow">Learn More <span class="arrow" aria-hidden="true">↗</span></a>
+        <a id="insightReviewBtn" href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="cta-outline">Learn More ↗</a>
       </div>
     </div>
   </section>
 
-  <!-- FEATURES STRIPS -->
+  <!-- Scrolling feature chips -->
   <div class="scroll-full">
     <div class="scroll-wrapper">
       <section class="scroll-section" data-aos="fade-up">
@@ -450,13 +502,13 @@
     </div>
   </div>
 
-  <!-- WATCH VIDEO -->
+  <!-- (Desktop) Watch video section -->
   <section class="watch-video-section" data-aos="fade-up" style="padding:100px 40px; max-width:1400px; margin:0 auto;">
     <div class="video-content" style="display:flex; align-items:center; gap:120px; flex-wrap:wrap; padding-left:35px;">
       <div class="video-text" style="flex:1; min-width:300px;">
         <h2 style="font-size:44px; line-height:1.4; margin-bottom:20px;">Take a deeper look to<br />see how SignSense<br />really works.</h2>
         <p style="color:#d8cccc; font-size:20px; margin-bottom:36px;">Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your contracts</p>
-        <a id="watchBtn" href="https://youtube.com" target="_blank" rel="noopener" class="cta-outline with-arrow">Watch on Channel <span class="arrow" aria-hidden="true">↗</span></a>
+        <a id="watchBtn" href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="cta-outline">Watch on Channel ↗</a>
       </div>
       <div class="video-box" style="position:relative; flex:1; min-width:320px; display:flex; justify-content:flex-end; margin-right:40px;">
         <iframe class="video-embed" style="width:min(100%,1100px); aspect-ratio:16/9; border:0; border-radius:16px;"
@@ -468,7 +520,7 @@
     </div>
   </section>
 
-  <!-- REVIEWS -->
+  <!-- Reviews -->
   <section class="reviews-section" data-aos="fade-up">
     <div class="reviews-header">
       <div class="reviews-title">
@@ -494,57 +546,11 @@
     <div class="review-dots" id="reviewDots"></div>
 
     <div class="leave-review-wrap">
-      <a class="leave-review with-arrow" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave A Review <span class="arrow" aria-hidden="true">↗</span></a>
+      <a class="leave-review" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave A Review ↗</a>
     </div>
   </section>
 
-  <!-- FAQ (added back; Q2 auto-opens on section enter) -->
-  <section id="faq" class="faq-section" data-aos="fade-up" style="max-width:1200px; margin:0 auto; padding:74px 16px;">
-    <h2 class="faq-title" style="text-align:center; font-size:clamp(32px, 8vw, 64px); line-height:1.1; font-weight:400; margin-bottom:28px;">Frequently Asked Questions</h2>
-    <div class="faq-list" style="max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:18px; text-align:left;">
-      <div class="faq-item" style="border-radius:24px; overflow:hidden;">
-        <button class="faq-q" type="button" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 20px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; text-align:left;">
-          <span>What languages do you support?</span>
-          <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <div class="faq-a" style="background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;">
-          We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!
-        </div>
-      </div>
-
-      <div class="faq-item" id="faq2" style="border-radius:24px; overflow:hidden;">
-        <button class="faq-q" type="button" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 20px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; text-align:left;">
-          <span>Is SignSense legally binding ?</span>
-          <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <div class="faq-a" style="background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;">
-          No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace professional legal advice.
-        </div>
-      </div>
-
-      <div class="faq-item" style="border-radius:24px; overflow:hidden;">
-        <button class="faq-q" type="button" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 20px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; text-align:left;">
-          <span>What types of contracts can I upload?</span>
-          <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <div class="faq-a" style="background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;">
-          Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
-        </div>
-      </div>
-
-      <div class="faq-item" style="border-radius:24px; overflow:hidden;">
-        <button class="faq-q" type="button" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 20px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; text-align:left;">
-          <span>Is my data secure?</span>
-          <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <div class="faq-a" style="background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7; padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease;">
-          Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DESKTOP FOOTER -->
+  <!-- Desktop footer -->
   <div class="site-footer-wrap" data-aos="fade-in">
     <footer class="site-footer">
       <div class="footer-left">
@@ -561,8 +567,8 @@
       <div class="footer-col">
         <div class="footer-title">Quick Menu</div>
         <nav class="footer-links">
-          <a href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
-          <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">How it Works</a>
+          <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">Leave Review</a>
         </nav>
       </div>
 
@@ -577,9 +583,9 @@
       <div class="footer-col">
         <div class="footer-title">Socials</div>
         <nav class="footer-links">
-          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
-          <a href="https://x.com" target="_blank" rel="noopener">X</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer">X</a>
         </nav>
       </div>
     </footer>
@@ -595,7 +601,7 @@
     </div>
   </div>
 
-  <!-- COMPACT MOBILE FOOTER -->
+  <!-- Compact mobile footer (auto-shown by CSS at ≤980px) -->
   <footer class="site-footer">
     <div class="footer-wrap">
       <div class="footer-brandrow">
@@ -641,107 +647,129 @@
     </div>
   </footer>
 
-  <!-- UPLOAD INPUTS -->
+  <!-- Upload inputs -->
   <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" multiple style="display:none" />
   <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
-    AOS.init({ once:true });
+    AOS.init({ once: true });
 
-    // staged intro
-    document.addEventListener('DOMContentLoaded', ()=>{
+    // Staged intro
+    document.addEventListener('DOMContentLoaded', () => {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.body.classList.add('stage1');
-      if(reduce){ document.body.classList.add('stage2','stage3'); return; }
-      setTimeout(()=>document.body.classList.add('stage2'), 80);
-      setTimeout(()=>document.body.classList.add('stage3'), 160);
+      if (reduce) { document.body.classList.add('stage2','stage3'); return; }
+      setTimeout(() => document.body.classList.add('stage2'), 80);
+      setTimeout(() => document.body.classList.add('stage3'), 160);
     });
 
-    // particles
-    (function(){
-      const c = document.getElementById("particles"); if(!c) return;
+    // Particles
+    (function () {
+      const container = document.getElementById("particles");
+      if (!container) return;
       const num = 50;
-      for(let i=0;i<num;i++){
-        const p = document.createElement('div'); p.className='particle';
-        const duration = 25 + Math.random()*15;
-        const size = 1 + Math.random()*2.5;
-        p.style.left = `${Math.random()*window.innerWidth}px`;
-        p.style.top  = `${Math.random()*1600}px`;
-        p.style.width = `${size}px`; p.style.height = `${size}px`;
+      for (let i = 0; i < num; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        const duration = 25 + Math.random() * 15;
+        const size = 1 + Math.random() * 2.5;
+        p.style.left = `${Math.random() * window.innerWidth}px`;
+        p.style.top = `${Math.random() * 1600}px`;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
         p.style.animationDuration = `${duration}s`;
-        c.appendChild(p);
+        container.appendChild(p);
       }
     })();
 
-    // tilt app preview
+    // App tilt on scroll (desktop)
     (function(){
-      const wrapper = document.getElementById("appWrapper"); if(!wrapper) return;
-      window.addEventListener("scroll", ()=>{
-        const y = window.scrollY;
-        wrapper.style.transform = y > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-      }, { passive:true });
+      const wrapper = document.getElementById("appWrapper");
+      if (!wrapper) return;
+      window.addEventListener("scroll", () => {
+        const st = window.scrollY;
+        wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+      }, { passive: true });
     })();
 
-    // topbar show/hide on scroll
-    (function(){
+    // Show/hide topbar on scroll
+    (function () {
       const bar = document.getElementById("topbarWrap");
-      let lastY = window.scrollY, ticking=false;
-      function onScroll(){
+      let lastY = window.scrollY, ticking = false;
+      function onScroll() {
         const y = window.scrollY;
-        if(y > lastY && y > 80) bar.classList.add("hide"); else bar.classList.remove("hide");
-        lastY = y <= 0 ? 0 : y; ticking=false;
+        if (y > lastY && y > 80) { bar.classList.add("hide"); } else { bar.classList.remove("hide"); }
+        lastY = y <= 0 ? 0 : y; ticking = false;
       }
-      window.addEventListener("scroll", ()=>{ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; }}, { passive:true });
+      window.addEventListener("scroll", () => {
+        if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+      }, { passive: true });
     })();
 
-    // menu panel attach
+    // Attach dropdown panel to bar
     (function(){
       const topbar = document.getElementById('topbar');
       const menuToggle = document.getElementById('menuToggle');
       const menuPanel  = document.getElementById('menuPanel');
       const menuOverlay= document.getElementById('menuOverlay');
 
-      function positionPanel(){ const r = topbar.getBoundingClientRect(); menuPanel.style.top = (r.top + r.height) + 'px'; }
-      positionPanel(); window.addEventListener('resize', positionPanel);
+      function positionPanel(){
+        const r = topbar.getBoundingClientRect();
+        menuPanel.style.top = (r.top + r.height + 0) + 'px';
+      }
+      positionPanel();
+      window.addEventListener('resize', positionPanel);
 
       function openMenu(){ positionPanel(); menuPanel.classList.add('open'); menuOverlay.classList.add('show'); menuToggle.classList.add('open'); topbar.classList.add('merged'); }
       function closeMenu(){ menuPanel.classList.remove('open'); menuOverlay.classList.remove('show'); menuToggle.classList.remove('open'); topbar.classList.remove('merged'); }
 
-      menuToggle.addEventListener('click', ()=>{ menuPanel.classList.contains('open') ? closeMenu() : openMenu(); });
+      menuToggle.addEventListener('click', () => { menuPanel.classList.contains('open') ? closeMenu() : openMenu(); });
       menuOverlay.addEventListener('click', closeMenu);
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
-      window.addEventListener('scroll', ()=>{ if(menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
+      window.addEventListener('scroll', () => { if (menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
     })();
 
-    // powered-by marquee
-    (function(){
-      const track = document.getElementById('logoTrack'); if(!track) return;
-      const src = 'https://i.imgur.com/2SUo8mv.png'; const COPIES=12;
-      for(let i=0;i<COPIES;i++){ const img=new Image(); img.src=src; img.alt='Powered-by logos'; img.className='logo-piece'; img.decoding='async'; track.appendChild(img); }
-      const SECONDS_PER_LOOP = 150;
-      function run(){
-        let x=0, pieceW=0, last=performance.now();
-        function measure(){ const first=track.querySelector('.logo-piece'); if(!first || !first.complete){ setTimeout(measure,50); return; } pieceW = first.getBoundingClientRect().width || first.naturalWidth; }
-        function tick(now){
-          const dt=(now-last)/1000; last=now;
-          const pxPerSecond=(pieceW*COPIES)/SECONDS_PER_LOOP;
-          x -= pxPerSecond*dt;
-          const loop = pieceW*COPIES;
-          if(x<=-loop) x+=loop;
+    // Powered-by marquee
+    (function () {
+      const track = document.getElementById('logoTrack');
+      if (!track) return;
+      const src = 'https://i.imgur.com/2SUo8mv.png';
+      const COPIES = 12;
+      for (let i = 0; i < COPIES; i++) {
+        const img = document.createElement('img');
+        img.src = src; img.alt = 'Powered-by logos'; img.className = 'logo-piece'; img.decoding = 'async';
+        track.appendChild(img);
+      }
+      const SECONDS_PER_LOOP = 150; // desktop speed; mobile looks fine too
+      function run() {
+        let x = 0, pieceW = 0, last = performance.now();
+        function measure() {
+          const first = track.querySelector('.logo-piece');
+          if (!first || !first.complete) { setTimeout(measure, 50); return; }
+          pieceW = first.getBoundingClientRect().width || first.naturalWidth;
+        }
+        function tick(now) {
+          const dt = (now - last) / 1000; last = now;
+          const pxPerSecond = (pieceW * COPIES) / SECONDS_PER_LOOP;
+          x -= pxPerSecond * dt;
+          const loop = pieceW * COPIES;
+          if (x <= -loop) x += loop;
           track.style.transform = `translateX(${x}px)`;
           requestAnimationFrame(tick);
         }
-        measure(); requestAnimationFrame(tick);
-        window.addEventListener('resize', measure, {passive:true});
+        measure();
+        requestAnimationFrame(tick);
+        window.addEventListener('resize', measure, { passive: true });
       }
       window.addEventListener('load', run);
     })();
 
-    // feature chip tickers
+    // Feature chip tickers
     (function(){
       const topRow = document.querySelector('.top-row');
       const bottomRow = document.querySelector('.bottom-row');
+
       const featuresTop = [
         { label: "No Signup", icon: "https://imgur.com/dKG0KXh.png" },
         { label: "Secure Processing", icon: "https://imgur.com/Cbflaz5.png" },
@@ -762,219 +790,379 @@
         { label: "Modern Design", icon: "https://imgur.com/Ie8CwXO.png" },
         { label: "Confidence to Sign", icon: "https://imgur.com/5DGepME.png" },
       ];
-      function populateRow(row, features){
-        if(!row) return;
-        const makeSet=()=>{ const f=document.createDocumentFragment(); features.forEach(it=>{ const el=document.createElement('div'); el.className='scroll-item'; el.innerHTML=`<img src="${it.icon}" alt="" loading="lazy"><span>${it.label}</span>`; f.appendChild(el); }); return f; };
-        row.appendChild(makeSet()); row.appendChild(makeSet());
-      }
-      populateRow(topRow, featuresTop); populateRow(bottomRow, featuresBottom);
 
-      function makeTicker(row, { pxPerSecond=36, direction="left" } = {}){
-        if(!row) return; const speed = direction==="left" ? -pxPerSecond : pxPerSecond;
-        let x=0, w=0, raf=0, last=performance.now();
+      function populateRow(row, features) {
+        if (!row) return;
+        const makeSet = () => {
+          const frag = document.createDocumentFragment();
+          features.forEach((f) => {
+            const el = document.createElement("div");
+            el.className = "scroll-item";
+            el.innerHTML = `<img src="${f.icon}" alt="" loading="lazy"><span>${f.label}</span>`;
+            frag.appendChild(el);
+          });
+          return frag;
+        };
+        row.appendChild(makeSet());
+        row.appendChild(makeSet());
+      }
+      populateRow(topRow, featuresTop);
+      populateRow(bottomRow, featuresBottom);
+
+      function makeTicker(row, { pxPerSecond = 36, direction = "left" } = {}) {
+        if (!row) return;
+        const speed = direction === "left" ? -pxPerSecond : pxPerSecond;
+        let x = 0, w = 0, raf = 0, last = performance.now();
         function measure(){ w = row.scrollWidth / 2; if(!w){ setTimeout(measure,60); } }
-        function tick(now){ const dt=(now-last)/1000; last=now; x += speed*dt; if(x<=-w) x+=w; if(x>0) x-=w; row.style.transform=`translateX(${x}px)`; raf=requestAnimationFrame(tick); }
+        function tick(now) {
+          const dt = (now - last) / 1000; last = now;
+          x += speed * dt;
+          if (x <= -w) x += w;
+          if (x > 0) x -= w;
+          row.style.transform = `translateX(${x}px)`;
+          raf = requestAnimationFrame(tick);
+        }
         const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-        function start(){ if(media.matches){ row.style.transform='none'; return; } measure(); last=performance.now(); raf=requestAnimationFrame(tick); }
-        function stop(){ if(raf) cancelAnimationFrame(raf); }
-        window.addEventListener('resize', measure, {passive:true});
-        media.addEventListener?.('change', ()=>{ stop(); start(); });
+        function start() {
+          if (media.matches) { row.style.transform = "none"; return; }
+          measure(); last = performance.now(); raf = requestAnimationFrame(tick);
+        }
+        function stop(){ if (raf) cancelAnimationFrame(raf); }
+        window.addEventListener("resize", measure, { passive: true });
+        media.addEventListener?.("change", () => { stop(); start(); });
         start();
       }
-      window.addEventListener('load', ()=>{
-        makeTicker(topRow, { pxPerSecond:36, direction:"right" });
-        makeTicker(bottomRow, { pxPerSecond:36, direction:"left" });
+
+      window.addEventListener("load", () => {
+        makeTicker(topRow,    { pxPerSecond: 36, direction: "right" });
+        makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
       });
     })();
 
-    // reviews carousel
-    (function(){
+    // Reviews carousel (adapts to width: 1/2/3 cards)
+    (function () {
       const track = document.getElementById("reviewsTrack");
       const prev = document.getElementById("revPrev");
       const next = document.getElementById("revNext");
       const dotsEl = document.getElementById("reviewDots");
+
       const originals = Array.from(track.children);
-      const TOTAL = originals.length;
+      const TOTAL = originals.length; // 5
+
       track.innerHTML = "";
-      for(let k=0;k<3;k++) originals.forEach(n=>track.appendChild(n.cloneNode(true)));
+      for (let k = 0; k < 3; k++) originals.forEach(n => track.appendChild(n.cloneNode(true)));
 
-      let perPage=3; const computePerPage=()=>{ const w=window.innerWidth; perPage = (w<=640)?1:(w<=1100)?2:3; }; computePerPage();
-      let itemW=0; const measure=()=>{ const c=track.querySelector(".review-card"); const gap=parseFloat(getComputedStyle(track).gap||24); itemW = (c?c.getBoundingClientRect().width:0)+gap; }; measure();
-
-      let baseIndex = TOTAL;
-      function setTransform(i, animate){ if(!animate) track.style.transition='none'; track.style.transform=`translateX(${-i*itemW}px)`; if(!animate){ track.offsetHeight; track.style.transition='transform .35s ease'; } }
-      setTransform(baseIndex,false);
-      const mod=(n,m)=>((n%m)+m)%m;
-
-      function updateDots(){
-        const start = mod(baseIndex, TOTAL);
-        [...dotsEl.children].forEach((d,i)=>{ const k=(i-start+TOTAL)%TOTAL; d.classList.toggle('active', k < perPage); });
+      let perPage = 3;
+      function computePerPage() {
+        const w = window.innerWidth;
+        perPage = (w <= 640) ? 1 : (w <= 1100) ? 2 : 3;
       }
-      (function renderDots(){ dotsEl.innerHTML=''; for(let i=0;i<TOTAL;i++){ const b=document.createElement('button'); b.type='button'; b.className='review-dot'; b.addEventListener('click', ()=>{ const p=mod(baseIndex, TOTAL); baseIndex = baseIndex + ((i - p + TOTAL) % TOTAL); setTransform(baseIndex,true); track.addEventListener('transitionend', ()=>{ recenterIfNeeded(); updateDots(); }, { once:true }); restartAutoplay(); }); dotsEl.appendChild(b); } updateDots(); })();
+      computePerPage();
 
-      function recenterIfNeeded(){ if(baseIndex >= 2*TOTAL){ baseIndex -= TOTAL; setTransform(baseIndex,false); } else if(baseIndex < TOTAL){ baseIndex += TOTAL; setTransform(baseIndex,false); } }
-      function goDelta(d){ baseIndex += d; setTransform(baseIndex,true); track.addEventListener('transitionend', ()=>{ recenterIfNeeded(); updateDots(); }, { once:true }); }
-      next?.addEventListener('click', ()=>{ goDelta(perPage); restartAutoplay(); });
-      prev?.addEventListener('click', ()=>{ goDelta(-perPage); restartAutoplay(); });
+      let itemW = 0;
+      function measure() {
+        const c = track.querySelector(".review-card");
+        const gap = parseFloat(getComputedStyle(track).gap || 24);
+        itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
+      }
+      measure();
 
-      let timer=null; function startAutoplay(){ stopAutoplay(); timer=setInterval(()=>goDelta(perPage), 5000); } function stopAutoplay(){ if(timer) clearInterval(timer); timer=null; } function restartAutoplay(){ stopAutoplay(); startAutoplay(); }
+      let baseIndex = TOTAL; // start at the first "real" item set
+      function setTransform(i, animate) {
+        if (!animate) track.style.transition = "none";
+        track.style.transform = `translateX(${-i * itemW}px)`;
+        if (!animate) { track.offsetHeight; track.style.transition = "transform .35s ease"; }
+      }
+      setTransform(baseIndex, false);
+
+      const mod = (n,m) => ((n % m) + m) % m;
+
+      // Dots rendering: highlight group depending on perPage
+      function updateDots() {
+        const start = mod(baseIndex, TOTAL);
+        [...dotsEl.children].forEach((d, i) => {
+          const k = (i - start + TOTAL) % TOTAL;
+          d.classList.toggle("active", k < perPage);
+        });
+      }
+      function renderDots(){
+        dotsEl.innerHTML = "";
+        for (let i = 0; i < TOTAL; i++) {
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "review-dot";
+          b.addEventListener("click", () => {
+            const p = mod(baseIndex, TOTAL);
+            baseIndex = baseIndex + ((i - p + TOTAL) % TOTAL);
+            setTransform(baseIndex, true);
+            track.addEventListener("transitionend", () => { recenterIfNeeded(); updateDots(); }, { once:true });
+            restartAutoplay();
+          });
+          dotsEl.appendChild(b);
+        }
+        updateDots();
+      }
+      renderDots();
+
+      function recenterIfNeeded() {
+        if (baseIndex >= 2 * TOTAL) { baseIndex -= TOTAL; setTransform(baseIndex, false); }
+        else if (baseIndex < TOTAL) { baseIndex += TOTAL; setTransform(baseIndex, false); }
+      }
+      function goDelta(delta) {
+        baseIndex += delta;
+        setTransform(baseIndex, true);
+        track.addEventListener("transitionend", () => { recenterIfNeeded(); updateDots(); }, { once:true });
+      }
+
+      next?.addEventListener("click", () => { goDelta(perPage); restartAutoplay(); });
+      prev?.addEventListener("click", () => { goDelta(-perPage); restartAutoplay(); });
+
+      // Autoplay
+      let timer = null;
+      function startAutoplay() { stopAutoplay(); timer = setInterval(() => goDelta(perPage), 5000); }
+      function stopAutoplay() { if (timer) clearInterval(timer); timer = null; }
+      function restartAutoplay() { stopAutoplay(); startAutoplay(); }
       startAutoplay();
 
-      // drag/swipe
-      (function(){
-        const viewport = document.getElementById('reviewsViewport'); if(!viewport) return;
-        viewport.style.cursor='grab'; let isDown=false, startX=0, startTx=0, moved=false;
-        function getTx(){ const m=getComputedStyle(track).transform; if(m&&m!=='none'){ const p=m.replace('matrix(','').replace(')','').split(','); return parseFloat(p[4]||0); } return 0; }
-        function setTx(x){ track.style.transition='none'; track.style.transform=`translateX(${x}px)`; }
-        function end(){ isDown=false; viewport.style.cursor='grab'; track.offsetHeight; track.style.transition='transform .35s ease'; setTimeout(()=>moved=false,0); }
-        function start(clientX){ isDown=true; moved=false; startX=clientX; startTx=getTx(); viewport.style.cursor='grabbing'; }
-        function move(clientX){ if(!isDown) return; const dx=clientX-startX; if(Math.abs(dx)>3) moved=true; setTx(startTx+dx); }
-        viewport.addEventListener('mousedown', e=>{ e.preventDefault(); start(e.clientX); });
-        window.addEventListener('mousemove', e=>move(e.clientX), { passive:true });
+      // Drag/swipe support
+      (function () {
+        const viewport = document.getElementById('reviewsViewport');
+        if (!viewport) return;
+        viewport.style.cursor = 'grab';
+        let isDown = false, startX = 0, startTx = 0, moved = false;
+
+        function getTx() {
+          const m = getComputedStyle(track).transform;
+          if (m && m !== 'none') {
+            const p = m.replace('matrix(', '').replace(')', '').split(',');
+            return parseFloat(p[4] || 0);
+          }
+          return 0;
+        }
+        function setTx(x) {
+          track.style.transition = 'none';
+          track.style.transform = `translateX(${x}px)`;
+        }
+        function end() {
+          isDown = false;
+          viewport.style.cursor = 'grab';
+          track.offsetHeight; // reflow
+          track.style.transition = 'transform .35s ease';
+          setTimeout(() => (moved = false), 0);
+        }
+        function start(clientX) {
+          isDown = true; moved = false; startX = clientX; startTx = getTx(); viewport.style.cursor = 'grabbing';
+        }
+        function move(clientX) {
+          if (!isDown) return;
+          const dx = clientX - startX;
+          if (Math.abs(dx) > 3) moved = true;
+          setTx(startTx + dx);
+        }
+
+        viewport.addEventListener('mousedown', e => { e.preventDefault(); start(e.clientX); });
+        window.addEventListener('mousemove', e => move(e.clientX), { passive: true });
         window.addEventListener('mouseup', end);
-        viewport.addEventListener('touchstart', e=>start(e.touches[0].clientX), { passive:true });
-        viewport.addEventListener('touchmove',  e=>move(e.touches[0].clientX),   { passive:true });
+
+        viewport.addEventListener('touchstart', e => start(e.touches[0].clientX), { passive: true });
+        viewport.addEventListener('touchmove',  e => move(e.touches[0].clientX),   { passive: true });
         window.addEventListener('touchend', end);
-        viewport.addEventListener('click', e=>{ if(moved) e.preventDefault(); }, true);
+
+        viewport.addEventListener('click', e => { if (moved) e.preventDefault(); }, true);
       })();
 
-      window.addEventListener('resize', ()=>{ computePerPage(); measure(); setTransform(baseIndex,false); updateDots(); }, { passive:true });
+      window.addEventListener("resize", () => { computePerPage(); measure(); setTransform(baseIndex, false); updateDots(); }, { passive:true });
     })();
 
-    // FAQ toggles + auto-open Q2 when section enters viewport
-    document.querySelectorAll(".faq-item .faq-q").forEach((btn)=>{
-      btn.addEventListener("click", ()=>{
+    // FAQ
+    document.querySelectorAll(".faq-item .faq-q").forEach((btn) => {
+      btn.addEventListener("click", () => {
         const item = btn.parentElement;
-        if(!item.classList.contains("open")) document.querySelectorAll(".faq-item.open").forEach(i=>i.classList.remove("open"));
+        if (!item.classList.contains("open")) document.querySelectorAll(".faq-item.open").forEach((i) => i.classList.remove("open"));
         item.classList.toggle("open");
-        const a = item.querySelector('.faq-a');
-        if(item.classList.contains('open')){ a.style.maxHeight='460px'; a.style.opacity='1'; a.style.padding='14px 20px 20px'; item.style.background='#191624'; }
-        else{ a.style.maxHeight='0'; a.style.opacity='0'; a.style.padding='0 20px'; item.style.background='transparent'; }
       });
     });
-    // intersection observer to open Q2 on enter
-    (function(){
-      const section = document.getElementById('faq');
-      const q2 = document.getElementById('faq2');
-      if(!section || !q2) return;
-      const openQ2 = ()=>{ if(!q2.classList.contains('open')){ q2.querySelector('.faq-q')?.click(); } };
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{ if(e.isIntersecting){ openQ2(); io.disconnect(); } });
-      }, { root:null, threshold:.2 });
-      io.observe(section);
-    })();
 
-    // FILE / CAMERA FLOW (preserved)
+    // ===== File / Camera flow (unified) =====
     (function () {
       const ctaBtn = document.getElementById("reviewBtn");
       const ctaWrap = document.getElementById("ctaWrap");
       const roleUI  = document.getElementById("rolePicker");
-      const inputGeneric = document.getElementById("contractFile");
+      const inputGeneric = document.getElementById("contractFile");   // unified
       const inputCamera  = document.getElementById("contractCamera");
 
+      // Counter under CTA
       const counterEl = document.createElement('div');
       counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
       ctaWrap.appendChild(counterEl);
 
-      let pickedFiles = [], finished=false;
+      let pickedFiles = [];
+      let chosenRole  = null;
+      let finished    = false;
 
       function resetPicker(el){ if(el) el.value=''; }
       function updateCounter(){ counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
-      function addFiles(list){ for(const f of Array.from(list)){ if(pickedFiles.length>=10) break; pickedFiles.push(f); } updateCounter(); }
-      function finishPicking(){ if(finished) return; finished=true; ctaWrap.style.display="none"; roleUI.hidden=false; window.scrollTo({ top:0, behavior:'smooth' }); }
+      function addFiles(list){ for (const f of Array.from(list)) { if (pickedFiles.length >= 10) break; pickedFiles.push(f); } updateCounter(); }
+      function finishPicking(){ if (finished) return; finished = true; ctaWrap.style.display = "none"; roleUI.hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-      function askAddMore(msg='Add more photos?'){
-        return new Promise(resolve=>{
-          const overlay=document.createElement('div'); overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
-          const box=document.createElement('div'); box.style.cssText='background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
-          box.innerHTML=`<div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+      // Little “Add more?” overlay (mobile camera flow)
+      function askAddMore(msg = 'Add more photos?'){
+        return new Promise(resolve => {
+          const overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+          const box = document.createElement('div');
+          box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+          box.innerHTML = `
+            <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
             <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
             <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
               <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
               <button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
             </div>`;
-          overlay.appendChild(box); document.body.appendChild(overlay);
-          const cleanup=(v)=>{ overlay.remove(); document.removeEventListener('keydown', onKey); resolve(v); };
-          const onKey=(e)=>{ if(e.key==='Escape') cleanup(false); };
+          overlay.appendChild(box);
+          document.body.appendChild(overlay);
+          const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
+          const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
           document.addEventListener('keydown', onKey);
-          box.querySelector('#am-yes').addEventListener('click', ()=>cleanup(true));
-          box.querySelector('#am-no').addEventListener('click', ()=>cleanup(false));
-          overlay.addEventListener('click', (e)=>{ if(e.target===overlay) cleanup(false); });
+          box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
+          box.querySelector('#am-no').addEventListener('click',  () => cleanup(false));
+          overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
         });
       }
       async function maybeAddMoreAndReopenCamera(){
-        if(pickedFiles.length>=10){ finishPicking(); return; }
+        if (pickedFiles.length >= 10) { finishPicking(); return; }
         const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
-        if(yes){ resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); }
+        if (yes) { resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); }
       }
 
-      ctaBtn.addEventListener("click", (e)=>{
-        e.preventDefault(); finished=false; pickedFiles=[]; updateCounter(); resetPicker(inputGeneric); inputGeneric.click();
+      // CTA click → open file sheet (works on desktop & mobile)
+      ctaBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        finished = false;
+        pickedFiles = [];
+        updateCounter();
+        resetPicker(inputGeneric);
+        inputGeneric.click();
       });
 
-      inputGeneric.addEventListener("change", ()=>{
-        if(!inputGeneric.files || !inputGeneric.files.length) return;
+      // Returned from generic picker (may include Take Photo on mobile)
+      inputGeneric.addEventListener("change", () => {
+        if (!inputGeneric.files || !inputGeneric.files.length) return;
         addFiles(inputGeneric.files);
-        const usedCamera = [...inputGeneric.files].some(f=>f.type.startsWith('image/') && f.name.toLowerCase().startsWith('image') && f.lastModified && f.size < 10_000_000);
-        if(usedCamera) maybeAddMoreAndReopenCamera(); else finishPicking();
+
+        // Heuristic: detect if camera was used from the sheet
+        const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.toLowerCase().startsWith('image') && f.lastModified && f.size < 10_000_000);
+        if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); }
       });
 
-      inputCamera.addEventListener("change", ()=>{
-        if(!inputCamera.files || !inputCamera.files.length){ finishPicking(); return; }
-        addFiles(inputCamera.files); maybeAddMoreAndReopenCamera();
+      // Returned from camera-only input (when reopening camera)
+      inputCamera.addEventListener("change", () => {
+        if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; }
+        addFiles(inputCamera.files);
+        maybeAddMoreAndReopenCamera();
       });
 
-      // Role selection → mock payload (kept identical to earlier demo)
-      roleUI.querySelectorAll('.role-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          roleUI.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+      // File decoding helpers
+      async function fileToPayload(file) {
+        const name = file.name || "file";
+        const mime = file.type || "application/octet-stream";
+        const ext = name.toLowerCase();
+        if (mime === "text/plain" || ext.endsWith(".txt")) {
+          const text = await file.text();
+          return { text, originalName: name, mime };
+        }
+        if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+          let full = "";
+          for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            const strings = content.items.map((i) => i.str).join(" ");
+            full += strings + "\n";
+          }
+          return { text: full, originalName: name, mime };
+        }
+        if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+          const buf = await file.arrayBuffer();
+          const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+          return { text: res.value || "", originalName: name, mime };
+        }
+        if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+          const dataUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.readAsDataURL(file);
+          });
+          return { imageDataURI: dataUrl, originalName: name, mime };
+        }
+        throw new Error("Unsupported file type: " + mime);
+      }
+
+      // Role selection → send to /api/analyze (desktop flow kept; works mobile too)
+      roleUI.querySelectorAll('.role-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           const chosenRole = btn.dataset.role || "signer";
-          if(!pickedFiles.length){ alert("Please add at least one file or photo."); return; }
 
-          const mock = {
-            languageOriginal:"en",
-            summary:[
-              "This contract is generally favorable with low overall risk.",
-              "Payment schedule and termination rights are standard.",
-              "Watch late-fee compounding and define 'material breach'.",
-            ],
-            risk:{ value:25, note:"Risks mainly around late fees and indemnity scope." },
-            clarity:{ value:80, note:"Most clauses are explicit; a few terms undefined." },
-            clauses:[
-              "Payment Terms — Net 30 with 2% per month late fee.",
-              "Scope of Work — Deliverables listed in Schedule A.",
-              "Termination — 30-day convenience; immediate for cause.",
-              "IP & Licensing — Client owns final assets; creator keeps tools.",
-            ],
-            issues:[
-              "Late fee compounding escalates costs on long delays.",
-              "Indemnity is one-sided; consider mutual or capped liability.",
-            ],
-            suggestions:[
-              "Add a 5–7 day grace period before late fees.",
-              "Define 'material breach' + 10-day cure period.",
-              "List milestones and acceptance criteria.",
-            ],
-            meters:{ confidence:75, favorability:80, deadline:18 },
-            translations:{ en:{} },
-          };
+          if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
 
+          let payload;
+          try {
+            const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+            const body = { files: payloadArr, role: chosenRole };
+            const resp = await fetch("/api/analyze", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            });
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({}));
+              throw new Error(err?.error || "Analysis failed");
+            }
+            payload = await resp.json();
+          } catch (e) {
+            console.error(e);
+            alert("Could not analyze this file. Try again or use another file.");
+            return;
+          }
+
+          const { contractName, detectedLang, analysis, translations = {} } = payload || {};
+          if (!analysis) { alert("Analysis came back empty. Please try again with a different file."); return; }
+
+          const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
+          const summaryStr = summaryArr.join("\n\n");
+
+          localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
+          localStorage.setItem("detectedLang", detectedLang || "en");
           localStorage.setItem("role", chosenRole);
+
           if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
 
-          localStorage.setItem("analysisData", JSON.stringify(mock));
-          localStorage.setItem("contractName", pickedFiles[0]?.name || "Contract");
-          localStorage.setItem("detectedLang", "en");
-          localStorage.setItem("summary", mock.summary.join("\n\n"));
-          localStorage.setItem("risk", String(mock.risk.value));
-          localStorage.setItem("clarity", String(mock.clarity.value));
-          localStorage.setItem("compliance", "0");
-          localStorage.setItem("keyClauses", JSON.stringify(mock.clauses));
-          localStorage.setItem("potentialIssues", JSON.stringify(mock.issues));
-          localStorage.setItem("smartSuggestions", JSON.stringify(mock.suggestions));
+          localStorage.setItem("summary", summaryStr);
+          localStorage.setItem("risk", String(analysis.risk ?? 0));
+          localStorage.setItem("clarity", String(analysis.clarity ?? 0));
+          localStorage.setItem("compliance", String(analysis.compliance ?? 0));
+          localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
+          localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
+          localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
 
-          window.location.href = "analysis.html";
+          localStorage.setItem("analysisData", JSON.stringify({
+            languageOriginal: detectedLang || "en",
+            summary: summaryArr,
+            risk: { value: analysis.risk ?? 0, note: "" },
+            clarity: { value: analysis.clarity ?? 0, note: "" },
+            clauses: analysis.keyClauses || [],
+            issues: analysis.potentialIssues || [],
+            suggestions: analysis.smartSuggestions || [],
+            meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 },
+            translations,
+          }));
+          localStorage.setItem("translations", JSON.stringify(translations));
+          localStorage.setItem("analysisMode", "live");
+          localStorage.setItem("analysisRaw", JSON.stringify(payload));
+
+          window.location.href = "analysis.html?ts=" + Date.now();
         });
       });
     })();
