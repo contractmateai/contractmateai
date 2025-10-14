@@ -12,10 +12,9 @@
       sizes="64x64"
     />
     <link rel="apple-touch-icon" href="https://imgur.com/hWueM44.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Shoika&family=Bricolage+Grotesque&family=Inter&display=swap"
-      rel="stylesheet"
-    />
+   
+    <link href="https://fonts.googleapis.com/css2?family=Shoika&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
     <link
       href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
       rel="stylesheet"
@@ -106,6 +105,54 @@
   --particle-color:#682fd8;
   --bar:#04040e;
   --bar-border:#3f3f3f;
+}
+/* burger button */
+.menu-toggle{
+  display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer;
+}
+.menu-toggle .bar{
+  position:absolute; left:0; right:0; height:2px; background:#ffffff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease;
+}
+.menu-toggle .b1{ top:3px; }
+.menu-toggle .b2{ top:11px; }
+.menu-toggle .b3{ top:19px; }
+.menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
+.menu-toggle.open .b2{ opacity:0; }
+.menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
+
+.menu-overlay{
+  position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:999;
+}
+.menu-overlay.show{ opacity:1; pointer-events:auto; }
+
+.menu-panel{
+  position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
+  width:min(720px, calc(100% - 28px));
+  background:#04040e;
+  border:1px solid var(--bar-border); border-top:none;
+  border-radius:0 0 16px 16px;
+  padding:18px 22px 22px;
+  box-shadow:0 20px 34px rgba(0,0,0,.55);
+  z-index:1001; pointer-events:none;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
+
+.menu-list{ margin-top:2px; }
+.menu-item{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 4px; font-size:20px; color:#fff; text-decoration:none;
+}
+.menu-item .chev{ opacity:.9; }
+
+.menu-disclaimer{
+  text-align:center; color:#cfcfcf; opacity:.9; margin-top:14px; line-height:1.6; font-size:14px;
+}
+
+/* show burger on smaller screens */
+@media (max-width: 980px){
+  .topbar-nav{ display:none; }
+  .menu-toggle{ display:block; }
 }
 
 .reveal-on-load{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
@@ -1041,20 +1088,42 @@ transition: opacity .6s ease;
   </head>
   <body>
 <div class="topbar-wrap" id="topbarWrap">
-  <div class="topbar">
-    <div class="topbar-left">
-      <a href="index.html">
-        <img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
-      </a>
-      <a href="index.html" class="topbar-brand">SignSense</a>
-    </div>
-    <nav class="topbar-nav">
-     <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
-      <a href="index.html">Home</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+ <div class="topbar" id="topbar">
+  <div class="topbar-left">
+    <a href="index.html">
+      <img class="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+    </a>
+    <a href="index.html" class="topbar-brand">SignSense</a>
+  </div>
+
+  <nav class="topbar-nav">
+    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">See How It Works</a>
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- burger -->
+  <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+    <span class="bar b1"></span>
+    <span class="bar b2"></span>
+    <span class="bar b3"></span>
+  </button>
+</div>
+</div>
+    <!-- Overlay + attached dropdown panel -->
+<div class="menu-overlay" id="menuOverlay"></div>
+<div class="menu-panel" id="menuPanel" aria-hidden="true">
+  <nav class="menu-list">
+    <a class="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span class="chev">›</span></a>
+    <a class="menu-item" href="index.html">Home <span class="chev">›</span></a>
+    <a class="menu-item" href="contact.html">Contact <span class="chev">›</span></a>
+  </nav>
+  <div class="menu-disclaimer">
+    <div>Not legal advice.</div>
+    <div>© 2025 SignSense. All rights reserved.</div>
   </div>
 </div>
+
 
 
     <div class="particle-container" id="particles"></div>
@@ -1191,6 +1260,38 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+<script>
+(() => {
+  const topbar   = document.getElementById('topbar');
+  const menuBtn  = document.getElementById('menuToggle');
+  const panel    = document.getElementById('menuPanel');
+  const overlay  = document.getElementById('menuOverlay');
+
+  function openMenu(){
+    panel.classList.add('open');
+    overlay.classList.add('show');
+    menuBtn.classList.add('open');
+  }
+  function closeMenu(){
+    panel.classList.remove('open');
+    overlay.classList.remove('show');
+    menuBtn.classList.remove('open');
+  }
+  menuBtn?.addEventListener('click', () => {
+    panel.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  overlay?.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+  // position panel under topbar
+  function positionPanel(){
+    const r = topbar.getBoundingClientRect();
+    panel.style.top = (r.top + r.height) + 'px';
+  }
+  positionPanel();
+  window.addEventListener('resize', positionPanel, {passive:true});
+})();
+</script>
 
 
       const container = document.getElementById("particles");
@@ -2000,105 +2101,193 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </style>
 
-    <input
-      id="contractFile"
-      type="file"
-      accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
-      style="display: none"
-    />
-   <script>
+  <input
+  id="contractFile"
+  type="file"
+  accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*"
+  multiple
+  style="display:none"
+/>
+<input
+  id="contractCamera"
+  type="file"
+  accept="image/*"
+  capture="environment"
+  multiple
+  style="display:none"
+/>
+
+ <script>
 (async () => {
+  // ---- helpers ----
   async function fileToPayload(file) {
-    try {
-      const name = file.name || "file";
-      const mime = file.type || "application/octet-stream";
-      const ext = name.toLowerCase();
-      if (mime === "text/plain" || ext.endsWith(".txt")) {
-        const text = await file.text();
-        return { text, originalName: name, mime };
-      }
+    const name = file.name || "file";
+    const mime = file.type || "application/octet-stream";
+    const ext = name.toLowerCase();
 
-      if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-        const buf = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-        let full = "";
-        for (let p = 1; p <= pdf.numPages; p++) {
-          const page = await pdf.getPage(p);
-          const content = await page.getTextContent();
-          const strings = content.items.map((i) => i.str).join(" ");
-          full += strings + "\n";
-        }
-        return { text: full, originalName: name, mime };
-      }
-
-      if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-        const buf = await file.arrayBuffer();
-        const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-        return { text: res.value || "", originalName: name, mime };
-      }
-
-      if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-        const dataUrl = await new Promise((resolve) => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result);
-          r.readAsDataURL(file);
-        });
-        return { imageDataURI: dataUrl, originalName: name, mime };
-      }
-
-      throw new Error("Unsupported file type: " + mime);
-    } catch (e) {
-      console.error("fileToPayload error:", e.message);
-      throw e;
+    if (mime === "text/plain" || ext.endsWith(".txt")) {
+      const text = await file.text();
+      return { kind: "text", text, originalName: name, mime };
     }
+    if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let full = "";
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const content = await page.getTextContent();
+        const strings = content.items.map((i) => i.str).join(" ");
+        full += strings + "\n";
+      }
+      return { kind: "text", text: full, originalName: name, mime };
+    }
+    if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+      const buf = await file.arrayBuffer();
+      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+      return { kind: "text", text: res.value || "", originalName: name, mime };
+    }
+    if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+      const dataUrl = await new Promise((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.readAsDataURL(file);
+      });
+      return { kind: "image", imageDataURI: dataUrl, originalName: name, mime };
+    }
+    throw new Error("Unsupported file type: " + mime);
   }
 
-  const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
-  const input = document.getElementById("contractFile");
-  const roleUI = document.getElementById("rolePicker");
+  function askAddMore(msg = 'Add more photos?') {
+    return new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+      const box = document.createElement('div');
+      box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+      box.innerHTML = `
+        <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+        <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+          <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
+          <button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
+        </div>`;
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+      const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
+      const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
+      document.addEventListener('keydown', onKey);
+      box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
+      box.querySelector('#am-no').addEventListener('click',  () => cleanup(false));
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+    });
+  }
 
-  let chosenRole = null;
-  let pickedFile = null;
+  // ---- elements ----
+  const triggers  = document.querySelectorAll(".cta-btn, #reviewBtn");
 
-  triggers.forEach((t) =>
-    t.addEventListener("click", (e) => {
-      e.preventDefault();
-      input.value = ""; 
-      input.click();
-    })
-  );
+  const inputFile = document.getElementById("contractFile");
+  const inputCam  = document.getElementById("contractCamera");
+  const roleUI    = document.getElementById("rolePicker");
+  const ctaWrap   = document.getElementById("ctaWrap");
 
-  input.addEventListener("change", () => {
-    if (!input.files || !input.files.length) return;
-    pickedFile = input.files[0];
+  // simple counter (optional)
+  let counterEl = document.getElementById('pickCounter');
+  if (!counterEl && ctaWrap) {
+    counterEl = document.createElement('div');
+    counterEl.id = 'pickCounter';
+    counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
+    ctaWrap.appendChild(counterEl);
+  }
+  const pickedFiles = []; // up to 10
 
-    const ctaWrap = document.getElementById("ctaWrap");
-    if (ctaWrap) ctaWrap.style.display = "none";
+  function updateCounter() { if (counterEl) counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
+  function resetPicker(el){ if (el) el.value = ''; }
+
+  triggers.forEach((t) => t.addEventListener("click", (e) => {
+    e.preventDefault();
+    pickedFiles.length = 0;
+    updateCounter();
+    resetPicker(inputFile);
+    inputFile?.click();
+  }));
+
+  function addFiles(list) {
+    for (const f of Array.from(list)) {
+      if (pickedFiles.length >= 10) break;
+      pickedFiles.push(f);
+    }
+    updateCounter();
+  }
+
+  async function maybeAddMoreAndReopenCamera() {
+    if (pickedFiles.length >= 10) return true;
+    const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
+    if (yes) { resetPicker(inputCam); inputCam.click(); return false; }
+    return true;
+  }
+
+  function likelyCameraCaptureFromSheet(fileList) {
+    return [...fileList].some(f =>
+      f.type.startsWith('image/') &&
+      f.name?.toLowerCase().startsWith('image') &&
+      f.lastModified && f.size < 10_000_000
+    );
+  }
+
+  inputFile?.addEventListener("change", async () => {
+    if (!inputFile.files || !inputFile.files.length) return;
+    addFiles(inputFile.files);
+
+    const usedCamera = likelyCameraCaptureFromSheet(inputFile.files);
+    if (usedCamera) {
+      const finished = await maybeAddMoreAndReopenCamera();
+      if (!finished) return; // user reopened camera; wait for inputCam
+    }
+    if (ctaWrap) ctaWrap.style.display = 'none';
     roleUI.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  inputCam?.addEventListener("change", async () => {
+    if (!inputCam.files || !inputCam.files.length) {
+      if (pickedFiles.length) { if (ctaWrap) ctaWrap.style.display = 'none'; roleUI.hidden = false; }
+      return;
+    }
+    addFiles(inputCam.files);
+    const finished = await maybeAddMoreAndReopenCamera();
+    if (finished) {
+      if (ctaWrap) ctaWrap.style.display = 'none';
+      roleUI.hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 
   roleUI?.querySelectorAll(".role-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       roleUI.querySelectorAll(".role-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      chosenRole = btn.dataset.role;
+      const chosenRole = btn.dataset.role || "signer";
 
-      if (!pickedFile) {
-        alert("Please choose a contract file first.");
+      if (!pickedFiles.length) {
+        alert("Please add at least one file or photo.");
+        return;
+      }
+
+      let payloadObj;
+      try {
+        payloadObj = await fileToPayload(pickedFiles[0]); // send first for now
+        payloadObj.role = chosenRole;
+      } catch (e) {
+        alert("Could not prepare the file. Try another one.");
         return;
       }
 
       let payload;
       try {
-        const payloadObj = await fileToPayload(pickedFile);
-        payloadObj.role = chosenRole || "signer";
-
         const resp = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payloadObj),
         });
-
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({}));
           throw new Error(err?.error || "Analysis failed");
@@ -2110,60 +2299,46 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const { contractName, detectedLang, analysis, translations = {} } = payload || {};
-      if (!analysis) {
-        console.error("Empty analysis in response:", payload);
-        alert("Analysis came back empty. Please try again with a different file.");
-        return;
-      }
-
-      const summaryArr = Array.isArray(analysis.summary)
+      const summaryArr = Array.isArray(analysis?.summary)
         ? analysis.summary
-        : analysis.summary
-        ? [analysis.summary]
-        : [];
-      const summaryStr = summaryArr.join("\n\n");
+        : analysis?.summary ? [analysis.summary] : [];
 
-      localStorage.setItem("contractName", contractName || pickedFile.name || "Contract");
+      localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
       localStorage.setItem("detectedLang", detectedLang || "en");
-      localStorage.setItem("role", chosenRole || "signer");
+      localStorage.setItem("role", chosenRole);
+      if (chosenRole === "writer") localStorage.setItem("hideConfidence", "1");
+      else localStorage.removeItem("hideConfidence");
 
-      if ((chosenRole || "signer") === "writer") {
-        localStorage.setItem("hideConfidence", "1");
-      } else {
-        localStorage.removeItem("hideConfidence");
-      }
+      localStorage.setItem("summary", summaryArr.join("\n\n"));
+      localStorage.setItem("risk", String(analysis?.risk ?? 0));
+      localStorage.setItem("clarity", String(analysis?.clarity ?? 0));
+      localStorage.setItem("compliance", String(analysis?.compliance ?? 0));
+      localStorage.setItem("keyClauses", JSON.stringify(analysis?.keyClauses || []));
+      localStorage.setItem("potentialIssues", JSON.stringify(analysis?.potentialIssues || []));
+      localStorage.setItem("smartSuggestions", JSON.stringify(analysis?.smartSuggestions || []));
 
-      localStorage.setItem("summary", summaryStr);
-      localStorage.setItem("risk", String(analysis.risk ?? 0));
-      localStorage.setItem("clarity", String(analysis.clarity ?? 0));
-      localStorage.setItem("compliance", String(analysis.compliance ?? 0));
-      localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
-      localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
-      localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
-
-      localStorage.setItem(
-        "analysisData",
-        JSON.stringify({
-          languageOriginal: detectedLang || "en",
-          summary: summaryArr,
-          risk: { value: analysis.risk ?? 0, note: "" },
-          clarity: { value: analysis.clarity ?? 0, note: "" },
-          clauses: analysis.keyClauses || [],
-          issues: analysis.potentialIssues || [],
-          suggestions: analysis.smartSuggestions || [],
-          meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 },
-          translations,
-        })
-      );
+      localStorage.setItem("analysisData", JSON.stringify({
+        languageOriginal: detectedLang || "en",
+        summary: summaryArr,
+        risk: { value: analysis?.risk ?? 0, note: "" },
+        clarity: { value: analysis?.clarity ?? 0, note: "" },
+        clauses: analysis?.keyClauses || [],
+        issues: analysis?.potentialIssues || [],
+        suggestions: analysis?.smartSuggestions || [],
+        meters: { confidence: analysis?.compliance ?? 0, favorability: analysis?.clarity ?? 0, deadline: 0 },
+        translations,
+      }));
       localStorage.setItem("translations", JSON.stringify(translations));
-
       localStorage.setItem("analysisMode", "live");
       localStorage.setItem("analysisRaw", JSON.stringify(payload));
+      localStorage.setItem("numSelectedFiles", String(pickedFiles.length));
+
       window.location.href = "analysis.html?ts=" + Date.now();
     });
   });
 })();
 </script>
+
 
 
   </body>
