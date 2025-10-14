@@ -319,7 +319,7 @@
         .faq-list { gap: 18px; padding-left: 0; }
         .faq-q { padding: 22px 20px; font-size: 24px; text-align: left; }
         .faq-a { font-size: 20px; padding: 0 20px; }
-        .faq-item.open .faq-a { padding: 14px 20px 20px; max-height: 460px; }
+        .faq-item.open .faq-a { font-size: 20px; padding: 14px 20px 20px; max-height: 460px; }
         .site-footer { background: #0a0a0a; border-top: 1px solid var(--bar-border); padding: 22px 14px 30px; display: block; }
         .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display: none; }
         .footer-brandrow { display: grid; }
@@ -337,23 +337,25 @@
       }
       @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
 
-      /* === desktop fixes: top bar, hero lift, insights layout === */
+      /* === desktop fixes: top bar, hero/app lower, insights layout === */
       @media (min-width: 981px) {
         /* ensure desktop menu look */
         .menu-toggle, .menu-overlay, .menu-panel { display: none !important; }
 
-        /* hero: raise content and preview slightly */
-        .hero-wrapper { margin-top: 92px; }           /* was 120px */
-        .hero { padding: 64px 20px 22px; }
-        .tagline-absolute { top: -10px; margin-bottom: 10px; }
-        .app-container { margin: 8px auto 0; }
-        .app-frame { margin-top: -28px; }             /* lifts the tilted preview */
+        /* hero lowered slightly to match reference */
+        .hero-wrapper { margin-top: 120px; }     /* was 92px in prior tweak */
+        .hero { padding: 80px 20px 30px; }       /* restore original top padding */
+        .tagline-absolute { top: -17px; }        /* match reference offset */
+
+        /* app preview slightly lower */
+        .app-container { margin: 30px auto 0; }
+        .app-frame { margin-top: -20px; }        /* was -28px (raised); now lower */
 
         /* insights: two columns with room for the right text block */
         .insight-section { padding: 70px 20px 70px; }
         .insight-content {
           display: grid;
-          grid-template-columns: 560px 1fr;           /* left image | right copy */
+          grid-template-columns: 560px 1fr;      /* left image | right copy */
           align-items: center;
           justify-content: center;
           gap: 64px;
