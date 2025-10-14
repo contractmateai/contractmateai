@@ -74,13 +74,11 @@
       .topbar-nav a:hover { opacity: .85; }
 
       .hero-wrapper { margin-top: 120px; }
-
       .tagline-absolute { background-color: #090823; color: #a7fd3c; display: inline-flex; align-items: center; gap: 10px; padding: 7px 12px; font-size: 15px; border-radius: 53px; position: relative; top: -17px; margin-bottom: 14px; transition: none; box-shadow: 0 0 20px var(--badge-glow); }
       .tagline-absolute .chip { background-color: var(--badge-lime); color: black; padding: 6px 12px; border-radius: 53px; font-size: 13px; font-weight: bold; }
 
       .hero { text-align: center; padding: 80px 20px 30px; }
       .hero-upper { margin-top: 40px; }
-
       h1, h2 { font-family: "Shoika", sans-serif; font-weight: 400; }
       h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; line-height: 1.1; }
       .hero h1 span { display: block; margin-top: 8px; }
@@ -119,13 +117,11 @@
       .moving-line-wrapper .moving-line-content { min-width: inherit; min-height: inherit; padding: 10px; z-index: 2 !important; position: relative; width: 100%; height: 100%; transform-origin: center; background: inherit; border-radius: inherit; overflow: inherit; }
       @keyframes move-around { 0% { top: -20px; left: -20px; } 25% { top: -20px; left: calc(100% - 20px); } 50% { top: calc(100% - 20px); left: calc(100% - 20px); } 75% { top: calc(100% - 20px); left: -20px; } 100% { top: -20px; left: -20px; } }
       .yellow-line { position: absolute; width: 30px; height: 30px; background: rgba(191, 246, 17, 0.8); box-shadow: 0 0 40px 30px rgba(191, 246, 17, 0.8); border-radius: 50%; animation: move-around 8s linear infinite; z-index: 0 !important; }
-
       .insight-left img { width: 520px; border-radius: 20px; display: block; }
       .insight-icon-row { display: flex; align-items: center; gap: 16px; margin-top: 40px; margin-bottom: 30px; margin-left: -18px; }
       .circle-icon { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; background: #000; border: 4px solid #93e533; }
       .insight-right h2 { font-size: 44px; color: #fff9f9; margin-bottom: 26px; font-weight: 400; }
       .insight-right p { color: #d8cccc; font-size: 22px; margin-bottom: 38px; font-weight: 400; }
-
       .cta-outline { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; font-size: 20px; background-color: #adff00; color: black; border: none; border-radius: 12px; text-decoration: none; transition: box-shadow 0.3s ease; font-weight: 500; }
       .cta-outline:hover { box-shadow: 0 0 16px #adff00; }
 
@@ -159,7 +155,6 @@
       @media (max-width: 900px)  { .logo-strip { --side-gap: 260px; margin-top: 34px; } }
       @media (max-width: 640px)  { .logo-strip { --side-gap: 160px; margin-top: 28px; } .logo-fade { width: 120px; } }
 
-      /* EXACT arrow animation */
       .animated-arrow-bttn { overflow: hidden; }
       .animated-arrow { display: inline-block; position: relative; transition: transform .3s ease; }
       .animated-arrow, .animated-arrow::before { color: currentColor; }
@@ -201,7 +196,6 @@
       .review-dot { width: 14px; height: 14px; border-radius: 50%; background: #777; opacity: 1; cursor: pointer; display: inline-block; border: none; padding: 0; appearance: none; outline: none; touch-action: manipulation; }
       .review-dot.active { background: #b9f03d; }
       .review-dot:focus-visible { box-shadow: 0 0 0 3px rgba(185,240,61,.35); outline: none; }
-
       .leave-review-wrap { display: flex; justify-content: center; }
       .leave-review { background: #adff00; color: #000; font-size: 18px; border: none; border-radius: 12px; padding: 14px 26px; cursor: pointer; font-weight: 500; transition: box-shadow 0.3s ease; }
       .leave-review:hover { box-shadow: 0 0 14px #adff00; }
@@ -342,6 +336,37 @@
         .watch-video-section { display: none; }
       }
       @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
+
+      /* === desktop fixes: top bar, hero lift, insights layout === */
+      @media (min-width: 981px) {
+        /* ensure desktop menu look */
+        .menu-toggle, .menu-overlay, .menu-panel { display: none !important; }
+
+        /* hero: raise content and preview slightly */
+        .hero-wrapper { margin-top: 92px; }           /* was 120px */
+        .hero { padding: 64px 20px 22px; }
+        .tagline-absolute { top: -10px; margin-bottom: 10px; }
+        .app-container { margin: 8px auto 0; }
+        .app-frame { margin-top: -28px; }             /* lifts the tilted preview */
+
+        /* insights: two columns with room for the right text block */
+        .insight-section { padding: 70px 20px 70px; }
+        .insight-content {
+          display: grid;
+          grid-template-columns: 560px 1fr;           /* left image | right copy */
+          align-items: center;
+          justify-content: center;
+          gap: 64px;
+          max-width: 1300px;
+          margin: 0 auto;
+        }
+        .insight-left { margin-left: 0; }
+        .moving-line-wrapper { width: 560px; max-width: 100%; border-radius: 16px; }
+        .moving-line-content img { width: 100%; height: auto; border-radius: 16px; }
+        .insight-right { max-width: 540px; }
+        .insight-icon-row { margin-left: 0; gap: 14px; }
+        .circle-icon { width: 80px; height: 80px; }
+      }
     </style>
   </head>
   <body>
@@ -623,14 +648,14 @@
     </footer>
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.image/*" style="display: none" />
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init({ once: true });
       document.addEventListener('DOMContentLoaded', () => {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; // FIXED paren
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; // fixed paren
         document.body.classList.add('stage1');
         if (reduce) { document.body.classList.add('stage2','stage3'); return; }
         setTimeout(() => document.body.classList.add('stage2'), 80);
@@ -951,34 +976,84 @@
           } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
         }
 
+        const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
         const input = document.getElementById("contractFile");
-        const inputGeneric = document.getElementById("contractFile"); // ensure defined
         const inputCamera = document.getElementById("contractCamera");
         const roleUI = document.getElementById("rolePicker");
-        const ctaWrap = document.getElementById("ctaWrap");
-        const ctaBtn = document.getElementById("reviewBtn");
 
         let chosenRole = null; let pickedFiles = []; let finished = false;
+
         function resetPicker(el){ if (el) el.value = ''; }
         function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
         function updateCounter(counterEl) { counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
         function addFiles(list) { for (const f of Array.from(list)) { if (pickedFiles.length >= 10) break; pickedFiles.push(f); } }
 
-        async function askAddMore(msg = 'Add more photos?') { return new Promise(resolve => { const overlay = document.createElement('div'); overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;'; const box = document.createElement('div'); box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;'; box.innerHTML = `<div style="font-size:18px;margin-bottom:6px;">${msg}</div><div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div><div style="display:flex;gap:10px;justify-content:center;margin-top:14px;"><button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button><button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button></div>`; overlay.appendChild(box); document.body.appendChild(overlay); const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); }; const onKey = (e) => { if (e.key === 'Escape') cleanup(false); }; document.addEventListener('keydown', onKey); box.querySelector('#am-yes').addEventListener('click', () => cleanup(true)); box.querySelector('#am-no').addEventListener('click', () => cleanup(false)); overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); }); }); }
+        async function askAddMore(msg = 'Add more photos?') {
+          return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+            const box = document.createElement('div');
+            box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+            box.innerHTML = `
+              <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+              <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
+              <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+                <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
+                <button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
+              </div>`;
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+            const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
+            const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
+            document.addEventListener('keydown', onKey);
+            box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
+            box.querySelector('#am-no').addEventListener('click', () => cleanup(false));
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+          });
+        }
+
         async function maybeAddMoreAndReopenCamera() { if (pickedFiles.length >= 10) { finishPicking(); return; } const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`); if (yes) { resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); } }
         function finishPicking() { if (finished) return; finished = true; ctaWrap.style.display = "none"; roleUI.hidden = false; }
 
+        const ctaWrap = document.getElementById("ctaWrap");
+        const ctaBtn = document.getElementById("reviewBtn");
         const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
-        ctaBtn.addEventListener("click", (e) => { e.preventDefault(); finished = false; pickedFiles = []; updateCounter(counterEl); if (isMobile()) { resetPicker(inputGeneric); inputGeneric.click(); } else { resetPicker(input); input.click(); } });
+
+        ctaBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          finished = false;
+          pickedFiles = [];
+          updateCounter(counterEl);
+          if (isMobile()) {
+            // your original code referenced inputGeneric; keeping the same behavior as you had
+            const inputGeneric = document.getElementById("contractFile");
+            inputGeneric.value = '';
+            inputGeneric.click();
+          } else {
+            input.value = '';
+            input.click();
+          }
+        });
+
         input.addEventListener("change", () => { if (!input.files || !input.files.length) return; pickedFiles = Array.from(input.files); finishPicking(); });
-        inputGeneric.addEventListener('change', () => { if (!inputGeneric.files || !inputGeneric.files.length) return; addFiles(inputGeneric.files); updateCounter(counterEl); const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000); if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); } });
+
+        // keep parity with your current behavior for generic input
+        const inputGeneric = document.getElementById("contractFile");
+        inputGeneric.addEventListener('change', () => {
+          if (!inputGeneric.files || !inputGeneric.files.length) return;
+          addFiles(inputGeneric.files);
+          updateCounter(counterEl);
+          const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
+          if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); }
+        });
+
         inputCamera.addEventListener('change', () => { if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; } addFiles(inputCamera.files); updateCounter(counterEl); maybeAddMoreAndReopenCamera(); });
 
         roleUI.querySelectorAll('.role-btn').forEach(btn => {
           btn.addEventListener('click', async () => {
             roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            chosenRole = btn.dataset.role;
+            const chosenRole = btn.dataset.role;
             if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
             let payload;
             try {
