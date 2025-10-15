@@ -253,6 +253,76 @@
       .watch-btn, .leave-review { text-decoration: none !important; }
       .watch-btn:hover, .leave-review:hover { text-decoration: none !important; }
       .site-footer .footer-links a, .site-footer .footer-links a:visited, .footer-bottom-links a, .footer-bottom-links a:visited { color: #c5c5c5; text-decoration: none; }
+/* === Mobile top menu (hamburger) UI === */
+.menu-toggle{
+  position:relative; width:34px; height:24px;
+  border:none; background:transparent; cursor:pointer;
+  /* hidden on desktop already via your @media(min-width:981px) rule */
+}
+.menu-toggle .bar{
+  position:absolute; left:0; right:0; height:2px;
+  background:#ffffff; border-radius:2px;
+  transition:transform .2s ease, top .2s ease, opacity .2s ease;
+}
+.menu-toggle .b1{ top:3px; }
+.menu-toggle .b2{ top:11px; }
+.menu-toggle .b3{ top:19px; }
+.menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
+.menu-toggle.open .b2{ opacity:0; }
+.menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
+
+/* overlay + dropdown panel */
+.menu-overlay{
+  position:fixed; inset:0; background:transparent; opacity:0;
+  pointer-events:none; transition:opacity .18s ease; z-index:999;
+}
+.menu-overlay.show{ opacity:1; pointer-events:auto; }
+
+.menu-panel{
+  position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
+  width:min(720px, calc(100% - 28px));
+  background:var(--panel);
+  border:1px solid var(--bar-border); border-top:none;
+  border-radius:0 0 16px 16px;
+  padding:18px 22px 22px;
+  box-shadow:0 20px 34px rgba(0,0,0,.55);
+  z-index:1001; pointer-events:none;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
+
+.menu-list{ margin-top:2px; }
+.menu-item{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 4px; font-size:24px; color:#fff; text-decoration:none;
+  border-bottom:none;
+}
+.menu-item .chev{ opacity:.9; }
+.menu-disclaimer{
+  text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6;
+  font-size:16px;
+}
+
+/* topbar bottom merge when panel is open */
+.topbar.merged{
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+  border-bottom-color:transparent;
+}
+/* === Footer (shared bits used by the mobile footer) === */
+.site-footer{
+  /* your mobile block already overrides background/border/padding on mobile */
+  color:#fff;
+}
+.footer-wrap{ max-width:980px; margin:0 auto; }
+
+.footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
+.social-btn{
+  width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
+  transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
+}
+.social-btn svg{ width:18px; height:18px; fill:#ffffff; }
 
       /* Mobile styles */
       @media (max-width: 980px) {
@@ -263,6 +333,10 @@
           background-attachment: fixed, fixed;
         }
         .topbar { width: min(1120px, calc(100% - 28px)); min-height: 68px; padding: 10px 16px; transition: border-radius .18s ease, border-color .18s ease; }
+        /* force mobile header behavior */
+.topbar-nav { display: none !important; }
+.menu-toggle { display: block !important; }
+
         .topbar.merged { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
         .topbar-logo { height: 34px; }
         .topbar-brand { font-size: 26px; }
@@ -669,47 +743,47 @@
     </div>
 
     <!-- Simple mobile footer (shown on mobile only by CSS) -->
-    <footer class="site-footer">
-      <div class="footer-wrap">
-        <div class="footer-brandrow">
-          <div class="footer-logo">
-            <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
-            <span>SignSense</span>
-          </div>
-          <div class="footer-copy">© 2025 SignSense. All rights reserved.</div>
-          <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
-        </div>
-        <div class="footer-socials">
-          <a class="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
-          </a>
-          <a class="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
-          </a>
-          <a class="social-btn" href="https://www.instagram.com/signsense.io/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
-          </a>
-        </div>
-        <div class="footer-cols">
-          <div class="footer-col">
-            <h4>Help</h4>
-            <a class="footer-link" href="contact.html">Contact us</a>
-            <a class="footer-link" href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
-          </div>
-          <div class="footer-col">
-            <h4>Product</h4>
-            <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
-          </div>
-          <div class="footer-col">
-            <h4>Legal</h4>
-            <a class="footer-link" href="terms.html">Terms of Service</a>
-            <a class="footer-link" href="privacy.html">Privacy Policy</a>
-            <a class="footer-link" href="cookies.html">Cookie Policy</a>
-          </div>
-        </div>
-        <div class="footer-bottom-space"></div>
+  <footer class="site-footer">
+  <div class="footer-wrap">
+    <div class="footer-brandrow">
+      <div class="footer-logo">
+        <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+        <span>SignSense</span>
       </div>
-    </footer>
+      <div class="footer-copy">© 2025 SignSense. All rights reserved.</div>
+      <div class="footer-disclaimer">For informational use only. Not legal advice.</div>
+    </div>
+    <div class="footer-socials">
+      <a class="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z"/></svg>
+      </a>
+      <a class="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z"/></svg>
+      </a>
+      <a class="social-btn" href="https://www.instagram.com/signsense.io/" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5a5.5 5.5 0 1 1 0 11.001 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 .001 7.001A3.5 3.5 0 0 0 12 9.5Zm5.25-2.25a1 1 0 1 1 0 2.001 1 1 0 0 1 0-2Z"/></svg>
+      </a>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Help</h4>
+        <a class="footer-link" href="contact.html">Contact us</a>
+        <a class="footer-link" href="https://youtube.com" target="_blank" rel="noopener">How it Works</a>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a class="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">Leave Review</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a class="footer-link" href="terms.html">Terms of Service</a>
+        <a class="footer-link" href="privacy.html">Privacy Policy</a>
+        <a class="footer-link" href="cookies.html">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 
     <!-- Upload inputs -->
     <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.image/*" style="display: none" />
