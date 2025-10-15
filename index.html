@@ -221,9 +221,7 @@
       .tagline-absolute .tilt-arrow, .section-badge .tilt-arrow { animation: arrow-float 1.8s ease-in-out infinite; }
       .tagline-absolute .tilt-arrow { background: none !important; color: inherit !important; padding: 0 !important; border-radius: 0 !important; }
       @keyframes arrow-float { 0%,100% { transform: rotate(18deg) translate(0,0); } 50% { transform: rotate(28deg) translate(2px,-2px); } }
-      @media (prefers-reduced-motion: reduce) { .tagline-absolute .tilt-arrow, .section-badge .tilt-arrow { animation: none; } .cta-btn:hover .tilt-arrow, .cta-outline:hover .tilt-arrow { translate: 0 0; }
-
-      }
+      @media (prefers-reduced-motion: reduce) { .tagline-absolute .tilt-arrow, .section-badge .tilt-arrow { animation: none; } .cta-btn:hover .tilt-arrow, .cta-outline:hover .tilt-arrow { translate: 0 0; } }
 
       .watch-video-section { padding: 100px 40px; background-color: transparent; max-width: 1400px; margin: 0 auto; }
       .video-content { display: flex; align-items: center; justify-content: flex-start; gap: 120px; flex-wrap: wrap; padding-left: 35px; }
@@ -256,39 +254,87 @@
       .watch-btn:hover, .leave-review:hover { text-decoration: none !important; }
       .site-footer .footer-links a, .site-footer .footer-links a:visited, .footer-bottom-links a, .footer-bottom-links a:visited { color: #c5c5c5; text-decoration: none; }
 
-      /* ===========
-         MOBILE MENU BASE STYLES (from your mobile file)
-         These are harmless on desktop; hidden via @media (min-width:981px) below
-      ===========*/
-      .menu-toggle{
-        display:none; position:relative; width:34px; height:24px; border:none; background:transparent; cursor:pointer;
+      /* Mobile styles */
+      @media (max-width: 980px) {
+        body {
+          background:
+            radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
+            linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
+          background-attachment: fixed, fixed;
+        }
+        .topbar { width: min(1120px, calc(100% - 28px)); min-height: 68px; padding: 10px 16px; transition: border-radius .18s ease, border-color .18s ease; }
+        .topbar.merged { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
+        .topbar-logo { height: 34px; }
+        .topbar-brand { font-size: 26px; }
+        .hero-wrapper { margin-top: 82px; }
+        .hero { padding: 64px 16px 18px; }
+        .tagline-absolute { background: #090922; color: #bdb7ff; padding: 6px 12px; font-size: 13px; top: -6px; margin-bottom: 10px; box-shadow: none; }
+        .tagline-absolute .chip { padding: 5px 10px; font-size: 12px; font-weight: 700; }
+        h1 { font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing: -0.4px; }
+        .hero h1 .lime { color: var(--lime); }
+        .subtext { margin: 16px auto 26px; font-size: 18px; line-height: 1.45; max-width: 680px; }
+        .cta-area { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 10px; }
+        .cta-btn { padding: 14px 26px; }
+        .role-picker { gap: 12px; background: transparent; }
+        .role-title { font-size: 18px; }
+        .role-buttons { gap: 10px; }
+        .role-btn { padding: 10px 14px; font-size: 16px; }
+        .app-container { display: none; }
+        .logo-strip { margin: 46px auto 10px; width: 99.5vw; }
+        .logo-piece { flex: 0 0 200%; width: 200%; }
+        .logo-fade { width: 110px; }
+        .logo-fade.left  { background: linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+        .logo-fade.right { background: linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+        .section-badge { background: #090922; color: #bdb7ff; box-shadow: none; }
+        .section-title { font-size: clamp(34px, 6.2vw, 50px); line-height: 1.25; }
+        .section-title .lime { color: var(--lime); }
+        .section-sub { margin-top: 10px; font-size: 19px; max-width: 860px; margin-left: auto; margin-right: auto; }
+        .insight-section { padding: 38px 16px 40px; }
+        .insight-content { gap: 54px; max-width: 1100px; }
+        .insight-left { margin-left: 0; }
+        .moving-line-wrapper { border-radius: 12px; }
+        .moving-line-content img { width: min(420px, 80vw); border-radius: 16px; }
+        .insight-right { display: none; }
+        .scroll-wrapper { padding: 0 18px; }
+        .scroll-section { padding: 22px 0; margin: 28px auto 0; transform: scale(0.88); }
+        .scroll-section h3 { font-size: 20px; margin: 28px 0 36px; }
+        .scroll-strip { gap: 22px; padding: 12px 0; }
+        .scroll-item { padding: 12px 20px; gap: 14px; border-radius: 42px; }
+        .scroll-item img { width: 40px; height: 40px; }
+        .scroll-item span { font-size: 16px; }
+        .reviews-section { padding: 60px 16px 92px; max-width: 1000px; margin: 64px auto 0; }
+        .reviews-title h2 { font-size: clamp(30px, 5.6vw, 44px); }
+        .reviews-sub { font-size: 18px; margin-top: 8px; }
+        .review-nav { display: none; }
+        .reviews-viewport { margin-top: 18px; }
+        .reviews-track { gap: 18px; }
+        .review-card { border-radius: 20px; }
+        .review-card img { border-radius: 16px; }
+        .side-nav { display: grid; }
+        .review-dots { gap: 12px; margin: 18px 0 22px; }
+        .review-dot { width: 12px; height: 12px; }
+        .faq-section { padding: 74px 16px; }
+        .faq-title { font-size: clamp(32px, 8vw, 64px); margin-bottom: 28px; }
+        .faq-list { gap: 18px; padding-left: 0; }
+        .faq-q { padding: 22px 20px; font-size: 24px; text-align: left; }
+        .faq-a { font-size: 20px; padding: 0 20px; }
+        .faq-item.open .faq-a { font-size: 20px; padding: 14px 20px 20px; max-height: 460px; }
+        .site-footer { background: #0a0a0a; border-top: 1px solid var(--bar-border); padding: 22px 14px 30px; display: block; }
+        .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display: none; }
+        .footer-brandrow { display: grid; }
+        .footer-logo { display: flex; align-items: flex-start; gap: 6px; border-radius: 8px; margin-top: -4px; }
+        .footer-logo span { font-size: 22px; font-weight: 400; }
+        .footer-copy { font-size: 15px; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1.3; }
+        .footer-disclaimer { font-size: 12px; color: #bdb7bd; }
+        .footer-socials { display: flex; gap: 12px; margin: 18px 0 24px; }
+        .footer-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; margin-top: 10px; }
+        .footer-col h4 { font-size: 15px; font-weight: 400; margin-bottom: 8px; color: #ffffff; }
+        .footer-link { display: block; text-decoration: none; font-size: 14px; line-height: 1.25; color: #d0d0d0; margin: 8px 0 0; white-space: nowrap; }
+        .footer-link:hover { color: #ffffff; text-decoration: none; }
+        .footer-bottom-space { height: 2px; }
+        .watch-video-section { display: none; }
       }
-      .menu-toggle .bar{ position:absolute; left:0; right:0; height:2px; background:#ffffff; border-radius:2px; transition:transform .2s ease, top .2s ease, opacity .2s ease; }
-      .menu-toggle .b1{ top:3px; } .menu-toggle .b2{ top:11px; } .menu-toggle .b3{ top:19px; }
-      .menu-toggle.open .b1{ top:11px; transform:rotate(45deg); }
-      .menu-toggle.open .b2{ opacity:0; }
-      .menu-toggle.open .b3{ top:11px; transform:rotate(-45deg); }
-
-      .menu-overlay{
-        position:fixed; inset:0; background:transparent; opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:999;
-      }
-      .menu-panel{
-        position:fixed; left:50%; transform:translate(-50%,-8px); opacity:0;
-        width:min(720px, calc(100% - 28px));
-        background:var(--panel);
-        border:1px solid var(--bar-border); border-top:none;
-        border-radius:0 0 16px 16px;
-        padding:18px 22px 22px;
-        box-shadow:0 20px 34px rgba(0,0,0,.55);
-        z-index:1001; pointer-events:none;
-        transition:transform .18s ease, opacity .18s ease;
-      }
-      .menu-panel.open{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
-      .menu-overlay.show{ opacity:1; pointer-events:auto; }
-      .menu-list{ margin-top:2px; }
-      .menu-item{ display:flex; align-items:center; justify-content:space-between; padding:16px 4px; font-size:24px; color:#fff; text-decoration:none; border-bottom:none; }
-      .menu-item .chev{ opacity:.9; }
-      .menu-disclaimer{ text-align:center; color:#cfcfcf; opacity:.9; margin-top:22px; line-height:1.6; font-size:16px; }
+      @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
 
       /* === desktop fixes: top bar, hero/app lower, insights layout === */
       @media (min-width: 981px) {
@@ -296,19 +342,19 @@
         .menu-toggle, .menu-overlay, .menu-panel { display: none !important; }
 
         /* hero lowered slightly to match reference */
-        .hero-wrapper { margin-top: 120px; }     /* was 92px in prior tweak */
-        .hero { padding: 80px 20px 30px; }       /* restore original top padding */
-        .tagline-absolute { top: -17px; }        /* match reference offset */
+        .hero-wrapper { margin-top: 120px; }
+        .hero { padding: 80px 20px 30px; }
+        .tagline-absolute { top: -17px; }
 
         /* app preview slightly lower */
         .app-container { margin: 30px auto 0; }
-        .app-frame { margin-top: -20px; }        /* was -28px (raised); now lower */
+        .app-frame { margin-top: -20px; }
 
         /* insights: two columns with room for the right text block */
         .insight-section { padding: 70px 20px 70px; }
         .insight-content {
           display: grid;
-          grid-template-columns: 560px 1fr;      /* left image | right copy */
+          grid-template-columns: 560px 1fr;
           align-items: center;
           justify-content: center;
           gap: 64px;
@@ -323,165 +369,49 @@
         .circle-icon { width: 80px; height: 80px; }
       }
 
-      /* =========================
-         MOBILE-ONLY OVERRIDES  ≤980px
-         (exactly your first code’s mobile styles)
-      ========================= */
-      @media (max-width: 980px) {
-        body{
-          background:
-            radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
-            linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
-          background-attachment: fixed, fixed;
-        }
-        .topbar { width:min(1120px, calc(100% - 28px)); min-height:68px; padding:10px 16px; transition:border-radius .18s ease, border-color .18s ease; }
-        .topbar.merged{ border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
-        .topbar-logo{ height:34px; }
-        .topbar-brand{ font-size:26px; }
+      /* ========== helpers + MOBILE-ONLY OVERRIDES you requested ========== */
 
-        /* show mobile hamburger, hide desktop nav */
-        .topbar-nav{ display:none; }
-        .menu-toggle{ display:block; }
+      /* helpers */
+      @media (max-width: 980px){
+        .hide-on-mobile { display: none !important; }
+        .show-on-mobile { display: initial !important; }
+      }
+      @media (min-width: 981px){
+        .show-on-mobile { display: none !important; }
+      }
 
-        .hero-wrapper{ margin-top:82px; }
-        .hero{ text-align:center; padding:64px 16px 18px; }
-        .tagline-absolute{
-          display:inline-flex; align-items:center; gap:10px;
-          background:#090922; color:#bdb7ff; padding:6px 12px; border-radius:53px;
-          position:relative; top:-6px; margin-bottom:10px;
-          box-shadow:none; font-size:13px;
-        }
-        .tagline-absolute .chip{ background:#adff00; color:#000; padding:5px 10px; border-radius:53px; font-weight:700; font-size:12px; }
-        h1{ font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing:-0.4px; }
-        .hero h1 .lime{ color:var(--lime); }
-        .subtext{ color:var(--muted); margin:16px auto 26px; font-size:18px; line-height:1.45; max-width:680px; }
+      /* mobile overrides */
+      @media (max-width: 980px){
+        /* hide purple artwork and particles; keep dark gradient (already set) */
+        body::before { display: none !important; }
+        .particle-container { display: none !important; }
 
-        .cta-area,.cta-wrapper{ display:flex; justify-content:center; align-items:center; flex-direction:column; gap:10px; }
-        .cta-btn{ background:#fff; color:#000; border:2px solid #999; padding:14px 26px; border-radius:16px; font-size:18px; }
-        .role-picker{ display:inline-flex; align-items:center; gap:12px; background:transparent; }
-        .role-title{ font-size:18px; color:#fff; }
-        .role-buttons{ display:inline-flex; gap:10px; }
-        .role-btn{ background:#a7fd3c; color:#000; border:2px solid transparent; border-radius:12px; padding:10px 14px; font-size:16px; }
-        .role-btn.active{ border-color:#fff; }
-
-        .app-container{ display:none; }
-        /* show YouTube style used in the mobile file */
-        .yt-wrap{
-          display:block;
+        /* mobile-only YouTube card style (placed under CTA below) */
+        .yt-wrap { 
           margin:22px auto 0; width:min(760px, 92vw);
-          border-radius:18px; overflow:hidden;
-          box-shadow:0 8px 24px rgba(0,0,0,.45);
-          border:1px solid rgba(255,255,255,.06);
-          background:#0a0a0a;
+          border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.45);
+          border:1px solid rgba(255,255,255,.06); background:#0a0a0a;
         }
         .yt-box{ position:relative; width:100%; aspect-ratio:16/9; }
         .yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
-        .logo-strip{ margin: 46px auto 10px; width:99.5vw; overflow:hidden; position:relative; }
-        .logo-piece{ flex:0 0 200%; width:200%; }
-        .logo-fade{ width:110px; }
-        .logo-fade.left{ background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
-        .logo-fade.right{ background:linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+        /* hide insight right column on mobile */
+        .insight-right { display: none !important; }
 
-        .section-badge{ background:#090922; color:#bdb7ff; box-shadow:none; }
-        .section-title{ text-align:center; font-size:clamp(34px, 6.2vw, 50px); font-weight:400; line-height:1.25; margin-top:14px; }
-        .section-title .lime{ color:var(--lime); }
-        .section-sub{
-          text-align:center; color:var(--muted); margin-top:10px; font-size:19px; line-height:1.4;
-          max-width:860px; margin-left:auto; margin-right:auto;
-        }
+        /* remove scroller side fades/shadows; adjust heading size + exact 3-line layout is done via <br> in HTML */
+        .scroll-shadow-left, .scroll-shadow-right { display: none !important; }
+        .scroll-section h3 { font-size: 20px !important; line-height: 1.4; margin: 28px 0 36px !important; }
 
-        .insight-section{ padding:38px 16px 40px; }
-        .insight-content{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:54px; max-width:1100px; margin:0 auto; }
-        .insight-left{ margin-left:0; }
-        .moving-line-wrapper{ background:#000; border-radius:12px; padding:2px; min-width:200px; min-height:200px; }
-        .moving-line-content{ min-width:inherit; min-height:inherit; padding:10px; border-radius:inherit; }
-        .moving-line-content img{ display:block; width:min(420px, 80vw); border-radius:16px; }
+        /* reviews: no arrows; centered header */
+        .review-nav { display: none !important; }
+        .reviews-header { grid-template-columns: 1fr !important; }
+        .reviews-title { text-align: center !important; }
 
-        .scroll-wrapper{ padding:0 18px; }
-        .scroll-section{
-          position:relative; padding:22px 0; background:linear-gradient(to bottom, #0e0c13, #181522, #040304);
-          border:1px solid rgba(36,36,37,.78); border-radius:18px; margin:28px auto 0; overflow:hidden; max-width:1280px; transform:scale(.88);
-        }
-        .scroll-section h3{ text-align:center; font-size:20px; line-height:1.4; font-weight:400; margin:28px 0 36px; }
-        .scroll-strip{ display:flex; gap:22px; padding:12px 0; white-space:nowrap; flex-shrink:0; }
-        .scroll-item{ background:rgba(26,24,34,.57); border:1px solid #3b3b3b; border-radius:42px; padding:12px 20px; display:inline-flex; align-items:center; gap:14px; }
-        .scroll-item img{ width:40px; height:40px; border-radius:50%; background:#101010; object-fit:cover; }
-        .scroll-item span{ font-size:16px; }
-
-        .reviews-section{ padding:60px 16px 92px; max-width:1000px; margin:64px auto 0; }
-        .reviews-title h2{ font-size:clamp(30px, 5.6vw, 44px); font-weight:400; }
-        .reviews-sub{ font-size:18px; color:#a8a8a8; margin-top:8px; text-align:center; }
-
-        .reviews-viewport{ overflow:hidden; margin-top:18px; position:relative; touch-action:pan-y; }
-        .reviews-track{ display:flex; gap:18px; transition:transform .32s ease; }
-        .review-card{ flex:0 0 100%; background:#000; border:1px solid #262626; border-radius:20px; padding:10px; position:relative; }
-        .review-card img{ width:100%; display:block; border-radius:16px; }
-        .review-dots{ display:flex; justify-content:center; gap:12px; margin:18px 0 22px; }
-        .review-dot{ width:12px; height:12px; border-radius:50%; background:#777; border:none; cursor:pointer; }
-        .review-dot.active{ background:#b9f03d; }
-
-        .side-nav{
-          position:absolute; top:50%; transform:translateY(-50%);
-          width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.14);
-          background:#0f0f0f; color:#fff; display:grid; place-items:center; cursor:pointer;
-          box-shadow:0 6px 18px rgba(0,0,0,0.35);
-        }
-        .side-nav.left{ left:-6px; }
-        .side-nav.right{ right:-6px; }
-        .side-nav:active{ transform:translateY(-50%) scale(.98); }
-        .side-nav span{ font-size:22px; line-height:1; }
-
-        .leave-review-wrap{ display:flex; justify-content:center; }
-        .leave-review{ background:#adff00; color:#000; font-size:18px; border:none; border-radius:12px; padding:14px 26px; cursor:pointer; font-weight:500; }
-
-        .faq-section{ max-width:1200px; margin:0 auto; padding:74px 16px; text-align:initial; }
-        .faq-title{ text-align:center; font-size:clamp(32px, 8vw, 64px); line-height:1.1; font-weight:400; margin-bottom:28px; }
-        .faq-list{ max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:18px; text-align:left; padding-left:0; }
-        .faq-item{ border-radius:24px; overflow:hidden; background:transparent; }
-        .faq-q{
-          width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
-          padding:22px 20px; border:none; cursor:pointer; background:transparent; color:#fff; font-size:24px; font-weight:500; border-radius:24px; text-align:left;
-        }
-        .faq-item.open{ background:#191624; border-radius:24px; }
-        .faq-item.open .faq-q{ background:transparent; border-radius:24px 24px 0 0; }
-        .faq-a{
-          background:transparent; color:#cfcbd6; font-size:20px; line-height:1.7;
-          padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .28s ease, opacity .25s ease, padding .2s ease; text-align:left;
-        }
-        .faq-item.open .faq-a{ padding:14px 20px 20px; max-height:460px; opacity:1; border-radius:0 0 24px 24px; }
-
-        /* FOOTER (mobile) from your mobile file */
-        .site-footer{
-          background:#0a0a0a; border-top:1px solid var(--bar-border); padding:22px 14px 30px; color:#fff; display:block;
-        }
-        .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display:none; }
-        .footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
-        .footer-logo{ display:flex; align-items:flex-start; gap:6px; }
-        .footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
-        .footer-logo span{ font-size:22px; font-weight:400; }
-        .footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
-        .footer-disclaimer{ font-size:12px; color:#bdbdbd; }
-        .footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
-        .social-btn{
-          width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
-          border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
-          transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
-        }
-        .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
-        .footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
-        .footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
-        .footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
-        .footer-link:hover{ color:#ffffff; text-decoration:none; }
-        .footer-bottom-space{ height:2px; }
-
-        .watch-video-section { display: none; }
-      }
-
-      @media (max-width: 340px){
-        .footer-logo span{ font-size:20px; }
-        .footer-copy{ font-size:14px; }
-        .footer-link{ font-size:13px; }
+        /* footer: hide desktop footer wrapper, use simple mobile footer block */
+        .site-footer-wrap { display: none !important; }
+        footer.site-footer { display: block !important; }
+        .footer-brandrow{ display:grid; }
+        .footer-copy{ text-align:left; }
       }
     </style>
   </head>
@@ -532,13 +462,22 @@
         <div id="ctaWrap" class="cta-wrapper">
           <button id="reviewBtn" class="cta-btn animated-arrow-bttn">Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span></button>
         </div>
-
-        <!-- this rolePicker stays hidden until file picked (desktop & mobile) -->
         <div id="rolePicker" class="role-picker" hidden>
           <span class="role-title">You are:</span>
           <div class="role-buttons">
             <button type="button" class="role-btn" data-role="signer">The Signer</button>
             <button type="button" class="role-btn" data-role="writer">The Writer</button>
+          </div>
+        </div>
+
+        <!-- MOBILE-ONLY YOUTUBE placed between CTA and logo strip -->
+        <div class="yt-wrap show-on-mobile">
+          <div class="yt-box">
+            <iframe
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+              title="SignSense video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
           </div>
         </div>
       </section>
@@ -549,17 +488,6 @@
             <div class="glint-line" aria-hidden="true"></div>
             <img class="app-preview" src="https://i.imgur.com/slsiM6i.png" alt="App Preview" />
           </div>
-        </div>
-      </div>
-
-      <!-- Mobile-only video wrapper (shown via CSS in ≤980px) -->
-      <div class="yt-wrap" style="display:none">
-        <div class="yt-box">
-          <iframe
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
-            title="SignSense video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen></iframe>
         </div>
       </div>
     </div>
@@ -586,7 +514,8 @@
           </div>
         </div>
 
-        <div class="insight-right">
+        <!-- Hide on mobile (also CSS-enforced) -->
+        <div class="insight-right hide-on-mobile">
           <div class="insight-icon-row">
             <img class="circle-icon" src="https://i.imgur.com/VVGvghi.png" alt="AI icon" loading="lazy" />
             <img class="circle-icon" src="https://i.imgur.com/woCjWUt.png" alt="Speed icon" loading="lazy" />
@@ -603,7 +532,12 @@
     <div class="scroll-full">
       <div class="scroll-wrapper">
         <section class="scroll-section" data-aos="fade-up">
-          <h3>Everything you need for clarity and security in one seamless experience.</h3>
+          <!-- exact 3-line layout for mobile via <br> -->
+          <h3>
+            Everything you need for clarity<br />
+            &amp; security in one seamless<br />
+            experience.
+          </h3>
           <div class="scroll-strip top-row"></div>
           <div class="scroll-strip bottom-row"></div>
           <div class="scroll-shadow-left"></div>
@@ -638,10 +572,6 @@
       </div>
 
       <div class="reviews-viewport" id="reviewsViewport">
-        <!-- Mobile arrow buttons overlay (visible via mobile CSS) -->
-        <button class="side-nav left" id="revPrevMobile" aria-label="Previous review" style="display:none"><span>‹</span></button>
-        <button class="side-nav right" id="revNextMobile" aria-label="Next review" style="display:none"><span>›</span></button>
-
         <div class="reviews-track" id="reviewsTrack">
           <div class="review-card"><img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" /></div>
           <div class="review-card"><img src="https://i.imgur.com/k42nv4C.png" alt="Review 2" /></div>
@@ -738,7 +668,7 @@
       </div>
     </div>
 
-    <!-- Mobile footer (shown by mobile CSS) -->
+    <!-- Simple mobile footer (shown on mobile only by CSS) -->
     <footer class="site-footer">
       <div class="footer-wrap">
         <div class="footer-brandrow">
@@ -1158,9 +1088,14 @@
           finished = false;
           pickedFiles = [];
           updateCounter(counterEl);
-          const inputGeneric = document.getElementById("contractFile");
-          inputGeneric.value = '';
-          inputGeneric.click();
+          if (isMobile()) {
+            const inputGeneric = document.getElementById("contractFile");
+            inputGeneric.value = '';
+            inputGeneric.click();
+          } else {
+            input.value = '';
+            input.click();
+          }
         });
 
         input.addEventListener("change", () => { if (!input.files || !input.files.length) return; pickedFiles = Array.from(input.files); finishPicking(); });
