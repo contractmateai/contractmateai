@@ -326,90 +326,142 @@
 .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
 
       /* Mobile styles */
-      @media (max-width: 980px) {
-        body {
-          background:
-            radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
-            linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
-         background-attachment: scroll, scroll; /* iOS-safe */
-        }
-        .topbar { width: min(1120px, calc(100% - 28px)); min-height: 68px; padding: 10px 16px; transition: border-radius .18s ease, border-color .18s ease; }
-        /* force mobile header behavior */
-.topbar-nav { display: none !important; }
-.menu-toggle { display: block !important; }
+    @media (max-width: 980px){
+  /* ===== base mobile vars / helpers ===== */
+  :root{ --hero-gap: 18px; }                /* controls spacing subtext→CTA and CTA→video */
+  .hide-on-mobile{ display:none !important; }
+  .show-on-mobile{ display:initial !important; }
 
-        .topbar.merged { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
-        .topbar-logo { height: 34px; }
-        .topbar-brand { font-size: 26px; }
-        .hero-wrapper { margin-top: 82px; }
-        .hero { padding: 64px 16px 18px; }
-        .tagline-absolute { background: #090922; color: #bdb7ff; padding: 6px 12px; font-size: 13px; top: -6px; margin-bottom: 10px; box-shadow: none; }
-        .tagline-absolute .chip { padding: 5px 10px; font-size: 12px; font-weight: 700; }
-        h1 { font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing: -0.4px; }
-        .hero h1 .lime { color: var(--lime); }
-        .subtext { margin: 16px auto 26px; font-size: 18px; line-height: 1.45; max-width: 680px; }
-        .cta-area { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 10px; }
-        .cta-btn { padding: 14px 26px; }
-        .role-picker { gap: 12px; background: transparent; }
-        .role-title { font-size: 18px; }
-        .role-buttons { gap: 10px; }
-        .role-btn { padding: 10px 14px; font-size: 16px; }
-        .app-container { display: none; }
-        .logo-strip { margin: 46px auto 10px; width: 99.5vw; }
-        .logo-piece { flex: 0 0 200%; width: 200%; }
-        .logo-fade { width: 110px; }
-        .logo-fade.left  { background: linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
-        .logo-fade.right { background: linear-gradient(to left, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
-        .section-badge { background: #090922; color: #bdb7ff; box-shadow: none; }
-        .section-title { font-size: clamp(34px, 6.2vw, 50px); line-height: 1.25; }
-        .section-title .lime { color: var(--lime); }
-        .section-sub { margin-top: 10px; font-size: 19px; max-width: 860px; margin-left: auto; margin-right: auto; }
-        .insight-section { padding: 38px 16px 40px; }
-        .insight-content { gap: 54px; max-width: 1100px; }
-        .insight-left { margin-left: 0; }
-        .moving-line-wrapper { border-radius: 12px; }
-        .moving-line-content img { width: min(420px, 80vw); border-radius: 16px; }
-        .insight-right { display: none; }
-        .scroll-wrapper { padding: 0 18px; }
-        .scroll-section { padding: 22px 0; margin: 28px auto 0; transform: scale(0.88); }
-        .scroll-section h3 { font-size: 20px; margin: 28px 0 36px; }
-        .scroll-strip { gap: 22px; padding: 12px 0; }
-        .scroll-item { padding: 12px 20px; gap: 14px; border-radius: 42px; }
-        .scroll-item img { width: 40px; height: 40px; }
-        .scroll-item span { font-size: 16px; }
-        .reviews-section { padding: 60px 16px 92px; max-width: 1000px; margin: 64px auto 0; }
-        .reviews-title h2 { font-size: clamp(30px, 5.6vw, 44px); }
-        .reviews-sub { font-size: 18px; margin-top: 8px; }
-        .review-nav { display: none; }
-        .reviews-viewport { margin-top: 18px; }
-        .reviews-track { gap: 18px; }
-        .review-card { border-radius: 20px; }
-        .review-card img { border-radius: 16px; }
-        .side-nav { display: grid; }
-        .review-dots { gap: 12px; margin: 18px 0 22px; }
-        .review-dot { width: 12px; height: 12px; }
-        .faq-section { padding: 74px 16px; }
-        .faq-title { font-size: clamp(32px, 8vw, 64px); margin-bottom: 28px; }
-        .faq-list { gap: 18px; padding-left: 0; }
-        .faq-q { padding: 22px 20px; font-size: 24px; text-align: left; }
-        .faq-a { font-size: 20px; padding: 0 20px; }
-        .faq-item.open .faq-a { font-size: 20px; padding: 14px 20px 20px; max-height: 460px; }
-        .site-footer { background: #0a0a0a; border-top: 1px solid var(--bar-border); padding: 22px 14px 30px; display: block; }
-        .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display: none; }
-        .footer-brandrow { display: grid; }
-        .footer-logo { display: flex; align-items: flex-start; gap: 6px; border-radius: 8px; margin-top: -4px; }
-        .footer-logo span { font-size: 22px; font-weight: 400; }
-        .footer-copy { font-size: 15px; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1.3; }
-        .footer-disclaimer { font-size: 12px; color: #bdb7bd; }
-        .footer-socials { display: flex; gap: 12px; margin: 18px 0 24px; }
-        .footer-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; margin-top: 10px; }
-        .footer-col h4 { font-size: 15px; font-weight: 400; margin-bottom: 8px; color: #ffffff; }
-        .footer-link { display: block; text-decoration: none; font-size: 14px; line-height: 1.25; color: #d0d0d0; margin: 8px 0 0; white-space: nowrap; }
-        .footer-link:hover { color: #ffffff; text-decoration: none; }
-        .footer-bottom-space { height: 2px; }
-        .watch-video-section { display: none; }
-      }
-      @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
+  /* ===== background ===== */
+  body{
+    background:
+      radial-gradient(1200px 60% at 50% 50%, var(--bg-mid) 0%, var(--bg-mid) 60%, rgba(0,0,0,.98) 70%, rgba(0,0,0,.96) 78%, rgba(13,1,27,.98) 88%, var(--bg-deep) 100%),
+      linear-gradient(to bottom, var(--bg-deep) 0%, var(--bg-mid) 30%, var(--bg-mid) 70%, var(--bg-deep) 100%);
+    background-attachment: scroll, scroll;  /* iOS-safe */
+  }
+  body::before, .particle-container{ display:none !important; } /* hide desktop artwork/particles */
+
+  /* ===== top bar / menu ===== */
+  .topbar{ width:min(1120px, calc(100% - 28px)); min-height:68px; padding:10px 16px;
+           transition:border-radius .18s ease, border-color .18s ease; }
+  .topbar-nav{ display:none !important; }   /* force hamburger on mobile */
+  .menu-toggle{ display:block !important; }
+  .topbar.merged{ border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
+  .topbar-logo{ height:34px; }
+  .topbar-brand{ font-size:26px; }
+
+  /* ===== hero + rhythm ===== */
+  .hero-wrapper{ margin-top:68px !important; }  /* bring the page up (was ~82/120) */
+  .hero{ padding:56px 16px 18px !important; }   /* tighter than 64px */
+  .tagline-absolute{ background:#090922; color:#bdb7ff; padding:6px 12px; font-size:13px; top:-6px; margin-bottom:10px; box-shadow:none; }
+  .tagline-absolute .chip{ padding:5px 10px; font-size:12px; font-weight:700; }
+
+  h1{ font-size:clamp(36px, 8.6vw, 68px); line-height:1.08; letter-spacing:-0.4px; }
+  .hero h1 .lime{ color:var(--lime); }      /* only mobile emphasizes green */
+  .subtext{ margin:16px auto var(--hero-gap); font-size:18px; line-height:1.45; max-width:680px; }
+
+  .cta-area{ display:flex; justify-content:center; align-items:center; flex-direction:column; gap:10px; }
+  .cta-btn{ padding:14px 26px; }
+  .cta-wrapper{ margin-top:0 !important; }  /* no extra gap above CTA */
+  #ctaWrap{ margin-bottom:var(--hero-gap) !important; } /* equalized rhythm to video */
+
+  /* YouTube card (between CTA + logos) */
+  .yt-wrap{
+    margin:var(--hero-gap) auto 0; width:min(760px, 92vw);
+    border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.06); background:#0a0a0a;
+  }
+  .yt-box{ position:relative; width:100%; aspect-ratio:16/9; }
+  .yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+  /* role picker sizing */
+  .role-picker{ gap:12px; background:transparent; }
+  .role-title{ font-size:18px; }
+  .role-buttons{ gap:10px; }
+  .role-btn{ padding:10px 14px; font-size:16px; }
+
+  /* desktop-only app preview hidden on mobile */
+  .app-container{ display:none; }
+
+  /* ===== powered-by strip ===== */
+  .logo-strip{ margin:46px auto 10px; width:99.5vw; }
+  .logo-piece{ flex:0 0 200%; width:200%; }
+  .logo-fade{ width:110px; }
+  .logo-fade.left{  background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+  .logo-fade.right{ background:linear-gradient(to left,  rgba(0,0,0,.6), rgba(0,0,0,.25), transparent); }
+
+  /* ===== headline + sub after logos (mobile copy/look) ===== */
+  .section-badge{ background:#090922; color:#bdb7ff; box-shadow:none; }
+  .section-title{ font-size:clamp(34px, 6.2vw, 50px); line-height:1.25; }
+  .section-title .lime{ color:var(--lime); }
+  .section-sub{ margin-top:10px; font-size:19px; max-width:860px; margin-left:auto; margin-right:auto; }
+
+  /* ===== insights ===== */
+  .insight-section{ padding:38px 16px 40px; }
+  .insight-content{ gap:54px; max-width:1100px; }
+  .insight-left{ margin-left:0; }
+  .moving-line-wrapper{ border-radius:12px; }
+  .moving-line-content img{ width:min(420px, 80vw); border-radius:16px; }
+  .insight-right{ display:none !important; } /* hide right column */
+
+  /* ===== scrolling features ===== */
+  .scroll-wrapper{ padding:0 18px; }
+  .scroll-section{ padding:22px 0; margin:28px auto 0; transform:scale(.88); background:linear-gradient(to bottom, #0e0c13, #181522, #040304); border:1px solid rgba(36,36,37,.78); border-radius:18px; overflow:hidden; }
+  .scroll-section h3{ font-size:20px; line-height:1.4; margin:28px 0 36px; }
+  .scroll-strip{ gap:22px; padding:12px 0; }
+  .scroll-item{ padding:12px 20px; gap:14px; border-radius:42px; }
+  .scroll-item img{ width:40px; height:40px; }
+  .scroll-item span{ font-size:16px; }
+  .scroll-shadow-left, .scroll-shadow-right{ display:none !important; }
+
+  /* ===== reviews ===== */
+  .reviews-section{ padding:60px 16px 92px; max-width:1000px; margin:64px auto 0; }
+  .reviews-title h2{ font-size:clamp(30px, 5.6vw, 44px); }
+  .reviews-title{ text-align:center !important; margin:0 auto !important; }
+  .reviews-sub{ font-size:18px; margin-top:8px; text-align:center !important; white-space:nowrap !important; }
+  .review-nav{ display:none !important; }
+  .reviews-viewport{ margin-top:18px; }
+  .reviews-track{ gap:18px; }
+  .review-card{ border-radius:20px; }
+  .review-card img{ border-radius:16px; }
+  .side-nav{ display:grid; }
+  .review-dots{ gap:12px; margin:18px 0 22px; }
+  .review-dot{ width:12px; height:12px; }
+
+  /* ===== FAQ ===== */
+  .faq-section{ padding:74px 16px; }
+  .faq-title{ font-size:clamp(32px, 8vw, 64px); margin-bottom:28px; }
+  .faq-list{ gap:18px; padding-left:0; }
+  .faq-q{ padding:22px 20px; font-size:24px; text-align:left; }
+  .faq-a{ font-size:20px; padding:0 20px; }
+  .faq-item.open .faq-a{ font-size:20px; padding:14px 20px 20px; max-height:460px; }
+
+  /* ===== footer (simple mobile footer; desktop footer hidden on mobile) ===== */
+  .site-footer-wrap{ display:none !important; }  /* hide desktop grid footer */
+  footer.site-footer{ background:#0a0a0a; border-top:1px solid var(--bar-border); padding:22px 14px 30px; display:block !important; color:#fff; }
+  .footer-wrap{ max-width:980px; margin:0 auto; }
+  .footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
+  .footer-logo{ display:flex; align-items:flex-start; gap:6px; }
+  .footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
+  .footer-logo span{ font-size:22px; font-weight:400; }
+  .footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; text-align:left; }
+  .footer-disclaimer{ font-size:12px; color:#bdbdbd; }
+  .footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
+  .social-btn{ width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a2a2a; border-radius:12px; text-decoration:none; }
+  .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
+  .footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
+  .footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
+  .footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
+  .footer-link:hover{ color:#ffffff; text-decoration:none; }
+  .footer-bottom-space{ height:2px; }
+
+  /* hide desktop-only footer bits that might still exist in DOM */
+  .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom{ display:none; }
+
+  /* misc sections that aren’t used on mobile */
+  .watch-video-section{ display:none; }
+}
+
 
       /* === desktop fixes: top bar, hero/app lower, insights layout === */
       @media (min-width: 981px) {
@@ -531,8 +583,22 @@
             Legal DocReview Tool
             <span class="animated-arrow diag" aria-hidden="true">↗</span>
           </div>
-          <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
-          <p class="subtext">Free contract reviewing and no need at all for any account creation or sign up.</p>
+          <h1>
+  Make <span class="lime">Sense</span> Of What<br />
+  You’re <span class="lime">Signing</span>
+</h1>
+
+<!-- desktop copy (unchanged) -->
+<p class="subtext hide-on-mobile">
+  Free contract reviewing and no need at all for any account creation or sign up.
+</p>
+
+<!-- mobile copy (new 2-line text) -->
+<p class="subtext show-on-mobile">
+  Free contract reviewing and no need for<br />
+  an account creation or sign up.
+</p>
+
         </div>
         <div id="ctaWrap" class="cta-wrapper">
           <button id="reviewBtn" class="cta-btn animated-arrow-bttn">Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span></button>
@@ -577,8 +643,22 @@
       <div class="section-badge animated-arrow-bttn">Instant Clarity Engine <span class="animated-arrow diag" aria-hidden="true">↗</span></div>
     </div>
 
-    <h2 class="section-title">Smarter Reviews,<br />Faster Decisions</h2>
-    <p class="section-sub">AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.</p>
+   <!-- desktop text (unchanged) -->
+<h2 class="section-title hide-on-mobile">Smarter Reviews,<br />Faster Decisions</h2>
+<p class="section-sub hide-on-mobile">
+  AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.
+</p>
+
+<!-- mobile text (new copy + coloring + line breaks) -->
+<h2 class="section-title show-on-mobile">
+  Way Smarter Reviews,<br />
+  <span class="lime">Faster&nbsp;Decisions</span>
+</h2>
+<p class="section-sub show-on-mobile">
+  AI highlights key clauses, risks, and<br />
+  red&nbsp;flags so you can sign smarter.
+</p>
+
 
     <section class="insight-section" data-aos="fade-up">
       <div class="insight-content">
