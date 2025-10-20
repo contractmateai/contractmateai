@@ -14,18 +14,11 @@
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-  (function () {
-    // Only run in the browser, *after* the pdf.js script is present
-    if (typeof window === 'undefined') return;
-    var lib = window['pdfjs-dist/build/pdf'];
-    if (lib && !window.pdfjsLib) window.pdfjsLib = lib;
-    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-    }
-  })();
-</script>
-
+      if (window['pdfjs-dist/build/pdf']) {
+        window.pdfjsLib = window['pdfjs-dist/build/pdf'];
+      }
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
       :root {
@@ -331,15 +324,6 @@
   transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
 }
 .social-btn svg{ width:18px; height:18px; fill:#ffffff; }
-      /* default desktop visibility */
-.subtext .mobile-copy,
-.section-title .mobile-copy,
-.section-sub .mobile-copy { display: none; }
-
-.subtext .desktop-copy,
-.section-title .desktop-copy,
-.section-sub .desktop-copy { display: inline; }
-
 
       /* Mobile styles */
       @media (max-width: 980px) {
@@ -357,19 +341,15 @@
         .topbar.merged { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
         .topbar-logo { height: 34px; }
         .topbar-brand { font-size: 26px; }
-        .hero-wrapper { margin-top: 68px; }
-        .hero { padding: 52px 16px 10px; }
-
+        .hero-wrapper { margin-top: 82px; }
+        .hero { padding: 64px 16px 18px; }
         .tagline-absolute { background: #090922; color: #bdb7ff; padding: 6px 12px; font-size: 13px; top: -6px; margin-bottom: 10px; box-shadow: none; }
         .tagline-absolute .chip { padding: 5px 10px; font-size: 12px; font-weight: 700; }
         h1 { font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing: -0.4px; }
         .hero h1 .lime { color: var(--lime); }
-        .subtext { margin: 14px auto 18px; font-size: 18px; line-height: 1.45; max-width: 680px; }
-
+        .subtext { margin: 16px auto 26px; font-size: 18px; line-height: 1.45; max-width: 680px; }
         .cta-area { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 10px; }
         .cta-btn { padding: 14px 26px; }
-        .cta-wrapper { margin: 0 !important; }
-
         .role-picker { gap: 12px; background: transparent; }
         .role-title { font-size: 18px; }
         .role-buttons { gap: 10px; }
@@ -400,9 +380,6 @@
         .reviews-section { padding: 60px 16px 92px; max-width: 1000px; margin: 64px auto 0; }
         .reviews-title h2 { font-size: clamp(30px, 5.6vw, 44px); }
         .reviews-sub { font-size: 18px; margin-top: 8px; }
-        .reviews-title { text-align: center; margin: 0 auto; }
-.reviews-title h2 { margin: 0 auto; }
-.reviews-sub { text-align: center; white-space: nowrap; }
         .review-nav { display: none; }
         .reviews-viewport { margin-top: 18px; }
         .reviews-track { gap: 18px; }
@@ -431,15 +408,6 @@
         .footer-link:hover { color: #ffffff; text-decoration: none; }
         .footer-bottom-space { height: 2px; }
         .watch-video-section { display: none; }
-        /* swap desktop/mobile text on phones */
-.subtext .mobile-copy,
-.section-title .mobile-copy,
-.section-sub .mobile-copy { display: inline; }
-
-.subtext .desktop-copy,
-.section-title .desktop-copy,
-.section-sub .desktop-copy { display: none; }
-
       }
       @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
 
@@ -495,7 +463,7 @@
 
         /* mobile-only YouTube card style (placed under CTA below) */
         .yt-wrap { 
-          margin:18px auto 0; width:min(760px, 92vw);
+          margin:22px auto 0; width:min(760px, 92vw);
           border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.45);
           border:1px solid rgba(255,255,255,.06); background:#0a0a0a;
         }
@@ -515,36 +483,10 @@
         .reviews-title { text-align: center !important; }
 
         /* footer: hide desktop footer wrapper, use simple mobile footer block */
-/* show mobile footer, hide desktop wrapper */
-.site-footer-wrap { display: none !important; }
-footer.site-footer { display: block !important; }
-
-.site-footer{
-  background:#0a0a0a;
-  border-top:1px solid var(--bar-border);
-  padding:22px 14px 30px;
-  color:#fff;
-}
-.footer-wrap{ max-width:980px; margin:0 auto; }
-.footer-brandrow{ display:grid; grid-template-columns:auto; row-gap:6px; }
-.footer-logo{ display:flex; align-items:flex-start; gap:6px; }
-.footer-logo img{ width:32px; height:32px; border-radius:8px; margin-top:-4px; }
-.footer-logo span{ font-size:22px; font-weight:400; }
-.footer-copy{ font-size:15px; font-weight:400; color:#fff; white-space:nowrap; line-height:1.3; }
-.footer-disclaimer{ font-size:12px; color:#bdbdbd; }
-.footer-socials{ display:flex; gap:12px; margin:18px 0 24px; }
-.social-btn{
-  width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
-  border:1px solid #2a2a2a; border-radius:12px; text-decoration:none;
-  transition:transform .12s ease, border-color .12s ease, opacity .12s ease;
-}
-.social-btn svg{ width:18px; height:18px; fill:#ffffff; }
-.footer-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-top:10px; }
-.footer-col h4{ font-size:15px; font-weight:400; margin-bottom:8px; color:#ffffff; }
-.footer-link{ display:block; text-decoration:none; font-size:14px; line-height:1.25; color:#d0d0d0; margin:8px 0 0; white-space:nowrap; }
-.footer-link:hover{ color:#ffffff; text-decoration:none; }
-.footer-bottom-space{ height:2px; }
-
+        .site-footer-wrap { display: none !important; }
+        footer.site-footer { display: block !important; }
+        .footer-brandrow{ display:grid; }
+        .footer-copy{ text-align:left; }
       }
     </style>
   </head>
@@ -589,16 +531,8 @@ footer.site-footer { display: block !important; }
             Legal DocReview Tool
             <span class="animated-arrow diag" aria-hidden="true">↗</span>
           </div>
-          <h1>
-  Make <span class="lime">Sense</span> Of What<br />
-  You’re <span class="lime">Signing</span>
-</h1>
-
-         <p class="subtext">
-  <span class="desktop-copy">Free contract reviewing and no need at all for any account creation or sign up.</span>
-  <span class="mobile-copy">Free contract reviewing and no need for<br class="mbr" />an account creation or sign up.</span>
-</p>
-
+          <h1>Make Sense Of What<br /><span>You’re Signing</span></h1>
+          <p class="subtext">Free contract reviewing and no need at all for any account creation or sign up.</p>
         </div>
         <div id="ctaWrap" class="cta-wrapper">
           <button id="reviewBtn" class="cta-btn animated-arrow-bttn">Review A Contract <span class="animated-arrow diag" aria-hidden="true">↗</span></button>
@@ -643,15 +577,8 @@ footer.site-footer { display: block !important; }
       <div class="section-badge animated-arrow-bttn">Instant Clarity Engine <span class="animated-arrow diag" aria-hidden="true">↗</span></div>
     </div>
 
-<h2 class="section-title">
-  <span class="desktop-copy">Smarter Reviews,<br />Faster Decisions</span>
-  <span class="mobile-copy">Way Smarter Reviews,<br /><span class="lime">Faster&nbsp;Decisions</span></span>
-</h2>
-<p class="section-sub">
-  <span class="desktop-copy">AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.</span>
-  <span class="mobile-copy">AI highlights key clauses, risks, and<br />red&nbsp;flags so you can sign smarter.</span>
-</p>
-
+    <h2 class="section-title">Smarter Reviews,<br />Faster Decisions</h2>
+    <p class="section-sub">AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.</p>
 
     <section class="insight-section" data-aos="fade-up">
       <div class="insight-content">
@@ -860,8 +787,7 @@ footer.site-footer { display: block !important; }
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
-
+    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.image/*" style="display: none" />
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
