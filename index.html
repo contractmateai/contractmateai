@@ -14,11 +14,18 @@
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-      if (window['pdfjs-dist/build/pdf']) {
-        window.pdfjsLib = window['pdfjs-dist/build/pdf'];
-      }
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-    </script>
+  (function () {
+    // Only run in the browser, *after* the pdf.js script is present
+    if (typeof window === 'undefined') return;
+    var lib = window['pdfjs-dist/build/pdf'];
+    if (lib && !window.pdfjsLib) window.pdfjsLib = lib;
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+  })();
+</script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
       :root {
@@ -853,7 +860,8 @@ footer.site-footer { display: block !important; }
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.image/*" style="display: none" />
+    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
