@@ -532,6 +532,20 @@
       @media (min-width: 981px){
         .show-on-mobile { display: none !important; }
       }
+      @media (max-width: 980px) {
+  /* Force the mobile headline and subtext to be block-level */
+  h1.show-on-mobile,
+  p.subtext.show-on-mobile {
+    display: block !important;
+  }
+
+  /* Center the badge and keep spacing clean */
+  .tagline-absolute {
+    margin: 0 auto 16px !important; /* centers it */
+    display: inline-flex;           /* keep pill layout */
+  }
+}
+
 
       /* mobile overrides */
       @media (max-width: 980px){
@@ -545,6 +559,11 @@
   border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.45);
   border: 1px solid rgba(255,255,255,.06); background: #0a0a0a;
 }
+   /* ADD these to actually round what you see */
+  .yt-box { border-radius: inherit; overflow: hidden; }
+  .yt-box iframe { border-radius: inherit; }
+}
+
         .yt-box{ position:relative; width:100%; aspect-ratio:16/9; }
         .yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
@@ -614,9 +633,10 @@
 
 <!-- MOBILE (green on Sense/Signing) -->
 <h1 class="show-on-mobile">
-  Make <span class="lime">Sense</span> Of What<br />
+  Make&nbsp;<span class="lime">Sense</span>&nbsp;Of&nbsp;What<br>
   You’re <span class="lime">Signing</span>
 </h1>
+
 
          <!-- DESKTOP (unchanged wording) -->
 <p class="subtext hide-on-mobile">
