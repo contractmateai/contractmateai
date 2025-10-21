@@ -55,6 +55,7 @@
         background-size: 100% 1600px; z-index: -2; opacity: 0; transition: opacity .6s ease;
       }
       body.stage2::before { opacity: 1; }
+.nowrap{ white-space:nowrap; }
 
       .reveal-on-load { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
       body.stage1 .reveal-on-load { opacity: 1; transform: none; }
@@ -504,6 +505,13 @@
 .reviews-title{ grid-column:auto !important; justify-self:center; text-align:center !important; }
 .reviews-title h2{ margin:0; }
 .reviews-sub{ margin-top:10px; text-align:center; }
+      .section-title.show-on-mobile,
+.section-sub.show-on-mobile{
+  display:block !important;
+  width:100% !important;
+  text-align:center !important;
+}
+
 
     </style>
   </head>
@@ -553,9 +561,10 @@
 
 <!-- MOBILE (green on Sense/Signing) -->
 <h1 class="show-on-mobile">
-  Make <span class="lime">Sense</span> Of What<br />
-  You’re <span class="lime">Signing</span>
+  <span class="nowrap">Make <span class="lime">Sense</span> Of What</span><br />
+  <span class="nowrap">You’re <span class="lime">Signing</span></span>
 </h1>
+
 
          <!-- DESKTOP (unchanged wording) -->
 <p class="subtext hide-on-mobile">
@@ -618,9 +627,10 @@
 
 <!-- MOBILE (Way Smarter…, “Faster Decisions” green) -->
 <h2 class="section-title show-on-mobile">
-  Way Smarter Reviews,<br />
-  <span class="lime">Faster&nbsp;Decisions</span>
+  <span class="nowrap">Way Smarter Reviews</span><br />
+  <span class="nowrap"><span class="lime">Faster&nbsp;Decisions</span></span>
 </h2>
+
 
    <!-- DESKTOP (unchanged) -->
 <p class="section-sub hide-on-mobile">
@@ -629,9 +639,10 @@
 
 <!-- MOBILE (shorter, 2 rows exactly as requested) -->
 <p class="section-sub show-on-mobile">
-  AI highlights, key clauses, risks,<br />
-  red&nbsp;flags so you can sign smarter.
+  <span class="nowrap">AI highlights, key clauses, risks</span><br />
+  <span class="nowrap">red&nbsp;flags so you can sign smarter</span>
 </p>
+
 
 
 
