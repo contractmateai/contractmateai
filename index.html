@@ -55,7 +55,7 @@
         background-size: 100% 1600px; z-index: -2; opacity: 0; transition: opacity .6s ease;
       }
       body.stage2::before { opacity: 1; }
-.nowrap{ white-space:nowrap; }
+
 
       .reveal-on-load { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
       body.stage1 .reveal-on-load { opacity: 1; transform: none; }
@@ -511,6 +511,9 @@
   width:100% !important;
   text-align:center !important;
 }
+.hero h1 span{ display:inline !important; margin-top:0 !important; }
+.hero h1 .nowrap{ white-space:nowrap !important; }
+.hero h1{ line-height:1.05; } /* tighter so rows visually “touch” */
 
 
     </style>
@@ -561,9 +564,10 @@
 
 <!-- MOBILE (green on Sense/Signing) -->
 <h1 class="show-on-mobile">
-  <span class="nowrap">Make <span class="lime">Sense</span> Of What</span><br />
-  <span class="nowrap">You’re <span class="lime">Signing</span></span>
+  <span class="nowrap">Make&nbsp;<span class="lime">Sense</span>&nbsp;Of&nbsp;What</span><br />
+  <span class="nowrap">You’re&nbsp;<span class="lime">Signing</span></span>
 </h1>
+
 
 
          <!-- DESKTOP (unchanged wording) -->
