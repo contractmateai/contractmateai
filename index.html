@@ -238,7 +238,9 @@
       .site-footer-wrap { max-width: 1400px; margin: 90px auto 0; padding: 0 24px 35px; }
       .site-footer { background: transparent; border: none; box-shadow: none; padding: 0; display: grid; grid-template-columns: minmax(460px,1fr) minmax(220px,max-content) minmax(220px,max-content) minmax(220px,max-content); column-gap: 88px; align-items: start; justify-items: start; padding-left: 40px !important; }
       .footer-left { display: flex; align-items: flex-start; gap: 12px; }
-      .footer-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 0 !important; }
+      /* scope the size to the desktop footer image only */
+.site-footer .footer-logo img { width: 32px; height: 32px; object-fit: contain; border-radius: 0 !important; }
+
       .footer-brand { color: #e1e1e1; font-size: 26px; line-height: 1.1; text-decoration: none; font-weight: 400; }
       .footer-tagline { color: #c5c5c5; margin-top: 18px; font-size: 18px; line-height: 1.5; position: relative; left: -40px; font-weight: 400; }
       .footer-col { display: flex; flex-direction: column; gap: 10px; }
@@ -342,16 +344,19 @@
         .topbar-logo { height: 34px; }
         .topbar-brand { font-size: 26px; }
         .hero-wrapper { margin-top: 82px; }
-        .hero { padding: 64px 16px 18px; }
+        .hero { padding: 84px 16px 24px; }
+
         .tagline-absolute { background: #090922; color: #bdb7ff; padding: 6px 12px; font-size: 13px; top: -6px; margin-bottom: 10px; box-shadow: none; }
         .tagline-absolute .chip { padding: 5px 10px; font-size: 12px; font-weight: 700; }
-        h1 { font-size: clamp(36px, 8.6vw, 68px); line-height: 1.08; letter-spacing: -0.4px; }
+        h1 { font-size: clamp(40px, 9.2vw, 72px); line-height: 1.12; letter-spacing: -0.3px; }
+
         .hero h1 .lime { color: var(--lime); }
         .subtext { margin: 16px auto 0; font-size: 18px; line-height: 1.45; max-width: 680px; }
 .cta-wrapper { margin-top: 18px; margin-bottom: 18px; }
 
         .cta-area { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 10px; }
-        .cta-btn { padding: 14px 26px; }
+        .cta-btn { padding: 16px 28px; font-size: 19px; }
+
         .role-picker { gap: 12px; background: transparent; }
         .role-title { font-size: 18px; }
         .role-buttons { gap: 10px; }
@@ -411,7 +416,8 @@
         .footer-bottom-space { height: 2px; }
         .watch-video-section { display: none; }
         .reviews-title { text-align: center !important; }
-.reviews-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reviews-sub { font-size: 18px; margin-top: 8px; text-align: center; white-space: normal; overflow: visible; text-overflow: clip; }
+
 
       }
       @media (max-width: 340px) { .footer-logo span { font-size: 20px; } .footer-copy { font-size: 14px; } .footer-link { font-size: 13px; } }
@@ -714,7 +720,8 @@
           </button>
           <div class="faq-a">We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More coming soon!</div>
         </div>
-        <div class="faq-item open">
+        <div class="faq-item">
+
           <button class="faq-q" type="button">
             <span>Is SignSense legally binding or a replacement for a lawyer?</span>
             <svg class="chev" viewBox="0 0 24 24" width="26" height="26"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -828,7 +835,8 @@
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.image/*" style="display: none" />
+    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
@@ -1109,6 +1117,8 @@
         });
       });
     </script>
+    <script>document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));</script>
+
 
     <script>
       const topbarWrap = document.getElementById('topbarWrap');
