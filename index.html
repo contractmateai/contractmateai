@@ -478,8 +478,9 @@
   border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.45);
   border: 1px solid rgba(255,255,255,.06); background: #0a0a0a;
 }
-        .yt-box{ position:relative; width:100%; aspect-ratio:16/9; }
-        .yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.yt-box{ position:relative; width:100%; aspect-ratio:16/9; border-radius:18px; overflow:hidden; }
+.yt-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:inherit; }
+
 
         /* hide insight right column on mobile */
         .insight-right { display: none !important; }
@@ -499,6 +500,11 @@
         .footer-brandrow{ display:grid; }
         .footer-copy{ text-align:left; }
       }
+      .reviews-header{ grid-template-columns:1fr !important; }
+.reviews-title{ grid-column:auto !important; justify-self:center; text-align:center !important; }
+.reviews-title h2{ margin:0; }
+.reviews-sub{ margin-top:10px; text-align:center; }
+
     </style>
   </head>
   <body>
@@ -559,8 +565,9 @@
 <!-- MOBILE (new wording + 2 rows) -->
 <p class="subtext show-on-mobile">
   Free contract reviewing and no need for<br />
-  an account creation or sign up.
+  account creation or sign up.
 </p>
+
 
         </div>
         <div id="ctaWrap" class="cta-wrapper">
@@ -622,9 +629,10 @@
 
 <!-- MOBILE (shorter, 2 rows exactly as requested) -->
 <p class="section-sub show-on-mobile">
-  AI highlights key clauses, risks, and<br />
+  AI highlights, key clauses, risks,<br />
   red&nbsp;flags so you can sign smarter.
 </p>
+
 
 
     <section class="insight-section" data-aos="fade-up">
