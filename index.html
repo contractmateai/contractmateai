@@ -1,4 +1,4 @@
-This is the code I got now. Retail me exactly what I need to find and replace with what, with the right spaces and everything, because if you don't give me them the right way I cannot find them.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en"> 
   <head>
     <meta charset="UTF-8" />
@@ -585,6 +585,62 @@ This is the code I got now. Retail me exactly what I need to find and replace wi
         .footer-brandrow{ display:grid; }
         .footer-copy{ text-align:left; }
       }
+      /* === Mobile-only polish: hero split + centered reviews (no !important) === */
+@media (max-width: 980px) {
+
+  /* HERO — enforce the two-line title + separate two-line subtext */
+  .hero .section-title.show-on-mobile {
+    display: block;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.25;
+  }
+  .hero .section-title.show-on-mobile br { display: block; }
+
+  .hero .section-sub.show-on-mobile {
+    display: block;
+    text-align: center;
+    margin: 8px auto 0;      /* sits just under “Faster Decisions” */
+    max-width: 92vw;         /* keeps it inside the screen */
+    line-height: 1.45;
+  }
+  .hero .section-sub.show-on-mobile br { display: block; } /* keeps the exact break after “risks,” */
+
+  /* REVIEWS — true centering + keep subtitle on a single row */
+  .reviews-section .reviews-header {
+    display: grid;
+    grid-template-columns: 1fr;   /* single centered column on mobile */
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .reviews-section .reviews-title {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .reviews-section .reviews-title h2 { margin: 0; }
+
+  /* make the subtitle a single line that stays centered */
+  .reviews-section .reviews-sub {
+    display: block;
+    text-align: center;
+    margin: 6px auto 0;
+    white-space: nowrap;     /* one row */
+    width: max-content;      /* shrink to its own width */
+    max-width: 92vw;         /* but never overflow screen */
+    overflow: hidden;
+    text-overflow: ellipsis; /* safety on very narrow phones */
+  }
+}
+
+/* tiny phones: nudge font-size so the one-line subtitle fits */
+@media (max-width: 360px) {
+  .reviews-section .reviews-sub { font-size: 16px; }
+  .hero .section-sub.show-on-mobile { font-size: 17px; }
+}
+
     </style>
   </head>
   <body>
