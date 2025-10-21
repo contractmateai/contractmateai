@@ -81,6 +81,11 @@
 
       .hero { text-align: center; padding: 80px 20px 30px; }
       .hero-upper { margin-top: 40px; }
+      /* Keep title and subtitle on separate rows */
+.hero-upper { display: grid; justify-items: center; }
+.hero-upper > h1 { margin: 0 0 10px; }
+.hero-upper > .subtext { display:block; clear:both; margin-top: 10px; width:100%; text-align:center; }
+
       h1, h2 { font-family: "Shoika", sans-serif; font-weight: 400; }
       h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; line-height: 1.1; }
       .hero h1 span { display: block; margin-top: 8px; }
@@ -531,11 +536,6 @@
   width:100% !important;
   text-align:center !important;
 }
-.hero h1 span{ display:inline !important; margin-top:0 !important; }
-.hero h1 .nowrap{ white-space:nowrap !important; }
-.hero h1{ line-height:1.05; } /* tighter so rows visually “touch” */
-
-
     </style>
   </head>
   <body>
