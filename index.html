@@ -314,6 +314,54 @@
   .topbar-nav{ display:none; }  
   .menu-toggle{ display:block; } 
 }
+/* === Mobile-only fixes (do NOT affect desktop) === */
+
+/* “Way Smarter Reviews / Faster Decisions” — title + subtext */
+.section-title.show-on-mobile {
+  text-align: center !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.section-sub.show-on-mobile {
+  display: block !important;
+  text-align: center !important;
+  margin: 8px auto 0 !important;   /* sits directly under “Faster Decisions” */
+  max-width: 92vw !important;
+  white-space: normal !important;   /* allow natural wrapping */
+}
+/* ensure the subtext we want is immediately under the mobile title */
+.section-title.show-on-mobile + .section-sub.show-on-mobile {
+  margin-top: 8px !important;
+}
+
+/* “What Our Clients Say” — true centering + one-line subtitle on mobile */
+.reviews-header {
+  display: grid !important;
+  grid-template-columns: 1fr !important;  /* single centered column */
+  justify-items: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.reviews-title {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.reviews-title h2 {
+  margin: 0 !important;
+}
+.reviews-sub {
+  text-align: center !important;
+  margin: 6px auto 0 !important;
+  width: max-content !important;    /* shrink to its own width */
+  max-width: 92vw !important;       /* but never overflow screen */
+  white-space: nowrap !important;   /* force ONE row */
+}
+/* keep arrows hidden on mobile so they don’t offset centering */
+.review-nav {
+  display: none !important;
+}
 
   </style>
 </head>
