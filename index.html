@@ -510,6 +510,18 @@
     position: relative;
     top: 15px;
   }
+  /* move all footer elements except the copyright further left */
+footer.site-footer *:not(.footer-copy) {
+  position: relative;
+  left: -15px; /* adjust this value for how much you want to move */
+}
+/* move all footer elements except the copyright further left */
+/* move all footer elements except © 2025 SignSense. All rights reserved. to the left */
+footer.site-footer :not(.footer-copy) {
+  position: relative;
+  left: -15px; /* adjust for how far you want to move it */
+}
+
 
 
         .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display: none; }
