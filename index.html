@@ -542,12 +542,87 @@
         .reviews-header { grid-template-columns: 1fr !important; }
         .reviews-title { text-align: center !important; }
 
-        /* footer: hide desktop footer wrapper, use simple mobile footer block */
-        .site-footer-wrap { display: none !important; }
-        footer.site-footer { display: block !important; }
-        .footer-brandrow{ display:grid; }
-        .footer-copy{ text-align:left; }
-      }
+     /* footer: hide desktop footer wrapper, use simple mobile footer block */
+.site-footer-wrap { display: none !important; }
+footer.site-footer {
+  display: block !important;
+  background: #0a0a0a !important;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 44px 22px 60px !important;
+  text-align: center !important;
+}
+.footer-wrap { max-width: 720px; margin: 0 auto; }
+.footer-brandrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.footer-logo img {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 8px;
+}
+.footer-logo span {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff;
+}
+.footer-copy {
+  font-size: 15px;
+  color: #cfcfcf;
+  margin-top: 6px;
+}
+.footer-disclaimer {
+  font-size: 12px;
+  color: #bdb7bd;
+  margin-top: 2px;
+}
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 18px 0 22px;
+}
+.footer-socials a {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.footer-socials a:hover { transform: scale(1.1); opacity: 0.9; }
+.footer-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 18px;
+  text-align: center;
+}
+.footer-col h4 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+.footer-link {
+  display: block;
+  text-decoration: none;
+  font-size: 14px;
+  color: #d0d0d0;
+  line-height: 1.4;
+}
+.footer-link:hover { color: #fff; }
+
       .reviews-header{ grid-template-columns:1fr !important; }
 .reviews-title{ grid-column:auto !important; justify-self:center; text-align:center !important; }
 .reviews-title h2{ margin:0; }
