@@ -450,6 +450,68 @@
         .faq-a { font-size: 20px; padding: 0 20px; }
         .faq-item.open .faq-a { font-size: 20px; padding: 14px 20px 20px; max-height: 460px; }
         .site-footer { background: #0a0a0a; border-top: 1px solid var(--bar-border); padding: 22px 14px 30px; display: block; }
+                  .site-footer .footer-wrap {
+    margin-left: -20px;
+  }
+
+  /* move all elements except logo 5px lower */
+  .footer-logo span,
+  .footer-copy,
+  .footer-disclaimer,
+  .footer-socials,
+  .footer-cols {
+    position: relative;
+    top: 5px;
+  }
+
+  /* move only copyright text 5px left */
+  .footer-copy {
+    position: relative;
+    left: -90px;
+  }
+
+  /* move specific groups slightly right */
+  .footer-disclaimer,
+  .footer-cols,
+  .footer-socials {
+    position: relative;
+    left: 5px;
+  }
+
+  /* move disclaimer 5px lower */
+  .footer-disclaimer {
+    position: relative;
+    top: 10px;
+  }
+
+  /* move social icons slightly lower */
+  .footer-socials {
+    position: relative;
+    top: 10px;
+  }
+ .footer-cols .footer-col:nth-child(1) .footer-link[href*="contact"],
+  .footer-cols .footer-col:nth-child(1) .footer-link[href*="youtube"],
+  .footer-cols .footer-col:nth-child(2) .footer-link[href*="tally"],
+  .footer-cols .footer-col:nth-child(3) .footer-link {
+    position: relative;
+    top: -18px;
+}.footer-cols .footer-col:nth-child(1) .footer-link[href*="youtube"],
+  .footer-cols .footer-col:nth-child(3) .footer-link[href*="privacy"],
+  .footer-cols .footer-col:nth-child(3) .footer-link[href*="cookies"] {
+    position: relative;
+    top: -30px;
+  }.footer-cols .footer-col:nth-child(3) .footer-link[href*="cookies"] {
+    position: relative;
+    top: -43px;
+  }  .footer-copy,
+  .footer-disclaimer,
+  .footer-cols,
+  .footer-socials {
+    position: relative;
+    top: 15px;
+  }
+
+
         .footer-left, .footer-tagline, .footer-title, .footer-links, .footer-bottom { display: none; }
         .footer-brandrow { display: grid; }
         .footer-logo { display: flex; align-items: flex-start; gap: 6px; border-radius: 8px; margin-top: -4px; }
