@@ -753,6 +753,88 @@
 .hero{
   margin-top: -80px;   /* adjust: try -30px, -40px, -50px until perfect */
 }
+/* force hide mobile-only texts on desktop */
+@media (min-width: 981px) {
+  .show-on-mobile {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+}
+/* move Instant Clarity Engine + Smarter Reviews block lower on DESKTOP only */
+@media (min-width: 981px) {
+  /* move the badge slightly down */
+  .section-badge {
+    position: relative;
+    top: 47px; /* adjust 40→60px depending on how low you want it */
+  }
+
+  /* move the "Smarter Reviews / Faster Decisions" title and paragraph together */
+  .section-title.hide-on-mobile,
+  .section-sub.hide-on-mobile {
+    position: relative;
+    top: 40px; /* adjust up/down until perfect alignment */
+  }
+}
+@media (min-width: 981px) {
+  .logo-strip {
+    transform: scale(1.2); /* enlarge slightly */
+    margin-top: 95px; /* move lower (increase for more distance) */
+  } 
+  
+}
+/* === Desktop: enlarge badge + section text === */
+@media (min-width: 981px) {
+  /* make the badge larger and bolder */
+  .section-badge {
+    font-size: 20px;        /* increase text size */
+    padding: 10px 22px;     /* make the pill wider */
+    border-radius: 60px;    /* keep rounded look */
+    transform: scale(0.8); /* slight enlargement */
+  }
+
+  /* enlarge main heading "Smarter Reviews, Faster Decisions" */
+  .section-title.hide-on-mobile {
+    font-size: 56px;        /* previously 44px */
+    line-height: 1.25;
+  }
+
+  /* enlarge subtext below */
+  .section-sub.hide-on-mobile {
+    font-size: 26px;        /* previously 21px */
+    line-height: 1.5;
+  }
+}
+/* === Desktop: keep "Everything you need..." in one line === */
+@media (min-width: 981px) {
+  .scroll-section h3 {
+    white-space: nowrap !important;   /* force text into one row */
+    font-size: 17px !important;        /* increase size slightly */
+    line-height: 1.1 !important;
+    text-align: center !important;
+    width: 100%;
+  }
+}
+/* === Desktop: keep features heading in one line === */
+@media (min-width: 981px) {
+  .scroll-section h3 {
+    white-space: nowrap !important;   /* force one line */
+    font-size: 28px !important;        /* tweak to fit your layout */
+    line-height: 1.1 !important;
+    text-align: center !important;
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .scroll-section {
+    max-width: 1200px; /* make section wide enough for one line */
+    margin: 0 auto;
+  }
+}
 
     </style>
   </head>
@@ -866,26 +948,27 @@
       <div class="section-badge animated-arrow-bttn">Instant Clarity Engine <span class="animated-arrow diag" aria-hidden="true">↗</span></div>
     </div>
 
-   <!-- DESKTOP (unchanged) -->
-<h2 class="section-title hide-on-mobile">Smarter Reviews,<br />Faster Decisions</h2>
+<!-- DESKTOP (only shows Smarter Reviews, Faster Decisions) -->
+<h2 class="section-title hide-on-mobile">
+  Smarter Reviews,<br />Faster Decisions
+</h2>
 
-<!-- MOBILE (Way Smarter…, “Faster Decisions” green) -->
+<p class="section-sub hide-on-mobile">
+  AI highlights key clauses, risks, and red flags<br />
+  so you can sign smarter and with confidence.
+</p>
+
+<!-- MOBILE (Way Smarter Reviews + shorter text) -->
 <h2 class="section-title show-on-mobile">
   <span class="nowrap">Way Smarter Reviews</span><br />
   <span class="nowrap"><span class="lime">Faster&nbsp;Decisions</span></span>
 </h2>
 
-
-   <!-- DESKTOP (unchanged) -->
-<p class="section-sub hide-on-mobile">
-  AI highlights key clauses, risks, and red flags<br />so you can sign smarter and with confidence.
-</p>
-
-<!-- MOBILE (shorter, 2 rows exactly as requested) -->
 <p class="section-sub show-on-mobile">
   <span class="nowrap">AI highlights, key clauses, risks</span><br />
   <span class="nowrap">red&nbsp;flags so you can sign smarter</span>
 </p>
+
 
 
 
@@ -918,11 +1001,8 @@
       <div class="scroll-wrapper">
         <section class="scroll-section" data-aos="fade-up">
           <!-- exact 3-line layout for mobile via <br> -->
-          <h3>
-            Everything you need for clarity<br />
-            &amp; security in one seamless<br />
-            experience.
-          </h3>
+         <h3>Everything you need for clarity &amp; security in one seamless experience.</h3>
+
           <div class="scroll-strip top-row"></div>
           <div class="scroll-strip bottom-row"></div>
           <div class="scroll-shadow-left"></div>
