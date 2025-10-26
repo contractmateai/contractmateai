@@ -342,8 +342,8 @@
         grid-template-columns: 1fr;
         margin: 0 auto;
         width: 92%;
-        max-width: 480px;
-        padding: 36px 24px;
+        max-width: 560px;
+        padding: 48px 28px;
         text-align: center;
         background: transparent;
         border: none;
@@ -357,35 +357,54 @@
       .row {
         grid-template-columns: 1fr;
         width: 100%;
-        max-width: 380px;
+        max-width: 480px;
         margin: 0 auto 24px;
       }
-      .field, .send-btn, .sla {
+      .field {
         width: 100%;
-        max-width: 380px;
+        max-width: 480px;
         margin: 0 auto;
+        padding: 20px;
+        font-size: 18px;
+      }
+      .send-btn {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px 28px;
+        font-size: 19px;
+      }
+      .sla {
+        width: 100%;
+        max-width: 480px;
+        margin: 24px auto 0;
+        font-size: 16px;
       }
       input.field.email { margin-bottom: 24px; }
+      textarea.field { min-height: 260px; }
       aside.contact-info {
         padding-left: 0;
         text-align: center;
       }
       .info-list { display: none; }
       .info-icon { display: none; }
-      .info-sub { margin: 16px auto; max-width: 380px; }
+      .info-title { font-size: 34px; }
+      .info-sub { margin: 20px auto; max-width: 480px; }
+      .info-sub div { text-align: center; font-size: 18px; }
+      .info-sub .future { white-space: nowrap; }
       .mobile-contact-info {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 12px;
-        margin-top: 24px;
+        gap: 14px;
+        margin-top: 28px;
       }
       .mobile-contact-info .info-label {
-        font-size: 18px;
+        font-size: 20px;
         color: #ffffff;
       }
       .mobile-contact-info .info-value a {
-        font-size: 20px;
+        font-size: 22px;
         color: #d8cccc;
         text-decoration: none;
       }
@@ -614,7 +633,7 @@
           <div class="info-title">Contact Information</div>
           <div class="info-sub">
             <div>Your feedback matters.</div>
-            <div>Let's build a better future together.</div>
+            <div class="future">Let's build a better future together.</div>
           </div>
           <div class="info-list">
             <div class="info-item">
