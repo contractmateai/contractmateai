@@ -337,13 +337,15 @@
       .contact-wrap {
         display: flex;
         justify-content: center;
+        align-items: center;
+        width: 100%;
       }
       .contact-card {
         grid-template-columns: 1fr;
         margin: 0 auto;
-        width: 92%;
-        max-width: 560px;
         padding: 48px 28px;
+        width: 100%;
+        max-width: 560px;
         text-align: center;
         background: transparent;
         border: none;
@@ -353,12 +355,16 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        width: 100%;
       }
       .row {
         grid-template-columns: 1fr;
         width: 100%;
         max-width: 480px;
         margin: 0 auto 24px;
+        display: flex;
+        justify-content: center;
       }
       .field {
         width: 100%;
@@ -383,14 +389,31 @@
       input.field.email { margin-bottom: 24px; }
       textarea.field { min-height: 260px; }
       aside.contact-info {
-        padding-left: 0;
+        padding: 0;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .info-list { display: none; }
       .info-icon { display: none; }
-      .info-title { font-size: 34px; }
-      .info-sub { margin: 20px auto; max-width: 480px; }
-      .info-sub div { text-align: center; font-size: 18px; }
+      .info-title {
+        font-size: 34px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .info-sub {
+        margin: 20px auto;
+        max-width: 480px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .info-sub div {
+        text-align: center;
+        font-size: 18px;
+        width: 100%;
+      }
       .info-sub .future { white-space: nowrap; }
       .mobile-contact-info {
         display: flex;
@@ -398,10 +421,18 @@
         align-items: center;
         gap: 14px;
         margin-top: 28px;
+        width: 100%;
+        max-width: 480px;
       }
       .mobile-contact-info .info-label {
         font-size: 20px;
         color: #ffffff;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .mobile-contact-info .info-value {
+        margin-left: auto;
+        margin-right: auto;
       }
       .mobile-contact-info .info-value a {
         font-size: 22px;
