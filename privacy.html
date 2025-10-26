@@ -140,7 +140,8 @@
     .footer-links a{color:#c5c5c5; text-decoration:none; font-size:18px; font-weight:400;}
     .footer-bottom{margin-top:24px;}
     .footer-divider{width:100%; height:1px; background:#c5c5c5; opacity:.28; margin-bottom:12px;}
-    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400;}
+    .footer-bottom-links{display:flex; align-items:center; gap:28px; color:#c5c5c5; font-size:16px; font-weight:400; justify-content:space-between;}
+    .footer-links-group{display:flex; gap:28px;}
     .footer-copy{margin-left:auto;}
     .site-footer .footer-links a,
     .site-footer .footer-links a:visited { color:#c5c5c5; text-decoration:none; }
@@ -450,9 +451,11 @@
     <div class="footer-bottom">
       <div class="footer-divider"></div>
       <div class="footer-bottom-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="cookies.html">Cookie Policy</a>
+        <div class="footer-links-group">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+          <a href="cookies.html">Cookie Policy</a>
+        </div>
         <span class="footer-copy">© 2025 SignSense. All rights reserved.</span>
       </div>
     </div>
