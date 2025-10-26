@@ -173,7 +173,7 @@
     aside.contact-info{padding-left:48px;}
     .info-title{font-size:28px; margin:0 0 4px; color:#ffffff; font-weight:400;}
     .info-sub{display:flex; flex-direction:column; gap:8px; color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px; font-weight:400;}
-    .info-sub div{text-align:center;}
+    .info-sub div{text-align:left;}
     .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
     .info-item{display:flex; align-items:center; gap:18px}
     .info-icon{width:48px; height:48px; display:block}
@@ -442,10 +442,11 @@
       .row { grid-template-columns: 1fr; }
     }
     @media (min-width: 981px) {
-      .site-footer-mobile { display: none; }
+      .site-footer-mobile { display: none !important; } /* Reinforced to hide mobile footer on desktop */
       .menu-toggle { display: none; }
       .menu-overlay, .menu-panel { display: none; }
       .footer-copy { margin-left: auto; }
+      .info-sub div { text-align: left; } /* Left-align "Your feedback matters" and "Let's build a better future together" on desktop */
     }
     /* ===== MOBILE FOOTER ===== */
     .site-footer-mobile {
