@@ -337,15 +337,13 @@
       .contact-wrap {
         display: flex;
         justify-content: center;
-        align-items: center;
-        width: 100%;
       }
       .contact-card {
         grid-template-columns: 1fr;
         margin: 0 auto;
-        padding: 48px 28px;
-        width: 100%;
+        width: 92%;
         max-width: 560px;
+        padding: 48px 28px;
         text-align: center;
         background: transparent;
         border: none;
@@ -355,16 +353,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        width: 100%;
       }
       .row {
         grid-template-columns: 1fr;
         width: 100%;
         max-width: 480px;
         margin: 0 auto 24px;
-        display: flex;
-        justify-content: center;
       }
       .field {
         width: 100%;
@@ -389,31 +383,14 @@
       input.field.email { margin-bottom: 24px; }
       textarea.field { min-height: 260px; }
       aside.contact-info {
-        padding: 0;
+        padding-left: 0;
         text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
       }
       .info-list { display: none; }
       .info-icon { display: none; }
-      .info-title {
-        font-size: 34px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .info-sub {
-        margin: 20px auto;
-        max-width: 480px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .info-sub div {
-        text-align: center;
-        font-size: 18px;
-        width: 100%;
-      }
+      .info-title { font-size: 34px; }
+      .info-sub { margin: 20px auto; max-width: 480px; }
+      .info-sub div { text-align: center; font-size: 18px; }
       .info-sub .future { white-space: nowrap; }
       .mobile-contact-info {
         display: flex;
@@ -421,18 +398,10 @@
         align-items: center;
         gap: 14px;
         margin-top: 28px;
-        width: 100%;
-        max-width: 480px;
       }
       .mobile-contact-info .info-label {
         font-size: 20px;
         color: #ffffff;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .mobile-contact-info .info-value {
-        margin-left: auto;
-        margin-right: auto;
       }
       .mobile-contact-info .info-value a {
         font-size: 22px;
@@ -558,6 +527,59 @@
         font-size: 13px;
       }
     }
+    @media (max-width: 980px) {
+  /* Center entire contact section */
+  .contact-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .contact-card {
+    margin: 0 auto;
+    width: 92%;
+    padding: 36px 24px;
+    text-align: center;
+  }
+
+  .contact-card form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .field,
+  .send-btn,
+  .sla {
+    width: 100%;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  aside.contact-info {
+    padding-left: 0;
+    text-align: center;
+  }
+
+  .info-title,
+  .info-sub {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .info-list,
+  .mobile-contact-info {
+    align-items: center;
+    text-align: center;
+  }
+}
+
     /* === Autofill: force dark background (keep these LAST inside <style>) === */
     input.field,
     textarea.field {
