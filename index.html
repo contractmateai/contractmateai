@@ -1470,11 +1470,8 @@
         const name = file.name || "file";
         const mime = file.type || "application/octet-stream";
         const ext = name.toLowerCase();
-        console.log(`Processing file: ${name}, type: ${mime}`);
         if (mime === "text/plain" || ext.endsWith(".txt")) {
-          const text = await file.text();
-          console.log("Text extracted:", text.substring(0, 100));
-          return { text, originalName: name, mime };
+          return { text: await file.text(), originalName: name, mime };
         }
         if (mime === "application/pdf" || ext.endsWith(".pdf")) {
           const buf = await file.arrayBuffer();
@@ -1483,16 +1480,13 @@
           for (let p = 1; p <= pdf.numPages; p++) {
             const page = await pdf.getPage(p);
             const content = await page.getTextContent();
-            const strings = content.items.map((i) => i.str).join(" ");
-            full += strings + "\n";
+            full += content.items.map((i) => i.str).join(" ") + "\n";
           }
-          console.log("PDF text extracted:", full.substring(0, 100));
           return { text: full, originalName: name, mime };
         }
         if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
           const buf = await file.arrayBuffer();
           const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-          console.log("DOCX text extracted:", res.value.substring(0, 100));
           return { text: res.value || "", originalName: name, mime };
         }
         if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
@@ -1501,7 +1495,6 @@
             r.onload = () => resolve(r.result);
             r.readAsDataURL(file);
           });
-          console.log("Image data URI generated:", dataUrl.substring(0, 100));
           return { imageDataURI: dataUrl, originalName: name, mime };
         }
         throw new Error("Unsupported file type: " + mime);
@@ -1511,184 +1504,74 @@
       }
     }
 
-    // Fallback demo data (same as analysis.html)
-    const fallbackDemo = {
-      contractName: "Non-Disclosure Agreement (NDA)",
+    const demoData = {
+      contractName: "Uploaded Contract",
       detectedLang: "en",
       analysis: {
-        summary: [
-          "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
-          "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
-          "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
-        ],
-        risk: 25,
-        clarity: 80,
-        compliance: 95,
-        keyClauses: [
-          "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
-          "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-          "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-          "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
-        ],
-        potentialIssues: [
-          "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
-          "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
-          "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
-          "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-          "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-        ],
-        smartSuggestions: [
-          "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-          "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-          "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
-        ]
+        summary: ["Contract appears standard with clear terms.", "Some clauses need review for fairness."],
+        risk: 20,
+        clarity: 85,
+        compliance: 90,
+        keyClauses: ["Payment: Net 30 days.", "Termination: 30-day notice."],
+        potentialIssues: ["Ambiguous termination clause.", "Unclear penalty terms."],
+        smartSuggestions: ["Clarify termination conditions.", "Cap penalties."]
       },
       translations: {}
     };
 
-    const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
     const input = document.getElementById("contractFile");
     const inputCamera = document.getElementById("contractCamera");
     const roleUI = document.getElementById("rolePicker");
-    let chosenRole = null;
+    const ctaBtn = document.getElementById("reviewBtn");
     let pickedFiles = [];
-    let finished = false;
-
-    function resetPicker(el) {
-      if (el) el.value = '';
-    }
 
     function isMobile() {
       return window.matchMedia('(max-width: 980px)').matches;
     }
 
-    function updateCounter(counterEl) {
-      counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : '';
-    }
-
-    function addFiles(list) {
-      for (const f of Array.from(list)) {
-        if (pickedFiles.length >= 10) break;
-        pickedFiles.push(f);
-      }
-    }
-
-    async function askAddMore(msg = 'Add more photos?') {
-      return new Promise(resolve => {
-        const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
-        const box = document.createElement('div');
-        box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
-        box.innerHTML = `
-          <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
-          <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
-            <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
-            <button id="am-no" style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
-          </div>`;
-        overlay.appendChild(box);
-        document.body.appendChild(overlay);
-        const cleanup = (val) => {
-          overlay.remove();
-          document.removeEventListener('keydown', onKey);
-          resolve(val);
-        };
-        const onKey = (e) => {
-          if (e.key === 'Escape') cleanup(false);
-        };
-        document.addEventListener('keydown', onKey);
-        box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
-        box.querySelector('#am-no').addEventListener('click', () => cleanup(false));
-        overlay.addEventListener('click', (e) => {
-          if (e.target === overlay) cleanup(false);
-        });
-      });
-    }
-
-    async function maybeAddMoreAndReopenCamera() {
-      if (pickedFiles.length >= 10) {
-        finishPicking();
-        return;
-      }
-      const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
-      if (yes) {
-        resetPicker(inputCamera);
-        inputCamera.click();
-      } else {
-        finishPicking();
-      }
-    }
-
-    function finishPicking() {
-      if (finished) return;
-      finished = true;
-      ctaWrap.style.display = "none";
-      roleUI.hidden = false;
-    }
-
-    const ctaWrap = document.getElementById("ctaWrap");
-    const ctaBtn = document.getElementById("reviewBtn");
-    const counterEl = document.createElement('div');
-    counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
-    ctaWrap.appendChild(counterEl);
-
     ctaBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      finished = false;
       pickedFiles = [];
-      updateCounter(counterEl);
       const inputToUse = isMobile() ? inputCamera : input;
       inputToUse.value = '';
       inputToUse.click();
     });
 
-    input.addEventListener("change", () => {
+    input.addEventListener("change", async () => {
       if (!input.files || !input.files.length) return;
-      addFiles(input.files);
-      finishPicking();
+      pickedFiles = Array.from(input.files);
+      roleUI.hidden = false;
     });
 
-    inputCamera.addEventListener('change', () => {
-      if (!inputCamera.files || !inputCamera.files.length) {
-        finishPicking();
-        return;
-      }
-      addFiles(inputCamera.files);
-      updateCounter(counterEl);
-      maybeAddMoreAndReopenCamera();
+    inputCamera.addEventListener("change", async () => {
+      if (!inputCamera.files || !inputCamera.files.length) return;
+      pickedFiles = Array.from(inputCamera.files);
+      roleUI.hidden = false;
     });
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        chosenRole = btn.dataset.role;
         if (!pickedFiles.length) {
           alert("Please choose a contract file first.");
           return;
         }
         try {
-          if (!pickedFiles.length) {
-            alert("No files selected. Please choose a file.");
+          const file = pickedFiles[0]; // Use first file
+          if (file.size > 10_000_000) {
+            alert(`File ${file.name} is too large. Maximum size is 10MB.`);
             return;
           }
-          for (const file of pickedFiles) {
-            if (file.size > 10_000_000) {
-              alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-              return;
-            }
-            const payload = await fileToPayload(file);
-            // Since no server, use fallback demo data
-            const analysisResult = {
-              ...fallbackDemo,
-              contractName: payload.originalName || fallbackDemo.contractName,
-              detectedLang: payload.text ? "en" : fallbackDemo.detectedLang
-            };
-            localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-            window.location.href = "analysis.html";
-          }
+          const payload = await fileToPayload(file);
+          const analysisResult = {
+            ...demoData,
+            contractName: payload.originalName || demoData.contractName,
+            detectedLang: payload.text ? "en" : demoData.detectedLang
+          };
+          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+          window.location.href = "analysis.html";
         } catch (e) {
-          console.error("Processing error:", e.message);
           alert(`Error processing file: ${e.message}`);
         }
       });
