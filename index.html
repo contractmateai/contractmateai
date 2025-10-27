@@ -1463,164 +1463,172 @@
       window.addEventListener('scroll', () => { if (menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
     </script>
 
-    <script>
-      (async () => {
-       async function fileToPayload(file) {
-  try {
-    const name = file.name || "file";
-    const mime = file.type || "application/octet-stream";
-    const ext = name.toLowerCase();
-    console.log(`Processing file: ${name}, type: ${mime}`);
-    if (mime === "text/plain" || ext.endsWith(".txt")) {
-      const text = await file.text();
-      console.log("Text extracted:", text.substring(0, 100));
-      return { text, originalName: name, mime };
-    }
-    if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-      const buf = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-      let full = ""; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const content = await page.getTextContent(); const strings = content.items.map((i) => i.str).join(" "); full += strings + "\n"; }
-      console.log("PDF text extracted:", full.substring(0, 100));
-      return { text: full, originalName: name, mime };
-    }
-    if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-      const buf = await file.arrayBuffer();
-      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-      console.log("DOCX text extracted:", res.value.substring(0, 100));
-      return { text: res.value || "", originalName: name, mime };
-    }
-    if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-      const dataUrl = await new Promise((resolve) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
-      console.log("Image data URI generated:", dataUrl.substring(0, 100));
-      return { imageDataURI: dataUrl, originalName: name, mime };
-    }
-    throw new Error("Unsupported file type: " + mime);
-  } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
-}
-        
-        const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
-        const input = document.getElementById("contractFile");
-        const inputCamera = document.getElementById("contractCamera");
-        const roleUI = document.getElementById("rolePicker");
-
-        let chosenRole = null; let pickedFiles = []; let finished = false;
-
-        function resetPicker(el){ if (el) el.value = ''; }
-        function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
-        function updateCounter(counterEl) { counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
-        function addFiles(list) { for (const f of Array.from(list)) { if (pickedFiles.length >= 10) break; pickedFiles.push(f); } }
-
-        async function askAddMore(msg = 'Add more photos?') {
-          return new Promise(resolve => {
-            const overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
-            const box = document.createElement('div');
-            box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
-            box.innerHTML = `
-              <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
-              <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
-              <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
-                <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
-                <button id="am-no"  style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
-              </div>`;
-            overlay.appendChild(box);
-            document.body.appendChild(overlay);
-            const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
-            const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
-            document.addEventListener('keydown', onKey);
-            box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
-            box.querySelector('#am-no').addEventListener('click', () => cleanup(false));
-            overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
-          });
+   <script>
+  (async () => {
+    async function fileToPayload(file) {
+      try {
+        const name = file.name || "file";
+        const mime = file.type || "application/octet-stream";
+        const ext = name.toLowerCase();
+        console.log(`Processing file: ${name}, type: ${mime}`);
+        if (mime === "text/plain" || ext.endsWith(".txt")) {
+          const text = await file.text();
+          console.log("Text extracted:", text.substring(0, 100));
+          return { text, originalName: name, mime };
         }
-
-        async function maybeAddMoreAndReopenCamera() { if (pickedFiles.length >= 10) { finishPicking(); return; } const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`); if (yes) { resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); } }
-        function finishPicking() { if (finished) return; finished = true; ctaWrap.style.display = "none"; roleUI.hidden = false; }
-
-        const ctaWrap = document.getElementById("ctaWrap");
-        const ctaBtn = document.getElementById("reviewBtn");
-        const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
-
-ctaBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  finished = false;
-  pickedFiles = [];
-  updateCounter(counterEl);
-  const inputToUse = document.getElementById("contractFile"); // Use contractFile for both mobile and desktop
-  inputToUse.value = '';
-  inputToUse.click();
-});
-
-        input.addEventListener("change", () => { if (!input.files || !input.files.length) return; pickedFiles = Array.from(input.files); finishPicking(); });
-
-        const inputGeneric = document.getElementById("contractFile");
-        inputGeneric.addEventListener('change', () => {
-          if (!inputGeneric.files || !inputGeneric.files.length) return;
-          addFiles(inputGeneric.files);
-          updateCounter(counterEl);
-          const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
-          if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); }
-        });
-
-        inputCamera.addEventListener('change', () => { if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; } addFiles(inputCamera.files); updateCounter(counterEl); maybeAddMoreAndReopenCamera(); });
-
-        roleUI.querySelectorAll('.role-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const chosenRole = btn.dataset.role;
-            if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
-            let payload;
-           try {
-  if (!pickedFiles.length) {
-    alert("No files selected. Please choose a file.");
-    return;
-  }
-  for (const file of pickedFiles) {
-    if (file.size > 10_000_000) {
-      alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-      return;
+        if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+          let full = ""; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const content = await page.getTextContent(); const strings = content.items.map((i) => i.str).join(" "); full += strings + "\n"; }
+          console.log("PDF text extracted:", full.substring(0, 100));
+          return { text: full, originalName: name, mime };
+        }
+        if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+          const buf = await file.arrayBuffer();
+          const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+          console.log("DOCX text extracted:", res.value.substring(0, 100));
+          return { text: res.value || "", originalName: name, mime };
+        }
+        if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+          const dataUrl = await new Promise((resolve) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
+          console.log("Image data URI generated:", dataUrl.substring(0, 100));
+          return { imageDataURI: dataUrl, originalName: name, mime };
+        }
+        throw new Error("Unsupported file type: " + mime);
+      } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
     }
-  }
-  const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-  const body = { files: payloadArr, role: chosenRole || "signer" };
-            console.log("Sending payload:", JSON.stringify(body, null, 2));
-const resp = await fetch("/api/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(body)
-});
-if (!resp.ok) {
-  const err = await resp.json().catch(() => ({}));
-  console.error("API error:", err);
-  alert(`Could not analyze this file: ${err?.error || "Unknown error"}. Try again or use another file.`);
-  return;
-}
-              payload = await resp.json();
-            } catch (e) { alert("Could not analyze this file. Try again or use another file."); return; }
-            const { contractName, detectedLang, analysis, translations = {} } = payload || {};
-            if (!analysis) { alert("Analysis came back empty. Please try again with a different file."); return; }
-            const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
-            const summaryStr = summaryArr.join("\n\n");
-            localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
-            localStorage.setItem("detectedLang", detectedLang || "en");
-            localStorage.setItem("role", chosenRole || "signer");
-            if ((chosenRole || "signer") === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
-            localStorage.setItem("summary", summaryStr);
-            localStorage.setItem("risk", String(analysis.risk ?? 0));
-            localStorage.setItem("clarity", String(analysis.clarity ?? 0));
-            localStorage.setItem("compliance", String(analysis.compliance ?? 0));
-            localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
-            localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
-            localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
-            localStorage.setItem("analysisData", JSON.stringify({ languageOriginal: detectedLang || "en", summary: summaryArr, risk: { value: analysis.risk ?? 0, note: "" }, clarity: { value: analysis.clarity ?? 0, note: "" }, clauses: analysis.keyClauses || [], issues: analysis.potentialIssues || [], suggestions: analysis.smartSuggestions || [], meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 }, translations }));
-            localStorage.setItem("translations", JSON.stringify(translations));
-            localStorage.setItem("analysisMode", "live");
-            localStorage.setItem("analysisRaw", JSON.stringify(payload));
-            window.location.href = "analysis.html?ts=" + Date.now();
+
+    const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
+    const input = document.getElementById("contractFile");
+    const inputCamera = document.getElementById("contractCamera");
+    const roleUI = document.getElementById("rolePicker");
+    let chosenRole = null; let pickedFiles = []; let finished = false;
+    function resetPicker(el){ if (el) el.value = ''; }
+    function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
+    function updateCounter(counterEl) { counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
+    function addFiles(list) { for (const f of Array.from(list)) { if (pickedFiles.length >= 10) break; pickedFiles.push(f); } }
+    async function askAddMore(msg = 'Add more photos?') {
+      return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:2000;';
+        const box = document.createElement('div');
+        box.style.cssText = 'background:#0f0f0f;border:1px solid #2a2a2a;border-radius:16px;padding:18px 16px;max-width:320px;width:calc(100% - 32px);text-align:center;color:#fff;';
+        box.innerHTML = `
+          <div style="font-size:18px;margin-bottom:6px;">${msg}</div>
+          <div style="color:#cfcfcf;font-size:14px;">Up to 10 photos total.</div>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+            <button id="am-yes" style="background:#a7fd3c;color:#000;border:1px solid #a7fd3c;border-radius:10px;padding:10px 14px;">Yes</button>
+            <button id="am-no" style="background:#2a2a2a;color:#fff;border:1px solid #4a4a4a;border-radius:10px;padding:10px 14px;">No</button>
+          </div>`;
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
+        const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
+        document.addEventListener('keydown', onKey);
+        box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
+        box.querySelector('#am-no').addEventListener('click', () => cleanup(false));
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+      });
+    }
+    async function maybeAddMoreAndReopenCamera() { if (pickedFiles.length >= 10) { finishPicking(); return; } const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`); if (yes) { resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); } }
+    function finishPicking() { if (finished) return; finished = true; ctaWrap.style.display = "none"; roleUI.hidden = false; }
+    const ctaWrap = document.getElementById("ctaWrap");
+    const ctaBtn = document.getElementById("reviewBtn");
+    const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
+    ctaBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      finished = false;
+      pickedFiles = [];
+      updateCounter(counterEl);
+      const inputToUse = isMobile() ? inputCamera : input; // Use camera on mobile, file input on desktop
+      inputToUse.value = '';
+      inputToUse.click();
+    });
+    input.addEventListener("change", () => { if (!input.files || !input.files.length) return; addFiles(input.files); finishPicking(); });
+    const inputGeneric = document.getElementById("contractFile");
+    inputGeneric.addEventListener('change', () => {
+      if (!inputGeneric.files || !inputGeneric.files.length) return;
+      addFiles(inputGeneric.files);
+      updateCounter(counterEl);
+      const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
+      if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); }
+    });
+    inputCamera.addEventListener('change', () => { if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; } addFiles(inputCamera.files); updateCounter(counterEl); maybeAddMoreAndReopenCamera(); });
+    roleUI.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const chosenRole = btn.dataset.role;
+        if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
+        let payload;
+        try {
+          if (!pickedFiles.length) {
+            alert("No files selected. Please choose a file.");
+            return;
+          }
+          for (const file of pickedFiles) {
+            if (file.size > 10_000_000) {
+              alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+              return;
+            }
+          }
+          const payloadArr = await Promise.all(pickedFiles.map(async (file) => {
+            const result = await fileToPayload(file);
+            if (result.text && !result.text.trim()) {
+              throw new Error(`Empty text extracted from ${result.originalName}`);
+            }
+            return {
+              text: result.text || undefined,
+              imageDataURI: result.imageDataURI || undefined,
+              originalName: result.originalName,
+              mime: result.mime
+            };
+          }));
+          const body = { files: payloadArr, role: chosenRole || "signer" };
+          console.log("Sending payload:", JSON.stringify(body, null, 2));
+          const resp = await fetch("/api/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
           });
-        });
-      })();
-    </script>
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            console.error("API error:", err);
+            alert(`Could not analyze this file: ${err?.error || "Unknown error"}. Try again or use another file.`);
+            return;
+          }
+          payload = await resp.json();
+        } catch (e) {
+          console.error("Processing error:", e.message);
+          alert(`Could not analyze this file: ${e.message}. Try again or use another file.`);
+          return;
+        }
+        const { contractName, detectedLang, analysis, translations = {} } = payload || {};
+        if (!analysis) {
+          alert("Analysis came back empty. Please try again with a different file.");
+          return;
+        }
+        const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
+        const summaryStr = summaryArr.join("\n\n");
+        localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
+        localStorage.setItem("detectedLang", detectedLang || "en");
+        localStorage.setItem("role", chosenRole || "signer");
+        if ((chosenRole || "signer") === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
+        localStorage.setItem("summary", summaryStr);
+        localStorage.setItem("risk", String(analysis.risk ?? 0));
+        localStorage.setItem("clarity", String(analysis.clarity ?? 0));
+        localStorage.setItem("compliance", String(analysis.compliance ?? 0));
+        localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
+        localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
+        localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
+        localStorage.setItem("analysisData", JSON.stringify({ languageOriginal: detectedLang || "en", summary: summaryArr, risk: { value: analysis.risk ?? 0, note: "" }, clarity: { value: analysis.clarity ?? 0, note: "" }, clauses: analysis.keyClauses || [], issues: analysis.potentialIssues || [], suggestions: analysis.smartSuggestions || [], meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 }, translations }));
+        localStorage.setItem("translations", JSON.stringify(translations));
+        localStorage.setItem("analysisMode", "live");
+        localStorage.setItem("analysisRaw", JSON.stringify(payload));
+        window.location.href = "analysis.html?ts=" + Date.now();
+      });
+    });
+  })();
+</script>
   </body>
 </html> 
