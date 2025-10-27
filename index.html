@@ -1571,11 +1571,31 @@
             const chosenRole = btn.dataset.role;
             if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
             let payload;
-            try {
-              const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-              const body = { files: payloadArr, role: chosenRole || "signer" };
-              const resp = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-              if (!resp.ok) { const err = await resp.json().catch(() => ({})); throw new Error(err?.error || "Analysis failed"); }
+           try {
+  if (!pickedFiles.length) {
+    alert("No files selected. Please choose a file.");
+    return;
+  }
+  for (const file of pickedFiles) {
+    if (file.size > 10_000_000) {
+      alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+      return;
+    }
+  }
+  const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+  const body = { files: payloadArr, role: chosenRole || "signer" };
+            console.log("Sending payload:", body);
+const resp = await fetch("/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body)
+});
+if (!resp.ok) {
+  const err = await resp.json().catch(() => ({}));
+  console.error("API error:", err);
+  alert(`Could not analyze this file: ${err?.error || "Unknown error"}. Try again or use another file.`);
+  return;
+}
               payload = await resp.json();
             } catch (e) { alert("Could not analyze this file. Try again or use another file."); return; }
             const { contractName, detectedLang, analysis, translations = {} } = payload || {};
