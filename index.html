@@ -1497,29 +1497,7 @@
     throw new Error("Unsupported file type: " + mime);
   } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
 }
-            if (mime === "text/plain" || ext.endsWith(".txt")) {
-              const text = await file.text();
-              return { text, originalName: name, mime };
-            }
-            if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-              const buf = await file.arrayBuffer();
-              const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-              let full = ""; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const content = await page.getTextContent(); const strings = content.items.map((i) => i.str).join(" "); full += strings + "\n"; }
-              return { text: full, originalName: name, mime };
-            }
-            if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-              const buf = await file.arrayBuffer();
-              const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-              return { text: res.value || "", originalName: name, mime };
-            }
-            if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-              const dataUrl = await new Promise((resolve) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
-              return { imageDataURI: dataUrl, originalName: name, mime };
-            }
-            throw new Error("Unsupported file type: " + mime);
-          } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
-        }
-
+        
         const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
         const input = document.getElementById("contractFile");
         const inputCamera = document.getElementById("contractCamera");
@@ -1563,12 +1541,12 @@
         const ctaBtn = document.getElementById("reviewBtn");
         const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
 
-  ctaBtn.addEventListener("click", (e) => {
+ctaBtn.addEventListener("click", (e) => {
   e.preventDefault();
   finished = false;
   pickedFiles = [];
   updateCounter(counterEl);
-  const inputToUse = isMobile() ? document.getElementById("contractFile") : input;
+  const inputToUse = document.getElementById("contractFile"); // Use contractFile for both mobile and desktop
   inputToUse.value = '';
   inputToUse.click();
 });
