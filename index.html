@@ -1573,7 +1573,12 @@
             let payload;
             try {
               const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-              const body = { files: payloadArr, role: chosenRole || "signer" };
+              const body = {
+  files: payloadArr,
+  role: chosenRole || "signer",
+  mode: window.innerWidth < 980 ? "mobile" : "desktop"  // 👈 NEW LINE
+};
+
               const resp = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
               if (!resp.ok) { const err = await resp.json().catch(() => ({})); throw new Error(err?.error || "Analysis failed"); }
               payload = await resp.json();
