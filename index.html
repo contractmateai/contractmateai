@@ -1465,11 +1465,38 @@
 
     <script>
       (async () => {
-        async function fileToPayload(file) {
-          try {
-            const name = file.name || "file";
-            const mime = file.type || "application/octet-stream";
-            const ext = name.toLowerCase();
+       async function fileToPayload(file) {
+  try {
+    const name = file.name || "file";
+    const mime = file.type || "application/octet-stream";
+    const ext = name.toLowerCase();
+    console.log(`Processing file: ${name}, type: ${mime}`);
+    if (mime === "text/plain" || ext.endsWith(".txt")) {
+      const text = await file.text();
+      console.log("Text extracted:", text.substring(0, 100));
+      return { text, originalName: name, mime };
+    }
+    if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let full = ""; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const content = await page.getTextContent(); const strings = content.items.map((i) => i.str).join(" "); full += strings + "\n"; }
+      console.log("PDF text extracted:", full.substring(0, 100));
+      return { text: full, originalName: name, mime };
+    }
+    if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+      const buf = await file.arrayBuffer();
+      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+      console.log("DOCX text extracted:", res.value.substring(0, 100));
+      return { text: res.value || "", originalName: name, mime };
+    }
+    if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+      const dataUrl = await new Promise((resolve) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
+      console.log("Image data URI generated:", dataUrl.substring(0, 100));
+      return { imageDataURI: dataUrl, originalName: name, mime };
+    }
+    throw new Error("Unsupported file type: " + mime);
+  } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
+}
             if (mime === "text/plain" || ext.endsWith(".txt")) {
               const text = await file.text();
               return { text, originalName: name, mime };
@@ -1584,7 +1611,7 @@
   }
   const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
   const body = { files: payloadArr, role: chosenRole || "signer" };
-            console.log("Sending payload:", body);
+            console.log("Sending payload:", JSON.stringify(body, null, 2));
 const resp = await fetch("/api/analyze", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
