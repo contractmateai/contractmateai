@@ -1,1613 +1,685 @@
-<html lang="en" class="notranslate" translate="no">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SignSense — Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+   :root {
+  --bg: #0e0c13;
+  --card: #1c1b22;
+  --border: #3b3b3b;
+  --white: #ffffff;
+  --muted: #bdbdbd;
+  --green: #00ff65;
+  --orange: #df911a;
+  --red: #fe0000;
+  --black: #000000;
+  --radius: 21px;
+  --gap: 18px;
+  --sidebar: 300px;
+  --drawerW: 75vw;
+  --containerMax: 428px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial; overflow-x: hidden; }
+.layout { display: grid; grid-template-columns: var(--sidebar) 1fr; min-height: 100vh; }
+.main { padding: 0 20px 140px; display: grid; grid-template-rows: auto auto 1fr; gap: 12px; }
+.container { width: 100%; max-width: var(--containerMax); margin: 0 auto; padding: 12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left)); }
+.sidebar { background: #0f0e14; border-right: 1px solid var(--border); padding: 12px 16px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 16px; }
+.drawer { position: fixed; left: 0; top: 0; bottom: 0; width: min(var(--drawerW), 420px); background: #0f0e14; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 12px 16px 16px; gap: 16px; transform: translateX(-100%); transition: transform .28s ease; z-index: 80; }
+.drawer.open { transform: translateX(0); }
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 70; }
+.scrim.show { opacity: 1; visibility: visible; }
+.brand, .brand-row { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
+.brand img, .brand-row img { width: 34px; height: 34px; }
+.brand span, .brand-row span { font-size: 24px; font-weight: 400; }
+.nav { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.nav a { text-decoration: none; color: var(--muted); display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1px solid transparent; font-size: 18px; }
+.nav a img.icon { width: 22px; height: 22px; }
+.nav a img.arr { width: 16px; height: 16px; opacity: .9; }
+.nav a.active { background: #181620; border: 1px solid var(--border); color: var(--white); }
+.nav a:hover { background: transparent; border: 1px solid var(--border); color: var(--white); }
+.push { flex: 1; }
+.end, .end-only { color: var(--muted); font-size: 15px; line-height: 1.6; }
+.footer-sep { height: 1px; background: var(--border); margin: 10px 0; }
+.topbar { position: sticky; top: 0; z-index: 40; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left)); height: 64px; border-bottom: 1px solid var(--border); }
+.top-left { display: flex; align-items: center; gap: 10px; }
+.menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: #14121a; cursor: pointer; padding: 0; }
+.menu-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
+.top-title { font-size: 20px; font-weight: 400; }
+.doc-title-top, .doc-title { margin: 10px calc(14px + env(safe-area-inset-left)) 10px calc(14px + env(safe-area-inset-right)); font-size: 18px; font-weight: 400; color: var(--white); }
+.doc-title .label, .doc-title .value { font-size: 18px; color: var(--muted); font-weight: 400; }
+.lang { position: relative; }
+.lang-btn { display: flex; align-items: center; gap: 8px; background: transparent; border: none; color: var(--white); font: 400 20px/1 Inter; cursor: pointer; padding: 6px 10px; min-width: 40px; user-select: none; }
+.lang-btn .caret { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #fff; opacity: .9; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 240px; max-height: 260px; overflow: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); padding: 6px; scrollbar-width: thin; scrollbar-color: #6a6a6a transparent; }
+.lang:hover .lang-menu, .lang.open .lang-menu { display: block; }
+.lang-menu::-webkit-scrollbar { width: 6px; }
+.lang-menu::-webkit-scrollbar-thumb { background: #6a6a6a; border-radius: 10px; }
+.lang-item { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; color: var(--white); cursor: pointer; }
+.lang-item:hover { background: #17161e; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; opacity: 0; transform: translateY(8px); margin-bottom: var(--gap); }
+@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn .8s ease forwards; }
+.card h3 { margin: 0 0 10px; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 400; }
+.card h3 img { width: 24px; height: 24px; }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.list p { margin: 0; color: var(--muted); font-size: 16px; overflow-wrap: anywhere; }
+.bullets { margin: 0; color: var(--muted); font-size: 16px; padding-left: 22px; list-style: disc; }
+.bullets li { margin: 0 0 10px; }
+.numbered { counter-reset: item; }
+.numbered p { position: relative; padding-left: 26px; margin: 0 0 10px; }
+.numbered p::before { counter-increment: item; content: counter(item) "."; position: absolute; left: 0; top: 0; color: var(--muted); }
+.meter-block { display: flex; flex-direction: column; gap: 10px; }
+.meter-head { display: flex; align-items: center; justify-content: space-between; }
+.meter-title { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
+.meter-title img { width: 24px; height: 24px; margin-top: 0px; }
+.meter { height: 10px; border-radius: 999px; background: var(--black); overflow: hidden; }
+.fill { height: 100%; width: 0%; transition: width 1.6s ease; border-radius: 999px; }
+.hcard { display: flex; gap: 12px; align-items: center; }
+.circle { width: 110px; height: 110px; position: relative; display: grid; place-items: center; flex: 0 0 110px; }
+.circle svg { transform: rotate(-90deg); }
+.circle .val { position: absolute; font-weight: 400; font-size: 26px; }
+.circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
+.circle circle.arc { stroke-width: 14; fill: none; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px); }
+.htext { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.muted { color: var(--muted); font-size: 15px; }
+#riskCard .muted, #clarCard .muted { font-size: 13.5px; line-height: 1.5; }
+.status { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.status .dot { width: 10px; height: 10px; border-radius: 2px; background: var(--green); }
+.status span { font-size: 15px; }
+#riskCard, #clarCard { padding: 12px 12px; }
+#scoreCard .score-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+#scoreCard .score-pct { font-size: 30px; }
+.score-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.score-remark { font-size: 16px; color: var(--muted); }
+.score-bar { position: relative; height: 20px; border-radius: 14px; background: linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%); border: 1px solid #2f2f2f; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); width: 100%; }
+.score-ind { position: absolute; top: -6px; height: 30px; width: 3px; background: #fff; border-radius: 2px; left: calc(80% - 1.5px); box-shadow: 0 0 8px rgba(255,255,255,.6); }
+.score-scale { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.download-wrap { position: fixed; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom)); display: none; justify-content: center; z-index: 60; opacity: 0; transform: translateY(8px); }
+.download { background: #f2f9fe; color: #000; border: 1px solid #cfcfcf; border-radius: 16px; padding: 16px 26px; display: inline-flex; gap: 12px; align-items: center; cursor: pointer; font-weight: 400; font-size: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; }
+.modal-card { background: #141319; border: 1px solid var(--border); border-radius: 18px; padding: 18px; width: min(480px,92vw); }
+.modal-card h4 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
+.modal-row { display: flex; gap: 10px; margin-top: 12px; }
+.input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 12px; color: #fff; font: 400 15px/1 Inter; }
+.btn { background: #0f0e14; border: 1px solid var(--border); color: #fff; border-radius: 10px; padding: 12px 14px; cursor: pointer; }
+.btn.primary { background: #f2f9fe; color: #000; border-color: #cfcfcf; }
+.email-inline { display: none; flex-direction: column; gap: 8px; width: min(92vw, 340px); background: #141319; border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
+.email-title { font-size: 14px; color: #bdbdbd; margin-bottom: 2px; }
+.email-row { display: flex; align-items: center; gap: 8px; }
+.email-inline .input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 10px 12px; color: #fff; font: 400 16px/1 Inter; }
+.email-inline .input:focus { outline: none; box-shadow: none; border-color: #5a5a5a; background: #0f0e14; color: #fff; }
+.email-err { color: #ff6b6b; font-size: 13px; display: none; }
+#emailInline .btn { padding: 7px 8px; border-radius: 8px; flex-shrink: 0; }
+#emailInline .btn.primary { padding: 7px 8px; font-size: 15px; font-weight: 500; }
+#emailInline .email-title { color: #f2f9fe; }
+@media (min-width: 981px) {
+  .drawer, .scrim, .menu-btn, .doc-title-top, .email-inline { display: none !important; }
+  .download-wrap { left: var(--sidebar); }
+  .grid { display: grid; grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr); gap: var(--gap); align-items: start; margin-top: 6px; }
+  .left, .right { display: flex; flex-direction: column; gap: var(--gap); }
+  .card { padding: 18px 18px 20px; }
+  .card h3 { font-size: 24px; }
+  .card h3 img { width: 30px; height: 30px; }
+  .list p, .bullets li { font-size: 20px; }
+  .meter-title { font-size: 22px; }
+  .meter-title img { width: 32px; height: 32px; }
+  .circle { width: 160px; height: 160px; flex: 0 0 160px; }
+  .circle .val { font-size: 34px; }
+  .muted { font-size: 18px; }
+  .status span { font-size: 17px; }
+  .score-pct { font-size: 42px; }
+  .score-remark { font-size: 20px; }
+  .score-bar { height: 22px; }
+  .score-ind { height: 34px; }
+  .score-scale { font-size: 16px; }
+  .modal { z-index: 20; }
+}
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar, .modal { display: none !important; }
+  .main { padding: 0; }
+  .download-wrap { left: 0; }
+  .circle { width: 110px; height: 110px; flex: 0 0 110px; }
+  .circle .val { font-size: 26px; }
+  .card h3 { font-size: 18px; }
+  .card h3 img { width: 24px; height: 24px; }
+  .list p, .bullets li { font-size: 16px; }
+  .meter-title { font-size: 16px; }
+  .meter-title img { width: 24px; height: 24px; }
+  .muted { font-size: 15px; }
+  .status span { font-size: 15px; }
+  .score-pct { font-size: 30px; }
+  .score-remark { font-size: 16px; }
+  .score-bar { height: 20px; }
+  .score-ind { height: 30px; }
+  .score-scale { font-size: 14px; }
+  .card { padding: 14px; }
+}
+@media (max-width: 420px) {
+  .email-row { flex-wrap: nowrap; }
+  .email-inline { width: min(92vw, 320px); }
+}
 
-  <head>
-   <meta charset="utf-8" />
-<meta name="google" content="notranslate" />
-<meta http-equiv="Content-Language" content="x-default" />
-
-    <title>SignSense — Analysis</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- UI font (site UI can stay Inter). PDF uses Poppins via jsPDF loader below -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap"
-      rel="stylesheet"
-    />
-    <!-- jsPDF -->
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <!-- PDF Generator Module -->
-    <script src="js/pdf-generator.js"></script>
-
-    <style>
-      :root {
-        --bg: #0e0c13;
-        --card: #1c1b22;
-        --border: #3b3b3b;
-        --white: #ffffff;
-        --muted: #bdbdbd;
-        --green: #00ff65;
-        --orange: #df911a;
-        --red: #fe0000;
-        --black: #000000;
-        --radius: 21px;
-        --gap: 18px;
-        --sidebar: 300px;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--white);
-        font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial;
-      }
-      .layout {
-        display: grid;
-        grid-template-columns: var(--sidebar) 1fr;
-        min-height: 100vh;
-      }
-
-      /* ===== SIDEBAR ===== */
-      .sidebar {
-        background: #0f0e14;
-        border-right: 1px solid var(--border);
-        padding: 12px 16px 16px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .brand {
-        padding: 0 2px 0 18px;
-      }
-      .brand a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        height: 52px;
-        text-decoration: none;
-        color: var(--white);
-      }
-      .brand img {
-        width: 34px;
-        height: 34px;
-      }
-      .brand span {
-        font-size: 24px;
-        color: var(--white);
-        font-weight: 400;
-      }
-      .nav {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 6px;
-      }
-      .nav a {
-        text-decoration: none;
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 16px 18px;
-        border-radius: 16px;
-        border: 1px solid transparent;
-        transition: border-color 0.2s ease;
-        font-size: 19px;
-      }
-      .nav a img.icon {
-        width: 30px;
-        height: 30px;
-        opacity: 0.95;
-      }
-      .nav a img.arr {
-        width: 20px;
-        height: 20px;
-        opacity: 0.9;
-      }
-      .nav a.active {
-        background: #181620;
-        border: 1px solid var(--border);
-        color: var(--white);
-      }
-      .nav a:hover {
-        background: transparent;
-        border-color: var(--border);
-        color: var(--white);
-      }
-      .nav a.active:hover {
-        background: #181620;
-        border-color: var(--border);
-      }
-      .push {
-        flex: 1;
-      }
-      .end-only {
-        display: none;
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      .legal,
-      .copy,
-      .copy2 {
-        color: var(--muted);
-        font-size: 15px;
-        line-height: 1.6;
-      }
-      .footer-sep {
-        height: 1px;
-        background: var(--border);
-        margin: 10px 0;
-      }
-
-      /* ===== MAIN ===== */
-      .main {
-        padding: 0 20px 140px;
-        display: grid;
-        grid-template-rows: auto auto 1fr;
-        gap: 12px;
-      }
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background: var(--bg);
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        padding: 8px 6px 10px;
-        height: 64px;
-        border-bottom: 1px solid var(--border);
-      }
-      .top-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .top-title {
-        font-size: 20px;
-        color: var(--white);
-        font-weight: 400;
-      }
-
-      .doc-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 2px 6px 0 6px;
-      }
-      .doc-title .label {
-        font-size: 18px;
-        color: var(--muted);
-        font-weight: 400;
-      }
-      .doc-title .value {
-        font-size: 18px;
-        color: var(--muted);
-        font-weight: 400;
-      }
-
-      .lang {
-        position: relative;
-        padding: 6px 4px;
-      }
-      .lang-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: transparent;
-        border: none;
-        color: var(--white);
-        font: 400 20px/1 Inter;
-        cursor: pointer;
-        padding: 6px 10px;
-        min-width: 40px;
-        user-select: none;
-      }
-      .lang-btn #langNow {
-        letter-spacing: 0.6px;
-      }
-      .lang-btn .caret {
-        width: 0;
-        height: 0;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-top: 7px solid #fff;
-        opacity: 0.9;
-      }
-      .lang-menu {
-        position: absolute;
-        right: 0;
-        top: calc(100% + 8px);
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        min-width: 240px;
-        max-height: 260px;
-        overflow: auto;
-        display: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        padding: 6px;
-        scrollbar-width: thin;
-        scrollbar-color: #6a6a6a transparent;
-      }
-      .lang.open .lang-menu {
-        display: block;
-      }
-      .lang-menu::-webkit-scrollbar {
-        width: 6px;
-      }
-      .lang-menu::-webkit-scrollbar-thumb {
-        background: #6a6a6a;
-        border-radius: 10px;
-      }
-      .lang-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px;
-        border-radius: 10px;
-        color: var(--white);
-        cursor: pointer;
-      }
-      .lang-item:hover {
-        background: #17161e;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr);
-        gap: var(--gap);
-        align-items: start;
-        margin-top: 6px;
-      }
-      .left,
-      .right {
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap);
-      }
-
-      @keyframes fadeIn {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .fade-in {
-        animation: fadeIn 0.8s ease forwards;
-      }
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 18px 18px 20px;
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      .card h3 {
-        margin: 0 0 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 24px;
-        color: var(--white);
-        font-weight: 400;
-      }
-      .card h3 img {
-        width: 30px;
-        height: 30px;
-      }
-
-      .list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .list p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 20px;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-      }
-      #summaryText:empty,
-      #issuesList:empty,
-      #suggestionsList:empty,
-      #clausesList:empty {
-        min-height: 72px;
-      }
-      #riskNote:empty,
-      #clarNote:empty {
-        min-height: 24px;
-      }
-      #scoreCard .score-remark:empty {
-        min-height: 40px;
-      }
-
-      .bullets {
-        margin: 0;
-        color: var(--muted);
-        font-size: 20px;
-        padding-left: 22px;
-        list-style: disc;
-      }
-      .bullets li {
-        margin: 0 0 12px;
-      }
-
-      .numbered {
-        counter-reset: item;
-      }
-      .numbered p {
-        position: relative;
-        padding-left: 26px;
-      }
-      .numbered p::before {
-        counter-increment: item;
-        content: counter(item) ".";
-        position: absolute;
-        left: 0;
-        top: 0;
-        color: var(--muted);
-      }
-
-      .meter-block {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .meter-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .meter-title {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 22px;
-      }
-      .meter-title img {
-        width: 32px;
-        height: 32px;
-      }
-      .meter {
-        height: 10px;
-        border-radius: 999px;
-        background: var(--black);
-        overflow: hidden;
-      }
-      .fill {
-        height: 100%;
-        width: 0%;
-        transition: width 1.6s ease;
-        border-radius: 999px;
-      }
-
-      .hcard {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-      }
-      .circle {
-        width: 160px;
-        height: 160px;
-        position: relative;
-        display: grid;
-        place-items: center;
-        flex: 0 0 160px;
-      }
-      .circle svg {
-        transform: rotate(-90deg);
-      }
-      .circle .val {
-        position: absolute;
-        font-weight: 400;
-        font-size: 34px;
-        color: var(--white);
-      }
-      .circle circle.track {
-        stroke: var(--black);
-        stroke-width: 12;
-        fill: none;
-      }
-      .circle circle.arc {
-        stroke-width: 12;
-        fill: none;
-        stroke-linecap: round;
-        stroke-dasharray: 440;
-        stroke-dashoffset: 440;
-      }
-      .htext {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .muted {
-        color: var(--muted);
-        font-size: 18px;
-      }
-      .status {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 8px;
-      }
-      .status .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 2px;
-        background: var(--green);
-      }
-      .status span {
-        font-size: 17px;
-        color: var(--white);
-        font-weight: 400;
-      }
-
-      #scoreCard {
-        margin-top: 12px;
-      }
-      #confRightCard {
-        margin-top: 12px;
-      }
-      #summaryCard,
-      #riskCard,
-      #clarCard,
-      #profCard,
-      #favCard,
-      #deadCard,
-      #issuesCard,
-      #clausesCard,
-      #suggestionsCard,
-      #scoreCard,
-      #confRightCard {
-        will-change: transform, opacity;
-      }
-
-      #scoreCard .score-center {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-      #scoreCard .score-pct {
-        font-size: 42px;
-      }
-      .score-side {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
-      .score-remark {
-        font-size: 20px;
-        color: var(--muted);
-      }
-      .score-bar {
-        position: relative;
-        height: 22px;
-        border-radius: 14px;
-        background: linear-gradient(
-          90deg,
-          #ff6b6b 0%,
-          #ffd166 45%,
-          #00e676 100%
-        );
-        border: 1px solid #2f2f2f;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        width: 100%;
-      }
-      .score-ind {
-        position: absolute;
-        top: -6px;
-        height: 34px;
-        width: 3px;
-        background: #fff;
-        border-radius: 2px;
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-      }
-      .score-scale {
-        display: flex;
-        justify-content: space-between;
-        font-size: 16px;
-        color: var(--muted);
-      }
-
-      .download-wrap {
-        position: fixed;
-        left: var(--sidebar);
-        right: 0;
-        bottom: 34px;
-        display: none;
-        justify-content: center;
-        z-index: 9;
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      .download {
-        background: #f2f9fe;
-        color: #000;
-        border: 1px solid #cfcfcf;
-        border-radius: 16px;
-        padding: 18px 32px;
-        display: inline-flex;
-        gap: 12px;
-        align-items: center;
-        cursor: pointer;
-        font-weight: 400;
-        font-size: 19px;
-        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.28);
-      }
-      .download:hover {
-        filter: brightness(1.03);
-      }
-      .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 20;
-      }
-      .modal-card {
-        background: #141319;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 18px 18px 16px;
-        width: min(480px, 92vw);
-      }
-      .modal-card h4 {
-        margin: 0 0 10px;
-        font-size: 18px;
-        font-weight: 400;
-      }
-      .modal-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 12px;
-      }
-      .input {
-        flex: 1;
-        background: #0f0e14;
-        border: 1px solid #5a5a5a;
-        border-radius: 10px;
-        padding: 12px;
-        color: #fff;
-        font: 400 15px/1 Inter;
-      }
-      .btn {
-        background: #0f0e14;
-        border: 1px solid var(--border);
-        color: #fff;
-        border-radius: 10px;
-        padding: 12px 14px;
-        cursor: pointer;
-      }
-      .btn.primary {
-        background: #f2f9fe;
-        color: #000;
-        border-color: #cfcfcf;
-      }
-
-      @media (max-width: 1100px) {
-        .layout {
-          grid-template-columns: 1fr;
-        }
-        .download-wrap {
-          left: 0;
-        }
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="layout">
-      <!-- ===== SIDEBAR ===== -->
-      <aside class="sidebar">
-        <div class="brand">
-          <a href="index.html" aria-label="Go to homepage">
-            <!-- <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo" /> -->
-            <!-- <img src="https://i.imgur.com/Z5hv7K9.png" alt="SignSense logo" /> -->
-            <img src="public/logo.png" alt="SignSense logo" />
-            <!-- <img src="public/logo.png" alt="SignSense logo" /> -->
-            <span>SignSense</span>
-          </a>
-        </div>
-
-        <nav class="nav">
-          <a class="active" href="#"
-            ><img class="arr" src="https://imgur.com/CHGomYz.png" alt="" /><img
-              class="icon"
-              src="https://imgur.com/lnQTDuo.png"
-              alt=""
-            /><span>Overview</span></a
-          >
-          <a href="index.html"
-            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
-              class="icon"
-              src="https://imgur.com/kE3okdE.png"
-              alt=""
-            /><span>Home</span></a
-          >
-          <a href="privacy.html"
-            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
-              class="icon"
-              src="https://imgur.com/krMnFVT.png"
-              alt=""
-            /><span>Privacy</span></a
-          >
-          <a href="#"
-            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
-              class="icon"
-              src="https://imgur.com/6zHviT6.png"
-              alt=""
-            /><span>Contact Us</span></a
-          >
-          <a href="#" id="leaveReview"
-            ><img class="arr" src="https://imgur.com/xhkeG0y.png" alt="" /><img
-              class="icon"
-              src="https://imgur.com/zwr9SOe.png"
-              alt=""
-            /><span>Add a Review</span></a
-          >
-        </nav>
-
-        <div class="push"></div>
-        <div class="end-only" id="sidebarEnd">
-          <div class="legal">All rights reserved.</div>
-          <div class="copy2">© 2025 SignSense</div>
-          <div class="footer-sep"></div>
-          <div class="copy">
-            Not legal advice.<br />For informational use only.
-          </div>
-        </div>
-      </aside>
-
-      <!-- ===== MAIN ===== -->
-      <main class="main">
-        <div class="topbar">
-          <div class="top-left">
-            <div class="top-title" id="uiOverview">Overview</div>
-          </div>
-          <div class="lang" id="lang">
-            <button class="lang-btn" id="langBtn" type="button">
-              <span id="langNow">EN</span
-              ><span class="caret" aria-hidden="true"></span>
-            </button>
-            <div
-              class="lang-menu"
-              id="langMenu"
-              role="listbox"
-              aria-label="Report Language"
-            >
-              <div class="lang-item" data-code="en">English</div>
-              <div class="lang-item" data-code="it">Italiano</div>
-              <div class="lang-item" data-code="de">Deutsch</div>
-              <div class="lang-item" data-code="es">Español</div>
-              <div class="lang-item" data-code="fr">Français</div>
-              <div class="lang-item" data-code="pt">Português</div>
-              <div class="lang-item" data-code="nl">Nederlands</div>
-              <div class="lang-item" data-code="ro">Română</div>
-              <div class="lang-item" data-code="sq">Shqip</div>
-              <div class="lang-item" data-code="tr">Türkçe</div>
-              <div class="lang-item" data-code="zh">中文</div>
-              <div class="lang-item" data-code="ja">日本語</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Contract title row -->
-        <div class="doc-title">
-          <span class="label" id="uiTitleLabel">Title:</span>
-          <span class="value" id="uiTitleValue">—</span>
-        </div>
-
-        <div class="grid">
-          <!-- LEFT -->
-          <div class="left">
-            <section class="card" id="summaryCard">
-              <h3>
-                <img src="https://imgur.com/CuQFbD7.png" alt="" /><span
-                  id="uiSummary"
-                  >Summary</span
-                >
-              </h3>
-              <div class="list" id="summaryText"></div>
-            </section>
-
-            <section class="card meter-block" id="profCard">
-              <div class="meter-head">
-                <div class="meter-title">
-                  <img src="https://imgur.com/EdMAMnx.png" alt="" />
-                  <span id="uiProfessionalism">Professionalism</span>
-                </div>
-                <div id="confVal">0%</div>
-              </div>
-              <div class="meter"><div id="confFill" class="fill"></div></div>
-            </section>
-
-            <section class="card meter-block" id="favCard">
-              <div class="meter-head">
-                <div class="meter-title">
-                  <img src="https://imgur.com/UDRuIvO.png" alt="" />
-                  <span id="uiFavorability">Favorability Index</span>
-                </div>
-                <div id="favVal">0%</div>
-              </div>
-              <div class="meter"><div id="favFill" class="fill"></div></div>
-            </section>
-
-            <section class="card meter-block" id="deadCard">
-              <div class="meter-head">
-                <div class="meter-title">
-                  <img src="https://imgur.com/VXZ3kD8.png" alt="" />
-                  <span id="uiDeadline">Deadline pressure</span>
-                </div>
-                <div id="deadVal">0%</div>
-              </div>
-              <div class="meter"><div id="deadFill" class="fill"></div></div>
-            </section>
-
-            <section class="card" id="issuesCard">
-              <h3>
-                <img src="https://imgur.com/ppLDtiq.png" alt="" /><span
-                  id="uiIssues"
-                  >Potential Issues</span
-                >
-              </h3>
-              <ul class="bullets" id="issuesList"></ul>
-            </section>
-
-            <section class="card" id="suggestionsCard">
-              <h3>
-                <img src="https://imgur.com/EoVDfd5.png" alt="" /><span
-                  id="uiSuggestions"
-                  >Smart Suggestions</span
-                >
-              </h3>
-              <div class="list numbered" id="suggestionsList"></div>
-            </section>
-          </div>
-
-          <!-- RIGHT -->
-          <div class="right">
-            <section class="card" id="riskCard">
-              <div class="hcard">
-                <div class="circle">
-                  <svg width="160" height="160" viewBox="0 0 160 160">
-                    <circle class="track" cx="80" cy="80" r="74"></circle>
-                    <circle
-                      id="riskArc"
-                      class="arc"
-                      cx="80"
-                      cy="80"
-                      r="74"
-                    ></circle>
-                  </svg>
-                  <div class="val" id="riskVal">0%</div>
-                </div>
-                <div class="htext">
-                  <h3 style="margin-bottom: 0">
-                    <img src="https://imgur.com/Myp6Un4.png" alt="" /><span
-                      id="uiRisk"
-                      >Risk Level</span
-                    >
-                  </h3>
-                  <div class="muted" id="riskNote"></div>
-                  <div class="status">
-                    <span class="dot" id="riskDot"></span
-                    ><span id="riskBadge">Generally Safe</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="card" id="clarCard">
-              <div class="hcard">
-                <div class="circle">
-                  <svg width="160" height="160" viewBox="0 0 160 160">
-                    <circle class="track" cx="80" cy="80" r="74"></circle>
-                    <circle
-                      id="clarArc"
-                      class="arc"
-                      cx="80"
-                      cy="80"
-                      r="74"
-                    ></circle>
-                  </svg>
-                  <div class="val" id="clarVal">0%</div>
-                </div>
-                <div class="htext">
-                  <h3 style="margin-bottom: 0">
-                    <img src="https://imgur.com/o39xZtC.png" alt="" /><span
-                      id="uiClarity"
-                      >Clause Clarity</span
-                    >
-                  </h3>
-                  <div class="muted" id="clarNote"></div>
-                  <div class="status">
-                    <span class="dot" id="clarDot"></span
-                    ><span id="clarBadge">Generally Safe</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="card" id="clausesCard">
-              <h3>
-                <img src="https://imgur.com/K04axKU.png" alt="" /><span
-                  id="uiClauses"
-                  >Main Clauses</span
-                >
-              </h3>
-              <div class="list numbered" id="clausesList"></div>
-            </section>
-
-            <section class="card" id="scoreCard">
-              <div class="hcard">
-                <div class="circle">
-                  <svg width="160" height="160" viewBox="0 0 160 160">
-                    <circle class="track" cx="80" cy="80" r="74"></circle>
-                    <circle
-                      id="scoreArc"
-                      class="arc"
-                      cx="80"
-                      cy="80"
-                      r="74"
-                    ></circle>
-                  </svg>
-                  <div class="score-center">
-                    <div class="score-pct" id="scorePct">80%</div>
-                  </div>
-                </div>
-                <div class="score-side">
-                  <h3 style="margin-bottom: 0">
-                    <img src="https://imgur.com/mFvyCj7.png" alt="" /><span
-                      id="uiScoreChecker"
-                      >Score Checker</span
-                    >
-                  </h3>
-                  <div class="score-remark" id="scoreRemark">
-                    The contract is nearly perfectly done.
-                  </div>
-                  <div class="score-bar">
-                    <span class="score-ind" id="scoreInd"></span>
-                  </div>
-                  <div class="score-scale">
-                    <span id="uiUnsafe">Unsafe</span
-                    ><span id="uiSafe">Safe</span
-                    ><span id="uiVerySafe">Very Safe</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="card meter-block" id="confRightCard">
-              <div class="meter-head">
-                <div class="meter-title">
-                  <img src="https://imgur.com/nUGfg96.png" alt="" />
-                  <span id="uiConfidence">Confidence to sign freely</span>
-                </div>
-                <div id="conf2Val">0%</div>
-              </div>
-              <div class="meter"><div id="conf2Fill" class="fill"></div></div>
-            </section>
-          </div>
-        </div>
-      </main>
+  </style>
+</head>
+<body>
+<div id="scrim" class="scrim" aria-hidden="true"></div>
+  <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
+    <div class="brand-row">
+      <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo">
+      <span>SignSense</span>
     </div>
-
-    <div class="download-wrap" id="dlWrap">
-      <button class="download" id="downloadBtn">Download Report</button>
+    <nav class="nav">
+      <a class="active" href="#"><img class="arr" src="https://imgur.com/CHGomYz.png" alt=""><img class="icon" src="https://imgur.com/lnQTDuo.png" alt=""><span>Overview</span></a>
+      <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
+      <a href="privacy.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
+      <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
+      <a href="#" id="leaveReview"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Add a Review</span></a>
+    </nav>
+    <div class="push"></div>
+    <div class="end">
+      <div>All rights reserved.</div>
+      <div>© 2025 SignSense</div>
+      <div class="footer-sep"></div>
+      <div>Not legal advice.<br>For informational use only.</div>
     </div>
-
-    <div class="modal" id="emailModal" aria-modal="true" role="dialog">
-      <div class="modal-card">
-        <h4>Enter your email to download the PDF report</h4>
-        <div class="modal-row">
-          <input
-            id="emailInput"
-            class="input"
-            type="email"
-            inputmode="email"
-            placeholder="you@example.com"
-          />
-          <button class="btn primary" id="emailSubmit">Download</button>
-          <button class="btn" id="emailCancel">Cancel</button>
+  </aside>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <a href="index.html" aria-label="Go to homepage">
+          <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo" />
+          <span>SignSense</span>
+        </a>
+      </div>
+      <nav class="nav">
+        <a class="active" href="#"><img class="arr" src="https://imgur.com/CHGomYz.png" alt=""><img class="icon" src="https://imgur.com/lnQTDuo.png" alt=""><span>Overview</span></a>
+        <a href="index.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/kE3okdE.png" alt=""><span>Home</span></a>
+        <a href="privacy.html"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/krMnFVT.png" alt=""><span>Privacy</span></a>
+        <a href="#"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/6zHviT6.png" alt=""><span>Contact Us</span></a>
+        <a href="#" id="leaveReview2"><img class="arr" src="https://imgur.com/xhkeG0y.png" alt=""><img class="icon" src="https://imgur.com/zwr9SOe.png" alt=""><span>Add a Review</span></a>
+      </nav>
+      <div class="push"></div>
+      <div class="end-only" id="sidebarEnd">
+        <div class="legal">All rights reserved.</div>
+        <div class="copy2">© 2025 SignSense</div>
+        <div class="footer-sep"></div>
+        <div class="copy">Not legal advice.<br>For informational use only.</div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <div class="top-left">
+          <button id="menuBtn" class="menu-btn" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18M3 12h18M3 17.5h18" /></svg>
+          </button>
+          <div class="top-title" id="uiOverview">Overview</div>
         </div>
-        <div
-          id="emailErr"
-          style="
-            color: #ff6b6b;
-            font-size: 13px;
-            margin-top: 8px;
-            display: none;
-          "
-        >
-          Please enter a valid email address.
+        <div class="lang" id="lang">
+          <button class="lang-btn" id="langBtn" type="button">
+            <span id="langNow">EN</span><span class="caret" aria-hidden="true"></span>
+          </button>
+          <div class="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
+            <div class="lang-item" data-code="en">English</div>
+            <div class="lang-item" data-code="it">Italiano</div>
+            <div class="lang-item" data-code="de">Deutsch</div>
+            <div class="lang-item" data-code="es">Español</div>
+            <div class="lang-item" data-code="fr">Français</div>
+            <div class="lang-item" data-code="pt">Português</div>
+            <div class="lang-item" data-code="nl">Nederlands</div>
+            <div class="lang-item" data-code="ro">Română</div>
+            <div class="lang-item" data-code="sq">Shqip</div>
+            <div class="lang-item" data-code="tr">Türkçe</div>
+            <div class="lang-item" data-code="zh">中文</div>
+            <div class="lang-item" data-code="ja">日本語</div>
+          </div>
         </div>
       </div>
+      <div class="doc-title">
+        <span class="label" id="uiTitleLabel">Title:</span>
+        <span class="value" id="uiTitleValue">—</span>
+      </div>
+      <div class="grid">
+        <div class="left">
+          <section class="card" id="summaryCard">
+            <h3><img src="https://imgur.com/CuQFbD7.png" alt=""><span id="uiSummary">Summary</span></h3>
+            <div class="list" id="summaryText"></div>
+          </section>
+          <section class="card meter-block" id="profCard">
+            <div class="meter-head">
+              <div class="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt=""><span id="uiProfessionalism">Professionalism</span></div>
+              <div id="confVal">0%</div>
+            </div>
+            <div class="meter"><div id="confFill" class="fill"></div></div>
+          </section>
+          <section class="card meter-block" id="favCard">
+            <div class="meter-head">
+              <div class="meter-title"><img src="https://imgur.com/UDRuIvO.png" alt=""><span id="uiFavorability">Favorability Index</span></div>
+              <div id="favVal">0%</div>
+            </div>
+            <div class="meter"><div id="favFill" class="fill"></div></div>
+          </section>
+          <section class="card meter-block" id="deadCard">
+            <div class="meter-head">
+              <div class="meter-title"><img src="https://imgur.com/VXZ3kD8.png" alt=""><span id="uiDeadline">Deadline pressure</span></div>
+              <div id="deadVal">0%</div>
+            </div>
+            <div class="meter"><div id="deadFill" class="fill"></div></div>
+          </section>
+          <section class="card" id="issuesCard">
+            <h3><img src="https://imgur.com/ppLDtiq.png" alt=""><span id="uiIssues">Potential Issues</span></h3>
+            <ul class="bullets" id="issuesList"></ul>
+          </section>
+          <section class="card" id="suggestionsCard">
+            <h3><img src="https://imgur.com/EoVDfd5.png" alt=""><span id="uiSuggestions">Smart Suggestions</span></h3>
+            <div class="list numbered" id="suggestionsList"></div>
+          </section>
+        </div>
+        <div class="right">
+          <section class="card" id="riskCard">
+            <div class="hcard">
+              <div class="circle">
+                <svg width="110" height="110" viewBox="0 0 160 160">
+                  <circle class="track" cx="80" cy="80" r="74"></circle>
+                  <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
+                </svg>
+                <div class="val" id="riskVal">0%</div>
+              </div>
+              <div class="htext">
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/Myp6Un4.png" alt=""><span id="uiRisk">Risk Level</span></h3>
+                <div class="muted" id="riskNote"></div>
+                <div class="status"><span class="dot" id="riskDot"></span><span id="riskBadge">Generally Safe</span></div>
+              </div>
+            </div>
+          </section>
+          <section class="card" id="clarCard">
+            <div class="hcard">
+              <div class="circle">
+                <svg width="110" height="110" viewBox="0 0 160 160">
+                  <circle class="track" cx="80" cy="80" r="74"></circle>
+                  <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
+                </svg>
+                <div class="val" id="clarVal">0%</div>
+              </div>
+              <div class="htext">
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/o39xZtC.png" alt=""><span id="uiClarity">Clause Clarity</span></h3>
+                <div class="muted" id="clarNote"></div>
+                <div class="status"><span class="dot" id="clarDot"></span><span id="clarBadge">Generally Safe</span></div>
+              </div>
+            </div>
+          </section>
+          <section class="card" id="clausesCard">
+            <h3><img src="https://imgur.com/K04axKU.png" alt=""><span id="uiClauses">Main Clauses</span></h3>
+            <div class="list numbered" id="clausesList"></div>
+          </section>
+          <section class="card" id="scoreCard">
+            <div class="hcard">
+              <div class="circle">
+                <svg width="110" height="110" viewBox="0 0 160 160">
+                  <circle class="track" cx="80" cy="80" r="74"></circle>
+                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
+                </svg>
+                <div class="val" id="scorePct">80%</div>
+              </div>
+              <div class="score-side">
+                <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="uiScoreChecker">Score Checker</span></h3>
+                <div class="score-remark" id="scoreRemark">The contract is nearly perfectly done.</div>
+                <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
+                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+              </div>
+            </div>
+          </section>
+          <section class="card meter-block" id="confRightCard">
+            <div class="meter-head">
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""><span>Confidence to sign freely</span></div>
+              <div id="conf2Val">0%</div>
+            </div>
+            <div class="meter"><div id="conf2Fill" class="fill"></div></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="download-wrap" id="dlWrap">
+    <button class="download" id="downloadBtn">Download Report</button>
+    <form id="emailInline" class="email-inline" novalidate>
+      <div class="email-title">Insert email to download</div>
+      <div class="email-row">
+        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+        <button class="btn primary" id="emailGo" type="submit">Done</button>
+      </div>
+      <div id="emailErr" class="email-err">Please enter a valid email address.</div>
+    </form>
+  </div>
+  <div class="modal" id="emailModal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <h4>Enter your email to download the PDF report</h4>
+      <div class="modal-row">
+        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+        <button class="btn primary" id="emailSubmit">Download</button>
+        <button class="btn" id="emailCancel">Cancel</button>
+      </div>
+      <div id="emailErr" class="email-err">Please enter a valid email address.</div>
     </div>
+  </div>
 
-    <script>
-      (() => {
-       const mode = localStorage.getItem("analysisMode") || "live";
-
-        /* ================= UI LABELS (i18n) ================= */
-       const UI = {
-  en:{overview:"Overview",title:"Title:",summary:"Summary",prof:"Professionalism",fav:"Favorability Index",deadline:"Deadline pressure",issues:"Potential Issues",suggestions:"Smart Suggestions",risk:"Risk Level",clarity:"Clause Clarity",clauses:"Main Clauses",score:"Score Checker",unsafe:"Unsafe",safe:"Safe",verysafe:"Very Safe",conf:"Confidence to sign freely"},
-  it:{overview:"Panoramica",title:"Titolo:",summary:"Sommario",prof:"Professionalità",fav:"Indice di favorevolezza",deadline:"Pressione della scadenza",issues:"Problemi potenziali",suggestions:"Suggerimenti intelligenti",risk:"Livello di rischio",clarity:"Chiarezza delle clausole",clauses:"Clausole principali",score:"Verifica punteggio",unsafe:"Rischioso",safe:"Sicuro",verysafe:"Molto sicuro",conf:"Fiducia a firmare liberamente"},
-  de:{overview:"Übersicht",title:"Titel:",summary:"Zusammenfassung",prof:"Professionalität",fav:"Günstigkeitsindex",deadline:"Termindruck",issues:"Mögliche Probleme",suggestions:"Smarte Vorschläge",risk:"Risikostufe",clarity:"Klauselklarheit",clauses:"Hauptklauseln",score:"Punktzahlprüfer",unsafe:"Unsicher",safe:"Sicher",verysafe:"Sehr sicher",conf:"Zuversicht frei zu unterschreiben"},
-  es:{overview:"Resumen",title:"Título:",summary:"Resumen",prof:"Profesionalidad",fav:"Índice de favorabilidad",deadline:"Presión de plazo",issues:"Posibles problemas",suggestions:"Sugerencias inteligentes",risk:"Nivel de riesgo",clarity:"Claridad de cláusulas",clauses:"Cláusulas principales",score:"Verificador de puntuación",unsafe:"Riesgoso",safe:"Seguro",verysafe:"Muy seguro",conf:"Confianza para firmar libremente"},
-  fr:{overview:"Aperçu",title:"Titre :",summary:"Résumé",prof:"Professionnalisme",fav:"Indice de favorabilité",deadline:"Pression d’échéance",issues:"Problèmes potentiels",suggestions:"Suggestions intelligentes",risk:"Niveau de risque",clarity:"Clarté des clauses",clauses:"Clauses principales",score:"Vérificateur de score",unsafe:"Risque",safe:"Sûr",verysafe:"Très sûr",conf:"Confiance pour signer librement"},
-  pt:{overview:"Visão geral",title:"Título:",summary:"Resumo",prof:"Profissionalismo",fav:"Índice de favorabilidade",deadline:"Pressão do prazo",issues:"Problemas potenciais",suggestions:"Sugestões inteligentes",risk:"Nível de risco",clarity:"Clareza das cláusulas",clauses:"Cláusulas principais",score:"Verificador de pontuação",unsafe:"Arriscado",safe:"Seguro",verysafe:"Muito seguro",conf:"Confiança para assinar livremente"},
-  nl:{overview:"Overzicht",title:"Titel:",summary:"Samenvatting",prof:"Professionaliteit",fav:"Voordeligheidsindex",deadline:"Deadline-druk",issues:"Potentiële problemen",suggestions:"Slimme suggesties",risk:"Risiconiveau",clarity:"Clausuleduidelijkheid",clauses:"Belangrijkste clausules",score:"Scorecontrole",unsafe:"Onveilig",safe:"Veilig",verysafe:"Zeer veilig",conf:"Vertrouwen om vrij te tekenen"},
-  ro:{overview:"Prezentare generală",title:"Titlu:",summary:"Rezumat",prof:"Profesionalism",fav:"Indice de favorabilitate",deadline:"Presiunea termenului",issues:"Probleme potențiale",suggestions:"Sugestii inteligente",risk:"Nivel de risc",clarity:"Claritatea clauzelor",clauses:"Clauze principale",score:"Verificator scor",unsafe:"Riscant",safe:"Sigur",verysafe:"Foarte sigur",conf:"Încredere de a semna liber"},
-  sq:{overview:"Përmbledhje",title:"Titulli:",summary:"Përmbledhje",prof:"Profesionalizmi",fav:"Indeksi i favorshmërisë",deadline:"Presioni i afatit",issues:"Çështje të mundshme",suggestions:"Sugjerime të zgjuara",risk:"Niveli i rrezikut",clarity:"Qartësia e klauzolave",clauses:"Klauzolat kryesore",score:"Kontrolli i pikëve",unsafe:"E pasigurt",safe:"E sigurt",verysafe:"Shumë e sigurt",conf:"Besim për të firmosur lirisht"},
-  tr:{overview:"Genel bakış",title:"Başlık:",summary:"Özet",prof:"Profesyonellik",fav:"Olumluluk endeksi",deadline:"Son tarih baskısı",issues:"Olası sorunlar",suggestions:"Akıllı öneriler",risk:"Risk seviyesi",clarity:"Hüküm açıklığı",clauses:"Ana hükümler",score:"Puan denetleyici",unsafe:"Güvensiz",safe:"Güvenli",verysafe:"Çok güvenli",conf:"Özgürce imzalama güveni"},
-  zh:{overview:"概览",title:"标题：",summary:"摘要",prof:"专业性",fav:"有利指数",deadline:"截止压力",issues:"潜在问题",suggestions:"智能建议",risk:"风险等级",clarity:"条款清晰度",clauses:"主要条款",score:"评分检查",unsafe:"不安全",safe:"安全",verysafe:"非常安全",conf:"放心签署的信心"},
-  ja:{overview:"概要",title:"タイトル：",summary:"要約",prof:"プロフェッショナリズム",fav:"好ましさ指数",deadline:"締切プレッシャー",issues:"潜在的な問題",suggestions:"スマート提案",risk:"リスクレベル",clarity:"条項の明確さ",clauses:"主要条項",score:"スコアチェッカー",unsafe:"危険",safe:"安全",verysafe:"非常に安全",conf:"自由に署名する自信"}
-};
-
-
-        /* ===== Demo data ===== */
-        const fallbackDemo = {
-          meta: { title: "Sample Agreement", detectedLang: "en" },
-          summary: [
-            "The Vienna Convention establishes a framework for international sales contracts between parties from different countries.",
-            "It outlines the rights and obligations of buyers and sellers, including provisions for contract formation, delivery, and liability.",
-            "The Convention aims to promote uniformity in international trade and reduce legal barriers.",
-          ],
-          risk: {
-            value: 45,
-            note: "The contract is generally safe, with clear provisions for both parties.",
-          },
-          clarity: {
-            value: 70,
-            note: "The clauses are generally clear and well-structured, facilitating understanding.",
-          },
-          clauses: [
-            "The Convention applies to contracts for the sale of goods between parties whose places of business are in different countries.",
-            "Parties may exclude the application of the Convention or derogate from its provisions.",
-            "The seller must deliver goods that conform to the contract in terms of quantity, quality, and packaging.",
-            "The buyer must pay the price and take delivery of the goods as stipulated in the contract.",
-            "In case of non-compliance, the aggrieved party has the right to seek damages or terminate the contract.",
-          ],
-          issues: [
-            "Parties may not fully understand their rights and obligations under the Convention, leading to disputes.",
-            "Exclusions or modifications to the Convention's provisions may create legal uncertainties.",
-            "The lack of clarity in certain terms could lead to differing interpretations between parties.",
-            "The Convention does not cover all aspects of sales, such as liability for personal injury or property damage.",
-            "Parties must ensure compliance with local laws that may affect the enforceability of the contract.",
-          ],
-          suggestions: [
-            "Consider including a clause that specifies the governing law for any disputes, e.g., 'This contract shall be governed by the laws of Italy.'",
-            "Ensure that all parties fully understand the implications of excluding any provisions of the Convention, e.g., 'Parties may opt-out of certain liability clauses.'",
-            "Include a clear dispute resolution mechanism, e.g., 'Any disputes arising from this contract shall be resolved through arbitration in Vienna.'",
-          ],
-          meters: {
-            professionalism: 65,
-            favorability: 50,
-            deadline: 40,
-            confidence: 70,
-          },
-          translations: {},
-        };
-
-let raw = localStorage.getItem("analysisRaw");
-let normalized;
-
-if (raw) {
-  try {
-    const parsed = JSON.parse(raw);
-    normalized = {
-      meta: {
-        title: parsed.contractName || "Untitled Contract",
-        detectedLang: parsed.detectedLang || "en",
-      },
-      analysis: parsed.analysis || {},
-      translations: parsed.translations || {}
-    };
-  } catch {
+<script>
+(() => {
+  const drawer = document.getElementById('drawer');
+  const scrim = document.getElementById('scrim');
+  const menuBtn = document.getElementById('menuBtn');
+  function openDrawer(){
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden','false');
+    scrim.classList.add('show');
+    scrim.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden','true');
+    scrim.classList.remove('show');
+    scrim.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+  menuBtn.addEventListener('click', openDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
+  const lang = document.getElementById("lang");
+  const langBtn = document.getElementById("langBtn");
+  const langNow = document.getElementById("langNow");
+  const langMenu = document.getElementById("langMenu");
+  const codeMap = {"English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES","Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO","Shqip":"SQ","Türkçe":"TR","中文":"ZH","日本語":"JA"};
+  langBtn.addEventListener("click", (e) => { e.stopPropagation(); lang.classList.toggle("open"); });
+  langMenu.querySelectorAll(".lang-item").forEach(li => {
+    li.addEventListener("click", (e) => {
+      e.stopPropagation();
+      langNow.textContent = codeMap[li.dataset.lang] || "EN";
+      lang.classList.remove("open");
+    });
+  });
+  document.addEventListener("click", (e) => { if (!lang.contains(e.target)) lang.classList.remove("open"); });
+  const fallbackDemo = {
+    meta: { title: "Non-Disclosure Agreement (NDA)", detectedLang: "en" },
+    summary: [
+      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
+      "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
+      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
+    ],
+    risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
+    clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
+    clauses: [
+      "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
+      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
+      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
+      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
+    ],
+    issues: [
+      "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
+      "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
+      "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
+      "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
+      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
+    ],
+    suggestions: [
+      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
+      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
+      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
+    ],
+    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 },
+    translations: {}
+  };
+  let raw = localStorage.getItem("analysisRaw");
+  let normalized;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      normalized = {
+        meta: { title: parsed.contractName || "Untitled Contract", detectedLang: parsed.detectedLang || "en" },
+        analysis: parsed.analysis || {},
+        translations: parsed.translations || {}
+      };
+      normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
+      normalized.clauses = normalized.analysis.keyClauses || fallbackDemo.clauses;
+      normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
+      normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
+      normalized.risk = {
+        value: Number(normalized.analysis.risk) || 0,
+        note: "The contract risk score is based on the clauses' fairness and obligations."
+      };
+      normalized.clarity = {
+        value: Number(normalized.analysis.clarity) || 0,
+        note: "The clarity score reflects how easy it is to understand the terms."
+      };
+      const riskV = clamp01(Number(normalized.analysis.risk));
+      const clarV = clamp01(Number(normalized.analysis.clarity));
+      const compV = clamp01(Number(normalized.analysis.compliance));
+      normalized.meters = {
+        professionalism: compV,
+        favorability: Math.round(((100 - riskV) + clarV) / 2),
+        deadline: clamp01(Math.round(40 + (riskV * 0.4))),
+        confidence: clamp01(Math.round((clarV * 0.6) + ((100 - riskV) * 0.4)))
+      };
+    } catch {
+      normalized = fallbackDemo;
+    }
+  } else {
     normalized = fallbackDemo;
   }
-} else {
-  normalized = fallbackDemo;
-}
-
- /* ================= Helpers ================= */
-        const $ = (s) => document.querySelector(s);
-        const cssVar = (v) =>
-          getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-        const clamp01 = (v) => Math.max(0, Math.min(100, Number(v || 0)));
-        const addP = (el, t) => {
-          const p = document.createElement("p");
-          p.textContent = t;
-          el.appendChild(p);
-        };
-        const colorFor = (metric, v) => {
-          if (metric === "risk")
-            return v <= 25
-              ? cssVar("--green")
-              : v <= 58
-              ? cssVar("--orange")
-              : cssVar("--red");
-          if (metric === "clarity")
-            return v >= 78
-              ? cssVar("--green")
-              : v >= 49
-              ? cssVar("--orange")
-              : cssVar("--red");
-          if (metric === "deadline")
-            return v <= 35
-              ? cssVar("--green")
-              : v <= 68
-              ? cssVar("--orange")
-              : cssVar("--red");
-          return v >= 75
-            ? cssVar("--green")
-            : v >= 49
-            ? cssVar("--orange")
-            : cssVar("--red");
-        };
-
-
- if (normalized.analysis) {
-  normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
-  normalized.clauses = normalized.analysis.keyClauses || fallbackDemo.clauses;
-  normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
-  normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
-
-normalized.risk = {
-  value: Number(normalized.analysis.risk) || 0,
-  note: "The contract risk score is based on the clauses' fairness and obligations."
-};
-normalized.clarity = {
-  value: Number(normalized.analysis.clarity) || 0,
-  note: "The clarity score reflects how easy it is to understand the terms."
-};
-// Derive meters from analysis numbers so bars react to real scores
-const riskV = clamp01(Number(normalized.analysis.risk));
-const clarV = clamp01(Number(normalized.analysis.clarity));
-const compV = clamp01(Number(normalized.analysis.compliance));
-
-// Favorability: combine "low risk" + "high clarity"
-const favorability = Math.round(( (100 - riskV) + clarV ) / 2);
-
-// Deadline pressure: if you have a dedicated value, use it (e.g. normalized.analysis.deadline)
-// otherwise derive gently from risk (more risk ⇒ more pressure)
-const deadline = clamp01(normalized.analysis.deadline != null
-  ? Number(normalized.analysis.deadline)
-  : Math.round(40 + (riskV * 0.4))); // 40..80 banded by risk
-
-// Confidence to sign: reward clarity + low risk, with a bias towards clarity
-const confidence = clamp01(Math.round((clarV * 0.6) + ((100 - riskV) * 0.4)));
-
-normalized.meters = {
-  professionalism: compV,
-  favorability,
-  deadline,
-  confidence
-};
-
-
-}
-
-        /* === Fixed note text (translatable) === */
-/* === Fixed note text (translatable) === */
-/* === Fixed notes (translatable) === */
-const RISK_NOTE_BY_LANG = {
-  en:"The contract risk score is based on the clauses' fairness and obligations.",
-  it:"Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
-  de:"Die Vertragsrisikobewertung basiert auf der Fairness und den Verpflichtungen der Klauseln.",
-  fr:"Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
-  es:"La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
-  pt:"A pontuação de risco do contrato baseia-se na justiça e nas obrigações das cláusulas.",
-  nl:"De contractrisicoscore is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
-  ro:"Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
-  sq:"Vlerësimi i rrezikut të kontratës bazohet në drejtësinë dhe detyrimet e klauzolave.",
-  tr:"Sözleşme risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
-  zh:"合同风险评分基于条款的公平性和义务。",
-  ja:"契約リスクスコアは条項の公平性と義務に基づいています。"
-};
-
-const CLAR_NOTE_BY_LANG = {
-  en:"The clarity score reflects how easy it is to understand the terms.",
-  it:"Il punteggio di chiarezza riflette quanto sia facile comprendere i termini.",
-  de:"Die Klarheitsbewertung spiegelt wider, wie leicht die Bedingungen zu verstehen sind.",
-  fr:"Le score de clarté reflète la facilité de compréhension des conditions.",
-  es:"La puntuación de claridad refleja lo fácil que es entender los términos.",
-  pt:"A pontuação de clareza reflete a facilidade de compreender os termos.",
-  nl:"De duidelijkheidsscore weerspiegelt hoe gemakkelijk de voorwaarden te begrijpen zijn.",
-  ro:"Scorul de claritate reflectă cât de ușor sunt de înțeles termenii.",
-  sq:"Vlerësimi i qartësisë pasqyron sa lehtë kuptohen kushtet.",
-  tr:"Açıklık puanı, şartların ne kadar kolay anlaşılabildiğini yansıtır.",
-  zh:"清晰度评分反映了条款的易懂程度。",
-  ja:"明確さのスコアは、条項の理解しやすさを反映します。"
-};
-
-
-/* === Safety labels (translatable) === */
-const SAFETY_LABELS = {
-  en: { green: "Generally Safe", orange: "Not That Safe", red: "Not Safe" },
-  it: { green: "Generalmente sicuro", orange: "Non molto sicuro", red: "Non sicuro" },
-  de: { green: "Im Allgemeinen sicher", orange: "Nicht besonders sicher", red: "Nicht sicher" },
-  fr: { green: "Généralement sûr", orange: "Peu sûr", red: "Pas sûr" },
-  es: { green: "Generalmente seguro", orange: "No tan seguro", red: "No seguro" },
-  pt: { green: "Geralmente seguro", orange: "Não tão seguro", red: "Inseguro" },
-  nl: { green: "Over het algemeen veilig", orange: "Niet zo veilig", red: "Onveilig" },
-  ro: { green: "În general sigur", orange: "Nu prea sigur", red: "Nesigur" },
-  sq: { green: "Në përgjithësi i sigurt", orange: "Jo edhe aq i sigurt", red: "Jo i sigurt" },
-  tr: { green: "Genel olarak güvenli", orange: "Çok da güvenli değil", red: "Güvenli değil" },
-  zh: { green: "总体安全", orange: "不太安全", red: "不安全" },
-  ja: { green: "概ね安全", orange: "あまり安全ではない", red: "安全ではない" }
-};
-
-/* === Score Checker remark (translatable) === */
-const SCORE_REMARK_BY_LANG = {
-  en: "This helps you to come to a conclusion",
-  it: "Questo ti aiuta a giungere a una conclusione",
-  de: "Dies hilft Ihnen, zu einem Schluss zu kommen",
-  fr: "Cela vous aide à parvenir à une conclusion",
-  es: "Esto te ayuda a llegar a una conclusión",
-  pt: "Isso ajuda você a chegar a uma conclusão",
-  nl: "Dit helpt je tot een conclusie te komen",
-  ro: "Acest lucru te ajută să ajungi la o concluzie",
-  sq: "Kjo të ndihmon të arrish në një përfundim",
-  tr: "Bu, bir sonuca varmana yardımcı olur",
-  zh: "这有助于你得出结论",
-  ja: "結論に至るのに役立ちます"
-};
-
-
-/* === Safety badge + colored square (dot) === */
-function setSafetyStatus(metric, value, lang) {
-  const dot = metric === "risk" ? $("#riskDot") : $("#clarDot");
-  const badge = metric === "risk" ? $("#riskBadge") : $("#clarBadge");
-
-  let band;
-  if (metric === "risk") { band = value <= 25 ? "green" : value <= 58 ? "orange" : "red"; }
-  else { band = value >= 78 ? "green" : value >= 49 ? "orange" : "red"; }
-
-  const color = band === "green" ? "#00ff65" : band === "orange" ? "#df911a" : "#fe0000";
-  const dict = SAFETY_LABELS[lang] || SAFETY_LABELS.en;
-
-  dot.style.background = color;
-  dot.style.border = "1px solid #000";
-  badge.textContent = dict[band] || SAFETY_LABELS.en[band];
-}
-
-
-
-       let currentLang = normalized.meta.detectedLang || "en";
-
-      function renderUILabels(lang) {
-  const t = UI[lang] || UI.en;
-  $("#uiOverview").textContent = t.overview;
-  $("#uiTitleLabel").textContent = t.title;
-  $("#uiSummary").textContent = t.summary;
-  $("#uiProfessionalism").textContent = t.prof;
-  $("#uiFavorability").textContent = t.fav;
-  $("#uiDeadline").textContent = t.deadline;
-  $("#uiIssues").textContent = t.issues;
-  $("#uiSuggestions").textContent = t.suggestions;
-  $("#uiRisk").textContent = t.risk;
-  $("#uiClarity").textContent = t.clarity;
-  $("#uiClauses").textContent = t.clauses;
-  $("#uiScoreChecker").textContent = t.score;
-  $("#uiUnsafe").textContent = t.unsafe;
-  $("#uiSafe").textContent = t.safe;
-  $("#uiVerySafe").textContent = t.verysafe;
-  $("#uiConfidence").textContent = t.conf;
-}
-
-
-      function getLocalizedContent(lang) {
-  const origLang = normalized.meta.detectedLang || "en";
-  const tr = normalized.translations || {};
-  const useTr = lang !== origLang && tr[lang];
-
-  return {
-    title: (lang !== origLang && tr[lang] && tr[lang].title) ? tr[lang].title : (normalized.meta.title || ""),
-    summary: useTr ? (tr[lang].summary || normalized.analysis.summary || []) : (normalized.analysis.summary || normalized.summary || []),
-    clauses: useTr ? (tr[lang].keyClauses || normalized.analysis.keyClauses || []) : (normalized.analysis.keyClauses || normalized.clauses || []),
-    issues: useTr ? (tr[lang].potentialIssues || normalized.analysis.potentialIssues || []) : (normalized.analysis.potentialIssues || normalized.issues || []),
-    suggestions: useTr ? (tr[lang].smartSuggestions || normalized.analysis.smartSuggestions || []) : (normalized.analysis.smartSuggestions || normalized.suggestions || []),
-    risk: { value: Number(normalized.risk.value) || 0, note: normalized.risk.note },
-    clarity: { value: Number(normalized.clarity.value) || 0, note: normalized.clarity.note },
+  const $ = s => document.querySelector(s);
+  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const clamp01 = v => Math.max(0, Math.min(100, Number(v || 0)));
+  const addP = (el, t) => { const p = document.createElement("p"); p.textContent = t; el.appendChild(p); };
+  const colorFor = (metric, v) => {
+    if (metric === 'risk') return v <= 25 ? cssVar('--green') : v <= 58 ? cssVar('--orange') : cssVar('--red');
+    if (metric === 'clarity') return v >= 78 ? cssVar('--green') : v >= 49 ? cssVar('--orange') : cssVar('--red');
+    if (metric === 'deadline') return v <= 35 ? cssVar('--green') : v <= 68 ? cssVar('--orange') : cssVar('--red');
+    return v >= 75 ? cssVar('--green') : v >= 49 ? cssVar('--orange') : cssVar('--red');
   };
-}
-        function setArc(arcEl, metric, value, valEl) {
-          const v = clamp01(value);
-          const rr = parseFloat(arcEl.getAttribute("r")) || 74;
-          const circ = 2 * Math.PI * rr;
-          arcEl.style.stroke = colorFor(metric, v);
-          arcEl.style.strokeDasharray = circ;
-          arcEl.style.strokeDashoffset = circ;
-          requestAnimationFrame(() => {
-            arcEl.style.transition = "stroke-dashoffset 1.8s ease";
-            arcEl.style.strokeDashoffset = circ * (1 - v / 100);
-          });
-          if (valEl) valEl.textContent = v + "%";
-        }
-        function setMeter(fillEl, labelEl, metric, value) {
-          const v = clamp01(value);
-          labelEl.textContent = v + "%";
-          fillEl.style.background = colorFor(metric, v);
-          requestAnimationFrame(() => {
-            fillEl.style.width = v + "%";
-          });
-        }
-
-      function renderAll(lang) {
-  renderUILabels(lang);
-  $("#langNow").textContent = lang.toUpperCase();
-  const data = getLocalizedContent(lang);
-
-  $("#uiTitleValue").textContent = data.title || "—";
-
- const sBox = $("#summaryText");
-sBox.innerHTML = "";
-const sArr = Array.isArray(data.summary) ? data.summary : [String(data.summary)];
-const single = String(sArr[0] || "");
-(single.split(/\n+/).filter(Boolean)).forEach(line => addP(sBox, line));
-
-
-  const cl = $("#clausesList");
-  cl.innerHTML = "";
-  (data.clauses || []).forEach((t) => addP(cl, t));
-
-  const il = $("#issuesList");
-  il.innerHTML = "";
-  (data.issues || []).forEach((t) => {
-    const li = document.createElement("li");
-    li.textContent = t;
-    il.appendChild(li);
+  const setSafetyStatus = (metric, value, lang) => {
+    const dot = metric === 'risk' ? $('#riskDot') : $('#clarDot');
+    const badge = metric === 'risk' ? $('#riskBadge') : $('#clarBadge');
+    let band = metric === 'risk' ? (value <= 25 ? 'green' : value <= 58 ? 'orange' : 'red') : (value >= 78 ? 'green' : value >= 49 ? 'orange' : 'red');
+    const color = band === 'green' ? '#00ff65' : band === 'orange' ? '#df911a' : '#fe0000';
+    const dict = SAFETY_LABELS[lang] || SAFETY_LABELS.en;
+    dot.style.background = color;
+    dot.style.border = '1px solid #000';
+    badge.textContent = dict[band] || SAFETY_LABELS.en[band];
+  };
+  const getLocalizedContent = lang => {
+    const origLang = normalized.meta.detectedLang || 'en';
+    const tr = normalized.translations || {};
+    const useTr = lang !== origLang && tr[lang];
+    return {
+      title: (useTr && tr[lang].title) ? tr[lang].title : (normalized.meta.title || ""),
+      summary: useTr ? (tr[lang].summary || normalized.analysis.summary || []) : (normalized.analysis.summary || normalized.summary || []),
+      clauses: useTr ? (tr[lang].keyClauses || normalized.analysis.keyClauses || []) : (normalized.analysis.keyClauses || normalized.clauses || []),
+      issues: useTr ? (tr[lang].potentialIssues || normalized.analysis.potentialIssues || []) : (normalized.analysis.potentialIssues || normalized.issues || []),
+      suggestions: useTr ? (tr[lang].smartSuggestions || normalized.analysis.smartSuggestions || []) : (normalized.analysis.smartSuggestions || normalized.suggestions || []),
+      risk: { value: Number(normalized.risk.value) || 0, note: RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en },
+      clarity: { value: Number(normalized.clarity.value) || 0, note: CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en }
+    };
+  };
+  const setArc = (arcEl, metric, value, valEl) => {
+    const v = clamp01(value);
+    const rr = parseFloat(arcEl.getAttribute('r')) || 74;
+    const circ = 2 * Math.PI * rr;
+    arcEl.style.stroke = colorFor(metric, v);
+    arcEl.style.strokeDasharray = circ;
+    arcEl.style.strokeDashoffset = circ;
+    requestAnimationFrame(() => { arcEl.style.transition = 'stroke-dashoffset 1.8s ease'; arcEl.style.strokeDashoffset = circ * (1 - v / 100); });
+    if (valEl) valEl.textContent = v + '%';
+  };
+  const setMeter = (fillEl, labelEl, metric, value) => {
+    const v = clamp01(value);
+    labelEl.textContent = v + '%';
+    fillEl.style.background = colorFor(metric, v);
+    requestAnimationFrame(() => { fillEl.style.width = v + '%'; });
+  };
+  let currentLang = normalized.meta.detectedLang || 'en';
+  const renderUILabels = lang => {
+    const t = UI[lang] || UI.en;
+    $('#uiOverview').textContent = t.overview;
+    $('#uiTitleLabel').textContent = t.title;
+    $('#uiSummary').textContent = t.summary;
+    $('#uiProfessionalism').textContent = t.prof;
+    $('#uiFavorability').textContent = t.fav;
+    $('#uiDeadline').textContent = t.deadline;
+    $('#uiIssues').textContent = t.issues;
+    $('#uiSuggestions').textContent = t.suggestions;
+    $('#uiRisk').textContent = t.risk;
+    $('#uiClarity').textContent = t.clarity;
+    $('#uiClauses').textContent = t.clauses;
+    $('#uiScoreChecker').textContent = t.score;
+    $('#uiUnsafe').textContent = t.unsafe;
+    $('#uiSafe').textContent = t.safe;
+    $('#uiVerySafe').textContent = t.verysafe;
+    $('#uiConfidence').textContent = t.conf;
+  };
+  const renderAll = lang => {
+    renderUILabels(lang);
+    $('#langNow').textContent = lang.toUpperCase();
+    const data = getLocalizedContent(lang);
+    $('#uiTitleValue').textContent = data.title || '—';
+    const sBox = $('#summaryText');
+    sBox.innerHTML = '';
+    const sArr = Array.isArray(data.summary) ? data.summary : [String(data.summary)];
+    sArr.forEach(t => addP(sBox, t));
+    const cl = $('#clausesList');
+    cl.innerHTML = '';
+    (data.clauses || []).forEach(t => addP(cl, t));
+    const il = $('#issuesList');
+    il.innerHTML = '';
+    (data.issues || []).forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      il.appendChild(li);
+    });
+    const sl = $('#suggestionsList');
+    sl.innerHTML = '';
+    (data.suggestions || []).forEach(t => addP(sl, t));
+    const riskVal = clamp01(data.risk.value);
+    const clarVal = clamp01(data.clarity.value);
+    setArc($('#riskArc'), 'risk', riskVal, $('#riskVal'));
+    setArc($('#clarArc'), 'clarity', clarVal, $('#clarVal'));
+    setArc($('#scoreArc'), 'clarity', clarVal, $('#scorePct'));
+    $('#riskNote').textContent = data.risk.note;
+    $('#clarNote').textContent = data.clarity.note;
+    setSafetyStatus('risk', riskVal, lang);
+    setSafetyStatus('clarity', clarVal, lang);
+    $('#scoreRemark').textContent = SCORE_REMARK_BY_LANG[lang] || SCORE_REMARK_BY_LANG.en;
+    $('#scoreInd').style.left = `calc(${clarVal}% - 1.5px)`;
+    setMeter($('#confFill'), $('#confVal'), 'professionalism', normalized.meters.professionalism);
+    setMeter($('#favFill'), $('#favVal'), 'favorability', normalized.meters.favorability);
+    setMeter($('#deadFill'), $('#deadVal'), 'deadline', normalized.meters.deadline);
+    setMeter($('#conf2Fill'), $('#conf2Val'), 'confidence', normalized.meters.confidence);
+  };
+  renderAll(currentLang);
+  document.querySelectorAll('.lang-item').forEach(item => {
+    item.addEventListener('click', e => {
+      currentLang = e.currentTarget.getAttribute('data-code') || e.currentTarget.getAttribute('data-lang').toLowerCase();
+      renderAll(currentLang);
+    });
   });
-
-  const sl = $("#suggestionsList");
-  sl.innerHTML = "";
-  (data.suggestions || []).forEach((t) => addP(sl, t));
-
-  const riskVal = clamp01(Number(data.risk.value)),
-        clarVal = clamp01(Number(data.clarity.value));
-
-  // Donuts
-  setArc($("#riskArc"), "risk", riskVal, $("#riskVal"));
-  setArc($("#clarArc"), "clarity", clarVal, $("#clarVal"));
-
-  // Fixed notes (translatable)
-$("#riskNote").textContent = (RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en);
-$("#clarNote").textContent = (CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en);
-
-
-  // Score checker mirrors clarity percentage (your current UI)
-  setArc($("#scoreArc"), "clarity", clarVal);
-  $("#scorePct").textContent = clarVal + "%";
-  $("#scoreInd").style.left = `calc(${clarVal}% - 1.5px)`;
-
-  $("#scoreRemark").textContent = SCORE_REMARK_BY_LANG[lang] || SCORE_REMARK_BY_LANG.en;
-        
-  // Safety badges + colored squares
-setSafetyStatus("risk", riskVal, lang);
-setSafetyStatus("clarity", clarVal, lang);
-
-
-  // Meters (bars)
-  setMeter($("#confFill"), $("#confVal"), "professionalism", normalized.meters.professionalism);
-  setMeter($("#favFill"),  $("#favVal"),  "favorability",   normalized.meters.favorability);
-  setMeter($("#deadFill"), $("#deadVal"), "deadline",       normalized.meters.deadline);
-  setMeter($("#conf2Fill"),$("#conf2Val"),"confidence",     normalized.meters.confidence);
-}
-
-
-        /* ======= Init render ======= */
-        renderAll(currentLang);
-        // === Language switching ===
-// === Language switching (single clean handler) ===
-document.querySelectorAll(".lang-item").forEach(item => {
-  item.addEventListener("click", e => {
-    const newLang = e.currentTarget.getAttribute("data-code");
-    currentLang = newLang;
-    $("#langNow").textContent = newLang.toUpperCase();
-    renderAll(currentLang);
+  const langBox = $('#lang');
+  let closeTimer = null;
+  const openMenu = () => { clearTimeout(closeTimer); langBox.classList.add('open'); };
+  const scheduleClose = () => { clearTimeout(closeTimer); closeTimer = setTimeout(() => langBox.classList.remove('open'), 140); };
+  ['mouseenter', 'mousemove'].forEach(ev => langBox.addEventListener(ev, openMenu));
+  langBox.addEventListener('mouseleave', scheduleClose);
+  document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
+  window.addEventListener('load', () => {
+    ['#summaryCard', '#riskCard', '#clarCard'].forEach((sel, i) => {
+      const el = $(sel);
+      if (el) setTimeout(() => el.classList.add('fade-in'), 70 * i);
+    });
+    setTimeout(() => {
+      ['#profCard', '#favCard', '#deadCard', '#issuesCard', '#clausesCard', '#suggestionsCard', '#scoreCard', '#confRightCard'].forEach((sel, i) => {
+        const el = $(sel);
+        if (el) setTimeout(() => el.classList.add('fade-in'), 70 * i);
+      });
+    }, 180);
   });
-});
-
-
-
-        /* ======= HOVER DROPDOWN ======= */
-        const langBox = document.getElementById("lang");
-        let closeTimer = null;
-        const openMenu = () => {
-          clearTimeout(closeTimer);
-          langBox.classList.add("open");
-        };
-        const scheduleClose = () => {
-          clearTimeout(closeTimer);
-          closeTimer = setTimeout(() => langBox.classList.remove("open"), 140);
-        };
-        ["mouseenter", "mousemove"].forEach((ev) =>
-          langBox.addEventListener(ev, openMenu)
-        );
-        langBox.addEventListener("mouseleave", scheduleClose);
-
-        /* ======= Reveal animations ======= */
-        window.addEventListener("load", () => {
-          ["#summaryCard", "#riskCard", "#clarCard"].forEach((sel) => {
-            const el = $(sel);
-            if (el) {
-              el.classList.add("fade-in");
-            }
-          });
-          setTimeout(
-            () =>
-              [
-                "#profCard",
-                "#favCard",
-                "#deadCard",
-                "#issuesCard",
-                "#clausesCard",
-              ].forEach((sel) => {
-                const el = $(sel);
-                if (el) {
-                  el.classList.add("fade-in");
-                }
-              }),
-            180
-          );
-        });
-
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                e.target.classList.add("fade-in");
-                io.unobserve(e.target);
-              }
-            });
-          },
-          { threshold: 0.18 }
-        );
-        ["#suggestionsCard", "#scoreCard", "#confRightCard"].forEach((sel) => {
-          const el = $(sel);
-          if (el) {
-            io.observe(el);
-          }
-        });
-
-        /* ======= Download modal & PDF ======= */
-        const dlWrap = $("#dlWrap"),
-          endBox = $("#sidebarEnd");
-        function nearBottom() {
-          const s =
-            document.documentElement.scrollHeight -
-            (window.scrollY + window.innerHeight);
-          const show = s <= 300;
-          dlWrap.style.display = show ? "flex" : "none";
-          endBox.style.display = show ? "block" : "none";
-          if (show) {
-            dlWrap.classList.add("fade-in");
-            endBox.classList.add("fade-in");
-          }
-        }
-        window.addEventListener("scroll", nearBottom, { passive: true });
-        window.addEventListener("load", nearBottom);
-
-        const modal = $("#emailModal"),
-          openModal = () => (modal.style.display = "flex"),
-          closeModal = () => (modal.style.display = "none");
-
-        // Initialize PDF Generator
-        const pdfGenerator = new PDFGenerator();
-
-        $("#downloadBtn").addEventListener("click", openModal);
-        $("#emailCancel").addEventListener("click", closeModal);
-
-        const validEmail = (e) =>
-          /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || "").trim());
-
-        $("#emailSubmit").addEventListener("click", async () => {
-          const email = $("#emailInput").value || "",
-            err = $("#emailErr");
-          if (!validEmail(email)) {
-            err.style.display = "block";
-            return;
-          }
-          err.style.display = "none";
-          const lang = currentLang;
-          const data = getLocalizedContent(lang);
-
-          // Add meter values to the data object for PDF generation
-          data.meters = normalized.meters;
-
-          try {
-            await pdfGenerator.generatePDF("SignSense_Report", data, lang);
-          } catch (e) {
-            console.error(e);
-            alert("Could not generate the PDF.");
-          }
-          closeModal();
-        });
-
-        /* ====== Poppins loader for jsPDF (Regular + Bold) ====== */
-        async function ensurePoppins(doc) {
-          try {
-            const list = doc.getFontList ? doc.getFontList() : {};
-            if (list && list.Poppins) return true;
-
-            const REG_URL =
-              "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Regular.ttf";
-            const BLD_URL =
-              "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Bold.ttf";
-
-            async function fetchAsBase64(url) {
-              const r = await fetch(url, { mode: "cors" });
-              if (!r.ok) throw new Error("font fetch failed " + r.status);
-              const buf = await r.arrayBuffer();
-              let binary = "";
-              const bytes = new Uint8Array(buf);
-              for (let i = 0; i < bytes.byteLength; i++)
-                binary += String.fromCharCode(bytes[i]);
-              return btoa(binary);
-            }
-
-            const [regB64, boldB64] = await Promise.all([
-              fetchAsBase64(REG_URL),
-              fetchAsBase64(BLD_URL),
-            ]);
-            doc.addFileToVFS("Poppins-Regular.ttf", regB64);
-            doc.addFont("Poppins-Regular.ttf", "Poppins", "normal");
-            doc.addFileToVFS("Poppins-Bold.ttf", boldB64);
-            doc.addFont("Poppins-Bold.ttf", "Poppins", "bold");
-            return true;
-          } catch (e) {
-            console.warn(
-              "Poppins failed to load — using helvetica fallback.",
-              e
-            );
-            return false;
-          }
-        }
-
-        /* === icons & marks === */
-        const ASSETS = {
-          logo: "https://i.imgur.com/aRIGT9V.png",
-          risk: "https://i.imgur.com/hSkzUQu.png",
-          clarity: "https://i.imgur.com/3J3mzur.png",
-          pro: "https://i.imgur.com/FLqsaQJ.png",
-          fav: "https://i.imgur.com/GIAYFBC.png",
-          dead: "https://i.imgur.com/BbyV5gF.png",
-          score: "https://i.imgur.com/H47wt5e.png",
-          confidence: "https://i.imgur.com/GzPeaz5.png",
-        };
-
-        /* === image URL -> dataURL for jsPDF === */
-        async function imgToDataURL(url) {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error("Image fetch failed " + res.status);
-          const buf = await res.arrayBuffer();
-          let binary = "";
-          const bytes = new Uint8Array(buf);
-          for (let i = 0; i < bytes.length; i++)
-            binary += String.fromCharCode(bytes[i]);
-          return "data:image/png;base64," + btoa(binary);
-        }
-
-        /* ================= Main generator (Poppins everywhere if available) ================= */
-        /* ================= Main generator (Updated Layout) ================= */
-        /* ================= PDF Helpers (add these right before generatePDF if not already there) ================= */
-        function getColorFor(metric, v, band) {
-          if (metric === "risk")
-            return v <= 25 ? "#00ff65" : v <= 58 ? "#df911a" : "#fe0000";
-          if (metric === "clarity" || metric === "score")
-            return v >= 78 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-          if (metric === "professionalism")
-            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-          if (metric === "favorability")
-            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-          if (metric === "deadline")
-            return v <= 35 ? "#00ff65" : v <= 68 ? "#df911a" : "#fe0000";
-          if (metric === "confidence")
-            return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-          return "#df911a";
-        }
-
-        function getBadgeBgColor(band) {
-          return band === "green"
-            ? [240, 255, 240]
-            : band === "orange"
-            ? [255, 244, 230]
-            : [255, 230, 230];
-        }
-
-        function getDotColor(band) {
-          return band === "green"
-            ? [40, 224, 112]
-            : band === "orange"
-            ? [223, 145, 26]
-            : [254, 0, 0];
-        }
-
-        function capitalizeSafety(safety) {
-          return safety
-            .split(" ")
-            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ");
-        }
-
-        function gradientBarPNG(width, height = 22, indPos) {
-          const c = document.createElement("canvas");
-          c.width = width;
-          c.height = height + 20; // extra for ind
-          const ctx = c.getContext("2d");
-
-          // bar
-          const r = height / 2;
-
-          // clip
-          ctx.beginPath();
-          ctx.moveTo(r, 10);
-          ctx.lineTo(width - r, 10);
-          ctx.arc(width - r, 10 + r, r, -Math.PI / 2, Math.PI / 2);
-          ctx.lineTo(r, 10 + height);
-          ctx.arc(r, 10 + r, r, Math.PI / 2, -Math.PI / 2);
-          ctx.closePath();
-          ctx.clip();
-
-          // gradient fill
-          const grad = ctx.createLinearGradient(0, 0, width, 0);
-          grad.addColorStop(0, "#ff6b6b");
-          grad.addColorStop(0.45, "#ffd166");
-          grad.addColorStop(1, "#00e676");
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 10, width, height);
-
-          // border
-          ctx.restore();
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = "#000";
-          ctx.beginPath();
-          ctx.moveTo(r, 10);
-          ctx.lineTo(width - r, 10);
-          ctx.arc(width - r, 10 + r, r, -Math.PI / 2, Math.PI / 2);
-          ctx.lineTo(r, 10 + height);
-          ctx.arc(r, 10 + r, r, Math.PI / 2, -Math.PI / 2);
-          ctx.stroke();
-
-          // indicator
-          const pos = Math.max(0, Math.min(1, indPos)) * width;
-          ctx.fillStyle = "#fff";
-          ctx.shadowColor = "rgba(0,0,0,0.3)";
-          ctx.shadowBlur = 6;
-          ctx.fillRect(pos - 1.5, 0, 3, height + 20);
-
-          return c.toDataURL("image/png");
-        }
-
-        document
-          .getElementById("leaveReview")
-          .addEventListener("click", (e) => {
-            e.preventDefault();
-            alert("Hook this to your reviews form URL.");
-          });
-      })();
-    </script>
-  </body>
-</html> 
+  const dlWrap = $('#dlWrap');
+  const endBox = $('#sidebarEnd');
+  const nearBottom = () => {
+    const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+    const show = scrolledFromBottom <= 320;
+    dlWrap.style.display = show ? 'flex' : 'none';
+    endBox.style.display = show ? 'block' : 'none';
+    if (show) {
+      dlWrap.classList.add('fade-in');
+      endBox.classList.add('fade-in');
+    }
+  };
+  window.addEventListener('scroll', nearBottom, { passive: true });
+  window.addEventListener('load', nearBottom);
+ const modal = $('#emailModal');
+const emailInline = $('#emailInline');
+const emailInput = isMobile() ? $('#emailInput') : $('#emailInputModal');
+const emailErr = isMobile() ? $('#emailErr') : $('#emailErrModal');
+  const downloadBtn = $('#downloadBtn');
+  const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
+  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
+  const openForm = () => {
+    if (isMobile()) {
+      downloadBtn.style.display = 'none';
+      emailInline.style.display = 'flex';
+      setTimeout(() => document.addEventListener('click', outsideCloseInline, { capture: true }), 0);
+      emailInput.focus();
+    } else {
+      modal.style.display = 'flex';
+      emailInput.focus();
+    }
+  };
+  const closeForm = () => {
+    if (isMobile()) {
+      emailInline.style.display = 'none';
+      emailErr.style.display = 'none';
+      emailInput.value = '';
+      downloadBtn.style.display = 'inline-flex';
+      document.removeEventListener('click', outsideCloseInline, { capture: true });
+    } else {
+      modal.style.display = 'none';
+      emailInput.value = '';
+      emailErr.style.display = 'none';
+    }
+  };
+  const outsideCloseInline = e => {
+    if (!emailInline.contains(e.target)) closeForm();
+  };
+  emailInline.addEventListener('click', e => e.stopPropagation());
+  downloadBtn.addEventListener('click', openForm);
+  $('#emailCancel').addEventListener('click', closeForm);
+  const handleSubmit = async () => {
+    const email = emailInput.value;
+    if (!validEmail(email)) {
+      emailErr.style.display = 'block';
+      return;
+    }
+    emailErr.style.display = 'none';
+    const data = getLocalizedContent(currentLang);
+    data.meters = normalized.meters;
+    try {
+      const pdfGenerator = new PDFGenerator();
+      await pdfGenerator.generatePDF('SignSense_Report', data, currentLang);
+    } catch (e) {
+      console.error(e);
+      alert('Could not generate the PDF.');
+    }
+    closeForm();
+  };
+  $('#emailSubmit').addEventListener('click', handleSubmit);
+  emailInline.addEventListener('submit', async e => { e.preventDefault(); await handleSubmit(); });
+  document.getElementById('leaveReview').addEventListener('click', e => { e.preventDefault(); alert('Hook this to your reviews form URL.'); });
+  document.getElementById('leaveReview2').addEventListener('click', e => { e.preventDefault(); alert('Hook this to your reviews form URL.'); });
+})();
+</script>
+</body>
+</html>  
