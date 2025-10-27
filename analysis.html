@@ -7,169 +7,168 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
-   :root {
-  --bg: #0e0c13;
-  --card: #1c1b22;
-  --border: #3b3b3b;
-  --white: #ffffff;
-  --muted: #bdbdbd;
-  --green: #00ff65;
-  --orange: #df911a;
-  --red: #fe0000;
-  --black: #000000;
-  --radius: 21px;
-  --gap: 18px;
-  --sidebar: 300px;
-  --drawerW: 75vw;
-  --containerMax: 428px;
-}
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial; overflow-x: hidden; }
-.layout { display: grid; grid-template-columns: var(--sidebar) 1fr; min-height: 100vh; }
-.main { padding: 0 20px 140px; display: grid; grid-template-rows: auto auto 1fr; gap: 12px; }
-.container { width: 100%; max-width: var(--containerMax); margin: 0 auto; padding: 12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left)); }
-.sidebar { background: #0f0e14; border-right: 1px solid var(--border); padding: 12px 16px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 16px; }
-.drawer { position: fixed; left: 0; top: 0; bottom: 0; width: min(var(--drawerW), 420px); background: #0f0e14; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 12px 16px 16px; gap: 16px; transform: translateX(-100%); transition: transform .28s ease; z-index: 80; }
-.drawer.open { transform: translateX(0); }
-.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 70; }
-.scrim.show { opacity: 1; visibility: visible; }
-.brand, .brand-row { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
-.brand img, .brand-row img { width: 34px; height: 34px; }
-.brand span, .brand-row span { font-size: 24px; font-weight: 400; }
-.nav { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
-.nav a { text-decoration: none; color: var(--muted); display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1px solid transparent; font-size: 18px; }
-.nav a img.icon { width: 22px; height: 22px; }
-.nav a img.arr { width: 16px; height: 16px; opacity: .9; }
-.nav a.active { background: #181620; border: 1px solid var(--border); color: var(--white); }
-.nav a:hover { background: transparent; border: 1px solid var(--border); color: var(--white); }
-.push { flex: 1; }
-.end, .end-only { color: var(--muted); font-size: 15px; line-height: 1.6; }
-.footer-sep { height: 1px; background: var(--border); margin: 10px 0; }
-.topbar { position: sticky; top: 0; z-index: 40; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left)); height: 64px; border-bottom: 1px solid var(--border); }
-.top-left { display: flex; align-items: center; gap: 10px; }
-.menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: #14121a; cursor: pointer; padding: 0; }
-.menu-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
-.top-title { font-size: 20px; font-weight: 400; }
-.doc-title-top, .doc-title { margin: 10px calc(14px + env(safe-area-inset-left)) 10px calc(14px + env(safe-area-inset-right)); font-size: 18px; font-weight: 400; color: var(--white); }
-.doc-title .label, .doc-title .value { font-size: 18px; color: var(--muted); font-weight: 400; }
-.lang { position: relative; }
-.lang-btn { display: flex; align-items: center; gap: 8px; background: transparent; border: none; color: var(--white); font: 400 20px/1 Inter; cursor: pointer; padding: 6px 10px; min-width: 40px; user-select: none; }
-.lang-btn .caret { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #fff; opacity: .9; }
-.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 240px; max-height: 260px; overflow: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); padding: 6px; scrollbar-width: thin; scrollbar-color: #6a6a6a transparent; }
-.lang:hover .lang-menu, .lang.open .lang-menu { display: block; }
-.lang-menu::-webkit-scrollbar { width: 6px; }
-.lang-menu::-webkit-scrollbar-thumb { background: #6a6a6a; border-radius: 10px; }
-.lang-item { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; color: var(--white); cursor: pointer; }
-.lang-item:hover { background: #17161e; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; opacity: 0; transform: translateY(8px); margin-bottom: var(--gap); }
-@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-.fade-in { animation: fadeIn .8s ease forwards; }
-.card h3 { margin: 0 0 10px; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 400; }
-.card h3 img { width: 24px; height: 24px; }
-.list { display: flex; flex-direction: column; gap: 10px; }
-.list p { margin: 0; color: var(--muted); font-size: 16px; overflow-wrap: anywhere; }
-.bullets { margin: 0; color: var(--muted); font-size: 16px; padding-left: 22px; list-style: disc; }
-.bullets li { margin: 0 0 10px; }
-.numbered { counter-reset: item; }
-.numbered p { position: relative; padding-left: 26px; margin: 0 0 10px; }
-.numbered p::before { counter-increment: item; content: counter(item) "."; position: absolute; left: 0; top: 0; color: var(--muted); }
-.meter-block { display: flex; flex-direction: column; gap: 10px; }
-.meter-head { display: flex; align-items: center; justify-content: space-between; }
-.meter-title { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
-.meter-title img { width: 24px; height: 24px; margin-top: 0px; }
-.meter { height: 10px; border-radius: 999px; background: var(--black); overflow: hidden; }
-.fill { height: 100%; width: 0%; transition: width 1.6s ease; border-radius: 999px; }
-.hcard { display: flex; gap: 12px; align-items: center; }
-.circle { width: 110px; height: 110px; position: relative; display: grid; place-items: center; flex: 0 0 110px; }
-.circle svg { transform: rotate(-90deg); }
-.circle .val { position: absolute; font-weight: 400; font-size: 26px; }
-.circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
-.circle circle.arc { stroke-width: 14; fill: none; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px); }
-.htext { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.muted { color: var(--muted); font-size: 15px; }
-#riskCard .muted, #clarCard .muted { font-size: 13.5px; line-height: 1.5; }
-.status { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-.status .dot { width: 10px; height: 10px; border-radius: 2px; background: var(--green); }
-.status span { font-size: 15px; }
-#riskCard, #clarCard { padding: 12px 12px; }
-#scoreCard .score-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
-#scoreCard .score-pct { font-size: 30px; }
-.score-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-.score-remark { font-size: 16px; color: var(--muted); }
-.score-bar { position: relative; height: 20px; border-radius: 14px; background: linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%); border: 1px solid #2f2f2f; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); width: 100%; }
-.score-ind { position: absolute; top: -6px; height: 30px; width: 3px; background: #fff; border-radius: 2px; left: calc(80% - 1.5px); box-shadow: 0 0 8px rgba(255,255,255,.6); }
-.score-scale { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
-.download-wrap { position: fixed; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom)); display: none; justify-content: center; z-index: 60; opacity: 0; transform: translateY(8px); }
-.download { background: #f2f9fe; color: #000; border: 1px solid #cfcfcf; border-radius: 16px; padding: 16px 26px; display: inline-flex; gap: 12px; align-items: center; cursor: pointer; font-weight: 400; font-size: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; }
-.modal-card { background: #141319; border: 1px solid var(--border); border-radius: 18px; padding: 18px; width: min(480px,92vw); }
-.modal-card h4 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
-.modal-row { display: flex; gap: 10px; margin-top: 12px; }
-.input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 12px; color: #fff; font: 400 15px/1 Inter; }
-.btn { background: #0f0e14; border: 1px solid var(--border); color: #fff; border-radius: 10px; padding: 12px 14px; cursor: pointer; }
-.btn.primary { background: #f2f9fe; color: #000; border-color: #cfcfcf; }
-.email-inline { display: none; flex-direction: column; gap: 8px; width: min(92vw, 340px); background: #141319; border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
-.email-title { font-size: 14px; color: #bdbdbd; margin-bottom: 2px; }
-.email-row { display: flex; align-items: center; gap: 8px; }
-.email-inline .input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 10px 12px; color: #fff; font: 400 16px/1 Inter; }
-.email-inline .input:focus { outline: none; box-shadow: none; border-color: #5a5a5a; background: #0f0e14; color: #fff; }
-.email-err { color: #ff6b6b; font-size: 13px; display: none; }
-#emailInline .btn { padding: 7px 8px; border-radius: 8px; flex-shrink: 0; }
-#emailInline .btn.primary { padding: 7px 8px; font-size: 15px; font-weight: 500; }
-#emailInline .email-title { color: #f2f9fe; }
-@media (min-width: 981px) {
-  .drawer, .scrim, .menu-btn, .doc-title-top, .email-inline { display: none !important; }
-  .download-wrap { left: var(--sidebar); }
-  .grid { display: grid; grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr); gap: var(--gap); align-items: start; margin-top: 6px; }
-  .left, .right { display: flex; flex-direction: column; gap: var(--gap); }
-  .card { padding: 18px 18px 20px; }
-  .card h3 { font-size: 24px; }
-  .card h3 img { width: 30px; height: 30px; }
-  .list p, .bullets li { font-size: 20px; }
-  .meter-title { font-size: 22px; }
-  .meter-title img { width: 32px; height: 32px; }
-  .circle { width: 160px; height: 160px; flex: 0 0 160px; }
-  .circle .val { font-size: 34px; }
-  .muted { font-size: 18px; }
-  .status span { font-size: 17px; }
-  .score-pct { font-size: 42px; }
-  .score-remark { font-size: 20px; }
-  .score-bar { height: 22px; }
-  .score-ind { height: 34px; }
-  .score-scale { font-size: 16px; }
-  .modal { z-index: 20; }
-}
-@media (max-width: 980px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar, .modal { display: none !important; }
-  .main { padding: 0; }
-  .download-wrap { left: 0; }
-  .circle { width: 110px; height: 110px; flex: 0 0 110px; }
-  .circle .val { font-size: 26px; }
-  .card h3 { font-size: 18px; }
-  .card h3 img { width: 24px; height: 24px; }
-  .list p, .bullets li { font-size: 16px; }
-  .meter-title { font-size: 16px; }
-  .meter-title img { width: 24px; height: 24px; }
-  .muted { font-size: 15px; }
-  .status span { font-size: 15px; }
-  .score-pct { font-size: 30px; }
-  .score-remark { font-size: 16px; }
-  .score-bar { height: 20px; }
-  .score-ind { height: 30px; }
-  .score-scale { font-size: 14px; }
-  .card { padding: 14px; }
-}
-@media (max-width: 420px) {
-  .email-row { flex-wrap: nowrap; }
-  .email-inline { width: min(92vw, 320px); }
-}
-
+    :root {
+      --bg: #0e0c13;
+      --card: #1c1b22;
+      --border: #3b3b3b;
+      --white: #ffffff;
+      --muted: #bdbdbd;
+      --green: #00ff65;
+      --orange: #df911a;
+      --red: #fe0000;
+      --black: #000000;
+      --radius: 21px;
+      --gap: 18px;
+      --sidebar: 300px;
+      --drawerW: 75vw;
+      --containerMax: 428px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial; overflow-x: hidden; }
+    .layout { display: grid; grid-template-columns: var(--sidebar) 1fr; min-height: 100vh; }
+    .main { padding: 0 20px 140px; display: grid; grid-template-rows: auto auto 1fr; gap: 12px; }
+    .container { width: 100%; max-width: var(--containerMax); margin: 0 auto; padding: 12px calc(14px + env(safe-area-inset-right)) 140px calc(14px + env(safe-area-inset-left)); }
+    .sidebar { background: #0f0e14; border-right: 1px solid var(--border); padding: 12px 16px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 16px; }
+    .drawer { position: fixed; left: 0; top: 0; bottom: 0; width: min(var(--drawerW), 420px); background: #0f0e14; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 12px 16px 16px; gap: 16px; transform: translateX(-100%); transition: transform .28s ease; z-index: 80; }
+    .drawer.open { transform: translateX(0); }
+    .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 70; }
+    .scrim.show { opacity: 1; visibility: visible; }
+    .brand, .brand-row { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
+    .brand img, .brand-row img { width: 34px; height: 34px; }
+    .brand span, .brand-row span { font-size: 24px; font-weight: 400; }
+    .nav { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+    .nav a { text-decoration: none; color: var(--muted); display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1px solid transparent; font-size: 18px; }
+    .nav a img.icon { width: 22px; height: 22px; }
+    .nav a img.arr { width: 16px; height: 16px; opacity: .9; }
+    .nav a.active { background: #181620; border: 1px solid var(--border); color: var(--white); }
+    .nav a:hover { background: transparent; border: 1px solid var(--border); color: var(--white); }
+    .push { flex: 1; }
+    .end, .end-only { color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .footer-sep { height: 1px; background: var(--border); margin: 10px 0; }
+    .topbar { position: sticky; top: 0; z-index: 40; background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 10px calc(12px + env(safe-area-inset-right)) 12px calc(12px + env(safe-area-inset-left)); height: 64px; border-bottom: 1px solid var(--border); }
+    .top-left { display: flex; align-items: center; gap: 10px; }
+    .menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: #14121a; cursor: pointer; padding: 0; }
+    .menu-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
+    .top-title { font-size: 20px; font-weight: 400; }
+    .doc-title-top, .doc-title { margin: 10px calc(14px + env(safe-area-inset-left)) 10px calc(14px + env(safe-area-inset-right)); font-size: 18px; font-weight: 400; color: var(--white); }
+    .doc-title .label, .doc-title .value { font-size: 18px; color: var(--muted); font-weight: 400; }
+    .lang { position: relative; }
+    .lang-btn { display: flex; align-items: center; gap: 8px; background: transparent; border: none; color: var(--white); font: 400 20px/1 Inter; cursor: pointer; padding: 6px 10px; min-width: 40px; user-select: none; }
+    .lang-btn .caret { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #fff; opacity: .9; }
+    .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 240px; max-height: 260px; overflow: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); padding: 6px; scrollbar-width: thin; scrollbar-color: #6a6a6a transparent; }
+    .lang:hover .lang-menu, .lang.open .lang-menu { display: block; }
+    .lang-menu::-webkit-scrollbar { width: 6px; }
+    .lang-menu::-webkit-scrollbar-thumb { background: #6a6a6a; border-radius: 10px; }
+    .lang-item { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; color: var(--white); cursor: pointer; }
+    .lang-item:hover { background: #17161e; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; opacity: 0; transform: translateY(8px); margin-bottom: var(--gap); }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn .8s ease forwards; }
+    .card h3 { margin: 0 0 10px; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 400; }
+    .card h3 img { width: 24px; height: 24px; }
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .list p { margin: 0; color: var(--muted); font-size: 16px; overflow-wrap: anywhere; }
+    .bullets { margin: 0; color: var(--muted); font-size: 16px; padding-left: 22px; list-style: disc; }
+    .bullets li { margin: 0 0 10px; }
+    .numbered { counter-reset: item; }
+    .numbered p { position: relative; padding-left: 26px; margin: 0 0 10px; }
+    .numbered p::before { counter-increment: item; content: counter(item) "."; position: absolute; left: 0; top: 0; color: var(--muted); }
+    .meter-block { display: flex; flex-direction: column; gap: 10px; }
+    .meter-head { display: flex; align-items: center; justify-content: space-between; }
+    .meter-title { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
+    .meter-title img { width: 24px; height: 24px; margin-top: 0px; }
+    .meter { height: 10px; border-radius: 999px; background: var(--black); overflow: hidden; }
+    .fill { height: 100%; width: 0%; transition: width 1.6s ease; border-radius: 999px; }
+    .hcard { display: flex; gap: 12px; align-items: center; }
+    .circle { width: 110px; height: 110px; position: relative; display: grid; place-items: center; flex: 0 0 110px; }
+    .circle svg { transform: rotate(-90deg); }
+    .circle .val { position: absolute; font-weight: 400; font-size: 26px; }
+    .circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
+    .circle circle.arc { stroke-width: 14; fill: none; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px); }
+    .htext { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .muted { color: var(--muted); font-size: 15px; }
+    #riskCard .muted, #clarCard .muted { font-size: 13.5px; line-height: 1.5; }
+    .status { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .status .dot { width: 10px; height: 10px; border-radius: 2px; background: var(--green); }
+    .status span { font-size: 15px; }
+    #riskCard, #clarCard { padding: 12px 12px; }
+    #scoreCard .score-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+    #scoreCard .score-pct { font-size: 30px; }
+    .score-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .score-remark { font-size: 16px; color: var(--muted); }
+    .score-bar { position: relative; height: 20px; border-radius: 14px; background: linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%); border: 1px solid #2f2f2f; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); width: 100%; }
+    .score-ind { position: absolute; top: -6px; height: 30px; width: 3px; background: #fff; border-radius: 2px; left: calc(80% - 1.5px); box-shadow: 0 0 8px rgba(255,255,255,.6); }
+    .score-scale { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+    .download-wrap { position: fixed; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom)); display: none; justify-content: center; z-index: 60; opacity: 0; transform: translateY(8px); }
+    .download { background: #f2f9fe; color: #000; border: 1px solid #cfcfcf; border-radius: 16px; padding: 16px 26px; display: inline-flex; gap: 12px; align-items: center; cursor: pointer; font-weight: 400; font-size: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-card { background: #141319; border: 1px solid var(--border); border-radius: 18px; padding: 18px; width: min(480px,92vw); }
+    .modal-card h4 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
+    .modal-row { display: flex; gap: 10px; margin-top: 12px; }
+    .input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 12px; color: #fff; font: 400 15px/1 Inter; }
+    .btn { background: #0f0e14; border: 1px solid var(--border); color: #fff; border-radius: 10px; padding: 12px 14px; cursor: pointer; }
+    .btn.primary { background: #f2f9fe; color: #000; border-color: #cfcfcf; }
+    .email-inline { display: none; flex-direction: column; gap: 8px; width: min(92vw, 340px); background: #141319; border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
+    .email-title { font-size: 14px; color: #bdbdbd; margin-bottom: 2px; }
+    .email-row { display: flex; align-items: center; gap: 8px; }
+    .email-inline .input { flex: 1; background: #0f0e14; border: 1px solid #5a5a5a; border-radius: 10px; padding: 10px 12px; color: #fff; font: 400 16px/1 Inter; }
+    .email-inline .input:focus { outline: none; box-shadow: none; border-color: #5a5a5a; background: #0f0e14; color: #fff; }
+    .email-err { color: #ff6b6b; font-size: 13px; display: none; }
+    #emailInline .btn { padding: 7px 8px; border-radius: 8px; flex-shrink: 0; }
+    #emailInline .btn.primary { padding: 7px 8px; font-size: 15px; font-weight: 500; }
+    #emailInline .email-title { color: #f2f9fe; }
+    @media (min-width: 981px) {
+      .drawer, .scrim, .menu-btn, .doc-title-top, .email-inline { display: none !important; }
+      .download-wrap { left: var(--sidebar); }
+      .grid { display: grid; grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr); gap: var(--gap); align-items: start; margin-top: 6px; }
+      .left, .right { display: flex; flex-direction: column; gap: var(--gap); }
+      .card { padding: 18px 18px 20px; }
+      .card h3 { font-size: 24px; }
+      .card h3 img { width: 30px; height: 30px; }
+      .list p, .bullets li { font-size: 20px; }
+      .meter-title { font-size: 22px; }
+      .meter-title img { width: 32px; height: 32px; }
+      .circle { width: 160px; height: 160px; flex: 0 0 160px; }
+      .circle .val { font-size: 34px; }
+      .muted { font-size: 18px; }
+      .status span { font-size: 17px; }
+      .score-pct { font-size: 42px; }
+      .score-remark { font-size: 20px; }
+      .score-bar { height: 22px; }
+      .score-ind { height: 34px; }
+      .score-scale { font-size: 16px; }
+      .modal { z-index: 20; }
+    }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar, .modal { display: none !important; }
+      .main { padding: 0; }
+      .download-wrap { left: 0; }
+      .circle { width: 110px; height: 110px; flex: 0 0 110px; }
+      .circle .val { font-size: 26px; }
+      .card h3 { font-size: 18px; }
+      .card h3 img { width: 24px; height: 24px; }
+      .list p, .bullets li { font-size: 16px; }
+      .meter-title { font-size: 16px; }
+      .meter-title img { width: 24px; height: 24px; }
+      .muted { font-size: 15px; }
+      .status span { font-size: 15px; }
+      .score-pct { font-size: 30px; }
+      .score-remark { font-size: 16px; }
+      .score-bar { height: 20px; }
+      .score-ind { height: 30px; }
+      .score-scale { font-size: 14px; }
+      .card { padding: 14px; }
+    }
+    @media (max-width: 420px) {
+      .email-row { flex-wrap: nowrap; }
+      .email-inline { width: min(92vw, 320px); }
+    }
   </style>
 </head>
 <body>
-<div id="scrim" class="scrim" aria-hidden="true"></div>
+  <div id="scrim" class="scrim" aria-hidden="true"></div>
   <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="brand-row">
       <img src="https://imgur.com/Z5hv7K9.png" alt="SignSense logo">
@@ -337,7 +336,7 @@ body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7
           </section>
           <section class="card meter-block" id="confRightCard">
             <div class="meter-head">
-              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""><span>Confidence to sign freely</span></div>
+              <div class="meter-title"><img src="https://imgur.com/nUGfg96.png" alt=""><span id="uiConfidence">Confidence to sign freely</span></div>
               <div id="conf2Val">0%</div>
             </div>
             <div class="meter"><div id="conf2Fill" class="fill"></div></div>
@@ -351,26 +350,113 @@ body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7
     <form id="emailInline" class="email-inline" novalidate>
       <div class="email-title">Insert email to download</div>
       <div class="email-row">
-        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+        <input id="emailInputInline" class="input" type="email" inputmode="email" placeholder="you@example.com" />
         <button class="btn primary" id="emailGo" type="submit">Done</button>
       </div>
-      <div id="emailErr" class="email-err">Please enter a valid email address.</div>
+      <div id="emailErrInline" class="email-err">Please enter a valid email address.</div>
     </form>
   </div>
   <div class="modal" id="emailModal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <h4>Enter your email to download the PDF report</h4>
       <div class="modal-row">
-        <input id="emailInput" class="input" type="email" inputmode="email" placeholder="you@example.com" />
+        <input id="emailInputModal" class="input" type="email" inputmode="email" placeholder="you@example.com" />
         <button class="btn primary" id="emailSubmit">Download</button>
         <button class="btn" id="emailCancel">Cancel</button>
       </div>
-      <div id="emailErr" class="email-err">Please enter a valid email address.</div>
+      <div id="emailErrModal" class="email-err">Please enter a valid email address.</div>
     </div>
   </div>
-
 <script>
 (() => {
+  // UI translations
+  const UI = {
+    en: {
+      overview: "Overview",
+      title: "Title:",
+      summary: "Summary",
+      prof: "Professionalism",
+      fav: "Favorability Index",
+      deadline: "Deadline pressure",
+      issues: "Potential Issues",
+      suggestions: "Smart Suggestions",
+      risk: "Risk Level",
+      clarity: "Clause Clarity",
+      clauses: "Main Clauses",
+      score: "Score Checker",
+      unsafe: "Unsafe",
+      safe: "Safe",
+      verysafe: "Very Safe",
+      conf: "Confidence to sign freely"
+    },
+    it: { overview: "Panoramica", title: "Titolo:", summary: "Riepilogo", prof: "Professionalità", fav: "Indice di favore", deadline: "Pressione delle scadenze", issues: "Problemi potenziali", suggestions: "Suggerimenti intelligenti", risk: "Livello di rischio", clarity: "Chiarezza delle clausole", clauses: "Clausole principali", score: "Controllo del punteggio", unsafe: "Non sicuro", safe: "Sicuro", verysafe: "Molto sicuro", conf: "Fiducia per firmare liberamente" },
+    de: { overview: "Übersicht", title: "Titel:", summary: "Zusammenfassung", prof: "Professionalität", fav: "Günstigkeitsindex", deadline: "Fristdruck", issues: "Mögliche Probleme", suggestions: "Intelligente Vorschläge", risk: "Risikostufe", clarity: "Klauselklarheit", clauses: "Hauptklauseln", score: "Punktprüfer", unsafe: "Unsicher", safe: "Sicher", verysafe: "Sehr sicher", conf: "Vertrauen zum freien Unterzeichnen" },
+    es: { overview: "Resumen", title: "Título:", summary: "Resumen", prof: "Profesionalismo", fav: "Índice de favorabilidad", deadline: "Presión de plazos", issues: "Problemas potenciales", suggestions: "Sugerencias inteligentes", risk: "Nivel de riesgo", clarity: "Claridad de las cláusulas", clauses: "Cláusulas principales", score: "Verificador de puntaje", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muy seguro", conf: "Confianza para firmar libremente" },
+    fr: { overview: "Aperçu", title: "Titre:", summary: "Résumé", prof: "Professionnalisme", fav: "Indice de favorabilité", deadline: "Pression des délais", issues: "Problèmes potentiels", suggestions: "Suggestions intelligentes", risk: "Niveau de risque", clarity: "Clarté des clauses", clauses: "Clauses principales", score: "Vérificateur de score", unsafe: "Non sécurisé", safe: "Sûr", verysafe: "Très sûr", conf: "Confiance pour signer librement" },
+    pt: { overview: "Visão geral", title: "Título:", summary: "Resumo", prof: "Profissionalismo", fav: "Índice de favorabilidade", deadline: "Pressão de prazos", issues: "Problemas potenciais", suggestions: "Sugestões inteligentes", risk: "Nível de risco", clarity: "Clareza das cláusulas", clauses: "Cláusulas principais", score: "Verificador de pontuação", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muito seguro", conf: "Confiança para assinar livremente" },
+    nl: { overview: "Overzicht", title: "Titel:", summary: "Samenvatting", prof: "Professionaliteit", fav: "Gunstigheidsindex", deadline: "Deadlinedruk", issues: "Mogelijke problemen", suggestions: "Slimme suggesties", risk: "Risiconiveau", clarity: "Helderheid van clausules", clauses: "Hoofdclausules", score: "Scorecontroleur", unsafe: "Onveilig", safe: "Veilig", verysafe: "Zeer veilig", conf: "Vertrouwen om vrij te ondertekenen" },
+    ro: { overview: "Prezentare generală", title: "Titlu:", summary: "Rezumat", prof: "Profesionalism", fav: "Indice de favorabilitate", deadline: "Presiune termene", issues: "Probleme potențiale", suggestions: "Sugestii inteligente", risk: "Nivel de risc", clarity: "Claritate clauze", clauses: "Clauze principale", score: "Verificator scor", unsafe: "Nesigur", safe: "Sigur", verysafe: "Foarte sigur", conf: "Încredere pentru a semna liber" },
+    sq: { overview: "Përmbledhje", title: "Titull:", summary: "Përmbledhje", prof: "Profesionalizëm", fav: "Indeksi i favorshmërisë", deadline: "Presioni i afateve", issues: "Probleme të mundshme", suggestions: "Sugjerime të zgjuara", risk: "Niveli i rrezikut", clarity: "Qartësia e klauzolave", clauses: "Klauzola kryesore", score: "Kontrollues i rezultatit", unsafe: "I pasigurt", safe: "I sigurt", verysafe: "Shumë i sigurt", conf: "Besim për të nënshkruar lirisht" },
+    tr: { overview: "Genel Bakış", title: "Başlık:", summary: "Özet", prof: "Profesyonellik", fav: "Olumluluk Endeksi", deadline: "Son Tarih Baskısı", issues: "Olası Sorunlar", suggestions: "Akıllı Öneriler", risk: "Risk Seviyesi", clarity: "Madde Açıklığı", clauses: "Ana Maddeler", score: "Puan Denetleyicisi", unsafe: "Güvensiz", safe: "Güvenli", verysafe: "Çok güvenli", conf: "Serbestçe imzalama güveni" },
+    zh: { overview: "概览", title: "标题:", summary: "摘要", prof: "专业性", fav: "有利指数", deadline: "期限压力", issues: "潜在问题", suggestions: "智能建议", risk: "风险水平", clarity: "条款清晰度", clauses: "主要条款", score: "分数检查器", unsafe: "不安全", safe: "安全", verysafe: "非常安全", conf: "自由签署的信心" },
+    ja: { overview: "概要", title: "タイトル:", summary: "要約", prof: "プロフェッショナリズム", fav: "有利指数", deadline: "期限の圧力", issues: "潜在的な問題", suggestions: "スマートな提案", risk: "リスクレベル", clarity: "条項の明確さ", clauses: "主要な条項", score: "スコアチェッカー", unsafe: "安全でない", safe: "安全", verysafe: "非常に安全", conf: "自由に署名する自信" }
+  };
+  const SAFETY_LABELS = {
+    en: { green: "Generally Safe", orange: "Caution Advised", red: "High Risk" },
+    it: { green: "Generalmente Sicuro", orange: "Cautela Consigliata", red: "Alto Rischio" },
+    de: { green: "Allgemein Sicher", orange: "Vorsicht Geboten", red: "Hohes Risiko" },
+    es: { green: "Generalmente Seguro", orange: "Se Recomienda Precaución", red: "Alto Riesgo" },
+    fr: { green: "Généralement Sûr", orange: "Prudence Conseillée", red: "Risque Élevé" },
+    pt: { green: "Geralmente Seguro", orange: "Cautela Recomendada", red: "Alto Risco" },
+    nl: { green: "Over het Algemeen Veilig", orange: "Voorzichtigheid Geboden", red: "Hoog Risico" },
+    ro: { green: "În General Sigur", orange: "Atenție Recomandată", red: "Risc Ridicat" },
+    sq: { green: "Përgjithësisht i Sigurt", orange: "Kujdes i Këshilluar", red: "Rrezik i Lartë" },
+    tr: { green: "Genel Olarak Güvenli", orange: "Dikkat Önerilir", red: "Yüksek Risk" },
+    zh: { green: "总体安全", orange: "建议谨慎", red: "高风险" },
+    ja: { green: "一般的に安全", orange: "注意が必要", red: "高リスク" }
+  };
+  const RISK_NOTE_BY_LANG = {
+    en: "The contract risk score is based on the clauses' fairness and obligations.",
+    it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
+    de: "Die Risikobewertung des Vertrags basiert auf der Fairness und den Verpflichtungen der Klauseln.",
+    es: "La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
+    fr: "Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
+    pt: "A pontuação de risco do contrato é baseada na equidade e nas obrigações das cláusulas.",
+    nl: "De risicoscore van het contract is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
+    ro: "Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
+    sq: "Pikët e rrezikut të kontratës bazohen në ndershmërinë dhe detyrimet e klauzolave.",
+    tr: "Sözleşmenin risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
+    zh: "合同风险评分基于条款的公平性和义务。",
+    ja: "契約のリスクスコアは、条項の公平性と義務に基づいています。"
+  };
+  const CLAR_NOTE_BY_LANG = {
+    en: "The clarity score reflects how easy it is to understand the terms.",
+    it: "Il punteggio di chiarezza riflette quanto sia facile comprendere i termini.",
+    de: "Die Klarheitsbewertung zeigt, wie leicht die Bedingungen zu verstehen sind.",
+    es: "La puntuación de claridad refleja lo fácil que es entender los términos.",
+    fr: "Le score de clarté reflète la facilité de compréhension des termes.",
+    pt: "A pontuação de clareza reflete o quão fácil é entender os termos.",
+    nl: "De helderheidsscore weerspiegelt hoe gemakkelijk de voorwaarden te begrijpen zijn.",
+    ro: "Scorul de claritate reflectă cât de ușor este de înțeles termenii.",
+    sq: "Pikët e qartësisë pasqyrojnë sa e lehtë është të kuptosh termat.",
+    tr: "Netlik puanı, şartların anlaşılmasının ne kadar kolay olduğunu yansıtır.",
+    zh: "清晰度评分反映了条款的易懂程度。",
+    ja: "明確さのスコアは、条件の理解のしやすさを反映しています。"
+  };
+  const SCORE_REMARK_BY_LANG = {
+    en: "The contract is nearly perfectly done.",
+    it: "Il contratto è quasi perfettamente redatto.",
+    de: "Der Vertrag ist nahezu perfekt erstellt.",
+    es: "El contrato está casi perfectamente redactado.",
+    fr: "Le contrat est presque parfaitement rédigé.",
+    pt: "O contrato está quase perfeitamente redigido.",
+    nl: "Het contract is bijna perfect opgesteld.",
+    ro: "Contractul este aproape perfect redactat.",
+    sq: "Kontrata është pothuajse e përkryer.",
+    tr: "Sözleşme neredeyse mükemmel bir şekilde hazırlanmış.",
+    zh: "合同几乎完美完成。",
+    ja: "契約はほぼ完璧に作成されています。"
+  };
   const drawer = document.getElementById('drawer');
   const scrim = document.getElementById('scrim');
   const menuBtn = document.getElementById('menuBtn');
@@ -400,7 +486,7 @@ body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7
   langMenu.querySelectorAll(".lang-item").forEach(li => {
     li.addEventListener("click", (e) => {
       e.stopPropagation();
-      langNow.textContent = codeMap[li.dataset.lang] || "EN";
+      langNow.textContent = codeMap[li.textContent] || "EN";
       lang.classList.remove("open");
     });
   });
@@ -620,10 +706,10 @@ body { margin: 0; background: var(--bg); color: var(--white); font: 400 16px/1.7
   };
   window.addEventListener('scroll', nearBottom, { passive: true });
   window.addEventListener('load', nearBottom);
- const modal = $('#emailModal');
-const emailInline = $('#emailInline');
-const emailInput = isMobile() ? $('#emailInput') : $('#emailInputModal');
-const emailErr = isMobile() ? $('#emailErr') : $('#emailErrModal');
+  const modal = $('#emailModal');
+  const emailInline = $('#emailInline');
+  const emailInput = isMobile() ? $('#emailInputInline') : $('#emailInputModal');
+  const emailErr = isMobile() ? $('#emailErrInline') : $('#emailErrModal');
   const downloadBtn = $('#downloadBtn');
   const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
   const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
@@ -682,4 +768,4 @@ const emailErr = isMobile() ? $('#emailErr') : $('#emailErrModal');
 })();
 </script>
 </body>
-</html>  
+</html>
