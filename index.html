@@ -1563,20 +1563,15 @@
         const ctaBtn = document.getElementById("reviewBtn");
         const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
 
-        ctaBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          finished = false;
-          pickedFiles = [];
-          updateCounter(counterEl);
-          if (isMobile()) {
-            const inputGeneric = document.getElementById("contractFile");
-            inputGeneric.value = '';
-            inputGeneric.click();
-          } else {
-            input.value = '';
-            input.click();
-          }
-        });
+  ctaBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  finished = false;
+  pickedFiles = [];
+  updateCounter(counterEl);
+  const inputToUse = isMobile() ? document.getElementById("contractFile") : input;
+  inputToUse.value = '';
+  inputToUse.click();
+});
 
         input.addEventListener("change", () => { if (!input.files || !input.files.length) return; pickedFiles = Array.from(input.files); finishPicking(); });
 
