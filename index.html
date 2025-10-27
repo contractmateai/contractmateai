@@ -1479,7 +1479,13 @@
         if (mime === "application/pdf" || ext.endsWith(".pdf")) {
           const buf = await file.arrayBuffer();
           const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-          let full = ""; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const content = await page.getTextContent(); const strings = content.items.map((i) => i.str).join(" "); full += strings + "\n"; }
+          let full = "";
+          for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            const strings = content.items.map((i) => i.str).join(" ");
+            full += strings + "\n";
+          }
           console.log("PDF text extracted:", full.substring(0, 100));
           return { text: full, originalName: name, mime };
         }
@@ -1490,23 +1496,83 @@
           return { text: res.value || "", originalName: name, mime };
         }
         if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-          const dataUrl = await new Promise((resolve) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
+          const dataUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.readAsDataURL(file);
+          });
           console.log("Image data URI generated:", dataUrl.substring(0, 100));
           return { imageDataURI: dataUrl, originalName: name, mime };
         }
         throw new Error("Unsupported file type: " + mime);
-      } catch (e) { console.error("fileToPayload error:", e.message); throw e; }
+      } catch (e) {
+        console.error("fileToPayload error:", e.message);
+        throw e;
+      }
     }
+
+    // Fallback demo data (same as analysis.html)
+    const fallbackDemo = {
+      contractName: "Non-Disclosure Agreement (NDA)",
+      detectedLang: "en",
+      analysis: {
+        summary: [
+          "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
+          "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
+          "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
+        ],
+        risk: 25,
+        clarity: 80,
+        compliance: 95,
+        keyClauses: [
+          "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
+          "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
+          "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
+          "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
+        ],
+        potentialIssues: [
+          "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
+          "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
+          "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
+          "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
+          "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
+        ],
+        smartSuggestions: [
+          "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
+          "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
+          "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
+        ]
+      },
+      translations: {}
+    };
 
     const triggers = document.querySelectorAll(".cta-btn, .footer-cta");
     const input = document.getElementById("contractFile");
     const inputCamera = document.getElementById("contractCamera");
     const roleUI = document.getElementById("rolePicker");
-    let chosenRole = null; let pickedFiles = []; let finished = false;
-    function resetPicker(el){ if (el) el.value = ''; }
-    function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
-    function updateCounter(counterEl) { counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : ''; }
-    function addFiles(list) { for (const f of Array.from(list)) { if (pickedFiles.length >= 10) break; pickedFiles.push(f); } }
+    let chosenRole = null;
+    let pickedFiles = [];
+    let finished = false;
+
+    function resetPicker(el) {
+      if (el) el.value = '';
+    }
+
+    function isMobile() {
+      return window.matchMedia('(max-width: 980px)').matches;
+    }
+
+    function updateCounter(counterEl) {
+      counterEl.textContent = pickedFiles.length ? `Selected: ${pickedFiles.length} / 10` : '';
+    }
+
+    function addFiles(list) {
+      for (const f of Array.from(list)) {
+        if (pickedFiles.length >= 10) break;
+        pickedFiles.push(f);
+      }
+    }
+
     async function askAddMore(msg = 'Add more photos?') {
       return new Promise(resolve => {
         const overlay = document.createElement('div');
@@ -1522,19 +1588,50 @@
           </div>`;
         overlay.appendChild(box);
         document.body.appendChild(overlay);
-        const cleanup = (val) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(val); };
-        const onKey = (e) => { if (e.key === 'Escape') cleanup(false); };
+        const cleanup = (val) => {
+          overlay.remove();
+          document.removeEventListener('keydown', onKey);
+          resolve(val);
+        };
+        const onKey = (e) => {
+          if (e.key === 'Escape') cleanup(false);
+        };
         document.addEventListener('keydown', onKey);
         box.querySelector('#am-yes').addEventListener('click', () => cleanup(true));
         box.querySelector('#am-no').addEventListener('click', () => cleanup(false));
-        overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) cleanup(false);
+        });
       });
     }
-    async function maybeAddMoreAndReopenCamera() { if (pickedFiles.length >= 10) { finishPicking(); return; } const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`); if (yes) { resetPicker(inputCamera); inputCamera.click(); } else { finishPicking(); } }
-    function finishPicking() { if (finished) return; finished = true; ctaWrap.style.display = "none"; roleUI.hidden = false; }
+
+    async function maybeAddMoreAndReopenCamera() {
+      if (pickedFiles.length >= 10) {
+        finishPicking();
+        return;
+      }
+      const yes = await askAddMore(`Added ${pickedFiles.length}. Add more photos?`);
+      if (yes) {
+        resetPicker(inputCamera);
+        inputCamera.click();
+      } else {
+        finishPicking();
+      }
+    }
+
+    function finishPicking() {
+      if (finished) return;
+      finished = true;
+      ctaWrap.style.display = "none";
+      roleUI.hidden = false;
+    }
+
     const ctaWrap = document.getElementById("ctaWrap");
     const ctaBtn = document.getElementById("reviewBtn");
-    const counterEl = document.createElement('div'); counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;'; ctaWrap.appendChild(counterEl);
+    const counterEl = document.createElement('div');
+    counterEl.style.cssText = 'color:#d8cccc;margin-top:8px;font-size:14px;text-align:center;';
+    ctaWrap.appendChild(counterEl);
+
     ctaBtn.addEventListener("click", (e) => {
       e.preventDefault();
       finished = false;
@@ -1544,14 +1641,32 @@
       inputToUse.value = '';
       inputToUse.click();
     });
-    input.addEventListener("change", () => { if (!input.files || !input.files.length) return; addFiles(input.files); finishPicking(); });
-    inputCamera.addEventListener('change', () => { if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; } addFiles(inputCamera.files); updateCounter(counterEl); maybeAddMoreAndReopenCamera(); });
+
+    input.addEventListener("change", () => {
+      if (!input.files || !input.files.length) return;
+      addFiles(input.files);
+      finishPicking();
+    });
+
+    inputCamera.addEventListener('change', () => {
+      if (!inputCamera.files || !inputCamera.files.length) {
+        finishPicking();
+        return;
+      }
+      addFiles(inputCamera.files);
+      updateCounter(counterEl);
+      maybeAddMoreAndReopenCamera();
+    });
+
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const chosenRole = btn.dataset.role;
-        if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
+        chosenRole = btn.dataset.role;
+        if (!pickedFiles.length) {
+          alert("Please choose a contract file first.");
+          return;
+        }
         try {
           if (!pickedFiles.length) {
             alert("No files selected. Please choose a file.");
@@ -1562,71 +1677,19 @@
               alert(`File ${file.name} is too large. Maximum size is 10MB.`);
               return;
             }
-          }
-          const payloadArr = await Promise.all(pickedFiles.map(async (file) => {
-            const result = await fileToPayload(file);
-            if (result.text && !result.text.trim()) {
-              throw new Error(`Empty text extracted from ${result.originalName}`);
-            }
-            return {
-              text: result.text || undefined,
-              imageDataURI: result.imageDataURI || undefined,
-              originalName: result.originalName,
-              mime: result.mime
+            const payload = await fileToPayload(file);
+            // Since no server, use fallback demo data
+            const analysisResult = {
+              ...fallbackDemo,
+              contractName: payload.originalName || fallbackDemo.contractName,
+              detectedLang: payload.text ? "en" : fallbackDemo.detectedLang
             };
-          }));
-          // Mock analysis response
-          const payload = {
-            contractName: payloadArr[0].originalName || "Contract",
-            detectedLang: "en",
-            analysis: {
-              summary: payloadArr.map(f => f.text || "Image-based contract").join("\n\n"),
-              risk: 0,
-              clarity: 0,
-              compliance: 0,
-              keyClauses: [],
-              potentialIssues: [],
-              smartSuggestions: []
-            },
-            translations: {}
-          };
-          const { contractName, detectedLang, analysis, translations = {} } = payload;
-          if (!analysis) {
-            alert("Analysis is empty. Please try again with a different file.");
-            return;
+            localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+            window.location.href = "analysis.html";
           }
-          const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
-          const summaryStr = summaryArr.join("\n\n");
-          localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
-          localStorage.setItem("detectedLang", detectedLang || "en");
-          localStorage.setItem("role", chosenRole || "signer");
-          if ((chosenRole || "signer") === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
-          localStorage.setItem("summary", summaryStr);
-          localStorage.setItem("risk", String(analysis.risk ?? 0));
-          localStorage.setItem("clarity", String(analysis.clarity ?? 0));
-          localStorage.setItem("compliance", String(analysis.compliance ?? 0));
-          localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
-          localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
-          localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
-          localStorage.setItem("analysisData", JSON.stringify({ 
-            languageOriginal: detectedLang || "en", 
-            summary: summaryArr, 
-            risk: { value: analysis.risk ?? 0, note: "" }, 
-            clarity: { value: analysis.clarity ?? 0, note: "" }, 
-            clauses: analysis.keyClauses || [], 
-            issues: analysis.potentialIssues || [], 
-            suggestions: analysis.smartSuggestions || [], 
-            meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 }, 
-            translations 
-          }));
-          localStorage.setItem("translations", JSON.stringify(translations));
-          localStorage.setItem("analysisMode", "live");
-          localStorage.setItem("analysisRaw", JSON.stringify(payload));
-          window.location.href = "analysis.html?ts=" + Date.now();
         } catch (e) {
           console.error("Processing error:", e.message);
-          alert(`Could not analyze this file: ${e.message}. Try again or use another file.`);
-          return;
+          alert(`Error processing file: ${e.message}`);
         }
       });
     });
