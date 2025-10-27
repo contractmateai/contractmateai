@@ -1463,7 +1463,7 @@
       window.addEventListener('scroll', () => { if (menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
     </script>
 
-   <script>
+<script>
   (async () => {
     async function fileToPayload(file) {
       try {
@@ -1540,19 +1540,11 @@
       finished = false;
       pickedFiles = [];
       updateCounter(counterEl);
-      const inputToUse = isMobile() ? inputCamera : input; // Use camera on mobile, file input on desktop
+      const inputToUse = isMobile() ? inputCamera : input;
       inputToUse.value = '';
       inputToUse.click();
     });
     input.addEventListener("change", () => { if (!input.files || !input.files.length) return; addFiles(input.files); finishPicking(); });
-    const inputGeneric = document.getElementById("contractFile");
-    inputGeneric.addEventListener('change', () => {
-      if (!inputGeneric.files || !inputGeneric.files.length) return;
-      addFiles(inputGeneric.files);
-      updateCounter(counterEl);
-      const usedCamera = [...inputGeneric.files].some(f => f.type.startsWith('image/') && f.name.startsWith('image') && f.lastModified && f.size < 10_000_000);
-      if (usedCamera) { maybeAddMoreAndReopenCamera(); } else { finishPicking(); }
-    });
     inputCamera.addEventListener('change', () => { if (!inputCamera.files || !inputCamera.files.length) { finishPicking(); return; } addFiles(inputCamera.files); updateCounter(counterEl); maybeAddMoreAndReopenCamera(); });
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1560,7 +1552,6 @@
         btn.classList.add('active');
         const chosenRole = btn.dataset.role;
         if (!pickedFiles.length) { alert("Please choose a contract file first."); return; }
-        let payload;
         try {
           if (!pickedFiles.length) {
             alert("No files selected. Please choose a file.");
@@ -1584,48 +1575,59 @@
               mime: result.mime
             };
           }));
-          const body = { files: payloadArr, role: chosenRole || "signer" };
-          console.log("Sending payload:", JSON.stringify(body, null, 2));
-          const resp = await fetch("/api/analyze", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-          });
-          if (!resp.ok) {
-            const err = await resp.json().catch(() => ({}));
-            console.error("API error:", err);
-            alert(`Could not analyze this file: ${err?.error || "Unknown error"}. Try again or use another file.`);
+          // Mock analysis response
+          const payload = {
+            contractName: payloadArr[0].originalName || "Contract",
+            detectedLang: "en",
+            analysis: {
+              summary: payloadArr.map(f => f.text || "Image-based contract").join("\n\n"),
+              risk: 0,
+              clarity: 0,
+              compliance: 0,
+              keyClauses: [],
+              potentialIssues: [],
+              smartSuggestions: []
+            },
+            translations: {}
+          };
+          const { contractName, detectedLang, analysis, translations = {} } = payload;
+          if (!analysis) {
+            alert("Analysis is empty. Please try again with a different file.");
             return;
           }
-          payload = await resp.json();
+          const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
+          const summaryStr = summaryArr.join("\n\n");
+          localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
+          localStorage.setItem("detectedLang", detectedLang || "en");
+          localStorage.setItem("role", chosenRole || "signer");
+          if ((chosenRole || "signer") === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
+          localStorage.setItem("summary", summaryStr);
+          localStorage.setItem("risk", String(analysis.risk ?? 0));
+          localStorage.setItem("clarity", String(analysis.clarity ?? 0));
+          localStorage.setItem("compliance", String(analysis.compliance ?? 0));
+          localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
+          localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
+          localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
+          localStorage.setItem("analysisData", JSON.stringify({ 
+            languageOriginal: detectedLang || "en", 
+            summary: summaryArr, 
+            risk: { value: analysis.risk ?? 0, note: "" }, 
+            clarity: { value: analysis.clarity ?? 0, note: "" }, 
+            clauses: analysis.keyClauses || [], 
+            issues: analysis.potentialIssues || [], 
+            suggestions: analysis.smartSuggestions || [], 
+            meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 }, 
+            translations 
+          }));
+          localStorage.setItem("translations", JSON.stringify(translations));
+          localStorage.setItem("analysisMode", "live");
+          localStorage.setItem("analysisRaw", JSON.stringify(payload));
+          window.location.href = "analysis.html?ts=" + Date.now();
         } catch (e) {
           console.error("Processing error:", e.message);
           alert(`Could not analyze this file: ${e.message}. Try again or use another file.`);
           return;
         }
-        const { contractName, detectedLang, analysis, translations = {} } = payload || {};
-        if (!analysis) {
-          alert("Analysis came back empty. Please try again with a different file.");
-          return;
-        }
-        const summaryArr = Array.isArray(analysis.summary) ? analysis.summary : analysis.summary ? [analysis.summary] : [];
-        const summaryStr = summaryArr.join("\n\n");
-        localStorage.setItem("contractName", contractName || pickedFiles[0].name || "Contract");
-        localStorage.setItem("detectedLang", detectedLang || "en");
-        localStorage.setItem("role", chosenRole || "signer");
-        if ((chosenRole || "signer") === "writer") localStorage.setItem("hideConfidence", "1"); else localStorage.removeItem("hideConfidence");
-        localStorage.setItem("summary", summaryStr);
-        localStorage.setItem("risk", String(analysis.risk ?? 0));
-        localStorage.setItem("clarity", String(analysis.clarity ?? 0));
-        localStorage.setItem("compliance", String(analysis.compliance ?? 0));
-        localStorage.setItem("keyClauses", JSON.stringify(analysis.keyClauses || []));
-        localStorage.setItem("potentialIssues", JSON.stringify(analysis.potentialIssues || []));
-        localStorage.setItem("smartSuggestions", JSON.stringify(analysis.smartSuggestions || []));
-        localStorage.setItem("analysisData", JSON.stringify({ languageOriginal: detectedLang || "en", summary: summaryArr, risk: { value: analysis.risk ?? 0, note: "" }, clarity: { value: analysis.clarity ?? 0, note: "" }, clauses: analysis.keyClauses || [], issues: analysis.potentialIssues || [], suggestions: analysis.smartSuggestions || [], meters: { confidence: analysis.compliance ?? 0, favorability: analysis.clarity ?? 0, deadline: 0 }, translations }));
-        localStorage.setItem("translations", JSON.stringify(translations));
-        localStorage.setItem("analysisMode", "live");
-        localStorage.setItem("analysisRaw", JSON.stringify(payload));
-        window.location.href = "analysis.html?ts=" + Date.now();
       });
     });
   })();
