@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="js/pdf-generator.js"></script>
   <style>
     :root {
       --bg: #0e0c13;
@@ -521,6 +522,7 @@
     meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 },
     translations: {}
   };
+  const clamp01 = v => Math.max(0, Math.min(100, Number(v || 0)));
   let raw = localStorage.getItem("analysisRaw");
   let normalized;
   if (raw) {
@@ -560,7 +562,6 @@
   }
   const $ = s => document.querySelector(s);
   const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const clamp01 = v => Math.max(0, Math.min(100, Number(v || 0)));
   const addP = (el, t) => { const p = document.createElement("p"); p.textContent = t; el.appendChild(p); };
   const colorFor = (metric, v) => {
     if (metric === 'risk') return v <= 25 ? cssVar('--green') : v <= 58 ? cssVar('--orange') : cssVar('--red');
@@ -582,8 +583,11 @@
     const origLang = normalized.meta.detectedLang || 'en';
     const tr = normalized.translations || {};
     const useTr = lang !== origLang && tr[lang];
+    console.log({useTr, tr, origLang, lang})
+
     return {
       title: (useTr && tr[lang].title) ? tr[lang].title : (normalized.meta.title || ""),
+      /* TODO: can not get properties of undefined (summrary) */
       summary: useTr ? (tr[lang].summary || normalized.analysis.summary || []) : (normalized.analysis.summary || normalized.summary || []),
       clauses: useTr ? (tr[lang].keyClauses || normalized.analysis.keyClauses || []) : (normalized.analysis.keyClauses || normalized.clauses || []),
       issues: useTr ? (tr[lang].potentialIssues || normalized.analysis.potentialIssues || []) : (normalized.analysis.potentialIssues || normalized.issues || []),
@@ -623,10 +627,12 @@
     $('#uiClarity').textContent = t.clarity;
     $('#uiClauses').textContent = t.clauses;
     $('#uiScoreChecker').textContent = t.score;
-    $('#uiUnsafe').textContent = t.unsafe;
-    $('#uiSafe').textContent = t.safe;
-    $('#uiVerySafe').textContent = t.verysafe;
+    // $('#uiUnsafe').textContent = t.unsafe; // TODO: uncmt later //kp
+    // $('#uiSafe').textContent = t.safe; // TODO: uncmt later //kp
+    // $('#uiVerySafe').textContent = t.verysafe; // TODO: uncmt later //kp
     $('#uiConfidence').textContent = t.conf;
+
+    console.log({test: $('#uiConfidence')})
   };
   const renderAll = lang => {
     renderUILabels(lang);
@@ -706,13 +712,13 @@
   };
   window.addEventListener('scroll', nearBottom, { passive: true });
   window.addEventListener('load', nearBottom);
+  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
   const modal = $('#emailModal');
   const emailInline = $('#emailInline');
   const emailInput = isMobile() ? $('#emailInputInline') : $('#emailInputModal');
   const emailErr = isMobile() ? $('#emailErrInline') : $('#emailErrModal');
   const downloadBtn = $('#downloadBtn');
   const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
-  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
   const openForm = () => {
     if (isMobile()) {
       downloadBtn.style.display = 'none';
