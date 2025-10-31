@@ -1565,7 +1565,11 @@
           }
           const payload = await fileToPayload(file);
         const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-const body = { files: payloadArr, role: btn.dataset.role || "signer" };
+const body = { 
+  ...payloadArr[0], 
+  role: btn.dataset.role || "signer" 
+};
+
 
 const resp = await fetch("/api/analyze", {
   method: "POST",
