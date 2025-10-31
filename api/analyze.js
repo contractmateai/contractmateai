@@ -1,4 +1,4 @@
-// api/analyze.js — Vercel serverless JSON endpoint
+analyze js // api/analyze.js — Serverless (Vercel/Netlify) JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
 
@@ -8,7 +8,7 @@ function send(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
-export default async (req, res) => {
+module.exports = async (req, res) => {
   // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -17,132 +17,89 @@ export default async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
-  // Toggle testing mode (set to false in production)
-  const TESTING = false; // ⬅️ Set to false in production
-
   try {
     let raw = "";
     await new Promise((resolve) => {
       req.on("data", (c) => (raw += c));
       req.on("end", resolve);
     });
+
     const ct = (req.headers["content-type"] || "").toLowerCase();
     if (!ct.includes("application/json")) {
       return send(res, 415, { error: `Send application/json. Got: ${ct || "unknown"}` });
     }
+
     let body = {};
-    try {
-      body = raw ? JSON.parse(raw) : {};
-    } catch {
-      return send(res, 400, { error: "Invalid JSON body" });
-    }
-    const { text = "", imageDataURI = "", originalName = "Contract", mime = "", role = "signer" } = body || {};
-    if (!text && !imageDataURI && !TESTING) {
+    try { body = raw ? JSON.parse(raw) : {}; }
+    catch { return send(res, 400, { error: "Invalid JSON body" }); }
+
+    const {
+      text = "",
+      imageDataURI = "",
+      originalName = "Contract",
+      mime = "",
+      role = "signer"
+    } = body || {};
+
+    if (!text && !imageDataURI) {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    // Testing mode (returns mobile’s fake data, adapted to desktop schema)
-    if (TESTING) {
-      const fake = {
-        contractName: "Non-Disclosure Agreement (NDA)",
-        detectedLang: "en",
-        analysis: {
-          summary: [
-            "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.\nPayment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.\nWatch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
-          ],
-          risk: 25,
-          clarity: 80,
-          compliance: 95,
-          keyClauses: [
-            "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
-            "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-            "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-            "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
-          ],
-          potentialIssues: [
-            "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
-            "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
-            "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
-            "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-            "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-          ],
-          smartSuggestions: [
-            "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-            "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-            "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.",
-            "Require written change-orders for scope changes to ensure clarity and agreement on price/timeline impacts."
-          ]
-        },
-        translations: {
-          en: {
-            title: "Non-Disclosure Agreement (NDA)",
-            summary: [
-              "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.\nPayment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.\nWatch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
-            ],
-            keyClauses: [
-              "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
-              "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-              "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-              "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
-            ],
-            potentialIssues: [
-              "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
-              "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
-              "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
-              "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-              "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-            ],
-            smartSuggestions: [
-              "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-              "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-              "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations.",
-              "Require written change-orders for scope changes to ensure clarity and agreement on price/timeline impacts."
-            ]
-          }
-          // Add other languages (it, de, es, fr, pt, nl, ro, sq, tr, zh, ja) as needed
-        }
-      };
-      return send(res, 200, fake);
-    }
+    // === SYSTEM PROMPT: require full translations for all supported languages, INCLUDING localized title ===
+    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema and constraints:
 
-    // System prompt (desktop’s strict schema)
-    const system = `You are a contract analyst. Return STRICT JSON only — no prose or markdown — matching EXACTLY this schema:
+Schema:
 {
   "contractName": "string",
-  "detectedLang": "string",
+  "contractTitle": "string",
+  "role": "signer|writer",
+  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
   "analysis": {
-    "summary": ["string"],
-    "risk": "number:0-100",
-    "clarity": "number:0-100",
-    "compliance": "number:0-100",
-    "keyClauses": ["string"],
-    "potentialIssues": ["string"],
-    "smartSuggestions": ["string"]
+    "summary": ["string","string","string"],                      // 3–4 concise sentences (array)
+    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
+    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
+    "mainClauses": ["string","string","string","string","string"], // up to 5; fuller sentences; DO NOT prefix with numbers
+    "potentialIssues": ["string","string","string","string","string"], // up to 5; each can be 1–3 sentences
+    "smartSuggestions": ["string","string","string"],              // exactly 3; each ends with "e.g., …" + a concrete example
+    "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
+    "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   },
   "translations": {
-    "langCode": {
-      "title": "string",
-      "summary": ["string"],
-      "keyClauses": ["string"],
-      "potentialIssues": ["string"],
-      "smartSuggestions": ["string"]
-    }
+    // REQUIRED FOR EACH LANGUAGE: include a localized "title" (translated contractTitle),
+    // plus localized arrays/notes.
+    "en": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "it": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "de": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "es": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "fr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "pt": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "nl": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "ro": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "sq": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "tr": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "ja": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" },
+    "zh": { "title":"string", "summary": ["..."], "mainClauses": ["..."], "potentialIssues": ["..."], "smartSuggestions": ["..."], "riskNote": "string", "clarityNote": "string" }
   }
 }
-LENGTH RULES:
-- summary[0] length = 540–660 chars; at least 4 sentences with "\\n" between them; end with a complete sentence.
-- keyClauses length = 4 items; each 152 chars EXACTLY.
-- potentialIssues length = 5 items; each 104 chars EXACTLY.
-- smartSuggestions length = 4 items; lengths [139, 161, 284, 123] chars respectively.
-CLOSURE & STYLE:
-- All items end with a complete sentence and punctuation (., ?, !).
-- No numbers, bullets, or labels in clauses; no repetition.
-- Synthesize plausible legal content if text is short.
-QUALITY:
-- Analysis in detected language; translations for en, it, de, es, fr, pt, nl, ro, sq, tr, zh, ja.
-- Numbers (risk, clarity, compliance) consistent across languages.`;
 
-    // User content
+Hard constraints:
+- Echo user role in "role".
+- "contractTitle": infer clean title (e.g., “Non-Disclosure Agreement”) or derive from filename.
+- SUMMARY: 3–4 sentences total, plain language; array only.
+- RISK (lower = safer): 0–25 green, 26–58 orange, 59–100 red. Short note ≤ 280 chars.
+- CLAUSE CLARITY (higher = clearer): 0–48 red, 49–77 orange, 78–100 green. Short note ≤ 280 chars.
+- MAIN CLAUSES: up to 5; fuller sentences (longer OK); DO NOT start with numbers/bullets.
+- POTENTIAL ISSUES: up to 5; 1–3 sentences each (longer OK).
+- SMART SUGGESTIONS: exactly 3; each ends with “e.g., …” followed by a concrete example.
+- Bars thresholds:
+  professionalism/favorability/confidence: 0–48 red, 49–74 orange, 75–100 green
+  deadlinePressure: 0–35 green, 36–68 orange, 69–100 red
+- SCORE CHECKER thresholds: 0–48 red, 49–77 orange, 78–100 green; verdict red="unsafe", orange="safe", green="very safe"; line red="The contract isnt done well", orange="The contract is done well", green="The contract is nearly perfectly done".
+- Tailor to role ("signer" = protective asks; "writer" = drafting/negotiation).
+- If info is insufficient, keep arrays short and scores conservative, but NEVER break schema.
+- Output VALID JSON only.`;
+
+    // === USER content ===
     const userContent = imageDataURI
       ? [
           { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}\n\nOCR the contract image(s) if needed, then analyze. Follow the SYSTEM schema exactly.` },
@@ -152,11 +109,11 @@ QUALITY:
           { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n\nAnalyze this contract text:\n${String(text).slice(0, 200000)}\n\nFollow the SYSTEM schema and constraints exactly.` }
         ];
 
-    // OpenAI call
+    // === OpenAI call ===
     const openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${SECRET}`,
+        "Authorization": `Bearer ${SECRET}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -172,52 +129,120 @@ QUALITY:
 
     if (!openaiResp.ok) {
       const errTxt = await openaiResp.text().catch(() => "");
-      return send(res, 502, { error: "Upstream analysis failed: " + errTxt });
+      console.error("OpenAI API error:", openaiResp.status, errTxt);
+      return send(res, 502, { error: "Upstream analysis failed" });
     }
 
     const resp = await openaiResp.json().catch(() => ({}));
     const content = resp?.choices?.[0]?.message?.content || "{}";
 
-    // Parse and normalize
+    // === Parse + normalize ===
     let parsed = {};
-    try {
-      parsed = JSON.parse(content);
-    } catch (e) {
-      return send(res, 500, { error: "Invalid JSON response from analysis" });
-    }
+    try { parsed = JSON.parse(content); } catch { parsed = {}; }
+
+    const bandRisk = v => (v <= 25 ? "green" : v <= 58 ? "orange" : "red");
+    const bandClarity = v => (v >= 78 ? "green" : v >= 49 ? "orange" : "red");
+    const scoreBand = v => (v <= 48 ? "red" : v <= 77 ? "orange" : "green");
+
+    const riskSafety    = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+    const claritySafety = b => b === "green" ? "totally safe" : b === "orange" ? "generally safe" : "not safe";
+
+    const scoreLine  = b => b === "green" ? "The contract is nearly perfectly done"
+                         : b === "orange" ? "The contract is done well"
+                         : "The contract isnt done well";
+    const scoreVerdict = b => b === "green" ? "very safe" : b === "orange" ? "safe" : "unsafe";
+
+    const capStr = (s, n) => (s || "").trim().slice(0, n);
+    const clamp = (v) => { v = Number(v || 0); return Math.max(0, Math.min(100, v)); };
+    const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
+
+    const roleOut = parsed.role === "writer" ? "writer" : "signer";
+    const title = parsed.contractTitle || parsed.contractName || originalName || "Contract";
+    const lang  = parsed.detectedLang || "en";
+
+    // Summary
+    let summaryArr = Array.isArray(parsed?.analysis?.summary) ? parsed.analysis.summary : [];
+    summaryArr = summaryArr.filter(Boolean).map((s) => s.trim()).slice(0,4);
+
+    // Risk / Clarity
+    const rVal  = clamp(parsed?.analysis?.risk?.value ?? parsed?.analysis?.risk);
+    const rBand = parsed?.analysis?.risk?.band || bandRisk(rVal);
+    const rNote = capStr(parsed?.analysis?.risk?.note || "", 280);
+
+    const cVal  = clamp(parsed?.analysis?.clarity?.value ?? parsed?.analysis?.clarity);
+    const cBand = parsed?.analysis?.clarity?.band || bandClarity(cVal);
+    const cNote = capStr(parsed?.analysis?.clarity?.note || "", 280);
+
+    // Clauses / Issues / Suggestions (longer + strip numbering)
+    const mainClauses = (parsed?.analysis?.mainClauses || [])
+      .filter(Boolean).map(s => stripLead(capStr(s, 900))).slice(0,5);
+
+    const potentialIssues = (parsed?.analysis?.potentialIssues || [])
+      .filter(Boolean).map(s => stripLead(capStr(s, 1000))).slice(0,5);
+
+    let smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
+      .filter(Boolean).map(s => {
+        let text = stripLead(capStr(s, 1000));
+        if (!/\beg\.,/i.test(text)) {
+          text = text.replace(/\.\s*$/,"") + " e.g., …";
+        }
+        return text;
+      }).slice(0,3);
+    while (smartSuggestions.length < 3) smartSuggestions.push("");
+
+    // Bars
+    const barsIn = parsed?.analysis?.bars || {};
+    const bars = {
+      professionalism:  clamp(barsIn.professionalism),
+      favorabilityIndex: clamp(barsIn.favorabilityIndex),
+      deadlinePressure: clamp(barsIn.deadlinePressure),
+      confidenceToSign: clamp(barsIn.confidenceToSign)
+    };
+
+    // Score
+    const scVal = clamp(parsed?.analysis?.scoreChecker?.value);
+    const scBand = parsed?.analysis?.scoreChecker?.band || scoreBand(scVal);
+    const scLine = parsed?.analysis?.scoreChecker?.line || scoreLine(scBand);
+    const scVerdict = parsed?.analysis?.scoreChecker?.verdict || scoreVerdict(scBand);
+
+    // Normalize translations for ALL supported languages (now includes "title")
+    const LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
+    const trIn = (parsed.translations && typeof parsed.translations === "object") ? parsed.translations : {};
+    const normTr = {};
+    LANGS.forEach(l=>{
+      const seg = trIn[l] || {};
+      normTr[l] = {
+        title: typeof seg.title === "string" ? capStr(seg.title, 200) : undefined,
+        summary: Array.isArray(seg.summary)? seg.summary.slice(0,4) : undefined,
+        mainClauses: Array.isArray(seg.mainClauses)? seg.mainClauses.slice(0,5) : undefined,
+        potentialIssues: Array.isArray(seg.potentialIssues)? seg.potentialIssues.slice(0,5) : undefined,
+        smartSuggestions: Array.isArray(seg.smartSuggestions)? seg.smartSuggestions.slice(0,3) : undefined,
+        riskNote: typeof seg.riskNote === "string" ? capStr(seg.riskNote, 280) : undefined,
+        clarityNote: typeof seg.clarityNote === "string" ? capStr(seg.clarityNote, 280) : undefined
+      };
+    });
 
     const normalized = {
-      contractName: parsed.contractName || originalName,
-      detectedLang: parsed.detectedLang || "en",
+      contractName: parsed.contractName || originalName || "Contract",
+      contractTitle: title,
+      role: roleOut,
+      detectedLang: lang,
       analysis: {
-        summary: Array.isArray(parsed.analysis?.summary) ? parsed.analysis.summary : [String(parsed.analysis?.summary || "")],
-        risk: Math.max(0, Math.min(100, Number(parsed.analysis?.risk || 0))),
-        clarity: Math.max(0, Math.min(100, Number(parsed.analysis?.clarity || 0))),
-        compliance: Math.max(0, Math.min(100, Number(parsed.analysis?.compliance || 0))),
-        keyClauses: Array.isArray(parsed.analysis?.keyClauses) ? parsed.analysis.keyClauses : [],
-        potentialIssues: Array.isArray(parsed.analysis?.potentialIssues) ? parsed.analysis.potentialIssues : [],
-        smartSuggestions: Array.isArray(parsed.analysis?.smartSuggestions) ? parsed.analysis.smartSuggestions : []
+        summary: summaryArr,
+        risk: { value: rVal, note: rNote, band: rBand, safety: riskSafety(rBand) },
+        clarity: { value: cVal, note: cNote, band: cBand, safety: claritySafety(cBand) },
+        mainClauses,
+        potentialIssues,
+        smartSuggestions,
+        bars,
+        scoreChecker: { value: scVal, band: scBand, verdict: scVerdict, line: scLine }
       },
-      translations: (() => {
-        const trIn = parsed.translations || {};
-        const trOut = {};
-        for (const code of Object.keys(trIn)) {
-          const pack = trIn[code] || {};
-          trOut[code] = {
-            title: String(pack.title || ""),
-            summary: Array.isArray(pack.summary) ? pack.summary : [String(pack.summary || "")],
-            keyClauses: Array.isArray(pack.keyClauses) ? pack.keyClauses : [],
-            potentialIssues: Array.isArray(pack.potentialIssues) ? pack.potentialIssues : [],
-            smartSuggestions: Array.isArray(pack.smartSuggestions) ? pack.smartSuggestions : []
-          };
-        }
-        return trOut;
-      })()
+      translations: normTr
     };
 
     return send(res, 200, normalized);
   } catch (e) {
-    console.error("Analyze error:", e.message);
-    return send(res, 500, { error: "Could not analyze this file. Try again or use another file. Details: " + e.message });
+    console.error("analyze error", e);
+    return send(res, 500, { error: "Could not analyze this file. Try again or use another file." });
   }
 };
