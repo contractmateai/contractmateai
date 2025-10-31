@@ -1564,13 +1564,24 @@
             return;
           }
           const payload = await fileToPayload(file);
-          const analysisResult = {
-            ...demoData,
-            contractName: payload.originalName || demoData.contractName,
-            detectedLang: payload.text ? "en" : demoData.detectedLang
-          };
-          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-          window.location.href = "analysis.html";
+        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+const body = { files: payloadArr, role: btn.dataset.role || "signer" };
+
+const resp = await fetch("/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body)
+});
+
+if (!resp.ok) {
+  const err = await resp.json().catch(() => ({}));
+  throw new Error(err?.error || "Analysis failed");
+}
+
+const analysisResult = await resp.json();
+localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+window.location.href = "analysis.html";
+
         } catch (e) {
           alert(`Error processing file: ${e.message}`);
         }
