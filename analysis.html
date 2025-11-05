@@ -174,8 +174,9 @@
   color: #fff !important;
   font-size: 24px;
   position: relative;
-  top: 2px;
+  top: -2px;
 }
+
 
   </style>
 </head>
@@ -681,7 +682,6 @@
     setSafetyStatus('risk', riskVal, lang);
     setSafetyStatus('clarity', clarVal, lang);
     $('#scoreRemark').textContent = "Determines the overall score.";
- || SCORE_REMARK_BY_LANG.en;
     $('#scoreInd').style.left = `calc(${clarVal}% - 1.5px)`;
     setMeter($('#confFill'), $('#confVal'), 'professionalism', normalized.meters.professionalism);
     setMeter($('#favFill'), $('#favVal'), 'favorability', normalized.meters.favorability);
