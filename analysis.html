@@ -130,8 +130,8 @@
       .list p, .bullets li { font-size: 20px; }
       .meter-title { font-size: 22px; }
       .meter-title img { width: 32px; height: 32px; }
-      .circle { width: 160px; height: 160px; flex: 0 0 160px; }
-      .circle .val { font-size: 34px; }
+       .circle { width: 190px; height: 190px; }
+  .circle .val { font-size: 44px; }
       .muted { font-size: 18px; }
       .status span { font-size: 17px; }
       .score-pct { font-size: 42px; }
@@ -166,6 +166,17 @@
       .email-row { flex-wrap: nowrap; }
       .email-inline { width: min(92vw, 320px); }
     }
+    .brand a {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+.brand span {
+  color: #fff !important;
+  font-size: 24px;
+  position: relative;
+  top: 2px;
+}
+
   </style>
 </head>
 <body>
@@ -329,7 +340,8 @@
               </div>
               <div class="score-side">
                 <h3 style="margin-bottom:0"><img src="https://imgur.com/mFvyCj7.png" alt=""><span id="uiScoreChecker">Score Checker</span></h3>
-                <div class="score-remark" id="scoreRemark">The contract is nearly perfectly done.</div>
+                <div class="score-remark" id="scoreRemark">Determines the overall score.</div>
+
                 <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
                 <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
               </div>
@@ -598,6 +610,7 @@
   };
   const setArc = (arcEl, metric, value, valEl) => {
     const v = clamp01(value);
+    const rendered = (v === 0 ? 1 : v);
     const rr = parseFloat(arcEl.getAttribute('r')) || 74;
     const circ = 2 * Math.PI * rr;
     arcEl.style.stroke = colorFor(metric, v);
@@ -608,6 +621,8 @@
   };
   const setMeter = (fillEl, labelEl, metric, value) => {
     const v = clamp01(value);
+    const rendered = (v === 0 ? 1 : v);
+
     labelEl.textContent = v + '%';
     fillEl.style.background = colorFor(metric, v);
     requestAnimationFrame(() => { fillEl.style.width = v + '%'; });
@@ -665,7 +680,8 @@
     $('#clarNote').textContent = data.clarity.note;
     setSafetyStatus('risk', riskVal, lang);
     setSafetyStatus('clarity', clarVal, lang);
-    $('#scoreRemark').textContent = SCORE_REMARK_BY_LANG[lang] || SCORE_REMARK_BY_LANG.en;
+    $('#scoreRemark').textContent = "Determines the overall score.";
+ || SCORE_REMARK_BY_LANG.en;
     $('#scoreInd').style.left = `calc(${clarVal}% - 1.5px)`;
     setMeter($('#confFill'), $('#confVal'), 'professionalism', normalized.meters.professionalism);
     setMeter($('#favFill'), $('#favVal'), 'favorability', normalized.meters.favorability);
