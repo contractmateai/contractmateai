@@ -633,7 +633,10 @@ const getLocalizedContent = (lang) => {
   return {
     title: useTr ? (trL.title || normalized.meta.title || "") : (normalized.meta.title || ""),
     summary: useTr ? (arr(trL.summary).length ? trL.summary : arr(normalized.analysis.summary)) : arr(normalized.analysis.summary),
-    clauses: useTr ? (arr(trL.keyClauses).length ? trL.keyClauses : arr(normalized.analysis.keyClauses)) : arr(normalized.analysis.keyClauses),
+   clauses: useTr
+  ? (arr(trL.mainClauses).length ? trL.mainClauses : arr(normalized.analysis.mainClauses))
+  : arr(normalized.analysis.mainClauses),
+
     issues: useTr ? (arr(trL.potentialIssues).length ? trL.potentialIssues : arr(normalized.analysis.potentialIssues)) : arr(normalized.analysis.potentialIssues),
     suggestions: useTr ? (arr(trL.smartSuggestions).length ? trL.smartSuggestions : arr(normalized.analysis.smartSuggestions)) : arr(normalized.analysis.smartSuggestions),
     risk: { value: Number(normalized.risk.value) || 0, note: RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en },
