@@ -96,11 +96,25 @@
     #riskCard, #clarCard { padding: 12px 12px; }
     #scoreCard .score-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
     #scoreCard .score-pct { font-size: 30px; }
-    .score-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .score-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 25px;   /* ✅ pushes everything right */
+}
+
     .score-remark { font-size: 16px; color: var(--muted); }
-    .score-bar { position: relative; height: 20px; border-radius: 14px; background: linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%); border: 1px solid #2f2f2f; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); width: 100%; }
+    .score-bar { position: relative; height: 26px; border-radius: 14px; background: linear-gradient(90deg,#ff6b6b 0%, #ffd166 45%, #00e676 100%); border: 1px solid #2f2f2f; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); width: 100%; }
     .score-ind { position: absolute; top: -6px; height: 30px; width: 3px; background: #fff; border-radius: 2px; left: calc(80% - 1.5px); box-shadow: 0 0 8px rgba(255,255,255,.6); }
-    .score-scale { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+    .score-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--muted);
+  margin-left: 25px;   /* ✅ aligns labels with the shifted bar */
+}
+
     .download-wrap { position: fixed; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom)); display: none; justify-content: center; z-index: 60; opacity: 0; transform: translateY(8px); }
     .download { background: #f2f9fe; color: #000; border: 1px solid #cfcfcf; border-radius: 16px; padding: 16px 26px; display: inline-flex; gap: 12px; align-items: center; cursor: pointer; font-weight: 400; font-size: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.28); }
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 100; }
