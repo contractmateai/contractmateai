@@ -130,16 +130,19 @@
       .list p, .bullets li { font-size: 20px; }
       .meter-title { font-size: 22px; }
       .meter-title img { width: 32px; height: 32px; }
-     .circle {
-  width: 230px !important;
-  height: 230px !important;
-  flex: 0 0 230px !important;
+/* ✅ Bigger charts */
+.circle {
+  width: 260px !important;
+  height: 260px !important;
+  flex: 0 0 260px !important;
 }
 
-/* ✅ Percentage text smaller so 100 fits clean */
+/* ✅ Smaller percentage text so 10 / 100 fits perfectly */
 .circle .val {
-  font-size: 38px !important;
+  font-size: 34px !important;
+  letter-spacing: -1px;
 }
+
       .muted { font-size: 18px; }
       .status span { font-size: 17px; }
       .score-pct { font-size: 42px; }
