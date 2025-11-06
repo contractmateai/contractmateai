@@ -120,6 +120,32 @@
     #emailInline .btn.primary { padding: 7px 8px; font-size: 15px; font-weight: 500; }
     #emailInline .email-title { color: #f2f9fe; }
     @media (min-width: 981px) {
+      /* ✅ Move titles, icons, sentences, badges, bar – slightly left */
+.right .htext {
+  margin-left: -18px !important;
+}
+
+/* ✅ Score Checker text block slightly left */
+#scoreCard .score-side {
+  margin-left: -18px !important;
+}
+
+/* ✅ Two-line clean wrapping for risk & clarity descriptions */
+#riskCard .muted,
+#clarCard .muted {
+  max-width: 420px !important;
+}
+
+/* ✅ Align “Generally Safe / High Risk” status row better */
+.status {
+  margin-left: -4px !important;
+}
+
+/* ✅ Move the scale (Unsafe–Safe–Very Safe) left slightly */
+.score-scale {
+  margin-left: -10px !important;
+}
+
       .drawer, .scrim, .menu-btn, .doc-title-top, .email-inline { display: none !important; }
       .download-wrap { left: var(--sidebar); }
       .grid { display: grid; grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr); gap: var(--gap); align-items: start; margin-top: 6px; }
