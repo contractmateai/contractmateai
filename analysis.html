@@ -127,8 +127,9 @@
 
 /* ✅ Score Checker text block slightly left */
 #scoreCard .score-side {
-  margin-left: -18px !important;
+  margin-left: -35px !important; /* same left shift */
 }
+
 
 /* ✅ Two-line clean wrapping for risk & clarity descriptions */
 #riskCard .muted,
@@ -150,7 +151,7 @@
       .download-wrap { left: var(--sidebar); }
       .grid { display: grid; grid-template-columns: minmax(560px, 1.25fr) minmax(560px, 1fr); gap: var(--gap); align-items: start; margin-top: 6px; }
       .left, .right { display: flex; flex-direction: column; gap: var(--gap); }
-      .card { padding: 18px 18px 20px; }
+      .card { padding: 14px 14px 16px !important; }
       .card h3 { font-size: 24px; }
       .card h3 img { width: 30px; height: 30px; }
       .list p, .bullets li { font-size: 20px; }
@@ -159,17 +160,18 @@
 /* ✅ Bigger charts */
 /* ✅ MUCH BIGGER CIRCLE */
 .circle {
-  width: 320px !important;
-  height: 320px !important;
-  flex: 0 0 320px !important;
-  margin-left: -20px !important; /* ✅ push circle more to the left */
+  width: 180px !important;
+  height: 180px !important;
+  flex: 0 0 180px !important;
+  margin-left: -25px !important; /* pushes left */
 }
+
 
 /* ✅ keep percentage text same size (you already have this, keep it) */
 .circle .val {
-  font-size: 34px !important;
-  letter-spacing: -1px;
+  font-size: 30px !important;
 }
+
 
 
       .muted { font-size: 18px; }
@@ -185,17 +187,20 @@
 }
 
 .htext {
-  padding-left: 6px !important;  /* moved left */
-  margin-left: -6px !important;  /* moved left */
+  margin-left: -35px !important;   /* pulls title + subtitle left */
+  padding-left: 0 !important;
 }
+
 
 
 /* ✅ Bigger static subtext for readability */
 #riskCard .muted,
 #clarCard .muted {
-  font-size: 20px !important;
-  line-height: 1.55;
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+  max-width: 430px !important;   /* ensures 2 lines */
 }
+
 
 /* ✅ Status label (Generally Safe) moved right */
 .status span {
