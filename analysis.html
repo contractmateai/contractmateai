@@ -178,7 +178,11 @@
       .status span { font-size: 17px; }
       .score-pct { font-size: 42px; }
       .score-remark { font-size: 20px; }
-      .score-bar { height: 22px; }
+      .score-bar {
+  height: 16px !important;
+  width: 85% !important;  /* shorter so it fits left */
+}
+
       .score-ind { height: 34px; }
       .score-scale { font-size: 16px; }
       .modal { z-index: 20; }
@@ -363,11 +367,11 @@
           <section class="card" id="riskCard">
             <div class="hcard">
               <div class="circle">
-               <svg width="200" height="200" viewBox="0 0 160 160">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+  <circle class="track" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+  <circle class="arc" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+</svg>
 
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="riskArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
                 <div class="val" id="riskVal">0%</div>
               </div>
               <div class="htext">
@@ -380,11 +384,11 @@
           <section class="card" id="clarCard">
             <div class="hcard">
               <div class="circle">
-                <svg width="200" height="200" viewBox="0 0 160 160">
+<svg width="140" height="140" viewBox="0 0 140 140">
+  <circle class="track" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+  <circle class="arc" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+</svg>
 
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="clarArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
                 <div class="val" id="clarVal">0%</div>
               </div>
               <div class="htext">
@@ -401,11 +405,11 @@
           <section class="card" id="scoreCard">
             <div class="hcard">
               <div class="circle">
-               <svg width="200" height="200" viewBox="0 0 160 160">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+  <circle class="track" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+  <circle class="arc" cx="70" cy="70" r="64" stroke-width="12" fill="none"></circle>
+</svg>
 
-                  <circle class="track" cx="80" cy="80" r="74"></circle>
-                  <circle id="scoreArc" class="arc" cx="80" cy="80" r="74"></circle>
-                </svg>
                 <div class="val" id="scorePct">80%</div>
               </div>
               <div class="score-side">
