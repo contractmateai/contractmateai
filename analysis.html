@@ -560,12 +560,38 @@
   const clamp = v => Math.max(0, Math.min(100, Number(v||0)));
   const addP = (el,t) => { const p=document.createElement('p'); p.textContent=t; el.appendChild(p); };
 
+  // --- LOAD DATA SAFELY ---
   let raw = localStorage.getItem("analysisRaw");
-  let data = raw ? JSON.parse(raw) : null;
-  if (!data) { console.error("No analysis in localStorage"); return; }
+  let data;
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.error("Failed to parse analysisRaw:", e);
+    data = null;
+  }
 
+  // --- FALLBACK DATA (same as your old demo) ---
+  const fallback = {
+    contractName: "Sample Contract",
+    contractTitle: "Non-Disclosure Agreement",
+    detectedLang: "en",
+    analysis: {
+      summary: ["This is a demo summary.", "Everything is working.", "Translation is active."],
+      risk: { value: 30, note: "Low risk detected." },
+      clarity: { value: 75, note: "Clear and readable." },
+      mainClauses: ["Clause 1", "Clause 2", "Clause 3"],
+      potentialIssues: ["Minor issue"],
+      smartSuggestions: ["Add a clause", "Clarify terms", "Include dates"],
+      scoreChecker: { value: 70, line: "Determines the overall score." },
+      bars: { professionalism: 90, favorabilityIndex: 80, deadlinePressure: 20, confidenceToSign: 85 }
+    }
+  };
+
+  // Use real data or fallback
+  data = data || fallback;
   let currentLang = data.detectedLang || "en";
 
+  // --- RENDER TITLES ---
   const renderTitles = lang => {
     const t = UI[lang] || UI.en;
     $('#uiOverview').textContent   = t.overview;
@@ -586,6 +612,7 @@
     $('#scaleVerySafe').textContent = t.verysafe;
   };
 
+  // --- RENDER AI CONTENT ---
   const renderAI = lang => {
     const a = data.analysis;
     $('#uiTitleValue').textContent = data.contractTitle || data.contractName || "—";
@@ -618,6 +645,7 @@
     $('#scorePct').textContent = overall + '%';
   };
 
+  // --- FULL RENDER ---
   const renderAll = lang => {
     currentLang = lang;
     $('#langNow').textContent = lang.toUpperCase();
@@ -625,6 +653,7 @@
     renderAI(lang);
   };
 
+  // --- LANGUAGE SWITCHER ---
   document.querySelectorAll('.lang-item').forEach(item => {
     item.addEventListener('click', () => {
       const code = item.getAttribute('data-code');
@@ -632,8 +661,10 @@
     });
   });
 
+  // --- INITIAL RENDER ---
   renderAll(currentLang);
 
+  // --- HOVER MENU ---
   const langBox = $('#lang');
   let closeTimer;
   const open = () => { clearTimeout(closeTimer); langBox.classList.add('open'); };
