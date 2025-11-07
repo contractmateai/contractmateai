@@ -440,7 +440,11 @@
                 <div class="score-remark" id="scoreRemark">Determines the overall score.</div>
 
                 <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
-                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+               <div class="score-scale">
+  <span id="scaleUnsafe">Unsafe</span>
+  <span id="scaleSafe">Safe</span>
+  <span id="scaleVerySafe">Very Safe</span>
+</div>
               </div>
             </div>
           </section>
@@ -479,430 +483,163 @@
   </div>
 <script>
 (() => {
-  // UI translations
   const UI = {
-    en: {
-      overview: "Overview",
-      title: "Title:",
-      summary: "Summary",
-      prof: "Professionalism",
-      fav: "Favorability Index",
-      deadline: "Deadline pressure",
-      issues: "Potential Issues",
-      suggestions: "Smart Suggestions",
-      risk: "Risk Level",
-      clarity: "Clause Clarity",
-      clauses: "Main Clauses",
-      score: "Score Checker",
-      unsafe: "Unsafe",
-      safe: "Safe",
-      verysafe: "Very Safe",
-      conf: "Confidence to sign freely"
-    },
-    it: { overview: "Panoramica", title: "Titolo:", summary: "Riepilogo", prof: "Professionalità", fav: "Indice di favore", deadline: "Pressione delle scadenze", issues: "Problemi potenziali", suggestions: "Suggerimenti intelligenti", risk: "Livello di rischio", clarity: "Chiarezza delle clausole", clauses: "Clausole principali", score: "Controllo del punteggio", unsafe: "Non sicuro", safe: "Sicuro", verysafe: "Molto sicuro", conf: "Fiducia per firmare liberamente" },
-    de: { overview: "Übersicht", title: "Titel:", summary: "Zusammenfassung", prof: "Professionalität", fav: "Günstigkeitsindex", deadline: "Fristdruck", issues: "Mögliche Probleme", suggestions: "Intelligente Vorschläge", risk: "Risikostufe", clarity: "Klauselklarheit", clauses: "Hauptklauseln", score: "Punktprüfer", unsafe: "Unsicher", safe: "Sicher", verysafe: "Sehr sicher", conf: "Vertrauen zum freien Unterzeichnen" },
-    es: { overview: "Resumen", title: "Título:", summary: "Resumen", prof: "Profesionalismo", fav: "Índice de favorabilidad", deadline: "Presión de plazos", issues: "Problemas potenciales", suggestions: "Sugerencias inteligentes", risk: "Nivel de riesgo", clarity: "Claridad de las cláusulas", clauses: "Cláusulas principales", score: "Verificador de puntaje", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muy seguro", conf: "Confianza para firmar libremente" },
-    fr: { overview: "Aperçu", title: "Titre:", summary: "Résumé", prof: "Professionnalisme", fav: "Indice de favorabilité", deadline: "Pression des délais", issues: "Problèmes potentiels", suggestions: "Suggestions intelligentes", risk: "Niveau de risque", clarity: "Clarté des clauses", clauses: "Clauses principales", score: "Vérificateur de score", unsafe: "Non sécurisé", safe: "Sûr", verysafe: "Très sûr", conf: "Confiance pour signer librement" },
-    pt: { overview: "Visão geral", title: "Título:", summary: "Resumo", prof: "Profissionalismo", fav: "Índice de favorabilidade", deadline: "Pressão de prazos", issues: "Problemas potenciais", suggestions: "Sugestões inteligentes", risk: "Nível de risco", clarity: "Clareza das cláusulas", clauses: "Cláusulas principais", score: "Verificador de pontuação", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muito seguro", conf: "Confiança para assinar livremente" },
-    nl: { overview: "Overzicht", title: "Titel:", summary: "Samenvatting", prof: "Professionaliteit", fav: "Gunstigheidsindex", deadline: "Deadlinedruk", issues: "Mogelijke problemen", suggestions: "Slimme suggesties", risk: "Risiconiveau", clarity: "Helderheid van clausules", clauses: "Hoofdclausules", score: "Scorecontroleur", unsafe: "Onveilig", safe: "Veilig", verysafe: "Zeer veilig", conf: "Vertrouwen om vrij te ondertekenen" },
-    ro: { overview: "Prezentare generală", title: "Titlu:", summary: "Rezumat", prof: "Profesionalism", fav: "Indice de favorabilitate", deadline: "Presiune termene", issues: "Probleme potențiale", suggestions: "Sugestii inteligente", risk: "Nivel de risc", clarity: "Claritate clauze", clauses: "Clauze principale", score: "Verificator scor", unsafe: "Nesigur", safe: "Sigur", verysafe: "Foarte sigur", conf: "Încredere pentru a semna liber" },
-    sq: { overview: "Përmbledhje", title: "Titull:", summary: "Përmbledhje", prof: "Profesionalizëm", fav: "Indeksi i favorshmërisë", deadline: "Presioni i afateve", issues: "Probleme të mundshme", suggestions: "Sugjerime të zgjuara", risk: "Niveli i rrezikut", clarity: "Qartësia e klauzolave", clauses: "Klauzola kryesore", score: "Kontrollues i rezultatit", unsafe: "I pasigurt", safe: "I sigurt", verysafe: "Shumë i sigurt", conf: "Besim për të nënshkruar lirisht" },
-    tr: { overview: "Genel Bakış", title: "Başlık:", summary: "Özet", prof: "Profesyonellik", fav: "Olumluluk Endeksi", deadline: "Son Tarih Baskısı", issues: "Olası Sorunlar", suggestions: "Akıllı Öneriler", risk: "Risk Seviyesi", clarity: "Madde Açıklığı", clauses: "Ana Maddeler", score: "Puan Denetleyicisi", unsafe: "Güvensiz", safe: "Güvenli", verysafe: "Çok güvenli", conf: "Serbestçe imzalama güveni" },
-    zh: { overview: "概览", title: "标题:", summary: "摘要", prof: "专业性", fav: "有利指数", deadline: "期限压力", issues: "潜在问题", suggestions: "智能建议", risk: "风险水平", clarity: "条款清晰度", clauses: "主要条款", score: "分数检查器", unsafe: "不安全", safe: "安全", verysafe: "非常安全", conf: "自由签署的信心" },
-    ja: { overview: "概要", title: "タイトル:", summary: "要約", prof: "プロフェッショナリズム", fav: "有利指数", deadline: "期限の圧力", issues: "潜在的な問題", suggestions: "スマートな提案", risk: "リスクレベル", clarity: "条項の明確さ", clauses: "主要な条項", score: "スコアチェッカー", unsafe: "安全でない", safe: "安全", verysafe: "非常に安全", conf: "自由に署名する自信" }
+    en: { overview:"Overview", title:"Title:", summary:"Summary", prof:"Professionalism",
+          fav:"Favorability Index", deadline:"Deadline pressure", issues:"Potential Issues",
+          suggestions:"Smart Suggestions", risk:"Risk Level", clarity:"Clause Clarity",
+          clauses:"Main Clauses", score:"Score Checker", unsafe:"Unsafe", safe:"Safe",
+          verysafe:"Very Safe", conf:"Confidence to sign freely",
+          scoreLine:"Determines the overall score." },
+    it: { overview:"Panoramica", title:"Titolo:", summary:"Riepilogo", prof:"Professionalità",
+          fav:"Indice di favore", deadline:"Pressione delle scadenze", issues:"Problemi potenziali",
+          suggestions:"Suggerimenti intelligenti", risk:"Livello di rischio", clarity:"Chiarezza delle clausole",
+          clauses:"Clausole principali", score:"Controllo del punteggio", unsafe:"Non sicuro",
+          safe:"Sicuro", verysafe:"Molto sicuro", conf:"Fiducia per firmare liberamente",
+          scoreLine:"Determina il punteggio complessivo." },
+    de: { overview:"Übersicht", title:"Titel:", summary:"Zusammenfassung", prof:"Professionalität",
+          fav:"Günstigkeitsindex", deadline:"Fristdruck", issues:"Mögliche Probleme",
+          suggestions:"Intelligente Vorschläge", risk:"Risikostufe", clarity:"Klauselklarheit",
+          clauses:"Hauptklauseln", score:"Punktprüfer", unsafe:"Unsicher", safe:"Sicher",
+          verysafe:"Sehr sicher", conf:"Vertrauen zum freien Unterzeichnen",
+          scoreLine:"Bestimmt die Gesamtbewertung." },
+    es: { overview:"Resumen", title:"Título:", summary:"Resumen", prof:"Profesionalismo",
+          fav:"Índice de favorabilidad", deadline:"Presión de plazos", issues:"Problemas potenciales",
+          suggestions:"Sugerencias inteligentes", risk:"Nivel de riesgo", clarity:"Claridad de las cláusulas",
+          clauses:"Cláusulas principales", score:"Verificador de puntaje", unsafe:"Inseguro",
+          safe:"Seguro", verysafe:"Muy seguro", conf:"Confianza para firmar libremente",
+          scoreLine:"Determina la puntuación general." },
+    fr: { overview:"Aperçu", title:"Titre:", summary:"Résumé", prof:"Professionnalisme",
+          fav:"Indice de favorabilité", deadline:"Pression des délais", issues:"Problèmes potentiels",
+          suggestions:"Suggestions intelligentes", risk:"Niveau de risque", clarity:"Clarté des clauses",
+          clauses:"Clauses principales", score:"Vérificateur de score", unsafe:"Non sécurisé",
+          safe:"Sûr", verysafe:"Très sûr", conf:"Confiance pour signer librement",
+          scoreLine:"Détermine le score global." },
+    pt: { overview:"Visão geral", title:"Título:", summary:"Resumo", prof:"Profissionalismo",
+          fav:"Índice de favorabilidade", deadline:"Pressão de prazos", issues:"Problemas potenciais",
+          suggestions:"Sugestões inteligentes", risk:"Nível de risco", clarity:"Clareza das cláusulas",
+          clauses:"Cláusulas principais", score:"Verificador de pontuação", unsafe:"Inseguro",
+          safe:"Seguro", verysafe:"Muito seguro", conf:"Confiança para assinar livremente",
+          scoreLine:"Determina a pontuação geral." },
+    nl: { overview:"Overzicht", title:"Titel:", summary:"Samenvatting", prof:"Professionaliteit",
+          fav:"Gunstigheidsindex", deadline:"Deadlinedruk", issues:"Mogelijke problemen",
+          suggestions:"Slimme suggesties", risk:"Risiconiveau", clarity:"Helderheid van clausules",
+          clauses:"Hoofdclausules", score:"Scorecontroleur", unsafe:"Onveilig", safe:"Veilig",
+          verysafe:"Zeer veilig", conf:"Vertrouwen om vrij te ondertekenen",
+          scoreLine:"Bepaalt de totale score." },
+    ro: { overview:"Prezentare generală", title:"Titlu:", summary:"Rezumat", prof:"Profesionalism",
+          fav:"Indice de favorabilitate", deadline:"Presiune termene", issues:"Probleme potențiale",
+          suggestions:"Sugestii inteligente", risk:"Nivel de risc", clarity:"Claritate clauze",
+          clauses:"Clauze principale", score:"Verificator scor", unsafe:"Nesigur", safe:"Sigur",
+          verysafe:"Foarte sigur", conf:"Încredere pentru a semna liber",
+          scoreLine:"Determină scorul general." },
+    sq: { overview:"Përmbledhje", title:"Titull:", summary:"Përmbledhje", prof:"Profesionalizëm",
+          fav:"Indeksi i favorshmërisë", deadline:"Presioni i afateve", issues:"Probleme të mundshme",
+          suggestions:"Sugjerime të zgjuara", risk:"Niveli i rrezikut", clarity:"Qartësia e klauzolave",
+          clauses:"Klauzola kryesore", score:"Kontrollues i rezultatit", unsafe:"I pasigurt",
+          safe:"I sigurt", verysafe:"Shumë i sigurt", conf:"Besim për të nënshkruar lirisht",
+          scoreLine:"Përcakton rezultatin e përgjithshëm." },
+    tr: { overview:"Genel Bakış", title:"Başlık:", summary:"Özet", prof:"Profesyonellik",
+          fav:"Olumluluk Endeksi", deadline:"Son Tarih Baskısı", issues:"Olası Sorunlar",
+          suggestions:"Akıllı Öneriler", risk:"Risk Seviyesi", clarity:"Madde Açıklığı",
+          clauses:"Ana Maddeler", score:"Puan Denetleyicisi", unsafe:"Güvensiz", safe:"Güvenli",
+          verysafe:"Çok güvenli", conf:"Serbestçe imzalama güveni",
+          scoreLine:"Genel puanı belirler." },
+    zh: { overview:"概览", title:"标题:", summary:"摘要", prof:"专业性",
+          fav:"有利指数", deadline:"期限压力", issues:"潜在问题", suggestions:"智能建议",
+          risk:"风险水平", clarity:"条款清晰度", clauses:"主要条款", score:"分数检查器",
+          unsafe:"不安全", safe:"安全", verysafe:"非常安全", conf:"自由签署的信心",
+          scoreLine:"确定总体评分。" },
+    ja: { overview:"概要", title:"タイトル:", summary:"要約", prof:"プロフェッショナリズム",
+          fav:"有利指数", deadline:"期限の圧力", issues:"潜在的な問題", suggestions:"スマートな提案",
+          risk:"リスクレベル", clarity:"条項の明確さ", clauses:"主要な条項", score:"スコアチェッカー",
+          unsafe:"安全でない", safe:"安全", verysafe:"非常に安全", conf:"自由に署名する自信",
+          scoreLine:"総合スコアを決定します。" }
   };
-  const SAFETY_LABELS = {
-    en: { green: "Generally Safe", orange: "Caution Advised", red: "High Risk" },
-    it: { green: "Generalmente Sicuro", orange: "Cautela Consigliata", red: "Alto Rischio" },
-    de: { green: "Allgemein Sicher", orange: "Vorsicht Geboten", red: "Hohes Risiko" },
-    es: { green: "Generalmente Seguro", orange: "Se Recomienda Precaución", red: "Alto Riesgo" },
-    fr: { green: "Généralement Sûr", orange: "Prudence Conseillée", red: "Risque Élevé" },
-    pt: { green: "Geralmente Seguro", orange: "Cautela Recomendada", red: "Alto Risco" },
-    nl: { green: "Over het Algemeen Veilig", orange: "Voorzichtigheid Geboden", red: "Hoog Risico" },
-    ro: { green: "În General Sigur", orange: "Atenție Recomandată", red: "Risc Ridicat" },
-    sq: { green: "Përgjithësisht i Sigurt", orange: "Kujdes i Këshilluar", red: "Rrezik i Lartë" },
-    tr: { green: "Genel Olarak Güvenli", orange: "Dikkat Önerilir", red: "Yüksek Risk" },
-    zh: { green: "总体安全", orange: "建议谨慎", red: "高风险" },
-    ja: { green: "一般的に安全", orange: "注意が必要", red: "高リスク" }
-  };
-  const RISK_NOTE_BY_LANG = {
-    en: "The contract risk score is based on the clauses' fairness and obligations.",
-    it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
-    de: "Die Risikobewertung des Vertrags basiert auf der Fairness und den Verpflichtungen der Klauseln.",
-    es: "La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
-    fr: "Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
-    pt: "A pontuação de risco do contrato é baseada na equidade e nas obrigações das cláusulas.",
-    nl: "De risicoscore van het contract is gebaseerd op de eerlijkheid en verplichtingen van de clausules.",
-    ro: "Scorul de risc al contractului se bazează pe echitatea și obligațiile clauzelor.",
-    sq: "Pikët e rrezikut të kontratës bazohen në ndershmërinë dhe detyrimet e klauzolave.",
-    tr: "Sözleşmenin risk puanı, maddelerin adilliği ve yükümlülüklerine dayanır.",
-    zh: "合同风险评分基于条款的公平性和义务。",
-    ja: "契約のリスクスコアは、条項の公平性と義務に基づいています。"
-  };
-  const CLAR_NOTE_BY_LANG = {
-    en: "The clarity score reflects how easy it is to understand the terms.",
-    it: "Il punteggio di chiarezza riflette quanto sia facile comprendere i termini.",
-    de: "Die Klarheitsbewertung zeigt, wie leicht die Bedingungen zu verstehen sind.",
-    es: "La puntuación de claridad refleja lo fácil que es entender los términos.",
-    fr: "Le score de clarté reflète la facilité de compréhension des termes.",
-    pt: "A pontuação de clareza reflete o quão fácil é entender os termos.",
-    nl: "De helderheidsscore weerspiegelt hoe gemakkelijk de voorwaarden te begrijpen zijn.",
-    ro: "Scorul de claritate reflectă cât de ușor este de înțeles termenii.",
-    sq: "Pikët e qartësisë pasqyrojnë sa e lehtë është të kuptosh termat.",
-    tr: "Netlik puanı, şartların anlaşılmasının ne kadar kolay olduğunu yansıtır.",
-    zh: "清晰度评分反映了条款的易懂程度。",
-    ja: "明確さのスコアは、条件の理解のしやすさを反映しています。"
-  };
-  const SCORE_REMARK_BY_LANG = {
-    en: "The contract is nearly perfectly done.",
-    it: "Il contratto è quasi perfettamente redatto.",
-    de: "Der Vertrag ist nahezu perfekt erstellt.",
-    es: "El contrato está casi perfectamente redactado.",
-    fr: "Le contrat est presque parfaitement rédigé.",
-    pt: "O contrato está quase perfeitamente redigido.",
-    nl: "Het contract is bijna perfect opgesteld.",
-    ro: "Contractul este aproape perfect redactat.",
-    sq: "Kontrata është pothuajse e përkryer.",
-    tr: "Sözleşme neredeyse mükemmel bir şekilde hazırlanmış.",
-    zh: "合同几乎完美完成。",
-    ja: "契約はほぼ完璧に作成されています。"
-  };
-  const drawer = document.getElementById('drawer');
-  const scrim = document.getElementById('scrim');
-  const menuBtn = document.getElementById('menuBtn');
-  function openDrawer(){
-    drawer.classList.add('open');
-    drawer.setAttribute('aria-hidden','false');
-    scrim.classList.add('show');
-    scrim.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-  }
-  function closeDrawer(){
-    drawer.classList.remove('open');
-    drawer.setAttribute('aria-hidden','true');
-    scrim.classList.remove('show');
-    scrim.setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-  }
-  menuBtn.addEventListener('click', openDrawer);
-  scrim.addEventListener('click', closeDrawer);
-  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
-  const lang = document.getElementById("lang");
-  const langBtn = document.getElementById("langBtn");
-  const langNow = document.getElementById("langNow");
-  const langMenu = document.getElementById("langMenu");
-  const codeMap = {"English":"EN","Italiano":"IT","Deutsch":"DE","Español":"ES","Français":"FR","Português":"PT","Nederlands":"NL","Română":"RO","Shqip":"SQ","Türkçe":"TR","中文":"ZH","日本語":"JA"};
-  langBtn.addEventListener("click", (e) => { e.stopPropagation(); lang.classList.toggle("open"); });
-  langMenu.querySelectorAll(".lang-item").forEach(li => {
-    li.addEventListener("click", (e) => {
-      e.stopPropagation();
-      langNow.textContent = codeMap[li.textContent] || "EN";
-      lang.classList.remove("open");
-    });
-  });
-  document.addEventListener("click", (e) => { if (!lang.contains(e.target)) lang.classList.remove("open"); });
-  const fallbackDemo = {
-    meta: { title: "Non-Disclosure Agreement (NDA)", detectedLang: "en" },
-    summary: [
-      "This contract is generally favorable with low overall risk, but several timing and remedy definitions could be tightened to avoid avoidable confusion between the parties.",
-      "Payment schedule and termination rights are presented in clear, plain language; still, a couple of legacy phrases can be simplified so non-lawyers can follow without re-reading.",
-      "Watch late-fee compounding and define 'material breach' with an objective test so everyday admin delays don’t escalate into disputes."
-    ],
-    risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
-    clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
-    clauses: [
-      "Payment Terms: Net 30 with 2% per month late fee; add a short grace period and a cap so charges remain predictable.",
-      "Scope of Work: Deliverables listed in Schedule A; include acceptance criteria so approvals are objective.",
-      "IP & Licensing: Client owns final assets; creator keeps tools, methods and pre-existing know-how.",
-      "Termination: 30-day convenience; immediate for cause. Add a ten-day cure for minor issues to prevent accidental termination."
-    ],
-    issues: [
-      "Late-fee compounding escalates costs on long delays; switch to simple interest with a reasonable cap to prevent outsized penalties.",
-      "Indemnity is one-sided and uncapped; replace with mutual indemnity and add a commercial cap tied to fees for proportional risk.",
-      "Undefined cure periods allow immediate termination for minor faults; add a standard 10-day cure for non-critical breaches.",
-      "Ambiguous definition of “material breach” invites disputes; specify an objective test and carve-out for trivial delays.",
-      "Scope changes lack a written change-order process; require signed amendments with impact on price/timeline captured."
-    ],
-    suggestions: [
-      "Add objective acceptance criteria and a short user-testing window for each milestone so sign-off is clear and quick.",
-      "Insert a 5–7 day grace period before late fees accrue and convert compounding to simple interest with a total cap.",
-      "Define “material breach” and include a standard ten-day cure (except for true emergencies) to minimize unnecessary escalations."
-    ],
-    meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 },
-    translations: {}
-  };
-  const clamp01 = v => Math.max(0, Math.min(100, Number(v || 0)));
-  let raw = localStorage.getItem("analysisRaw");
-  let normalized;
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw);
-      normalized = {
-        meta: { title: parsed.contractName || "Untitled Contract", detectedLang: parsed.detectedLang || "en" },
-        analysis: parsed.analysis || {},
-        translations: parsed.translations || {}
-      };
-      normalized.summary = normalized.analysis.summary || fallbackDemo.summary;
-      normalized.clauses = normalized.analysis.mainClauses || fallbackDemo.clauses;
 
-      normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
-      normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
-      normalized.risk = {
-        value: Number(normalized.analysis.risk) || 0,
-        note: "The contract risk score is based on the clauses' fairness and obligations."
-      };
-      normalized.clarity = {
-        value: Number(normalized.analysis.clarity) || 0,
-        note: "The clarity score reflects how easy it is to understand the terms."
-      };
-      const riskV = clamp01(Number(normalized.analysis.risk));
-      const clarV = clamp01(Number(normalized.analysis.clarity));
-      const compV = clamp01(Number(normalized.analysis.compliance));
-      normalized.meters = {
-        professionalism: compV,
-        favorability: Math.round(((100 - riskV) + clarV) / 2),
-        deadline: clamp01(Math.round(40 + (riskV * 0.4))),
-        confidence: clamp01(Math.round((clarV * 0.6) + ((100 - riskV) * 0.4)))
-      };
-    } catch {
-      normalized = fallbackDemo;
-    }
-  } else {
-    normalized = fallbackDemo;
-  }
   const $ = s => document.querySelector(s);
-  const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const addP = (el, t) => { const p = document.createElement("p"); p.textContent = t; el.appendChild(p); };
-  const colorFor = (metric, v) => {
-    if (metric === 'risk') return v <= 25 ? cssVar('--green') : v <= 58 ? cssVar('--orange') : cssVar('--red');
-    if (metric === 'clarity') return v >= 78 ? cssVar('--green') : v >= 49 ? cssVar('--orange') : cssVar('--red');
-    if (metric === 'deadline') return v <= 35 ? cssVar('--green') : v <= 68 ? cssVar('--orange') : cssVar('--red');
-    return v >= 75 ? cssVar('--green') : v >= 49 ? cssVar('--orange') : cssVar('--red');
-  };
-  const setSafetyStatus = (metric, value, lang) => {
-    const dot = metric === 'risk' ? $('#riskDot') : $('#clarDot');
-    const badge = metric === 'risk' ? $('#riskBadge') : $('#clarBadge');
-    let band = metric === 'risk' ? (value <= 25 ? 'green' : value <= 58 ? 'orange' : 'red') : (value >= 78 ? 'green' : value >= 49 ? 'orange' : 'red');
-    const color = band === 'green' ? '#00ff65' : band === 'orange' ? '#df911a' : '#fe0000';
-    const dict = SAFETY_LABELS[lang] || SAFETY_LABELS.en;
-    dot.style.background = color;
-    dot.style.border = '1px solid #000';
-    badge.textContent = dict[band] || SAFETY_LABELS.en[band];
-  };
-const getLocalizedContent = (lang) => {
-  const origLang = normalized.meta.detectedLang || 'en';
-  const trAll = normalized.translations || {};
-  const trL = trAll[lang] || {};
+  const clamp = v => Math.max(0, Math.min(100, Number(v||0)));
+  const addP = (el,t) => { const p=document.createElement('p'); p.textContent=t; el.appendChild(p); };
 
-  // Always prefer translation when lang != detected
-  const useTr = lang !== origLang;
+  let raw = localStorage.getItem("analysisRaw");
+  let data = raw ? JSON.parse(raw) : null;
+  if (!data) { console.error("No analysis in localStorage"); return; }
 
-  const arr = (v) => Array.isArray(v) ? v : (v ? [String(v)] : []);
+  let currentLang = data.detectedLang || "en";
 
-  return {
-    title: useTr ? (trL.title || normalized.meta.title || "") : (normalized.meta.title || ""),
-    summary: useTr ? (arr(trL.summary).length ? trL.summary : arr(normalized.analysis.summary)) : arr(normalized.analysis.summary),
-   clauses: useTr
-  ? (arr(trL.mainClauses).length ? trL.mainClauses : arr(normalized.analysis.mainClauses))
-  : arr(normalized.analysis.mainClauses),
-
-    issues: useTr ? (arr(trL.potentialIssues).length ? trL.potentialIssues : arr(normalized.analysis.potentialIssues)) : arr(normalized.analysis.potentialIssues),
-    suggestions: useTr ? (arr(trL.smartSuggestions).length ? trL.smartSuggestions : arr(normalized.analysis.smartSuggestions)) : arr(normalized.analysis.smartSuggestions),
-    risk: { value: Number(normalized.risk.value) || 0, note: RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en },
-    clarity: { value: Number(normalized.clarity.value) || 0, note: CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en }
-  };
-};
-
-const setArc = (arcEl, metric, value, valEl) => {
-  const v = clamp01(value);
-  const renderV = (v === 0 ? 1 : v);          // 1% visual minimum
-  const rr = parseFloat(arcEl.getAttribute('r')) || 74;
-  const circ = 2 * Math.PI * rr;
-  arcEl.style.stroke = colorFor(metric, v);
-  arcEl.style.strokeDasharray = circ;
-  arcEl.style.strokeDashoffset = circ;
-  requestAnimationFrame(() => {
-    arcEl.style.transition = 'stroke-dashoffset 1.8s ease';
-    arcEl.style.strokeDashoffset = circ * (1 - renderV / 100);
-  });
-  if (valEl) valEl.textContent = v + '%';
-};
-
-const setMeter = (fillEl, labelEl, metric, value) => {
-  const v = clamp01(value);
-  const renderV = (v === 0 ? 1 : v);      // 1% visual minimum
-  labelEl.textContent = v + '%';
-  fillEl.style.background = colorFor(metric, v);
-  requestAnimationFrame(() => { fillEl.style.width = renderV + '%'; });
-};
-
-  let currentLang = normalized.meta.detectedLang || 'en';
-  const renderUILabels = lang => {
+  const renderTitles = lang => {
     const t = UI[lang] || UI.en;
-    $('#uiOverview').textContent = t.overview;
+    $('#uiOverview').textContent   = t.overview;
     $('#uiTitleLabel').textContent = t.title;
-    $('#uiSummary').textContent = t.summary;
+    $('#uiSummary').textContent    = t.summary;
     $('#uiProfessionalism').textContent = t.prof;
-    $('#uiFavorability').textContent = t.fav;
-    $('#uiDeadline').textContent = t.deadline;
-    $('#uiIssues').textContent = t.issues;
-    $('#uiSuggestions').textContent = t.suggestions;
-    $('#uiRisk').textContent = t.risk;
-    $('#uiClarity').textContent = t.clarity;
-    $('#uiClauses').textContent = t.clauses;
-    $('#uiScoreChecker').textContent = t.score;
-    // $('#uiUnsafe').textContent = t.unsafe; // TODO: uncmt later //kp
-    // $('#uiSafe').textContent = t.safe; // TODO: uncmt later //kp
-    // $('#uiVerySafe').textContent = t.verysafe; // TODO: uncmt later //kp
-    $('#uiConfidence').textContent = t.conf;
-
-    console.log({test: $('#uiConfidence')})
+    $('#uiFavorability').textContent    = t.fav;
+    $('#uiDeadline').textContent        = t.deadline;
+    $('#uiIssues').textContent          = t.issues;
+    $('#uiSuggestions').textContent     = t.suggestions;
+    $('#uiRisk').textContent            = t.risk;
+    $('#uiClarity').textContent         = t.clarity;
+    $('#uiClauses').textContent         = t.clauses;
+    $('#uiScoreChecker').textContent    = t.score;
+    $('#uiConfidence').textContent      = t.conf;
+    $('#scaleUnsafe').textContent = t.unsafe;
+    $('#scaleSafe').textContent   = t.safe;
+    $('#scaleVerySafe').textContent = t.verysafe;
   };
+
+  const renderAI = lang => {
+    const a = data.analysis;
+    $('#uiTitleValue').textContent = data.contractTitle || data.contractName || "—";
+
+    const sumBox = $('#summaryText'); sumBox.innerHTML='';
+    (a.summary||[]).forEach(s=>addP(sumBox,s));
+
+    const clBox = $('#clausesList'); clBox.innerHTML='';
+    (a.mainClauses||[]).forEach(c=>addP(clBox,c));
+
+    const issBox = $('#issuesList'); issBox.innerHTML='';
+    (a.potentialIssues||[]).forEach(i=>{ const li=document.createElement('li'); li.textContent=i; issBox.appendChild(li); });
+
+    const sugBox = $('#suggestionsList'); sugBox.innerHTML='';
+    (a.smartSuggestions||[]).forEach(s=>addP(sugBox,s));
+
+    $('#riskNote').textContent = a.risk?.note || "";
+    $('#clarNote').textContent = a.clarity?.note || "";
+
+    const sc = a.scoreChecker || {};
+    const overall = clamp(sc.value);
+    const t = UI[lang] || UI.en;
+    $('#scoreRemark').textContent = sc.line?.trim() || t.scoreLine;
+    $('#scoreInd').style.left = `calc(${overall}% - 1.5px)`;
+
+    const arc = $('#scoreArc');
+    const circ = 2 * Math.PI * 64;
+    arc.style.strokeDashoffset = circ * (1 - overall/100);
+    arc.style.stroke = overall < 34 ? '#fe0000' : overall < 67 ? '#df911a' : '#00ff65';
+    $('#scorePct').textContent = overall + '%';
+  };
+
   const renderAll = lang => {
-    renderUILabels(lang);
+    currentLang = lang;
     $('#langNow').textContent = lang.toUpperCase();
-    const data = getLocalizedContent(lang);
-    $('#uiTitleValue').textContent = data.title || '—';
-    const sBox = $('#summaryText');
-    sBox.innerHTML = '';
-    const sArr = Array.isArray(data.summary) ? data.summary : [String(data.summary)];
-    sArr.forEach(t => addP(sBox, t));
-    const cl = $('#clausesList');
-    cl.innerHTML = '';
-    (data.clauses || []).forEach(t => addP(cl, t));
-    const il = $('#issuesList');
-    il.innerHTML = '';
-    (data.issues || []).forEach(t => {
-      const li = document.createElement('li');
-      li.textContent = t;
-      il.appendChild(li);
-    });
-    const sl = $('#suggestionsList');
-    sl.innerHTML = '';
-    (data.suggestions || []).forEach(t => addP(sl, t));
-    const riskVal = clamp01(data.risk.value);
-    const clarVal = clamp01(data.clarity.value);
-    setArc($('#riskArc'), 'risk', riskVal, $('#riskVal'));
-    setArc($('#clarArc'), 'clarity', clarVal, $('#clarVal'));
-    setArc($('#scoreArc'), 'clarity', clarVal, $('#scorePct'));
-    $('#riskNote').textContent = data.risk.note;
-    $('#clarNote').textContent = data.clarity.note;
-    setSafetyStatus('risk', riskVal, lang);
-    setSafetyStatus('clarity', clarVal, lang);
-    // Compute a simple overall score = avg(clarity, 100 - risk)
-const overall = Math.round((clarVal + (100 - riskVal)) / 2);
-let scoreMsg;
-if (overall <= 33) scoreMsg = (UI[lang]?.unsafe || UI.en.unsafe);        // "Unsafe"
-else if (overall <= 66) scoreMsg = (UI[lang]?.safe || UI.en.safe);        // "Safe"
-else scoreMsg = (UI[lang]?.verysafe || UI.en.verysafe);                   // "Very Safe"
-$('#scoreRemark').textContent = `Determines the overall score.`;
-$('#scoreInd').style.left = `calc(${overall}% - 1.5px)`;
+    renderTitles(lang);
+    renderAI(lang);
+  };
 
-    $('#scoreInd').style.left = `calc(${clarVal}% - 1.5px)`;
-    setMeter($('#confFill'), $('#confVal'), 'professionalism', normalized.meters.professionalism);
-    setMeter($('#favFill'), $('#favVal'), 'favorability', normalized.meters.favorability);
-    setMeter($('#deadFill'), $('#deadVal'), 'deadline', normalized.meters.deadline);
-    setMeter($('#conf2Fill'), $('#conf2Val'), 'confidence', normalized.meters.confidence);
-  };
-  renderAll(currentLang);
   document.querySelectorAll('.lang-item').forEach(item => {
-    item.addEventListener('click', e => {
-      currentLang = e.currentTarget.getAttribute('data-code') || e.currentTarget.getAttribute('data-lang').toLowerCase();
-      renderAll(currentLang);
+    item.addEventListener('click', () => {
+      const code = item.getAttribute('data-code');
+      renderAll(code);
     });
   });
+
+  renderAll(currentLang);
+
   const langBox = $('#lang');
-  let closeTimer = null;
-  const openMenu = () => { clearTimeout(closeTimer); langBox.classList.add('open'); };
-  const scheduleClose = () => { clearTimeout(closeTimer); closeTimer = setTimeout(() => langBox.classList.remove('open'), 140); };
-  ['mouseenter', 'mousemove'].forEach(ev => langBox.addEventListener(ev, openMenu));
-  langBox.addEventListener('mouseleave', scheduleClose);
-  document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
-  window.addEventListener('load', () => {
-    ['#summaryCard', '#riskCard', '#clarCard'].forEach((sel, i) => {
-      const el = $(sel);
-      if (el) setTimeout(() => el.classList.add('fade-in'), 70 * i);
-    });
-    setTimeout(() => {
-      ['#profCard', '#favCard', '#deadCard', '#issuesCard', '#clausesCard', '#suggestionsCard', '#scoreCard', '#confRightCard'].forEach((sel, i) => {
-        const el = $(sel);
-        if (el) setTimeout(() => el.classList.add('fade-in'), 70 * i);
-      });
-    }, 180);
-  });
-  const dlWrap = $('#dlWrap');
-  const endBox = $('#sidebarEnd');
-  const nearBottom = () => {
-    const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-    const show = scrolledFromBottom <= 320;
-    dlWrap.style.display = show ? 'flex' : 'none';
-    endBox.style.display = show ? 'block' : 'none';
-    if (show) {
-      dlWrap.classList.add('fade-in');
-      endBox.classList.add('fade-in');
-    }
-  };
-  window.addEventListener('scroll', nearBottom, { passive: true });
-  window.addEventListener('load', nearBottom);
-  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
-  const modal = $('#emailModal');
-  const emailInline = $('#emailInline');
-  const emailInput = isMobile() ? $('#emailInputInline') : $('#emailInputModal');
-  const emailErr = isMobile() ? $('#emailErrInline') : $('#emailErrModal');
-  const downloadBtn = $('#downloadBtn');
-  const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
-  const openForm = () => {
-    if (isMobile()) {
-      downloadBtn.style.display = 'none';
-      emailInline.style.display = 'flex';
-      setTimeout(() => document.addEventListener('click', outsideCloseInline, { capture: true }), 0);
-      emailInput.focus();
-    } else {
-      modal.style.display = 'flex';
-      emailInput.focus();
-    }
-  };
-  const closeForm = () => {
-    if (isMobile()) {
-      emailInline.style.display = 'none';
-      emailErr.style.display = 'none';
-      emailInput.value = '';
-      downloadBtn.style.display = 'inline-flex';
-      document.removeEventListener('click', outsideCloseInline, { capture: true });
-    } else {
-      modal.style.display = 'none';
-      emailInput.value = '';
-      emailErr.style.display = 'none';
-    }
-  };
-  const outsideCloseInline = e => {
-    if (!emailInline.contains(e.target)) closeForm();
-  };
-  emailInline.addEventListener('click', e => e.stopPropagation());
-  downloadBtn.addEventListener('click', openForm);
-  $('#emailCancel').addEventListener('click', closeForm);
-  const handleSubmit = async () => {
-    const email = emailInput.value;
-    if (!validEmail(email)) {
-      emailErr.style.display = 'block';
-      return;
-    }
-    emailErr.style.display = 'none';
-    const data = getLocalizedContent(currentLang);
-    data.meters = normalized.meters;
-    try {
-      const pdfGenerator = new PDFGenerator();
-      await pdfGenerator.generatePDF('SignSense_Report', data, currentLang);
-    } catch (e) {
-      console.error(e);
-      alert('Could not generate the PDF.');
-    }
-    closeForm();
-  };
-  $('#emailSubmit').addEventListener('click', handleSubmit);
-  emailInline.addEventListener('submit', async e => { e.preventDefault(); await handleSubmit(); });
-  document.getElementById('leaveReview').addEventListener('click', e => { e.preventDefault(); alert('Hook this to your reviews form URL.'); });
-  document.getElementById('leaveReview2').addEventListener('click', e => { e.preventDefault(); alert('Hook this to your reviews form URL.'); });
+  let closeTimer;
+  const open = () => { clearTimeout(closeTimer); langBox.classList.add('open'); };
+  const scheduleClose = () => { clearTimeout(closeTimer); closeTimer=setTimeout(()=>langBox.classList.remove('open'),140); };
+  ['mouseenter','mousemove'].forEach(ev=>langBox.addEventListener(ev,open));
+  langBox.addEventListener('mouseleave',scheduleClose);
 })();
 </script>
 </body>
