@@ -1,13 +1,11 @@
 // api/analyze.js — Vercel Serverless JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
-
 function send(res, code, obj) {
   res.statusCode = code;
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify(obj));
 }
-
 export default async function handler(req, res) {
   // --- CORS ---
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -16,7 +14,6 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return send(res, 204, {});
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
-
   try {
     // --- Read body ---
     let raw = "";
@@ -28,11 +25,9 @@ export default async function handler(req, res) {
     if (!ct.includes("application/json")) {
       return send(res, 415, { error: `Send application/json. Got: ${ct || "unknown"}` });
     }
-
     let body = {};
     try { body = raw ? JSON.parse(raw) : {}; }
     catch { return send(res, 400, { error: "Invalid JSON body" }); }
-
     const {
       text = "",
       imageDataURI = "",
@@ -40,14 +35,11 @@ export default async function handler(req, res) {
       mime = "",
       role = "signer"
     } = body || {};
-
     if (!text && !imageDataURI) {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
-
     // --- System prompt ---
     const system = `You are a contract analyst. Return STRICT JSON only:
-
 {
   "contractName": "string",
   "contractTitle": "string",
@@ -68,13 +60,12 @@ export default async function handler(req, res) {
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
   }
 }
-
 Rules:
 - SUMMARY = 3 clear sentences.
-- Smart Suggestions must be EXACTLY 3 and must include short “e.g.,” examples.
+- Smart Suggestions must be EXACTLY 3 and must include short “e.g.,” examples (or language-appropriate equivalent).
 - scoreChecker.line MUST match verdict.
-- No translations here. No extra explanations.`;
-
+- Detect the language of the input contract and set detectedLang accordingly. Output all textual content (contractName, contractTitle, summary, risk.note, clarity.note, mainClauses, potentialIssues, smartSuggestions, scoreChecker.line) in the detected language.
+- No extra explanations.`;
     // --- User content ---
     const userContent = imageDataURI
       ? [
@@ -84,7 +75,6 @@ Rules:
       : [
           { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\nAnalyze this contract:\n${String(text).slice(0, 110000)}` }
         ];
-
     // --- OpenAI call ---
     let openaiResp;
     try {
@@ -107,33 +97,25 @@ Rules:
     } catch (err) {
       return send(res, 500, { error: "OpenAI network error: " + err.message });
     }
-
     if (!openaiResp.ok) {
       const errTxt = await openaiResp.text().catch(() => "");
       return send(res, 502, { error: "OpenAI request failed: " + errTxt });
     }
-
     const resp = await openaiResp.json().catch(() => ({}));
     const content = resp?.choices?.[0]?.message?.content || "{}";
-
     let parsed = {};
     try { parsed = JSON.parse(content); }
     catch { return send(res, 500, { error: "Invalid JSON returned by model" }); }
-
     // --- Normalize ---
     const cap = (s, n) => (s || "").trim().slice(0, n);
     const clamp = (v) => Math.max(0, Math.min(100, Number(v || 0)));
     const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
-
     const mainClauses = (parsed?.analysis?.mainClauses || [])
       .filter(Boolean).map(s => stripLead(cap(s, 900))).slice(0,5);
-
     const potentialIssues = (parsed?.analysis?.potentialIssues || [])
       .filter(Boolean).map(s => stripLead(cap(s, 1000))).slice(0,5);
-
     const smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
       .filter(Boolean).map(s => stripLead(cap(s, 250))).slice(0,3);
-
     // ✅ FIXED SCORE CHECKER HERE
     const scIn = parsed?.analysis?.scoreChecker || {};
     const scVal = clamp(scIn.value);
@@ -141,57 +123,46 @@ Rules:
       scVal < 34 ? "unsafe" :
       scVal < 67 ? "safe" :
       "very safe";
-
     let band =
       verdict === "unsafe" ? "red" :
       verdict === "safe" ? "orange" :
       "green";
-
-    // ✅ Your new sentence
-    const line = "Determines the overall score.";
-
+    // Use the model's line, capped
+    const line = cap(scIn.line || "Determines the overall score.", 280);
     const normalized = {
       contractName: parsed.contractName || originalName || "Contract",
       contractTitle: parsed.contractTitle || parsed.contractName || originalName,
       role: parsed.role === "writer" ? "writer" : "signer",
       detectedLang: parsed.detectedLang || "en",
-
       analysis: {
         summary: Array.isArray(parsed?.analysis?.summary)
           ? parsed.analysis.summary.slice(0,3)
           : [],
-
         risk: {
           value: clamp(parsed?.analysis?.risk?.value),
           note: cap(parsed?.analysis?.risk?.note, 280),
-          band,
+          band: parsed?.analysis?.risk?.band || band,
           safety: parsed?.analysis?.risk?.safety || ""
         },
-
         clarity: {
           value: clamp(parsed?.analysis?.clarity?.value),
           note: cap(parsed?.analysis?.clarity?.note, 280),
-          band,
+          band: parsed?.analysis?.clarity?.band || band,
           safety: parsed?.analysis?.clarity?.safety || ""
         },
-
         mainClauses,
         potentialIssues,
         smartSuggestions,
-
         bars: {
           professionalism: clamp(parsed?.analysis?.bars?.professionalism),
           favorabilityIndex: clamp(parsed?.analysis?.bars?.favorabilityIndex),
           deadlinePressure: clamp(parsed?.analysis?.bars?.deadlinePressure),
           confidenceToSign: clamp(parsed?.analysis?.bars?.confidenceToSign)
         },
-
         scoreChecker: { value: scVal, band, verdict, line }
       }
     };
-
     return send(res, 200, normalized);
-
   } catch (err) {
     return send(res, 500, { error: "Could not analyze this file. Details: " + err.message });
   }
