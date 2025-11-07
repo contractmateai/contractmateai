@@ -1,11 +1,173 @@
 // api/analyze.js — Vercel Serverless JSON endpoint
 // Requires env: OPENAI_API_KEY
 const SECRET = process.env.OPENAI_API_KEY;
+
 function send(res, code, obj) {
   res.statusCode = code;
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify(obj));
 }
+
+// Static UI translations
+const UI = {
+  en: {
+    summary: "Summary",
+    risk: "Risk",
+    clarity: "Clarity",
+    mainClauses: "Main Clauses",
+    potentialIssues: "Potential Issues",
+    smartSuggestions: "Smart Suggestions",
+    score: "Overall Score",
+    unsafe: "Unsafe",
+    safe: "Safe",
+    verySafe: "Very Safe",
+    scoreLine: "Determines the overall score."
+  },
+  it: {
+    summary: "Riassunto",
+    risk: "Rischio",
+    clarity: "Chiarezza",
+    mainClauses: "Clausole Principali",
+    potentialIssues: "Problemi Potenziali",
+    smartSuggestions: "Suggerimenti Intelligenti",
+    score: "Punteggio Complessivo",
+    unsafe: "Non Sicuro",
+    safe: "Sicuro",
+    verySafe: "Molto Sicuro",
+    scoreLine: "Determina il punteggio complessivo."
+  },
+  de: {
+    summary: "Zusammenfassung",
+    risk: "Risiko",
+    clarity: "Klarheit",
+    mainClauses: "Hauptklauseln",
+    potentialIssues: "Mögliche Probleme",
+    smartSuggestions: "Intelligente Vorschläge",
+    score: "Gesamtwertung",
+    unsafe: "Unsicher",
+    safe: "Sicher",
+    verySafe: "Sehr Sicher",
+    scoreLine: "Bestimmt die Gesamtbewertung."
+  },
+  es: {
+    summary: "Resumen",
+    risk: "Riesgo",
+    clarity: "Claridad",
+    mainClauses: "Cláusulas Principales",
+    potentialIssues: "Problemas Potenciales",
+    smartSuggestions: "Sugerencias Inteligentes",
+    score: "Puntuación General",
+    unsafe: "Inseguro",
+    safe: "Seguro",
+    verySafe: "Muy Seguro",
+    scoreLine: "Determina la puntuación general."
+  },
+  fr: {
+    summary: "Résumé",
+    risk: "Risque",
+    clarity: "Clarté",
+    mainClauses: "Clauses Principales",
+    potentialIssues: "Problèmes Potentiels",
+    smartSuggestions: "Suggestions Intelligentes",
+    score: "Score Global",
+    unsafe: "Dangereux",
+    safe: "Sûr",
+    verySafe: "Très Sûr",
+    scoreLine: "Détermine le score global."
+  },
+  pt: {
+    summary: "Resumo",
+    risk: "Risco",
+    clarity: "Clareza",
+    mainClauses: "Cláusulas Principais",
+    potentialIssues: "Problemas Potenciais",
+    smartSuggestions: "Sugestões Inteligentes",
+    score: "Pontuação Geral",
+    unsafe: "Inseguro",
+    safe: "Seguro",
+    verySafe: "Muito Seguro",
+    scoreLine: "Determina a pontuação geral."
+  },
+  nl: {
+    summary: "Samenvatting",
+    risk: "Risico",
+    clarity: "Duidelijkheid",
+    mainClauses: "Hoofdclausules",
+    potentialIssues: "Mogelijke Problemen",
+    smartSuggestions: "Slimme Suggesties",
+    score: "Totale Score",
+    unsafe: "Onveilig",
+    safe: "Veilig",
+    verySafe: "Zeer Veilig",
+    scoreLine: "Bepaalt de totale score."
+  },
+  ro: {
+    summary: "Rezumat",
+    risk: "Risc",
+    clarity: "Claritate",
+    mainClauses: "Clauze Principale",
+    potentialIssues: "Probleme Potențiale",
+    smartSuggestions: "Sugestii Inteligente",
+    score: "Scor General",
+    unsafe: "Nesigur",
+    safe: "Sigur",
+    verySafe: "Foarte Sigur",
+    scoreLine: "Determină scorul general."
+  },
+  sq: {
+    summary: "Përmbledhje",
+    risk: "Rrezik",
+    clarity: "Qartësi",
+    mainClauses: "Klauzola Kryesore",
+    potentialIssues: "Probleme të Mundshme",
+    smartSuggestions: "Sugjerime të Zgjuara",
+    score: "Rezultati i Përgjithshëm",
+    unsafe: "E pasigurt",
+    safe: "E sigurt",
+    verySafe: "Shumë e sigurt",
+    scoreLine: "Përcakton rezultatin e përgjithshëm."
+  },
+  tr: {
+    summary: "Özet",
+    risk: "Risk",
+    clarity: "Netlik",
+    mainClauses: "Ana Maddeler",
+    potentialIssues: "Potansiyel Sorunlar",
+    smartSuggestions: "Akıllı Öneriler",
+    score: "Genel Puan",
+    unsafe: "Güvensiz",
+    safe: "Güvenli",
+    verySafe: "Çok Güvenli",
+    scoreLine: "Genel puanı belirler."
+  },
+  ja: {
+    summary: "要約",
+    risk: "リスク",
+    clarity: "明瞭さ",
+    mainClauses: "主要条項",
+    potentialIssues: "潜在的問題",
+    smartSuggestions: "スマートな提案",
+    score: "総合スコア",
+    unsafe: "危険",
+    safe: "安全",
+    verySafe: "非常に安全",
+    scoreLine: "総合スコアを決定します。"
+  },
+  zh: {
+    summary: "摘要",
+    risk: "风险",
+    clarity: "清晰度",
+    mainClauses: "主要条款",
+    potentialIssues: "潜在问题",
+    smartSuggestions: "智能建议",
+    score: "总体评分",
+    unsafe: "不安全",
+    safe: "安全",
+    verySafe: "非常安全",
+    scoreLine: "确定总体评分。"
+  }
+};
+
 export default async function handler(req, res) {
   // --- CORS ---
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -14,6 +176,7 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return send(res, 204, {});
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
+
   try {
     // --- Read body ---
     let raw = "";
@@ -28,17 +191,24 @@ export default async function handler(req, res) {
     let body = {};
     try { body = raw ? JSON.parse(raw) : {}; }
     catch { return send(res, 400, { error: "Invalid JSON body" }); }
+
     const {
       text = "",
       imageDataURI = "",
       originalName = "Contract",
       mime = "",
-      role = "signer"
+      role = "signer",
+      targetLang = "en"
     } = body || {};
+
     if (!text && !imageDataURI) {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
-    // --- System prompt ---
+
+    const lang = UI[targetLang] ? targetLang : "en";
+    const t = UI[lang];
+
+    // --- System prompt — EXACTLY as you had before, but with dynamic language ---
     const system = `You are a contract analyst. Return STRICT JSON only:
 {
   "contractName": "string",
@@ -64,8 +234,9 @@ Rules:
 - SUMMARY = 3 clear sentences.
 - Smart Suggestions must be EXACTLY 3 and must include short “e.g.,” examples (or language-appropriate equivalent).
 - scoreChecker.line MUST match verdict.
-- Detect the language of the input contract and set detectedLang accordingly. Output all textual content (contractName, contractTitle, summary, risk.note, clarity.note, mainClauses, potentialIssues, smartSuggestions, scoreChecker.line) in the detected language.
+- Detect the language of the input contract and set detectedLang accordingly. Output all textual content (contractName, contractTitle, summary, risk.note, clarity.note, mainClauses, potentialIssues, smartSuggestions, scoreChecker.line) in **${lang}**.
 - No extra explanations.`;
+
     // --- User content ---
     const userContent = imageDataURI
       ? [
@@ -75,6 +246,7 @@ Rules:
       : [
           { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\nAnalyze this contract:\n${String(text).slice(0, 110000)}` }
         ];
+
     // --- OpenAI call ---
     let openaiResp;
     try {
@@ -106,34 +278,37 @@ Rules:
     let parsed = {};
     try { parsed = JSON.parse(content); }
     catch { return send(res, 500, { error: "Invalid JSON returned by model" }); }
+
     // --- Normalize ---
     const cap = (s, n) => (s || "").trim().slice(0, n);
     const clamp = (v) => Math.max(0, Math.min(100, Number(v || 0)));
     const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
+
     const mainClauses = (parsed?.analysis?.mainClauses || [])
       .filter(Boolean).map(s => stripLead(cap(s, 900))).slice(0,5);
     const potentialIssues = (parsed?.analysis?.potentialIssues || [])
       .filter(Boolean).map(s => stripLead(cap(s, 1000))).slice(0,5);
     const smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
       .filter(Boolean).map(s => stripLead(cap(s, 250))).slice(0,3);
-    // ✅ FIXED SCORE CHECKER HERE
+
     const scIn = parsed?.analysis?.scoreChecker || {};
     const scVal = clamp(scIn.value);
     let verdict =
       scVal < 34 ? "unsafe" :
       scVal < 67 ? "safe" :
-      "very safe";
+      "verySafe";
     let band =
       verdict === "unsafe" ? "red" :
       verdict === "safe" ? "orange" :
       "green";
-    // Use the model's line, capped
-    const line = cap(scIn.line || "Determines the overall score.", 280);
+
     const normalized = {
       contractName: parsed.contractName || originalName || "Contract",
       contractTitle: parsed.contractTitle || parsed.contractName || originalName,
       role: parsed.role === "writer" ? "writer" : "signer",
       detectedLang: parsed.detectedLang || "en",
+      targetLang: lang,
+      ui: t,
       analysis: {
         summary: Array.isArray(parsed?.analysis?.summary)
           ? parsed.analysis.summary.slice(0,3)
@@ -141,13 +316,13 @@ Rules:
         risk: {
           value: clamp(parsed?.analysis?.risk?.value),
           note: cap(parsed?.analysis?.risk?.note, 280),
-          band: parsed?.analysis?.risk?.band || band,
+          band,
           safety: parsed?.analysis?.risk?.safety || ""
         },
         clarity: {
           value: clamp(parsed?.analysis?.clarity?.value),
           note: cap(parsed?.analysis?.clarity?.note, 280),
-          band: parsed?.analysis?.clarity?.band || band,
+          band,
           safety: parsed?.analysis?.clarity?.safety || ""
         },
         mainClauses,
@@ -159,9 +334,16 @@ Rules:
           deadlinePressure: clamp(parsed?.analysis?.bars?.deadlinePressure),
           confidenceToSign: clamp(parsed?.analysis?.bars?.confidenceToSign)
         },
-        scoreChecker: { value: scVal, band, verdict, line }
+        scoreChecker: {
+          value: scVal,
+          band,
+          verdict,
+          line: cap(scIn.line || t.scoreLine, 280),
+          verdictLabel: t[verdict]
+        }
       }
     };
+
     return send(res, 200, normalized);
   } catch (err) {
     return send(res, 500, { error: "Could not analyze this file. Details: " + err.message });
