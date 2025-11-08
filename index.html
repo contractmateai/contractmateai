@@ -1512,7 +1512,7 @@ keep dis here <!DOCTYPE html>
   }
 
   const input        = document.getElementById("contractFile");
-  const inputCamera  = document.getElementById("contractCamera");
+  const inputCamera  = document.getElementById("contractCamera"); // STILL USED FOR CAMERA, BUT ONLY WHEN USER CHOOSES
   const roleUI       = document.getElementById("rolePicker");
   const ctaBtn       = document.getElementById("reviewBtn");
   let pickedFiles    = [];
@@ -1521,90 +1521,47 @@ keep dis here <!DOCTYPE html>
     return window.matchMedia("(max-width: 980px)").matches;
   }
 
-  // ✅ Helper → hide button & show role picker
+  // ✅ Show Role Picker
   function showRolePicker() {
     roleUI.hidden = false;
     document.getElementById("ctaWrap").style.display = "none";
   }
 
-  // ✅ CAMERA FLOW (take up to 10 photos)
-  async function mobileCameraFlow() {
-    pickedFiles = [];
-    let count = 0;
-
-    while (count < 10) {
-      inputCamera.value = "";
-      inputCamera.click();
-
-      const one = await new Promise(resolve => {
-        inputCamera.onchange = () => resolve(inputCamera.files?.[0] || null);
-      });
-
-      if (!one) break;
-      pickedFiles.push(one);
-      count++;
-
-      if (count >= 10) break;
-
-      const more = confirm(`${count}/10 uploaded\nAdd more?`);
-      if (!more) break;
-    }
-
-    if (pickedFiles.length > 0) showRolePicker();
-  }
-
-  // ✅ LIBRARY FLOW (pick up to 10 images)
-  async function mobileLibraryFlow() {
-    input.value = "";
-    input.click();
-
-    await new Promise(resolve => { input.onchange = resolve; });
-
-    pickedFiles = Array.from(input.files).slice(0, 10);
-
-    if (pickedFiles.length > 0) showRolePicker();
-  }
-
-  // ✅ BUTTON CLICK
-  ctaBtn.addEventListener("click", async (e) => {
+  // ✅ NO POPUP ANYMORE — direct iOS picker
+  // ✅ MOBILE → USE ONLY THE REGULAR FILE PICKER
+  ctaBtn.addEventListener("click", (e) => {
     e.preventDefault();
     pickedFiles = [];
 
     if (!isMobile()) {
-      // ✅ DESKTOP: choose file or up to 10 photos
+      // ✅ DESKTOP: normal file input
       input.value = "";
       input.click();
       return;
     }
 
-    // ✅ MOBILE MENU
-    const choice = await new Promise((resolve) => {
-      const opt = confirm("OK = Take Photo\nCancel = Choose From Library");
-      resolve(opt ? "camera" : "library");
-    });
-
-    if (choice === "camera") {
-      await mobileCameraFlow();
-    } else {
-      await mobileLibraryFlow();
-    }
+    // ✅ MOBILE: open iOS file sheet DIRECTLY
+    input.value = "";
+    input.click();
   });
 
-  // ✅ DESKTOP input change
+  // ✅ When mobile user selects from Photo Library or Files
   input.addEventListener("change", () => {
     if (!input.files.length) return;
+
     pickedFiles = Array.from(input.files).slice(0, 10);
     showRolePicker();
   });
 
-  // ✅ CAMERA input (mobile)
+  // ✅ Camera input still works IF the user chooses "Take Photo" from iOS sheet manually
   inputCamera.addEventListener("change", () => {
     if (!inputCamera.files.length) return;
+
     pickedFiles = Array.from(inputCamera.files).slice(0, 10);
     showRolePicker();
   });
 
-  // ✅ ANALYZE when user chooses role
+  // ✅ ANALYSIS
   roleUI.querySelectorAll(".role-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
@@ -1647,6 +1604,7 @@ keep dis here <!DOCTYPE html>
 
 })();
 </script>
+
 
   </body>
 </html> 
