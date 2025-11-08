@@ -1162,9 +1162,8 @@
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
-
-    <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
+  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,image/*" multiple style="display:none" />
+<input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1466,131 +1465,102 @@
 <script>
   (async () => {
     async function fileToPayload(file) {
-      try {
-        const name = file.name || "file";
-        const mime = file.type || "application/octet-stream";
-        const ext = name.toLowerCase();
-        if (mime === "text/plain" || ext.endsWith(".txt")) {
-          return { text: await file.text(), originalName: name, mime };
+      const name = file.name || "file";
+      const mime = file.type || "application/octet-stream";
+      const ext = name.toLowerCase();
+      if (mime === "text/plain" || ext.endsWith(".txt")) return { text: await file.text(), originalName: name, mime };
+      if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        let full = "";
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          full += content.items.map(i => i.str).join(" ") + "\n";
         }
-        if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-          const buf = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-          let full = "";
-          for (let p = 1; p <= pdf.numPages; p++) {
-            const page = await pdf.getPage(p);
-            const content = await page.getTextContent();
-            full += content.items.map((i) => i.str).join(" ") + "\n";
-          }
-          return { text: full, originalName: name, mime };
-        }
-        if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-          const buf = await file.arrayBuffer();
-          const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-          return { text: res.value || "", originalName: name, mime };
-        }
-        if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-          const dataUrl = await new Promise((resolve) => {
-            const r = new FileReader();
-            r.onload = () => resolve(r.result);
-            r.readAsDataURL(file);
-          });
-          return { imageDataURI: dataUrl, originalName: name, mime };
-        }
-        throw new Error("Unsupported file type: " + mime);
-      } catch (e) {
-        console.error("fileToPayload error:", e.message);
-        throw e;
+        return { text: full, originalName: name, mime };
       }
+      if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+        const buf = await file.arrayBuffer();
+        const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+        return { text: res.value || "", originalName: name, mime };
+      }
+      if (mime.startsWith("image/")) {
+        const dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(file); });
+        return { imageDataURI: dataUrl, originalName: name, mime };
+      }
+      throw new Error("Unsupported file");
     }
 
-    const demoData = {
-      contractName: "Uploaded Contract",
-      detectedLang: "en",
-      analysis: {
-        summary: ["Contract appears standard with clear terms.", "Some clauses need review for fairness."],
-        risk: 20,
-        clarity: 85,
-        compliance: 90,
-        keyClauses: ["Payment: Net 30 days.", "Termination: 30-day notice."],
-        potentialIssues: ["Ambiguous termination clause.", "Unclear penalty terms."],
-        smartSuggestions: ["Clarify termination conditions.", "Cap penalties."]
-      },
-      translations: {}
-    };
-
-    const input = document.getElementById("contractFile");
-    const inputCamera = document.getElementById("contractCamera");
+    const fileInput = document.getElementById("contractFile");
+    const camInput = document.getElementById("contractCamera");
     const roleUI = document.getElementById("rolePicker");
-    const ctaBtn = document.getElementById("reviewBtn");
-    let pickedFiles = [];
+    const ctaWrap = document.getElementById("ctaWrap");
+    const reviewBtn = document.getElementById("reviewBtn");
+    let files = [];
+    const MAX = 10;
 
-    function isMobile() {
-      return window.matchMedia('(max-width: 980px)').matches;
+    function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
+
+    function showRolePicker() {
+      ctaWrap.style.display = "none";
+      roleUI.hidden = false;
     }
 
-    ctaBtn.addEventListener("click", (e) => {
+    function showUploadOptions() {
+      if (!isMobile()) return;
+      const opts = ["Take a Photo", "Choose from Photo Library", "Choose a File"];
+      const choice = prompt(opts.map((o,i)=>`${i+1}. ${o}`).join("\n") + "\nEnter 1, 2, or 3:");
+      if (!choice) return;
+      const n = parseInt(choice);
+      if (n === 1) camInput.setAttribute("capture", "environment");
+      else if (n === 2) camInput.removeAttribute("capture");
+      else if (n === 3) { fileInput.click(); return; }
+      camInput.click();
+    }
+
+    function handleFiles(newFiles) {
+      files = [...files, ...Array.from(newFiles)].slice(0, MAX);
+      if (!isMobile()) { showRolePicker(); return; }
+      const uploaded = files.length;
+      if (uploaded >= MAX) { showRolePicker(); return; }
+      const more = confirm(`${uploaded} of ${MAX} uploaded. Upload more?`);
+      if (!more) showRolePicker();
+      else showUploadOptions();
+    }
+
+    reviewBtn.addEventListener("click", e => {
       e.preventDefault();
-      pickedFiles = [];
-      const inputToUse = isMobile() ? inputCamera : input;
-      inputToUse.value = '';
-      inputToUse.click();
+      files = [];
+      roleUI.hidden = true;
+      ctaWrap.style.display = "flex";
+      if (isMobile()) showUploadOptions();
+      else fileInput.click();
     });
 
-    input.addEventListener("change", async () => {
-      if (!input.files || !input.files.length) return;
-      pickedFiles = Array.from(input.files);
-      roleUI.hidden = false;
-    });
-
-    inputCamera.addEventListener("change", async () => {
-      if (!inputCamera.files || !inputCamera.files.length) return;
-      pickedFiles = Array.from(inputCamera.files);
-      roleUI.hidden = false;
-    });
+    fileInput.addEventListener("change", () => { if (fileInput.files.length) handleFiles(fileInput.files); });
+    camInput.addEventListener("change", () => { if (camInput.files.length) handleFiles(camInput.files); });
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (!pickedFiles.length) {
-          alert("Please choose a contract file first.");
-          return;
-        }
+        if (!files.length) return alert("No file selected");
         try {
-          const file = pickedFiles[0]; // Use first file
-          if (file.size > 10_000_000) {
-            alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-            return;
-          }
-          const payload = await fileToPayload(file);
-        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-const body = { 
-  ...payloadArr[0], 
-  role: btn.dataset.role || "signer" 
-};
-
-
-const resp = await fetch("/api/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(body)
-});
-
-if (!resp.ok) {
-  const err = await resp.json().catch(() => ({}));
-  throw new Error(err?.error || "Analysis failed");
-}
-
-const analysisResult = await resp.json();
-localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-window.location.href = "analysis.html";
-
-        } catch (e) {
-          alert(`Error processing file: ${e.message}`);
-        }
+          const payloads = await Promise.all(files.map(fileToPayload));
+          const body = { ...payloads[0], role: btn.dataset.role || "signer", additional: payloads.slice(1) };
+          const resp = await fetch("/api/analyze", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body) });
+          if (!resp.ok) throw new Error("Analysis failed");
+          const result = await resp.json();
+          localStorage.setItem("analysisRaw", JSON.stringify(result));
+          window.location.href = "analysis.html";
+        } catch (err) { alert(err.message); }
       });
     });
+
+    // Desktop: allow multiple images + 1 file
+    fileInput.setAttribute("multiple", "");
+    fileInput.setAttribute("accept", ".pdf,.doc,.docx,.txt,image/*");
   })();
 </script>
   </body>
