@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+keep dis here <!DOCTYPE html>
 <html lang="en"> 
   <head>
     <meta charset="UTF-8" />
@@ -1162,8 +1162,10 @@
 
 
     <!-- Upload inputs -->
-  <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,image/*" multiple style="display:none" />
-<input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
+    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" multiple style="display: none" />
+
+
+    <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1463,12 +1465,18 @@
     </script>
 
 <script>
-  (async () => {
-    async function fileToPayload(file) {
+(async () => {
+
+  async function fileToPayload(file) {
+    try {
       const name = file.name || "file";
       const mime = file.type || "application/octet-stream";
       const ext = name.toLowerCase();
-      if (mime === "text/plain" || ext.endsWith(".txt")) return { text: await file.text(), originalName: name, mime };
+
+      if (mime === "text/plain" || ext.endsWith(".txt")) {
+        return { text: await file.text(), originalName: name, mime };
+      }
+
       if (mime === "application/pdf" || ext.endsWith(".pdf")) {
         const buf = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -1480,88 +1488,165 @@
         }
         return { text: full, originalName: name, mime };
       }
-      if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+
+      if (mime.includes("word") || ext.endsWith(".docx")) {
         const buf = await file.arrayBuffer();
         const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
         return { text: res.value || "", originalName: name, mime };
       }
+
       if (mime.startsWith("image/")) {
-        const dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(file); });
+        const dataUrl = await new Promise((resolve) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.readAsDataURL(file);
+        });
         return { imageDataURI: dataUrl, originalName: name, mime };
       }
-      throw new Error("Unsupported");
+
+      throw new Error("Unsupported file type.");
+    } catch (e) {
+      alert("Error reading file: " + e.message);
+      throw e;
     }
+  }
 
-    const fileInput = document.getElementById("contractFile");
-    const camInput = document.getElementById("contractCamera");
-    const roleUI = document.getElementById("rolePicker");
-    const ctaWrap = document.getElementById("ctaWrap");
-    const reviewBtn = document.getElementById("reviewBtn");
-    let files = [];
-    const MAX = 10;
+  const input        = document.getElementById("contractFile");
+  const inputCamera  = document.getElementById("contractCamera");
+  const roleUI       = document.getElementById("rolePicker");
+  const ctaBtn       = document.getElementById("reviewBtn");
+  let pickedFiles    = [];
 
-    function isMobile() { return window.matchMedia('(max-width: 980px)').matches; }
+  function isMobile() {
+    return window.matchMedia("(max-width: 980px)").matches;
+  }
 
-    function showRolePicker() {
-      ctaWrap.style.display = "none";
-      roleUI.hidden = false;
-    }
+  // ✅ Helper → hide button & show role picker
+  function showRolePicker() {
+    roleUI.hidden = false;
+    document.getElementById("ctaWrap").style.display = "none";
+  }
 
-    reviewBtn.addEventListener("click", e => {
-      e.preventDefault();
-      files = [];
-      roleUI.hidden = true;
-      ctaWrap.style.display = "flex";
+  // ✅ CAMERA FLOW (take up to 10 photos)
+  async function mobileCameraFlow() {
+    pickedFiles = [];
+    let count = 0;
 
-      if (isMobile()) {
-        // Trigger native iOS/Android sheet
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*,.pdf,.doc,.docx";
-        input.multiple = true;
-        input.capture = "environment"; // tries camera first on mobile
-        input.onchange = () => {
-          if (input.files.length) {
-            files = Array.from(input.files).slice(0, MAX);
-            if (files.length >= MAX || confirm(`${files.length} of ${MAX} uploaded. Done?`)) {
-              showRolePicker();
-            } else {
-              input.value = "";
-              input.click(); // allow more
-            }
-          }
-        };
-        input.click();
-      } else {
-        fileInput.click(); // desktop: instant file picker
-      }
-    });
+    while (count < 10) {
+      inputCamera.value = "";
+      inputCamera.click();
 
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length) {
-        files = Array.from(fileInput.files).slice(0, MAX);
-        showRolePicker();
-      }
-    });
-
-    roleUI.querySelectorAll('.role-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (!files.length) return alert("No file selected");
-
-        try {
-          const payloads = await Promise.all(files.map(fileToPayload));
-          const body = { ...payloads[0], role: btn.dataset.role || "signer", additional: payloads.slice(1) };
-          const resp = await fetch("/api/analyze", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body) });
-          if (!resp.ok) throw new Error("Failed");
-          const result = await resp.json();
-          localStorage.setItem("analysisRaw", JSON.stringify(result));
-          window.location.href = "analysis.html";
-        } catch (err) { alert(err.message); }
+      const one = await new Promise(resolve => {
+        inputCamera.onchange = () => resolve(inputCamera.files?.[0] || null);
       });
+
+      if (!one) break;
+      pickedFiles.push(one);
+      count++;
+
+      if (count >= 10) break;
+
+      const more = confirm(`${count}/10 uploaded\nAdd more?`);
+      if (!more) break;
+    }
+
+    if (pickedFiles.length > 0) showRolePicker();
+  }
+
+  // ✅ LIBRARY FLOW (pick up to 10 images)
+  async function mobileLibraryFlow() {
+    input.value = "";
+    input.click();
+
+    await new Promise(resolve => { input.onchange = resolve; });
+
+    pickedFiles = Array.from(input.files).slice(0, 10);
+
+    if (pickedFiles.length > 0) showRolePicker();
+  }
+
+  // ✅ BUTTON CLICK
+  ctaBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    pickedFiles = [];
+
+    if (!isMobile()) {
+      // ✅ DESKTOP: choose file or up to 10 photos
+      input.value = "";
+      input.click();
+      return;
+    }
+
+    // ✅ MOBILE MENU
+    const choice = await new Promise((resolve) => {
+      const opt = confirm("OK = Take Photo\nCancel = Choose From Library");
+      resolve(opt ? "camera" : "library");
     });
-  })();
+
+    if (choice === "camera") {
+      await mobileCameraFlow();
+    } else {
+      await mobileLibraryFlow();
+    }
+  });
+
+  // ✅ DESKTOP input change
+  input.addEventListener("change", () => {
+    if (!input.files.length) return;
+    pickedFiles = Array.from(input.files).slice(0, 10);
+    showRolePicker();
+  });
+
+  // ✅ CAMERA input (mobile)
+  inputCamera.addEventListener("change", () => {
+    if (!inputCamera.files.length) return;
+    pickedFiles = Array.from(inputCamera.files).slice(0, 10);
+    showRolePicker();
+  });
+
+  // ✅ ANALYZE when user chooses role
+  roleUI.querySelectorAll(".role-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      if (!pickedFiles.length) {
+        alert("Please choose a contract file first.");
+        return;
+      }
+
+      try {
+        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+
+        const body = {
+          files: payloadArr,
+          role: btn.dataset.role || "signer"
+        };
+
+        const resp = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err?.error || "Analysis failed");
+        }
+
+        const analysisResult = await resp.json();
+        localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+
+        window.location.href = "analysis.html";
+
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    });
+  });
+
+})();
 </script>
+
   </body>
 </html> 
