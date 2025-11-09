@@ -1419,7 +1419,8 @@
     if (!input.files.length) return;
 
     const first = input.files[0];
-const fromCamera = input.capture === "environment";
+const fromCamera = inputCamera.capture === "environment";
+
 
 if (fromCamera && first.type.startsWith("image/")) {
   pickedFiles = [first];
