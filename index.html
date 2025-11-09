@@ -1512,7 +1512,7 @@ keep dis here <!DOCTYPE html>
   }
 
   const input        = document.getElementById("contractFile");
-  const inputCamera  = document.getElementById("contractCamera"); // STILL USED FOR CAMERA, BUT ONLY WHEN USER CHOOSES
+  const inputCamera  = document.getElementById("contractCamera");
   const roleUI       = document.getElementById("rolePicker");
   const ctaBtn       = document.getElementById("reviewBtn");
   let pickedFiles    = [];
@@ -1521,31 +1521,52 @@ keep dis here <!DOCTYPE html>
     return window.matchMedia("(max-width: 980px)").matches;
   }
 
-  // ✅ Show Role Picker
+  // ✅ Show Role Picker & hide button
   function showRolePicker() {
     roleUI.hidden = false;
     document.getElementById("ctaWrap").style.display = "none";
   }
 
-  // ✅ NO POPUP ANYMORE — direct iOS picker
-  // ✅ MOBILE → USE ONLY THE REGULAR FILE PICKER
+  // ✅ MULTI-PHOTO CAMERA LOOP
+  async function handleTakePhotoFlow() {
+    pickedFiles = [];
+    let count = 0;
+
+    while (count < 10) {
+      inputCamera.value = "";
+      inputCamera.click();
+
+      const file = await new Promise(resolve => {
+        inputCamera.onchange = () =>
+          resolve(inputCamera.files?.[0] || null);
+      });
+
+      if (!file) break;
+
+      pickedFiles.push(file);
+      count++;
+
+      if (count >= 10) break;
+
+      const more = confirm(`${count}/10 photos added\nAdd more?`);
+      if (!more) break;
+    }
+
+    if (pickedFiles.length > 0) {
+      showRolePicker();
+    }
+  }
+
+  // ✅ BUTTON CLICK → directly open iOS sheet (NO POPUP)
   ctaBtn.addEventListener("click", (e) => {
     e.preventDefault();
     pickedFiles = [];
 
-    if (!isMobile()) {
-      // ✅ DESKTOP: normal file input
-      input.value = "";
-      input.click();
-      return;
-    }
-
-    // ✅ MOBILE: open iOS file sheet DIRECTLY
     input.value = "";
-    input.click();
+    input.click();  // ✅ Always opens the iOS sheet
   });
 
-  // ✅ When mobile user selects from Photo Library or Files
+  // ✅ File picker (Photo Library / Choose Files)
   input.addEventListener("change", () => {
     if (!input.files.length) return;
 
@@ -1553,18 +1574,26 @@ keep dis here <!DOCTYPE html>
     showRolePicker();
   });
 
-  // ✅ Camera input still works IF the user chooses "Take Photo" from iOS sheet manually
-  inputCamera.addEventListener("change", () => {
+  // ✅ CAMERA input listener (detect Take Photo from iOS sheet)
+  inputCamera.addEventListener("change", async () => {
     if (!inputCamera.files.length) return;
 
+    // ✅ If this is a single image and capture is enabled → it's a camera shot
+    if (isMobile() && inputCamera.capture && inputCamera.files.length === 1) {
+      await handleTakePhotoFlow();
+      return;
+    }
+
+    // ✅ Otherwise, treat like normal selection
     pickedFiles = Array.from(inputCamera.files).slice(0, 10);
     showRolePicker();
   });
 
-  // ✅ ANALYSIS
+  // ✅ ANALYZE AFTER ROLE PICK
   roleUI.querySelectorAll(".role-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
-      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+      roleUI.querySelectorAll(".role-btn")
+        .forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
       if (!pickedFiles.length) {
@@ -1573,7 +1602,9 @@ keep dis here <!DOCTYPE html>
       }
 
       try {
-        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+        const payloadArr = await Promise.all(
+          pickedFiles.map(fileToPayload)
+        );
 
         const body = {
           files: payloadArr,
@@ -1604,6 +1635,7 @@ keep dis here <!DOCTYPE html>
 
 })();
 </script>
+
 
 
   </body>
