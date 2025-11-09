@@ -1505,6 +1505,7 @@
       }
 
       throw new Error("Unsupported file type.");
+
     } catch (e) {
       alert("Error reading file: " + e.message);
       throw e;
@@ -1521,35 +1522,39 @@
     return window.matchMedia("(max-width: 980px)").matches;
   }
 
-  // ✅ Show Role Picker & hide button
+  // ✅ Show Role Picker and hide button
   function showRolePicker() {
     roleUI.hidden = false;
     document.getElementById("ctaWrap").style.display = "none";
   }
 
-  // ✅ MULTI-PHOTO CAMERA LOOP
+  // ✅ MULTI-PHOTO CAMERA FLOW WITH iOS DELAY FIX
   async function handleTakePhotoFlow() {
-    pickedFiles = [];
-    let count = 0;
+
+    if (!pickedFiles.length) pickedFiles = [];
+
+    let count = pickedFiles.length;
 
     while (count < 10) {
+
+      // ✅ Only ask AFTER first photo (iOS returns after Use Photo)
+      if (count > 0) {
+        const more = confirm(`${count}/10 photos added\nAdd more?`);
+        if (!more) break;
+      }
+
       inputCamera.value = "";
       inputCamera.click();
 
-      const file = await new Promise(resolve => {
+      const photo = await new Promise(resolve => {
         inputCamera.onchange = () =>
           resolve(inputCamera.files?.[0] || null);
       });
 
-      if (!file) break;
+      if (!photo) break;
 
-      pickedFiles.push(file);
+      pickedFiles.push(photo);
       count++;
-
-      if (count >= 10) break;
-
-      const more = confirm(`${count}/10 photos added\nAdd more?`);
-      if (!more) break;
     }
 
     if (pickedFiles.length > 0) {
@@ -1557,16 +1562,15 @@
     }
   }
 
-  // ✅ BUTTON CLICK → directly open iOS sheet (NO POPUP)
+  // ✅ Review button → ALWAYS open iOS sheet (Photo Library / Take Photo / Files)
   ctaBtn.addEventListener("click", (e) => {
     e.preventDefault();
     pickedFiles = [];
-
     input.value = "";
-    input.click();  // ✅ Always opens the iOS sheet
+    input.click();
   });
 
-  // ✅ File picker (Photo Library / Choose Files)
+  // ✅ Photo Library / Choose Files
   input.addEventListener("change", () => {
     if (!input.files.length) return;
 
@@ -1574,24 +1578,32 @@
     showRolePicker();
   });
 
-  // ✅ CAMERA input listener (detect Take Photo from iOS sheet)
+  // ✅ Detect Take Photo → iOS delay fix applied here
   inputCamera.addEventListener("change", async () => {
     if (!inputCamera.files.length) return;
 
-    // ✅ If this is a single image and capture is enabled → it's a camera shot
+    // ✅ User selected "Take Photo" from iOS sheet (capture input)
     if (isMobile() && inputCamera.capture && inputCamera.files.length === 1) {
-      await handleTakePhotoFlow();
+
+      // ✅ DELAY so iOS won't block confirm()
+      setTimeout(async () => {
+        pickedFiles = [inputCamera.files[0]];
+        await handleTakePhotoFlow();
+      }, 500);
+
       return;
     }
 
-    // ✅ Otherwise, treat like normal selection
+    // ✅ Normal image selection from gallery
     pickedFiles = Array.from(inputCamera.files).slice(0, 10);
     showRolePicker();
   });
 
-  // ✅ ANALYZE AFTER ROLE PICK
+  // ✅ ANALYZE AFTER ROLE SELECT
   roleUI.querySelectorAll(".role-btn").forEach(btn => {
+
     btn.addEventListener("click", async () => {
+
       roleUI.querySelectorAll(".role-btn")
         .forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
@@ -1631,10 +1643,12 @@
         alert("Error: " + e.message);
       }
     });
+
   });
 
 })();
 </script>
+
 
 
 
