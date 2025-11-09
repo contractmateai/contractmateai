@@ -1165,7 +1165,8 @@
     <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" multiple style="display: none" />
 
 
-    <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
+    <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
+
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1269,202 +1270,7 @@
       });
     </script>
 
-    <script>
-      (function () {
-        const track = document.getElementById('logoTrack');
-        if (!track) return;
-        const src = 'https://i.imgur.com/2SUo8mv.png';
-        const COPIES = 12;
-        for (let i = 0; i < COPIES; i++) {
-          const img = document.createElement('img');
-          img.src = src; img.alt = 'Powered-by logos'; img.className = 'logo-piece'; img.decoding = 'async';
-          track.appendChild(img);
-        }
-        const SECONDS_PER_LOOP = 150;
-        function run() {
-          let x = 0, pieceW = 0, last = performance.now();
-          function measure() {
-            const first = track.querySelector('.logo-piece');
-            if (!first || !first.complete) { setTimeout(measure, 50); return; }
-            pieceW = first.getBoundingClientRect().width || first.naturalWidth;
-          }
-          function tick(now) {
-            const dt = (now - last) / 1000; last = now;
-            const pxPerSecond = (pieceW * COPIES) / SECONDS_PER_LOOP;
-            x -= pxPerSecond * dt; const loop = pieceW * COPIES; if (x <= -loop) x += loop;
-            track.style.transform = `translateX(${x}px)`; requestAnimationFrame(tick);
-          }
-          measure(); requestAnimationFrame(tick); window.addEventListener('resize', measure, { passive: true });
-        }
-        window.addEventListener('load', run);
-      })();
-    </script>
-
-    <script>
-      (function () {
-        const bar = document.getElementById("topbarWrap");
-        let lastY = window.scrollY, ticking = false;
-        function onScroll() {
-          const y = window.scrollY;
-          if (y > lastY && y > 80) { bar.classList.add("hide"); } else { bar.classList.remove("hide"); }
-          lastY = y <= 0 ? 0 : y; ticking = false;
-        }
-        window.addEventListener("scroll", () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
-      })();
-    </script>
-
-    <!-- REVIEWS SECTION -->
-    <script>
-      (function () {
-        const track = document.getElementById("reviewsTrack");
-        const prev = document.getElementById("revPrev");
-        const next = document.getElementById("revNext");
-        const prevMobile = document.getElementById("revPrevMobile");
-        const nextMobile = document.getElementById("revNextMobile");
-        const dotsEl = document.getElementById("reviewDots");
-        const viewport = document.getElementById("reviewsViewport");
-
-        const originals = Array.from(track.children);
-        const TOTAL = originals.length;
-        track.innerHTML = "";
-        for (let k = 0; k < 3; k++) originals.forEach(n => track.appendChild(n.cloneNode(true)));
-
-        let perPage = 3;
-        function computePerPage() {
-          const w = window.innerWidth;
-          perPage = (w <= 640) ? 1 : (w <= 1100) ? 2 : 3;
-        }
-        computePerPage();
-
-        let itemW = 0;
-        function measure() {
-          const c = track.querySelector(".review-card");
-          const gap = parseFloat(getComputedStyle(track).gap || 24);
-          itemW = (c ? c.getBoundingClientRect().width : 0) + gap;
-        }
-        measure();
-
-        let baseIndex = TOTAL;
-        function setTransform(i, animate) {
-          if (!animate) track.style.transition = "none";
-          track.style.transform = `translateX(${-i * itemW}px)`;
-          if (!animate) { track.offsetHeight; track.style.transition = "transform .35s ease"; }
-        }
-        setTransform(baseIndex, false);
-
-        const mod = (n,m) => ((n % m) + m) % m;
-        const groupStarts = [0, 2];
-        const toggleMode = () => (perPage === 3 && TOTAL === 5);
-
-        function renderDots() {
-          dotsEl.innerHTML = "";
-          for (let i = 0; i < TOTAL; i++) {
-            const b = document.createElement("button");
-            b.type = "button"; b.className = "review-dot";
-            b.addEventListener("click", () => {
-              if (toggleMode()) {
-                let g = (i < 2) ? 0 : (i > 2) ? 1 : (currentGroup() === 0 ? 0 : 1);
-                goGroup(g);
-              } else { goToStart(i); }
-              restartAutoplay();
-            });
-            dotsEl.appendChild(b);
-          }
-          updateDots();
-        }
-
-        function currentGroup() { const p = mod(baseIndex, TOTAL); return (p === groupStarts[1]) ? 1 : 0; }
-        function updateDots() {
-          const g = toggleMode() ? currentGroup() : null;
-          const children = [...dotsEl.children];
-          if (toggleMode()) {
-            const active = g === 0 ? new Set([0,1,2]) : new Set([2,3,4]);
-            children.forEach((d, i) => d.classList.toggle("active", active.has(i)));
-          } else {
-            const start = mod(baseIndex, TOTAL);
-            children.forEach((d, i) => { const k = (i - start + TOTAL) % TOTAL; d.classList.toggle("active", k < perPage); });
-          }
-        }
-
-        function recenterIfNeeded() {
-          if (baseIndex >= 2 * TOTAL) { baseIndex -= TOTAL; setTransform(baseIndex, false); }
-          else if (baseIndex < TOTAL) { baseIndex += TOTAL; setTransform(baseIndex, false); }
-        }
-
-        function goDelta(delta) { baseIndex += delta; setTransform(baseIndex, true); track.addEventListener("transitionend", () => { recenterIfNeeded(); updateDots(); }, { once: true }); }
-        function goGroup(g) { const p = mod(baseIndex, TOTAL); if (g === 0) { if (p === groupStarts[0]) return; goDelta(3); } else { if (p === groupStarts[1]) return; goDelta(2); } }
-        function goPrevGroup() { const p = mod(baseIndex, TOTAL); baseIndex += (p === groupStarts[0]) ? -3 : -2; setTransform(baseIndex, true); track.addEventListener("transitionend", () => { recenterIfNeeded(); updateDots(); }, { once: true }); }
-        function goToStart(dotIdx) { const p = mod(baseIndex, TOTAL); baseIndex = baseIndex + ((dotIdx - p + TOTAL) % TOTAL); setTransform(baseIndex, true); track.addEventListener("transitionend", () => { recenterIfNeeded(); updateDots(); }, { once: true }); }
-
-        next?.addEventListener("click", () => { if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0); else goDelta(perPage); restartAutoplay(); });
-        prev?.addEventListener("click", () => { if (toggleMode()) goPrevGroup(); else goDelta(-perPage); restartAutoplay(); });
-        nextMobile?.addEventListener('click', () => { if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0); else goDelta(perPage); restartAutoplay(); });
-        prevMobile?.addEventListener('click', () => { if (toggleMode()) goPrevGroup(); else goDelta(-perPage); restartAutoplay(); });
-
-        let timer = null;
-        function startAutoplay() { stopAutoplay(); timer = setInterval(() => { if (toggleMode()) goGroup(currentGroup() === 0 ? 1 : 0); else goDelta(perPage); }, 5000); }
-        function stopAutoplay() { if (timer) clearInterval(timer); timer = null; }
-        function restartAutoplay() { stopAutoplay(); startAutoplay(); }
-        renderDots(); startAutoplay();
-
-        function snap() { setTransform(baseIndex, false); updateDots(); }
-        window.addEventListener("resize", () => { computePerPage(); measure(); snap(); }, { passive: true });
-      })();
-    </script>
-
-    <script>
-      (() => {
-        const viewport = document.querySelector('.reviews-viewport');
-        const track = document.getElementById('reviewsTrack');
-        if (!viewport || !track) return;
-        viewport.style.cursor = 'grab';
-        let isDown = false, startX = 0, startTx = 0, moved = false;
-        function getTx() { const m = getComputedStyle(track).transform; if (m && m !== 'none') { const p = m.replace('matrix(', '').replace(')', '').split(','); return parseFloat(p[4] || 0); } return 0; }
-        function setTx(x) { track.style.transition = 'none'; track.style.transform = `translateX(${x}px)`; }
-        function end() { isDown = false; viewport.style.cursor = 'grab'; track.offsetHeight; track.style.transition = 'transform .35s ease'; setTimeout(() => (moved = false), 0); }
-        function start(clientX) { isDown = true; moved = false; startX = clientX; startTx = getTx(); viewport.style.cursor = 'grabbing'; }
-        function move(clientX) { if (!isDown) return; const dx = clientX - startX; if (Math.abs(dx) > 3) moved = true; setTx(startTx + dx); }
-        viewport.addEventListener('mousedown', e => { e.preventDefault(); start(e.clientX); });
-        window.addEventListener('mousemove', e => move(e.clientX), { passive: true });
-        window.addEventListener('mouseup', end);
-        viewport.addEventListener('touchstart', e => start(e.touches[0].clientX), { passive: true });
-        viewport.addEventListener('touchmove',  e => move(e.touches[0].clientX),   { passive: true });
-        window.addEventListener('touchend', end);
-        viewport.addEventListener('click', e => { if (moved) e.preventDefault(); }, true);
-      })();
-    </script>
-
-    <script>
-      document.querySelectorAll(".faq-item .faq-q").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const item = btn.parentElement;
-          if (!item.classList.contains("open")) {
-            document.querySelectorAll(".faq-item.open").forEach((i) => i.classList.remove("open"));
-          }
-          item.classList.toggle("open");
-        });
-      });
-    </script>
-    <script>document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));</script>
-
-
-    <script>
-      const topbarWrap = document.getElementById('topbarWrap');
-      const topbar = document.getElementById('topbar');
-      const menuToggle = document.getElementById('menuToggle');
-      const menuPanel  = document.getElementById('menuPanel');
-      const menuOverlay= document.getElementById('menuOverlay');
-      function positionPanel(){ const r = topbar.getBoundingClientRect(); menuPanel.style.top = (r.top + r.height + 0) + 'px'; }
-      positionPanel(); window.addEventListener('resize', positionPanel);
-      function openMenu(){ positionPanel(); menuPanel.classList.add('open'); menuOverlay.classList.add('show'); menuToggle.classList.add('open'); topbar.classList.add('merged'); }
-      function closeMenu(){ menuPanel.classList.remove('open'); menuOverlay.classList.remove('show'); menuToggle.classList.remove('open'); topbar.classList.remove('merged'); }
-      menuToggle.addEventListener('click', () => { if(menuPanel.classList.contains('open')) closeMenu(); else openMenu(); });
-      menuOverlay.addEventListener('click', closeMenu);
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
-      window.addEventListener('scroll', () => { if (menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
-    </script>
-
-<script>
+   <script>
 (async () => {
 
   async function fileToPayload(file) {
@@ -1483,8 +1289,8 @@
         let full = "";
         for (let p = 1; p <= pdf.numPages; p++) {
           const page = await pdf.getPage(p);
-          const content = await page.getTextContent();
-          full += content.items.map(i => i.str).join(" ") + "\n";
+          const c = await page.getTextContent();
+          full += c.items.map(i => i.str).join(" ") + "\n";
         }
         return { text: full, originalName: name, mime };
       }
@@ -1496,59 +1302,61 @@
       }
 
       if (mime.startsWith("image/")) {
-        const dataUrl = await new Promise((resolve) => {
+        return await new Promise(resolve => {
           const r = new FileReader();
-          r.onload = () => resolve(r.result);
+          r.onload = () => resolve({
+            imageDataURI: r.result,
+            originalName: name,
+            mime
+          });
           r.readAsDataURL(file);
         });
-        return { imageDataURI: dataUrl, originalName: name, mime };
       }
 
       throw new Error("Unsupported file type.");
-
     } catch (e) {
       alert("Error reading file: " + e.message);
       throw e;
     }
   }
 
-  const input        = document.getElementById("contractFile");
-  const inputCamera  = document.getElementById("contractCamera");
-  const roleUI       = document.getElementById("rolePicker");
-  const ctaBtn       = document.getElementById("reviewBtn");
-  let pickedFiles    = [];
+  const input = document.getElementById("contractFile");
+  const inputCamera = document.getElementById("contractCamera");
+  const roleUI = document.getElementById("rolePicker");
+  const ctaBtn = document.getElementById("reviewBtn");
+
+  let pickedFiles = [];
 
   function isMobile() {
     return window.matchMedia("(max-width: 980px)").matches;
   }
 
-  // ✅ Show Role Picker and hide button
   function showRolePicker() {
     roleUI.hidden = false;
     document.getElementById("ctaWrap").style.display = "none";
   }
 
-  // ✅ MULTI-PHOTO CAMERA FLOW WITH iOS DELAY FIX
+  // ✅ FULL MULTI-PHOTO CAMERA FLOW
   async function handleTakePhotoFlow() {
-
     if (!pickedFiles.length) pickedFiles = [];
 
     let count = pickedFiles.length;
 
     while (count < 10) {
 
-      // ✅ Only ask AFTER first photo (iOS returns after Use Photo)
+      // ✅ Ask AFTER the first photo is taken
       if (count > 0) {
         const more = confirm(`${count}/10 photos added\nAdd more?`);
         if (!more) break;
       }
 
+      // ✅ open camera
       inputCamera.value = "";
       inputCamera.click();
 
+      // ✅ wait for user to take and use photo
       const photo = await new Promise(resolve => {
-        inputCamera.onchange = () =>
-          resolve(inputCamera.files?.[0] || null);
+        inputCamera.onchange = () => resolve(inputCamera.files?.[0] || null);
       });
 
       if (!photo) break;
@@ -1562,8 +1370,8 @@
     }
   }
 
-  // ✅ Review button → ALWAYS open iOS sheet (Photo Library / Take Photo / Files)
-  ctaBtn.addEventListener("click", (e) => {
+  // ✅ Review button → open iOS sheet
+  ctaBtn.addEventListener("click", e => {
     e.preventDefault();
     pickedFiles = [];
     input.value = "";
@@ -1578,14 +1386,13 @@
     showRolePicker();
   });
 
-  // ✅ Detect Take Photo → iOS delay fix applied here
+  // ✅ Take Photo (camera)
   inputCamera.addEventListener("change", async () => {
+
     if (!inputCamera.files.length) return;
 
-    // ✅ User selected "Take Photo" from iOS sheet (capture input)
     if (isMobile() && inputCamera.capture && inputCamera.files.length === 1) {
-
-      // ✅ DELAY so iOS won't block confirm()
+      // ✅ iOS delay fix
       setTimeout(async () => {
         pickedFiles = [inputCamera.files[0]];
         await handleTakePhotoFlow();
@@ -1594,12 +1401,12 @@
       return;
     }
 
-    // ✅ Normal image selection from gallery
+    // ✅ normal gallery images
     pickedFiles = Array.from(inputCamera.files).slice(0, 10);
     showRolePicker();
   });
 
-  // ✅ ANALYZE AFTER ROLE SELECT
+  // ✅ Analyze after role picked
   roleUI.querySelectorAll(".role-btn").forEach(btn => {
 
     btn.addEventListener("click", async () => {
@@ -1634,8 +1441,8 @@
           throw new Error(err?.error || "Analysis failed");
         }
 
-        const analysisResult = await resp.json();
-        localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+        const result = await resp.json();
+        localStorage.setItem("analysisRaw", JSON.stringify(result));
 
         window.location.href = "analysis.html";
 
@@ -1648,6 +1455,7 @@
 
 })();
 </script>
+
 
 
 
