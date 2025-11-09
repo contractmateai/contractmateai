@@ -1327,6 +1327,18 @@
       });
     </script>
 
+
+
+
+<!-- ✅ iOS Bottom Sheet: Add More Photos -->
+<div id="addMoreSheet" class="sheet-backdrop" style="display:none;">
+  <div class="sheet-panel">
+    <div class="sheet-title" id="sheetCount">1/10 photos added</div>
+
+    <button class="sheet-btn sheet-yes" id="sheetAddMore">Add More</button>
+    <button class="sheet-btn sheet-no" id="sheetContinue">Continue</button>
+  </div>
+</div>
 <script>
 (async () => {
 
@@ -1509,18 +1521,6 @@ if (fromCamera && first.type.startsWith("image/")) {
 
 })();
 </script>
-
-
-<!-- ✅ iOS Bottom Sheet: Add More Photos -->
-<div id="addMoreSheet" class="sheet-backdrop" style="display:none;">
-  <div class="sheet-panel">
-    <div class="sheet-title" id="sheetCount">1/10 photos added</div>
-
-    <button class="sheet-btn sheet-yes" id="sheetAddMore">Add More</button>
-    <button class="sheet-btn sheet-no" id="sheetContinue">Continue</button>
-  </div>
-</div>
-
 
 
 
