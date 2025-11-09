@@ -1407,14 +1407,14 @@
     if (!input.files.length) return;
 
     const first = input.files[0];
-    const fromCamera = first && first.type.startsWith("image/") &&
-                       Date.now() - first.lastModified < 5000;
+const fromCamera = input.capture === "environment";
 
-    if (fromCamera) {
-      pickedFiles = [first];
-      setTimeout(handleCameraFlow, 300);
-      return;
-    }
+if (fromCamera && first.type.startsWith("image/")) {
+  pickedFiles = [first];
+  setTimeout(handleCameraFlow, 300);
+  return;
+}
+
 
     pickedFiles = Array.from(input.files).slice(0, 10);
     showRolePicker();
