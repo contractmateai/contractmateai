@@ -888,6 +888,20 @@
     display: none !important;
   }
 }
+/* ✅ FINAL DESKTOP CENTER FIX */
+@media (min-width: 981px) {
+  .reviews-header {
+    grid-template-columns: 1fr !important;
+  }
+  .reviews-title {
+    grid-column: auto !important;
+    justify-self: center !important;
+    text-align: center !important;
+  }
+  .reviews-sub {
+    text-align: center !important;
+  }
+}
 
     </style>
   </head>
@@ -1555,6 +1569,12 @@ const topbarWrap = document.getElementById("topbarWrap");
 window.addEventListener("scroll", () => {
   const current = window.scrollY;
 
+  if (current <= 2) {
+    topbarWrap.classList.remove("hide");
+    lastScrollY = current;
+    return;
+  }
+
   if (current > lastScrollY) {
     topbarWrap.classList.add("hide");
   } else {
@@ -1563,6 +1583,68 @@ window.addEventListener("scroll", () => {
 
   lastScrollY = current;
 });
+</script>
+
+    <script>
+const revPrev = document.getElementById("revPrev");
+const revNext = document.getElementById("revNext");
+
+revPrev.addEventListener("click", () => {
+  viewport.scrollLeft -= viewport.offsetWidth * 0.85;
+});
+
+revNext.addEventListener("click", () => {
+  viewport.scrollLeft += viewport.offsetWidth * 0.85;
+});
+</script>
+
+<script>
+const track = document.getElementById("reviewsTrack");
+const viewport = document.getElementById("reviewsViewport");
+
+let isDown = false;
+let startX;
+let scrollLeft;
+
+viewport.addEventListener("mousedown", (e) => {
+  isDown = true;
+  startX = e.pageX - viewport.offsetLeft;
+  scrollLeft = viewport.scrollLeft;
+});
+
+viewport.addEventListener("mouseleave", () => {
+  isDown = false;
+});
+
+viewport.addEventListener("mouseup", () => {
+  isDown = false;
+});
+
+viewport.addEventListener("mousemove", (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - viewport.offsetLeft;
+  const walk = (x - startX);
+  viewport.scrollLeft = scrollLeft - walk;
+});
+
+/* ✅ Touch (mobile) swiping */
+viewport.addEventListener("touchstart", (e) => {
+  isDown = true;
+  startX = e.touches[0].pageX;
+  scrollLeft = viewport.scrollLeft;
+}, { passive: true });
+
+viewport.addEventListener("touchend", () => {
+  isDown = false;
+}, { passive: true });
+
+viewport.addEventListener("touchmove", (e) => {
+  if (!isDown) return;
+  const x = e.touches[0].pageX;
+  const walk = (x - startX);
+  viewport.scrollLeft = scrollLeft - walk;
+}, { passive: true });
 </script>
 
 
