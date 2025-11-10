@@ -863,6 +863,31 @@
   background: #2c2b33;
   color: #ffffff;
 }
+/* ✅ Center reviews title + subtitle on desktop */
+@media (min-width: 981px) {
+  .reviews-header {
+    grid-template-columns: 1fr !important;
+  }
+  .reviews-title {
+    grid-column: auto !important;
+    justify-self: center !important;
+    text-align: center !important;
+  }
+  .reviews-sub {
+    text-align: center !important;
+  }
+}
+/* ✅ Fix mobile menu not clickable */
+#menuToggle {
+  position: relative;
+  z-index: 999999 !important;
+}
+/* ✅ Prevent mobile YouTube block from showing on desktop */
+@media (min-width: 981px) {
+  .yt-wrap {
+    display: none !important;
+  }
+}
 
     </style>
   </head>
@@ -1523,6 +1548,22 @@ if (fromCamera && first.type.startsWith("image/")) {
 })();
 </script>
 
+<script>
+let lastScrollY = 0;
+const topbarWrap = document.getElementById("topbarWrap");
+
+window.addEventListener("scroll", () => {
+  const current = window.scrollY;
+
+  if (current > lastScrollY) {
+    topbarWrap.classList.add("hide");
+  } else {
+    topbarWrap.classList.remove("hide");
+  }
+
+  lastScrollY = current;
+});
+</script>
 
 
   </body>
