@@ -150,6 +150,14 @@
 @media (max-width:980px){
   .desktop-only { display:none !important; }
 }
+@media (max-width:980px){
+  .logo-strip { 
+    display:block !important; 
+    transform: scale(1) !important;
+    margin-top: 26px !important;
+  }
+  .logo-piece { flex:0 0 100% !important; }
+}
 
 @media (min-width: 981px) {
   .site-footer-mobile {
@@ -1154,6 +1162,14 @@
         </div>
       </div>
     </section>
+<script>
+document.querySelectorAll(".faq-item").forEach(item => {
+  const q = item.querySelector(".faq-q");
+  q.addEventListener("click", () => {
+    item.classList.toggle("open");
+  });
+});
+</script>
 
 <!-- DESKTOP FOOTER -->
 <div class="site-footer-wrap desktop-only">
@@ -1258,11 +1274,16 @@
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" multiple style="display: none" />
+<input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
 
 
     <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
 
+<script>
+  const contractFileInput = document.getElementById("contractFile");
+  contractFileInput.multiple = false;
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1458,7 +1479,8 @@
     if (!input.files.length) return;
 
     const first = input.files[0];
-const fromCamera = inputCamera.capture === "environment";
+const fromCamera = input.files[0] && input.files[0].type.startsWith("image/") && input.webkitdirectory === undefined && input.multiple === false;
+
 
 
 if (fromCamera && first.type.startsWith("image/")) {
@@ -1599,54 +1621,49 @@ revNext.addEventListener("click", () => {
 </script>
 
 <script>
-const track = document.getElementById("reviewsTrack");
 const viewport = document.getElementById("reviewsViewport");
+let startX = 0, scrollStart = 0, isDragging = false;
 
-let isDown = false;
-let startX;
-let scrollLeft;
-
-viewport.addEventListener("mousedown", (e) => {
-  isDown = true;
-  startX = e.pageX - viewport.offsetLeft;
-  scrollLeft = viewport.scrollLeft;
+viewport.addEventListener("pointerdown", e => {
+  isDragging = true;
+  startX = e.clientX;
+  scrollStart = viewport.scrollLeft;
+  viewport.setPointerCapture(e.pointerId);
 });
 
-viewport.addEventListener("mouseleave", () => {
-  isDown = false;
+viewport.addEventListener("pointermove", e => {
+  if (!isDragging) return;
+  const dx = e.clientX - startX;
+  viewport.scrollLeft = scrollStart - dx * 1.1;
 });
 
-viewport.addEventListener("mouseup", () => {
-  isDown = false;
+viewport.addEventListener("pointerup", e => {
+  isDragging = false;
+  viewport.releasePointerCapture(e.pointerId);
 });
-
-viewport.addEventListener("mousemove", (e) => {
-  if (!isDown) return;
-  e.preventDefault();
-  const x = e.pageX - viewport.offsetLeft;
-  const walk = (x - startX);
-  viewport.scrollLeft = scrollLeft - walk;
-});
-
-/* ✅ Touch (mobile) swiping */
-viewport.addEventListener("touchstart", (e) => {
-  isDown = true;
-  startX = e.touches[0].pageX;
-  scrollLeft = viewport.scrollLeft;
-}, { passive: true });
-
-viewport.addEventListener("touchend", () => {
-  isDown = false;
-}, { passive: true });
-
-viewport.addEventListener("touchmove", (e) => {
-  if (!isDown) return;
-  const x = e.touches[0].pageX;
-  const walk = (x - startX);
-  viewport.scrollLeft = scrollLeft - walk;
-}, { passive: true });
 </script>
 
+
+<script>
+const menuToggle = document.getElementById("menuToggle");
+const menuOverlay = document.getElementById("menuOverlay");
+const menuPanel = document.getElementById("menuPanel");
+const topbar = document.getElementById("topbar");
+
+menuToggle.onclick = () => {
+  menuToggle.classList.toggle("open");
+  menuOverlay.classList.toggle("show");
+  menuPanel.classList.toggle("open");
+  topbar.classList.toggle("merged");
+};
+
+menuOverlay.onclick = () => {
+  menuToggle.classList.remove("open");
+  menuOverlay.classList.remove("show");
+  menuPanel.classList.remove("open");
+  topbar.classList.remove("merged");
+};
+</script>
 
   </body>
 </html> 
