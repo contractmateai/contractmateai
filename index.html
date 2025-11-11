@@ -1162,7 +1162,8 @@
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+ <input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
 
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
 
@@ -1580,6 +1581,55 @@ inputCamera.addEventListener("change", async () => {
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+// === CAMERA FLOW SYSTEM (FULL) ===
+
+const cameraSheet = document.getElementById("cameraSheet");
+const cameraCount = document.getElementById("cameraCount");
+const addMoreBtn = document.getElementById("addMoreBtn");
+const continueBtn = document.getElementById("continueBtn");
+
+function showCameraSheet() {
+  cameraSheet.style.bottom = "0";
+}
+
+function hideCameraSheet() {
+  cameraSheet.style.bottom = "-400px";
+}
+
+function updateCount() {
+  cameraCount.textContent = `${pickedFiles.length}/10 photos added`;
+}
+
+// ✅ Core function that runs when the FIRST camera photo is taken
+window.handleCameraFlow = function () {
+  updateCount();
+  showCameraSheet();
+};
+
+// ✅ Add more photos
+addMoreBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  if (pickedFiles.length >= 10) {
+    alert("Maximum 10 photos.");
+    return;
+  }
+
+  // reopen camera
+  inputCamera.value = "";
+  inputCamera.click();
+});
+
+// ✅ Continue → show role picker
+continueBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  // hide CTA
+  ctaBtn.style.display = "none";
+
+  // show role picker
+  roleUI.hidden = false;
+});
 
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
@@ -1626,5 +1676,45 @@ window.location.href = "analysis.html";
     });
   })();
 </script>
+    <!-- CAMERA FLOW BOTTOM SHEET -->
+<div id="cameraSheet" style="
+  position: fixed;
+  left: 0; right: 0; bottom: -400px;
+  background: #111;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  box-shadow: 0 -6px 22px rgba(0,0,0,.6);
+  transition: bottom .25s ease;
+  color: white;
+  z-index: 99999;
+">
+  <div id="cameraCount" style="
+    font-size: 20px;
+    margin-bottom: 18px;
+    text-align: center;
+  ">1/10 photos added</div>
+
+  <button id="addMoreBtn" style="
+    width: 100%;
+    background: #adff00;
+    color: black;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    margin-bottom: 12px;
+  ">Add More</button>
+
+  <button id="continueBtn" style="
+    width: 100%;
+    background: white;
+    color: black;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+  ">Continue</button>
+</div>
+
   </body>
 </html> 
