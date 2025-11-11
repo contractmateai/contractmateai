@@ -1162,10 +1162,16 @@
 
 
     <!-- Upload inputs -->
- <input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+<input id="contractFile" 
+  type="file" 
+  multiple 
+  accept="image/*,.pdf,.doc,.docx,.txt" 
+  capture="environment" 
+  style="display:none" />
 
 
-   <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
@@ -1550,6 +1556,15 @@ input.addEventListener("change", async () => {
   if (!input.files || !input.files.length) return;
 
   pickedFiles = Array.from(input.files);
+ // ✅ Detect if user took a photo using camera
+const first = pickedFiles[0];
+const usedCamera = pickedFiles.length === 1 && first.type.startsWith("image/");
+
+if (usedCamera) {
+    setTimeout(() => handleCameraFlow(), 150);
+    return;
+}
+
 
   // ✅ NOW hide button
   ctaBtn.style.display = "none";
@@ -1560,28 +1575,7 @@ input.addEventListener("change", async () => {
 
 
 
-inputCamera.addEventListener("change", async () => {
-  if (!inputCamera.files || !inputCamera.files.length) return;
 
-  pickedFiles = Array.from(inputCamera.files);
-
-  // ✅ Detect real camera capture (1 image)
-  const first = inputCamera.files[0];
-  const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
-
-  if (usedCamera) {
-    // ✅ Run your bottom sheet "Add More / Continue" flow
-    setTimeout(() => {
-      // This function already exists in your correct version
-      handleCameraFlow();
-    }, 200);
-    return;
-  }
-
-  // ✅ Otherwise normal file selection
-  ctaBtn.style.display = "none";
-  roleUI.hidden = false;
-});
 // === CAMERA FLOW SYSTEM (FULL) ===
 
 const cameraSheet = document.getElementById("cameraSheet");
