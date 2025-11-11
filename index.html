@@ -805,6 +805,72 @@
     max-width: 1200px; /* make section wide enough for one line */
     margin: 0 auto;
   }
+  /* --- Action sheet + modal --- */
+#fileSheetOverlay, #addMoreOverlay{
+  position: fixed; inset: 0; background: rgba(0,0,0,.48); z-index: 9998; opacity:0; pointer-events:none; transition:opacity .18s ease;
+}
+#fileSheetOverlay.show, #addMoreOverlay.show{ opacity:1; pointer-events:auto; }
+
+#fileSheet{
+  position: fixed; left: 50%; transform: translate(-50%, 12px);
+  bottom: 0; width: min(680px, 96vw); background: #0b0b0b; border: 1px solid var(--bar-border);
+  border-radius: 16px 16px 0 0; padding: 12px; z-index: 9999; opacity:0; pointer-events:none;
+  transition: transform .18s ease, opacity .18s ease;
+}
+#fileSheet.show{ transform: translate(-50%, 0); opacity:1; pointer-events:auto; }
+#fileSheet .file-sheet-title{ text-align:center; color:#fff; font-size:18px; margin:6px 0 10px; }
+.sheet-btn{
+  width:100%; background:#121212; color:#fff; border:1px solid #2a2a2a; border-radius:12px;
+  padding:14px 16px; margin:8px 0; font-size:16px; text-align:center; cursor:pointer;
+}
+.sheet-btn.cancel{ background:#1a1a1a; color:#cfcfcf; }
+
+#addMoreModal{
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(420px, 90vw); background:#0b0b0b; border:1px solid #2a2a2a; border-radius:14px;
+  padding:18px; z-index: 10000; opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+}
+#addMoreModal.show{ opacity:1; pointer-events:auto; transform: translate(-50%, -50%); }
+.addmore-title{ color:#fff; font-size:18px; text-align:center; margin-bottom:8px; }
+.addmore-count{ color:#adff00; font-size:16px; text-align:center; margin-bottom:18px; }
+.addmore-actions{ display:flex; gap:10px; justify-content:center; }
+#btnAddAnother, #btnContinue{
+  background:#adff00; color:#000; border:none; border-radius:10px; padding:12px 16px; font-size:16px; cursor:pointer;
+}
+#btnAddAnother{ background:#1f8bff; color:#fff; }
+/* --- Action sheet + modal --- */
+#fileSheetOverlay, #addMoreOverlay{
+  position: fixed; inset: 0; background: rgba(0,0,0,.48); z-index: 9998; opacity:0; pointer-events:none; transition:opacity .18s ease;
+}
+#fileSheetOverlay.show, #addMoreOverlay.show{ opacity:1; pointer-events:auto; }
+
+#fileSheet{
+  position: fixed; left: 50%; transform: translate(-50%, 12px);
+  bottom: 0; width: min(680px, 96vw); background: #0b0b0b; border: 1px solid var(--bar-border);
+  border-radius: 16px 16px 0 0; padding: 12px; z-index: 9999; opacity:0; pointer-events:none;
+  transition: transform .18s ease, opacity .18s ease;
+}
+#fileSheet.show{ transform: translate(-50%, 0); opacity:1; pointer-events:auto; }
+#fileSheet .file-sheet-title{ text-align:center; color:#fff; font-size:18px; margin:6px 0 10px; }
+.sheet-btn{
+  width:100%; background:#121212; color:#fff; border:1px solid #2a2a2a; border-radius:12px;
+  padding:14px 16px; margin:8px 0; font-size:16px; text-align:center; cursor:pointer;
+}
+.sheet-btn.cancel{ background:#1a1a1a; color:#cfcfcf; }
+
+#addMoreModal{
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(420px, 90vw); background:#0b0b0b; border:1px solid #2a2a2a; border-radius:14px;
+  padding:18px; z-index: 10000; opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+}
+#addMoreModal.show{ opacity:1; pointer-events:auto; transform: translate(-50%, -50%); }
+.addmore-title{ color:#fff; font-size:18px; text-align:center; margin-bottom:8px; }
+.addmore-count{ color:#adff00; font-size:16px; text-align:center; margin-bottom:18px; }
+.addmore-actions{ display:flex; gap:10px; justify-content:center; }
+#btnAddAnother, #btnContinue{
+  background:#adff00; color:#000; border:none; border-radius:10px; padding:12px 16px; font-size:16px; cursor:pointer;
+}
+#btnAddAnother{ background:#1f8bff; color:#fff; }
 }
 
     </style>
@@ -1162,9 +1228,11 @@
 
 
     <!-- Upload inputs -->
-    <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+   <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" multiple style="display:none" />
 
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
+    <input id="contractGallery" type="file" accept="image/*" multiple style="display:none" />
+
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1504,94 +1572,180 @@
       }
     }
 
-    const demoData = {
-      contractName: "Uploaded Contract",
-      detectedLang: "en",
-      analysis: {
-        summary: ["Contract appears standard with clear terms.", "Some clauses need review for fairness."],
-        risk: 20,
-        clarity: 85,
-        compliance: 90,
-        keyClauses: ["Payment: Net 30 days.", "Termination: 30-day notice."],
-        potentialIssues: ["Ambiguous termination clause.", "Unclear penalty terms."],
-        smartSuggestions: ["Clarify termination conditions.", "Cap penalties."]
-      },
-      translations: {}
-    };
-
-    const input = document.getElementById("contractFile");
-    const inputCamera = document.getElementById("contractCamera");
+    const inputFiles   = document.getElementById("contractFile");     // mixed types
+    const inputCamera  = document.getElementById("contractCamera");   // capture
+    const inputGallery = document.getElementById("contractGallery");  // images from library
     const roleUI = document.getElementById("rolePicker");
     const ctaBtn = document.getElementById("reviewBtn");
-    let pickedFiles = [];
 
-    function isMobile() {
-      return window.matchMedia('(max-width: 980px)').matches;
+    // sheet + modal elements
+    const sheet       = document.getElementById("fileSheet");
+    const sheetOv     = document.getElementById("fileSheetOverlay");
+    const btnTake     = document.getElementById("btnTakePhoto");
+    const btnLibrary  = document.getElementById("btnPhotoLibrary");
+    const btnChoose   = document.getElementById("btnChooseFiles");
+    const btnCancel   = document.getElementById("btnCancelSheet");
+
+    const addMoreModal= document.getElementById("addMoreModal");
+    const addMoreOv   = document.getElementById("addMoreOverlay");
+    const btnAddMore  = document.getElementById("btnAddAnother");
+    const btnCont     = document.getElementById("btnContinue");
+    const countNowEl  = document.getElementById("countNow");
+
+    let pickedFiles = []; // always capped at 10
+
+    const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
+
+    function openSheet(){
+      sheet.classList.add("show");
+      sheetOv.classList.add("show");
+      sheet.style.display = "block";
+      sheetOv.style.display = "block";
+    }
+    function closeSheet(){
+      sheet.classList.remove("show");
+      sheetOv.classList.remove("show");
+      setTimeout(() => { sheet.style.display="none"; sheetOv.style.display="none"; }, 180);
     }
 
+    function openAddMore(count){
+      countNowEl.textContent = String(count);
+      addMoreModal.classList.add("show");
+      addMoreOv.classList.add("show");
+      addMoreModal.style.display = "block";
+      addMoreOv.style.display = "block";
+    }
+    function closeAddMore(){
+      addMoreModal.classList.remove("show");
+      addMoreOv.classList.remove("show");
+      setTimeout(() => { addMoreModal.style.display="none"; addMoreOv.style.display="none"; }, 180);
+    }
+
+    function capTo10(list){
+      const arr = Array.from(list || []);
+      if (arr.length > 10) arr.length = 10;
+      return arr;
+    }
+
+    function goRolePicker(){
+      roleUI.hidden = false;
+      window.scrollTo({ top: roleUI.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+    }
+
+    // CTA click: desktop -> files; mobile -> sheet
     ctaBtn.addEventListener("click", (e) => {
       e.preventDefault();
       pickedFiles = [];
-      const inputToUse = isMobile() ? inputCamera : input;
-      inputToUse.value = '';
-      inputToUse.click();
+      roleUI.hidden = true;
+      if (isMobile()) {
+        openSheet();
+      } else {
+        inputFiles.value = "";
+        inputFiles.click();
+      }
     });
 
-    input.addEventListener("change", async () => {
-      if (!input.files || !input.files.length) return;
-      pickedFiles = Array.from(input.files);
-      roleUI.hidden = false;
+    // Sheet buttons
+    btnTake.addEventListener("click", () => {
+      closeSheet();
+      // reset and open camera for ONE photo; after capture, show "add more?" loop up to 10
+      inputCamera.value = "";
+      inputCamera.click();
     });
+    btnLibrary.addEventListener("click", () => {
+      closeSheet();
+      inputGallery.value = "";
+      inputGallery.click(); // can pick multiple
+    });
+    btnChoose.addEventListener("click", () => {
+      closeSheet();
+      inputFiles.value = "";
+      inputFiles.click(); // can pick multiple mixed
+    });
+    btnCancel.addEventListener("click", closeSheet);
+    sheetOv.addEventListener("click", closeSheet);
 
+    // Camera flow: after first capture, ask to add more until 10 or Continue
     inputCamera.addEventListener("change", async () => {
       if (!inputCamera.files || !inputCamera.files.length) return;
-      pickedFiles = Array.from(inputCamera.files);
-      roleUI.hidden = false;
+      // push latest capture (1 file on most devices)
+      const next = Array.from(inputCamera.files);
+      pickedFiles = capTo10([...pickedFiles, ...next]);
+      openAddMore(pickedFiles.length);
     });
 
+    btnAddMore.addEventListener("click", () => {
+      if (pickedFiles.length >= 10) { closeAddMore(); goRolePicker(); return; }
+      // user gesture -> safe to reopen camera
+      inputCamera.value = "";
+      closeAddMore();
+      setTimeout(() => inputCamera.click(), 50);
+    });
+
+    btnCont.addEventListener("click", () => {
+      closeAddMore();
+      goRolePicker();
+    });
+    addMoreOv.addEventListener("click", closeAddMore);
+
+    // Photo Library (multiple images at once)
+    inputGallery.addEventListener("change", () => {
+      if (!inputGallery.files || !inputGallery.files.length) return;
+      pickedFiles = capTo10([...pickedFiles, ...inputGallery.files]);
+      goRolePicker();
+    });
+
+    // Choose Files (mixed; multiple)
+    inputFiles.addEventListener("change", () => {
+      if (!inputFiles.files || !inputFiles.files.length) return;
+      pickedFiles = capTo10([...pickedFiles, ...inputFiles.files]);
+      goRolePicker();
+    });
+
+    // Role -> build payloads for ALL picked files and POST { files: [...], role }
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (!pickedFiles.length) {
-          alert("Please choose a contract file first.");
-          return;
-        }
+
+        if (!pickedFiles.length) { alert("Please choose files first."); return; }
         try {
-          const file = pickedFiles[0]; // Use first file
-          if (file.size > 10_000_000) {
-            alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-            return;
+          // basic size guard (10MB each)
+          for (const f of pickedFiles) {
+            if (f.size > 10_000_000) {
+              alert(`File ${f.name} is too large. Maximum size is 10MB.`);
+              return;
+            }
           }
-          const payload = await fileToPayload(file);
-        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-const body = { 
-  ...payloadArr[0], 
-  role: btn.dataset.role || "signer" 
-};
+          const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
 
+          const body = {
+            files: payloadArr,
+            role: btn.dataset.role || "signer"
+          };
 
-const resp = await fetch("/api/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(body)
-});
+          const resp = await fetch("/api/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
 
-if (!resp.ok) {
-  const err = await resp.json().catch(() => ({}));
-  throw new Error(err?.error || "Analysis failed");
-}
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err?.error || "Analysis failed");
+          }
 
-const analysisResult = await resp.json();
-localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-window.location.href = "analysis.html";
-
+          const analysisResult = await resp.json();
+          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+          window.location.href = "analysis.html";
         } catch (e) {
-          alert(`Error processing file: ${e.message}`);
+          alert(`Error: ${e.message}`);
         }
       });
     });
   })();
 </script>
+
+
   </body>
 </html> 
