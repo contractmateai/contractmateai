@@ -1582,18 +1582,21 @@ inputCamera.addEventListener("change", async () => {
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
-// === CAMERA FLOW SYSTEM (FULL) ===
+// === CAMERA FLOW SYSTEM — FULL LOOPED VERSION ===
 
 const cameraSheet = document.getElementById("cameraSheet");
 const cameraCount = document.getElementById("cameraCount");
 const addMoreBtn = document.getElementById("addMoreBtn");
 const continueBtn = document.getElementById("continueBtn");
 
-function showCameraSheet() {
+let cameraResolve = null;
+
+function showSheet() {
+  updateCount();
   cameraSheet.style.bottom = "0";
 }
 
-function hideCameraSheet() {
+function hideSheet() {
   cameraSheet.style.bottom = "-400px";
 }
 
@@ -1601,39 +1604,58 @@ function updateCount() {
   cameraCount.textContent = `${pickedFiles.length}/10 photos added`;
 }
 
-// ✅ Core function that runs when the FIRST camera photo is taken
-window.handleCameraFlow = function () {
-  updateCount();
-  showCameraSheet();
-};
+// ✅ Loop system identical to your correct working version
+async function handleCameraFlow() {
+  let count = pickedFiles.length;
 
-// ✅ Add more photos
-addMoreBtn.addEventListener("click", () => {
-  hideCameraSheet();
+  while (count < 10) {
 
-  if (pickedFiles.length >= 10) {
-    alert("Maximum 10 photos.");
-    return;
+    if (count > 0) {
+      await new Promise(resolve => {
+        cameraResolve = resolve;
+        showSheet();
+      });
+    }
+
+    if (!cameraResolve) break;
+
+    const addMore = await cameraResolve;
+    if (!addMore) break; // Continue clicked → stop asking
+
+    // User wants to add more → reopen camera
+    await new Promise(resolve => {
+      inputCamera.onchange = () => {
+        if (inputCamera.files.length) {
+          pickedFiles.push(inputCamera.files[0]);
+          updateCount();
+        }
+        resolve();
+      };
+      inputCamera.value = "";
+      inputCamera.click();
+    });
+
+    count = pickedFiles.length;
   }
 
-  // reopen camera
-  inputCamera.value = "";
-  inputCamera.click();
-});
-
-// ✅ Continue → show role picker
-continueBtn.addEventListener("click", () => {
-  hideCameraSheet();
-
-  // hide CTA
+  // ✅ After loop finishes → hide sheet + show role picker
+  hideSheet();
   ctaBtn.style.display = "none";
-
-  // show role picker
   roleUI.hidden = false;
-});
+}
 
+// ✅ Add More pressed
+addMoreBtn.onclick = () => {
+  hideSheet();
+  if (cameraResolve) cameraResolve(true);
+};
 
-    roleUI.querySelectorAll('.role-btn').forEach(btn => {
+// ✅ Continue pressed
+continueBtn.onclick = () => {
+  hideSheet();
+  if (cameraResolve) cameraResolve(false);
+};
+
       btn.addEventListener('click', async () => {
         roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
