@@ -1532,38 +1532,55 @@
 ctaBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
-  // ✅ Hide the button immediately
-  ctaBtn.style.display = "none";
-
-  // ✅ Show role picker EXACTLY in the same place
-  const ctaWrap = document.getElementById("ctaWrap");
-  ctaWrap.appendChild(roleUI);
-  roleUI.hidden = false;
+  // ✅ DO NOT HIDE BUTTON YET
+  // ✅ DO NOT SHOW ROLE PICKER YET
 
   pickedFiles = [];
 
-  const inputToUse = isMobile() ? inputCamera : input;
-  inputToUse.value = '';
-  inputToUse.click();
+  // ✅ ALWAYS show native iOS/Android sheet:
+  input.value = "";
+  input.click();
 });
+
 
 
 input.addEventListener("change", async () => {
   if (!input.files || !input.files.length) return;
+
   pickedFiles = Array.from(input.files);
 
+  // ✅ NOW hide button
   ctaBtn.style.display = "none";
+
+  // ✅ NOW show role picker
   roleUI.hidden = false;
 });
 
 
-  inputCamera.addEventListener("change", async () => {
+
+inputCamera.addEventListener("change", async () => {
   if (!inputCamera.files || !inputCamera.files.length) return;
+
   pickedFiles = Array.from(inputCamera.files);
 
+  // ✅ Detect real camera capture (1 image)
+  const first = inputCamera.files[0];
+  const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
+
+  if (usedCamera) {
+    // ✅ Run your bottom sheet "Add More / Continue" flow
+    setTimeout(() => {
+      // This function already exists in your correct version
+      handleCameraFlow();
+    }, 200);
+    return;
+  }
+
+  // ✅ Otherwise normal file selection
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
