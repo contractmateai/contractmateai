@@ -788,7 +788,6 @@
     width: 100%;
   }
 }
-      
 /* === Desktop: keep features heading in one line === */
 @media (min-width: 981px) {
   .scroll-section h3 {
@@ -807,11 +806,7 @@
     margin: 0 auto;
   }
 }
-/* ✅ FIX: make “Review A Contract” button clickable */
-#reviewBtn {
-  position: relative !important;
-  z-index: 999999 !important;
-}
+
     </style>
   </head>
   <body>
@@ -1170,26 +1165,6 @@
     <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
 
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
-<!-- ✅ ACTION SHEET (mobile options) -->
-<div id="fileSheetOverlay" style="display:none"></div>
-<div id="fileSheet" aria-hidden="true">
-  <div class="file-sheet-title">Choose an option</div>
-  <button type="button" class="sheet-btn" id="btnTakePhoto">Take Photo</button>
-  <button type="button" class="sheet-btn" id="btnPhotoLibrary">Photo Library</button>
-  <button type="button" class="sheet-btn" id="btnChooseFiles">Choose Files</button>
-  <button type="button" class="sheet-btn cancel" id="btnCancelSheet">Cancel</button>
-</div>
-
-<!-- ✅ ADD MORE MODAL -->
-<div id="addMoreOverlay" style="display:none"></div>
-<div id="addMoreModal" aria-hidden="true">
-  <div class="addmore-title">Add more photos?</div>
-  <div class="addmore-count"><span id="countNow">1</span> / 10</div>
-  <div class="addmore-actions">
-    <button type="button" id="btnAddAnother">Yes, add more</button>
-    <button type="button" id="btnContinue">Continue</button>
-  </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1556,30 +1531,39 @@
 
 ctaBtn.addEventListener("click", (e) => {
   e.preventDefault();
+
+  // ✅ Hide the button immediately
+  ctaBtn.style.display = "none";
+
+  // ✅ Show role picker EXACTLY in the same place
+  const ctaWrap = document.getElementById("ctaWrap");
+  ctaWrap.appendChild(roleUI);
+  roleUI.hidden = false;
+
   pickedFiles = [];
 
-  if (isMobile()) {
-    // ✅ Show action sheet
-    document.getElementById("fileSheetOverlay").classList.add("show");
-    document.getElementById("fileSheet").classList.add("show");
-  } else {
-    input.value = "";
-    input.click();
-  }
+  const inputToUse = isMobile() ? inputCamera : input;
+  inputToUse.value = '';
+  inputToUse.click();
 });
 
 
-    input.addEventListener("change", async () => {
-      if (!input.files || !input.files.length) return;
-      pickedFiles = Array.from(input.files);
-      roleUI.hidden = false;
-    });
+input.addEventListener("change", async () => {
+  if (!input.files || !input.files.length) return;
+  pickedFiles = Array.from(input.files);
 
-    inputCamera.addEventListener("change", async () => {
-      if (!inputCamera.files || !inputCamera.files.length) return;
-      pickedFiles = Array.from(inputCamera.files);
-      roleUI.hidden = false;
-    });
+  ctaBtn.style.display = "none";
+  roleUI.hidden = false;
+});
+
+
+  inputCamera.addEventListener("change", async () => {
+  if (!inputCamera.files || !inputCamera.files.length) return;
+  pickedFiles = Array.from(inputCamera.files);
+
+  ctaBtn.style.display = "none";
+  roleUI.hidden = false;
+});
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1625,39 +1609,5 @@ window.location.href = "analysis.html";
     });
   })();
 </script>
-    <script>
-document.getElementById("btnCancelSheet").onclick = () => {
-  document.getElementById("fileSheetOverlay").classList.remove("show");
-  document.getElementById("fileSheet").classList.remove("show");
-};
-
-document.getElementById("btnTakePhoto").onclick = () => {
-  document.getElementById("fileSheetOverlay").classList.remove("show");
-  document.getElementById("fileSheet").classList.remove("show");
-
-  const cam = document.getElementById("contractCamera");
-  cam.value = "";
-  cam.click();
-};
-
-document.getElementById("btnPhotoLibrary").onclick = () => {
-  document.getElementById("fileSheetOverlay").classList.remove("show");
-  document.getElementById("fileSheet").classList.remove("show");
-
-  const cam = document.getElementById("contractCamera");
-  cam.value = "";
-  cam.click();
-};
-
-document.getElementById("btnChooseFiles").onclick = () => {
-  document.getElementById("fileSheetOverlay").classList.remove("show");
-  document.getElementById("fileSheet").classList.remove("show");
-
-  const inp = document.getElementById("contractFile");
-  inp.value = "";
-  inp.click();
-};
-</script>
-
   </body>
 </html> 
