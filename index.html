@@ -1233,6 +1233,26 @@
     <input id="contractCamera" type="file" accept="image/*" capture="environment" multiple style="display:none" />
     <input id="contractGallery" type="file" accept="image/*" multiple style="display:none" />
 
+<!-- Action Sheet -->
+<div id="fileSheetOverlay" style="display:none"></div>
+<div id="fileSheet" aria-hidden="true">
+  <div class="file-sheet-title">Choose an option</div>
+  <button type="button" class="sheet-btn" id="btnTakePhoto">Take Photo</button>
+  <button type="button" class="sheet-btn" id="btnPhotoLibrary">Photo Library</button>
+  <button type="button" class="sheet-btn" id="btnChooseFiles">Choose Files</button>
+  <button type="button" class="sheet-btn cancel" id="btnCancelSheet">Cancel</button>
+</div>
+
+<!-- Add More Modal -->
+<div id="addMoreOverlay" style="display:none"></div>
+<div id="addMoreModal" aria-hidden="true">
+  <div class="addmore-title">Add more photos?</div>
+  <div class="addmore-count"><span id="countNow">1</span> / 10</div>
+  <div class="addmore-actions">
+    <button type="button" id="btnAddAnother">Yes, add more</button>
+    <button type="button" id="btnContinue">Continue</button>
+  </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
