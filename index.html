@@ -1457,10 +1457,28 @@
       positionPanel(); window.addEventListener('resize', positionPanel);
       function openMenu(){ positionPanel(); menuPanel.classList.add('open'); menuOverlay.classList.add('show'); menuToggle.classList.add('open'); topbar.classList.add('merged'); }
       function closeMenu(){ menuPanel.classList.remove('open'); menuOverlay.classList.remove('show'); menuToggle.classList.remove('open'); topbar.classList.remove('merged'); }
-      menuToggle.addEventListener('click', () => { if(menuPanel.classList.contains('open')) closeMenu(); else openMenu(); });
-      menuOverlay.addEventListener('click', closeMenu);
+     menuToggle.addEventListener('click', () => {
+  if (menuPanel.classList.contains('open')) {
+    closeMenu();
+    menuOverlay.classList.remove('show');   // ✅ FIX
+  } else {
+    openMenu();
+  }
+});
+
+     menuOverlay.addEventListener('click', () => {
+  closeMenu();
+  menuOverlay.classList.remove('show');     // ✅ FIX
+});
+
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
-      window.addEventListener('scroll', () => { if (menuPanel.classList.contains('open')) closeMenu(); }, { passive:true });
+     window.addEventListener('scroll', () => {
+  if (menuPanel.classList.contains('open')) {
+    closeMenu();
+    menuOverlay.classList.remove('show');   // ✅ FIX
+  }
+}, { passive:true });
+
     </script>
 
 <script>
