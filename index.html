@@ -1552,22 +1552,25 @@ input.addEventListener("change", async () => {
   pickedFiles = Array.from(input.files);
 
   const first = input.files[0];
+  const now = Date.now();
   const usedCamera =
     input.files.length === 1 &&
     first.type.startsWith("image/") &&
-    first.name.startsWith("image") &&
-    first.lastModified > Date.now() - 5000; // taken within 5 s
+    (first.name.toLowerCase().startsWith("image") ||
+     first.name.toLowerCase().startsWith("captur")) &&
+    now - first.lastModified < 8000; // freshly captured within 8 sec
 
   if (usedCamera) {
-    // ✅ User just took a photo — show bottom sheet “Add More / Continue”
-    setTimeout(() => handleCameraFlow(), 300);
+    // ✅ Just took a photo → show bottom sheet Add More / Continue
+    setTimeout(() => handleCameraFlow(), 400);
     return;
   }
 
-  // ✅ Otherwise normal file/library selection
+  // ✅ Otherwise = normal file or library choice
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+
 
 
 
