@@ -1799,25 +1799,48 @@ window.location.href = "analysis.html";
 </script>
 
 <style>
+/* ----- BOTTOM SHEET: YOUR NEW COLORS (FUNCTION 100% PRESERVED) ----- */
 .sheet-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,.6);
-  display: flex; align-items: flex-end; justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   z-index: 99999;
 }
 .sheet-panel {
-  background: #111; color: white; width: 100%; max-width: 500px;
-  border-radius: 24px 24px 0 0; padding: 24px;
+  background: #1e1d23; /* ← panel background */
+  color: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
   box-shadow: 0 -6px 22px rgba(0,0,0,.6);
 }
 .sheet-title {
-  font-size: 20px; text-align: center; margin-bottom: 18px;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 18px;
+  color: #fff; /* ← white text */
 }
 .sheet-btn {
-  width: 100%; padding: 14px; border: none; border-radius: 12px;
-  font-size: 18px; margin-bottom: 12px; cursor: pointer;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: #fff; /* ← both buttons: white text */
+  font-weight: 500;
 }
-.sheet-yes { background: #adff00; color: black; }
-.sheet-no { background: white; color: black; }
+.sheet-yes {
+  background: #007aff; /* ← Add More button */
+}
+.sheet-no {
+  background: #2c2b33; /* ← Continue button */
+}
 </style>
   </body>
 </html> 
