@@ -816,7 +816,10 @@
     margin: 0 auto;
   }
 }
-
+/* BLUR + NO JUMP */
+body.sheet-open{filter:blur(4px);transition:filter .25s}
+#addMoreSheet,#cameraSheet,#rolePicker{filter:none!important}
+.cta-btn.hidden{visibility:hidden!important;opacity:0!important;height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;transition:all .2s}
     </style>
   </head>
   <body>
@@ -1562,7 +1565,7 @@ input.addEventListener("change", async () => {
   pickedFiles = Array.from(input.files);
 
   // ✅ NOW hide button
-  ctaBtn.style.display = "none";
+ ctaBtn.classList.add('hidden');
 
   // ✅ NOW show role picker
   roleUI.hidden = false;
@@ -1589,7 +1592,7 @@ inputCamera.addEventListener("change", async () => {
   }
 
   // ✅ Otherwise normal file selection
-  ctaBtn.style.display = "none";
+ctaBtn.classList.add('hidden');
   roleUI.hidden = false;
 });
 // === CAMERA FLOW SYSTEM (FULL) ===
@@ -1636,7 +1639,7 @@ continueBtn.addEventListener("click", () => {
   hideCameraSheet();
 
   // hide CTA
-  ctaBtn.style.display = "none";
+ ctaBtn.classList.add('hidden');
 
   // show role picker
   roleUI.hidden = false;
@@ -1737,6 +1740,11 @@ window.location.href = "analysis.html";
 
 <script>
 (async () => {
+ // BLUR + NO JUMP
+const c=document.getElementById.bind(document);
+const sheet=c('addMoreSheet'),cam=c('cameraSheet'),role=c('rolePicker'),cta=c('reviewBtn');
+function b(){const o=sheet.style.display!=='none'||cam.style.bottom==='0px'||!role.hidden;document.body.classList.toggle('sheet-open',o)}
+const o=new MutationObserver(b);o.observe(sheet,{attributes:true,attributeFilter:['style']});o.observe(cam,{attributes:true,attributeFilter:['style']});o.observe(role,{attributes:true,attributeFilter:['hidden']});b();
   const input = document.getElementById("contractFile");
   const inputCamera = document.getElementById("contractCamera");
   const roleUI = document.getElementById("rolePicker");
@@ -1785,7 +1793,7 @@ window.location.href = "analysis.html";
       count++;
     }
     if (pickedFiles.length) {
-      ctaBtn.style.display = "none";
+      ctaBtn.classList.add('hidden');
       roleUI.hidden = false;
     }
   }
@@ -1800,7 +1808,7 @@ window.location.href = "analysis.html";
       return;
     }
     pickedFiles = Array.from(input.files).slice(0, 10);
-    ctaBtn.style.display = "none";
+    ctaBtn.classList.add('hidden');
     roleUI.hidden = false;
   });
 
