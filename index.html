@@ -1774,11 +1774,15 @@ window.location.href = "analysis.html";
       pickedFiles.push(newPhoto);
       count++;
     }
-    if (pickedFiles.length) {
-      ctaBtn.style.display = "none";
-      roleUI.hidden = false;
-    }
+    if (pickedFiles.length) showRolePicker();
   }
+
+  ctaBtn.addEventListener("click", e => {
+    e.preventDefault();
+    pickedFiles = [];
+    input.value = "";
+    input.click();
+  });
 
   input.addEventListener("change", () => {
     if (!input.files.length) return;
@@ -1790,45 +1794,109 @@ window.location.href = "analysis.html";
       return;
     }
     pickedFiles = Array.from(input.files).slice(0, 10);
-    ctaBtn.style.display = "none";
-    roleUI.hidden = false;
+    showRolePicker();
   });
 
-  window.handleCameraFlow = handleCameraFlow;
+  function showRolePicker() {
+    roleUI.hidden = false;
+    document.getElementById("ctaWrap").style.display = "none";
+  }
+
+  async function fileToPayload(file) {
+    const name = file.name || "file";
+    const mime = file.type || "application/octet-stream";
+    if (mime.startsWith("image/")) {
+      return await new Promise(resolve => {
+        const r = new FileReader();
+        r.onload = () => resolve({
+          imageDataURI: r.result,
+          originalName: name,
+          mime
+        });
+        r.readAsDataURL(file);
+      });
+    }
+    if (mime === "application/pdf") {
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let full = "";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const pg = await pdf.getPage(i);
+        const t = await pg.getTextContent();
+        full += t.items.map(a => a.str).join(" ") + "\n";
+      }
+      return { text: full, originalName: name, mime };
+    }
+    if (mime.includes("word")) {
+      const buf = await file.arrayBuffer();
+      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+      return { text: res.value || "", originalName: name, mime };
+    }
+    return { text: await file.text(), originalName: name, mime };
+  }
+
+  roleUI.querySelectorAll(".role-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (!pickedFiles.length) {
+        alert("Please choose a contract file first.");
+        return;
+      }
+      try {
+        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+        const body = { files: payloadArr, role: btn.dataset.role || "signer" };
+        const resp = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const result = await resp.json();
+        localStorage.setItem("analysisRaw", JSON.stringify(result));
+        window.location.href = "analysis.html";
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+  });
 })();
 </script>
 
 <style>
+/* Premium iOS Bottom Sheet – EXACT MATCH to your original design */
 .sheet-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
   display: flex; align-items: flex-end; justify-content: center;
-  z-index: 99999; font-family: "Inter", sans-serif;
+  z-index: 99999; backdrop-filter: blur(2px);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 .sheet-panel {
-  background: #0a0a0a; color: #fff; width: 100%; max-width: 460px;
-  border-radius: 28px 28px 0 0; padding: 28px 24px 32px;
-  box-shadow: 0 -12px 40px rgba(0,0,0,0.5);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  width: 100%; max-width: 460px;
+  background: #1e1d24;
+  border-top-left-radius: 22px; border-top-right-radius: 22px;
+  padding: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+  animation: sheetSlideUp 0.25s ease-out;
+}
+@keyframes sheetSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 .sheet-title {
-  font-size: 19px; font-weight: 500; text-align: center; margin-bottom: 22px;
-  color: #e0e0e0; letter-spacing: -0.2px;
+  font-size: 17px; font-weight: 500; color: #ffffff;
+  text-align: center; margin-bottom: 18px;
 }
 .sheet-btn {
-  width: 100%; padding: 16px; border: none; border-radius: 14px;
-  font-size: 18px; font-weight: 600; cursor: pointer;
-  transition: all 0.22s ease; margin-bottom: 14px;
+  width: 100%; padding: 14px 0; border: none; border-radius: 14px;
+  font-size: 17px; font-weight: 600; cursor: pointer;
+  margin-bottom: 10px; transition: opacity 0.15s ease;
 }
 .sheet-yes {
-  background: #adff00; color: #000;
-  box-shadow: 0 4px 14px rgba(173,255,0,0.3);
+  background: #007aff; color: white;
 }
-.sheet-yes:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(173,255,0,0.2); }
 .sheet-no {
-  background: #ffffff; color: #000;
-  box-shadow: 0 4px 14px rgba(255,255,255,0.15);
+  background: #2c2b33; color: #ffffff;
 }
-.sheet-no:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(255,255,255,0.1); }
+.sheet-btn:active { opacity: 0.7; }
 </style>
   </body>
 </html> 
