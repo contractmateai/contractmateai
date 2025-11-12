@@ -1553,23 +1553,29 @@ input.addEventListener("change", async () => {
 
   const first = input.files[0];
   const now = Date.now();
+
+  // ✅ Detect camera capture from "Take Photo"
   const usedCamera =
     input.files.length === 1 &&
     first.type.startsWith("image/") &&
-    (first.name.toLowerCase().startsWith("image") ||
-     first.name.toLowerCase().startsWith("captur")) &&
-    now - first.lastModified < 8000; // freshly captured within 8 sec
+    (
+      first.name.toLowerCase().startsWith("image") ||
+      first.name.toLowerCase().includes("captur") ||
+      first.name.toLowerCase().includes("photo")
+    ) &&
+    now - first.lastModified < 10000; // captured in the last 10 s
 
   if (usedCamera) {
-    // ✅ Just took a photo → show bottom sheet Add More / Continue
-    setTimeout(() => handleCameraFlow(), 400);
+    // ✅ User took a photo → show bottom sheet
+    setTimeout(() => handleCameraFlow(), 300);
     return;
   }
 
-  // ✅ Otherwise = normal file or library choice
+  // ✅ Otherwise (Photo Library or Files)
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+
 
 
 
