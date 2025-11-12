@@ -1851,20 +1851,14 @@ window.location.href = "analysis.html";
 .sheet-no {
   background: #2c2b33; /* ← Continue button */
 }
-/* ✅ Mobile fix: push the YouTube video down when role picker appears */
+/* Lift up role picker on mobile */
 @media (max-width: 980px) {
   .role-picker {
     position: relative;
+    margin-top: -25px !important; /* move it upward */
     z-index: 5;
   }
-  .yt-wrap {
-    transition: margin-top 0.25s ease;
-  }
-  .role-picker:not([hidden]) ~ .yt-wrap {
-    margin-top: 80px !important; /* adjust spacing */
-  }
 }
-
 
 </style>
   </body>
