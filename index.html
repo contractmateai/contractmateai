@@ -1851,19 +1851,17 @@ window.location.href = "analysis.html";
 .sheet-no {
   background: #2c2b33; /* ← Continue button */
 }
-/* ✅ Raise only the role picker (without moving YouTube) */
+/* ✅ Move BOTH role picker and YouTube section lower together */
 @media (max-width: 980px) {
-  #rolePicker {
-    position: relative;
-    transform: translateY(-40px); /* lift higher */
-    z-index: 10;
-  }
-
-  /* Compensate spacing so YouTube doesn’t jump */
+  .role-picker,
+  #rolePicker,
   .yt-wrap {
-    margin-top: -20px; /* tighten the gap */
+    position: relative;
+    top: 45px; /* moves both downward equally */
+    transition: top 0.25s ease;
   }
 }
+
 
 
 </style>
