@@ -1162,37 +1162,11 @@
 
 
     <!-- Upload inputs -->
-<input id="contractFile"   type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display:none">
-<input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none">
+ <input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
 
-<!-- NEW: Mobile bottom sheet (Take Photo / Choose from Library) -->
-<div id="mobileUploadSheet" style="
-  position:fixed; inset:0; background:rgba(0,0,0,.65);
-  display:none; align-items:flex-end; justify-content:center;
-  z-index:99999; backdrop-filter:blur(4px);
-">
-  <div style="
-    background:#111; width:100%; max-width:420px;
-    border-radius:24px 24px 0 0; padding:24px;
-    color:#fff; box-shadow:0 -6px 22px rgba(0,0,0,.6);
-  ">
-    <h3 style="margin:0 0 20px; font-size:20px; text-align:center;">Upload Contract</h3>
-    <button id="takePhotoBtn" style="
-      width:100%; background:#adff00; color:#000;
-      padding:14px; border:none; border-radius:12px;
-      font-size:18px; margin-bottom:12px;
-    ">Take Photo</button>
-    <button id="chooseFileBtn" style="
-      width:100%; background:#fff; color:#000;
-      padding:14px; border:none; border-radius:12px;
-      font-size:18px; margin-bottom:12px;
-    ">Choose from Library</button>
-    <button id="cancelSheetBtn" style="
-      width:100%; background:transparent; color:#aaa;
-      padding:14px; border:none; font-size:16px;
-    ">Cancel</button>
-  </div>
-</div>
+
+   <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
+
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1492,188 +1466,228 @@
     </script>
 
 <script>
-(async () => {
-  /* -------------------------------------------------
-     1. ELEMENTS
-  ------------------------------------------------- */
-  const ctaBtn          = document.getElementById('reviewBtn');
-  const roleUI          = document.getElementById('rolePicker');
-  const fileInput       = document.getElementById('contractFile');
-  const camInput        = document.getElementById('contractCamera');
-
-  const mobileSheet     = document.getElementById('mobileUploadSheet');
-  const takePhotoBtn    = document.getElementById('takePhotoBtn');
-  const chooseFileBtn   = document.getElementById('chooseFileBtn');
-  const cancelSheetBtn  = document.getElementById('cancelSheetBtn');
-
-  const cameraSheet     = document.getElementById('cameraSheet');
-  const cameraCount     = document.getElementById('cameraCount');
-  const addMoreBtn      = document.getElementById('addMoreBtn');
-  const continueBtn     = document.getElementById('continueBtn');
-
-  let pickedFiles = [];
-
-  /* -------------------------------------------------
-     2. HELPERS
-  ------------------------------------------------- */
-  const isMobile = () => window.matchMedia('(max-width:980px)').matches;
-
-  function showMobileSheet() { mobileSheet.style.display = 'flex'; }
-  function hideMobileSheet() { mobileSheet.style.display = 'none'; }
-
-  function updateCount() { cameraCount.textContent = `${pickedFiles.length}/10 photos added`; }
-
-  /* -------------------------------------------------
-     3. CTA → open native sheet (mobile) or file picker (desktop)
-  ------------------------------------------------- */
-  ctaBtn.addEventListener('click', e => {
-    e.preventDefault();
-    pickedFiles = [];
-
-    if (isMobile()) {
-      showMobileSheet();
-    } else {
-      fileInput.value = '';
-      fileInput.click();
-    }
-  });
-
-  /* -------------------------------------------------
-     4. Mobile sheet buttons
-  ------------------------------------------------- */
-  takePhotoBtn.addEventListener('click', () => {
-    hideMobileSheet();
-    camInput.value = '';
-    camInput.click();
-  });
-
-  chooseFileBtn.addEventListener('click', () => {
-    hideMobileSheet();
-    fileInput.value = '';
-    fileInput.click();
-  });
-
-  cancelSheetBtn.addEventListener('click', hideMobileSheet);
-
-  /* -------------------------------------------------
-     5. File picker (desktop or “Choose from Library”)
-  ------------------------------------------------- */
-  fileInput.addEventListener('change', () => {
-    if (!fileInput.files?.length) return;
-    pickedFiles = Array.from(fileInput.files);
-    ctaBtn.style.display = 'none';
-    roleUI.hidden = false;
-  });
-
-  /* -------------------------------------------------
-     6. Camera capture → Add-more sheet
-  ------------------------------------------------- */
-  camInput.addEventListener('change', () => {
-    if (!camInput.files?.length) return;
-    pickedFiles = Array.from(camInput.files);
-
-    const usedCamera = camInput.files.length === 1 && camInput.files[0].type.startsWith('image/');
-    if (usedCamera) {
-      updateCount();
-      cameraSheet.style.bottom = '0';
-      return;
-    }
-
-    ctaBtn.style.display = 'none';
-    roleUI.hidden = false;
-  });
-
-  /* -------------------------------------------------
-     7. Add-more / Continue
-  ------------------------------------------------- */
-  addMoreBtn.addEventListener('click', () => {
-    cameraSheet.style.bottom = '-400px';
-    if (pickedFiles.length >= 10) { alert('Maximum 10 photos.'); return; }
-    camInput.value = '';
-    camInput.click();
-  });
-
-  continueBtn.addEventListener('click', () => {
-    cameraSheet.style.bottom = '-400px';
-    ctaBtn.style.display = 'none';
-    roleUI.hidden = false;
-  });
-
-  /* -------------------------------------------------
-     8. Role picker → analysis
-  ------------------------------------------------- */
-  roleUI.querySelectorAll('.role-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (!pickedFiles.length) { alert('Please choose a contract first.'); return; }
-
+  (async () => {
+    async function fileToPayload(file) {
       try {
-        const file = pickedFiles[0];
-        if (file.size > 10_000_000) { alert(`File ${file.name} is too large (max 10 MB).`); return; }
-
-        // Reuse your original fileToPayload function
-        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-        const body = { ...payloadArr[0], role: btn.dataset.role || 'signer' };
-
-        const resp = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        if (!resp.ok) throw new Error((await resp.json()).error || 'Analysis failed');
-
-        const result = await resp.json();
-        localStorage.setItem('analysisRaw', JSON.stringify(result));
-        location.href = 'analysis.html';
-      } catch (err) {
-        alert(`Error: ${err.message}`);
-      }
-    });
-  });
-
-  /* -------------------------------------------------
-     9. Keep your original fileToPayload function
-  ------------------------------------------------- */
-  async function fileToPayload(file) {
-    try {
-      const name = file.name || "file";
-      const mime = file.type || "application/octet-stream";
-      const ext = name.toLowerCase();
-      if (mime === "text/plain" || ext.endsWith(".txt")) {
-        return { text: await file.text(), originalName: name, mime };
-      }
-      if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-        const buf = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-        let full = "";
-        for (let p = 1; p <= pdf.numPages; p++) {
-          const page = await pdf.getPage(p);
-          const content = await page.getTextContent();
-          full += content.items.map((i) => i.str).join(" ") + "\n";
+        const name = file.name || "file";
+        const mime = file.type || "application/octet-stream";
+        const ext = name.toLowerCase();
+        if (mime === "text/plain" || ext.endsWith(".txt")) {
+          return { text: await file.text(), originalName: name, mime };
         }
-        return { text: full, originalName: name, mime };
+        if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+          let full = "";
+          for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            full += content.items.map((i) => i.str).join(" ") + "\n";
+          }
+          return { text: full, originalName: name, mime };
+        }
+        if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
+          const buf = await file.arrayBuffer();
+          const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+          return { text: res.value || "", originalName: name, mime };
+        }
+        if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
+          const dataUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.readAsDataURL(file);
+          });
+          return { imageDataURI: dataUrl, originalName: name, mime };
+        }
+        throw new Error("Unsupported file type: " + mime);
+      } catch (e) {
+        console.error("fileToPayload error:", e.message);
+        throw e;
       }
-      if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || ext.endsWith(".docx")) {
-        const buf = await file.arrayBuffer();
-        const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-        return { text: res.value || "", originalName: name, mime };
-      }
-      if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-        const dataUrl = await new Promise((resolve) => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result);
-          r.readAsDataURL(file);
-        });
-        return { imageDataURI: dataUrl, originalName: name, mime };
-      }
-      throw new Error("Unsupported file type: " + mime);
-    } catch (e) {
-      console.error("fileToPayload error:", e.message);
-      throw e;
     }
+
+    const demoData = {
+      contractName: "Uploaded Contract",
+      detectedLang: "en",
+      analysis: {
+        summary: ["Contract appears standard with clear terms.", "Some clauses need review for fairness."],
+        risk: 20,
+        clarity: 85,
+        compliance: 90,
+        keyClauses: ["Payment: Net 30 days.", "Termination: 30-day notice."],
+        potentialIssues: ["Ambiguous termination clause.", "Unclear penalty terms."],
+        smartSuggestions: ["Clarify termination conditions.", "Cap penalties."]
+      },
+      translations: {}
+    };
+
+    const input = document.getElementById("contractFile");
+    const inputCamera = document.getElementById("contractCamera");
+    const roleUI = document.getElementById("rolePicker");
+    const ctaBtn = document.getElementById("reviewBtn");
+    let pickedFiles = [];
+
+    function isMobile() {
+      return window.matchMedia('(max-width: 980px)').matches;
+    }
+
+ctaBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // ✅ DO NOT HIDE BUTTON YET
+  // ✅ DO NOT SHOW ROLE PICKER YET
+
+  pickedFiles = [];
+
+  // ✅ ALWAYS show native iOS/Android sheet:
+  input.value = "";
+  input.click();
+});
+
+
+
+input.addEventListener("change", async () => {
+  if (!input.files || !input.files.length) return;
+
+  pickedFiles = Array.from(input.files);
+
+  const first = input.files[0];
+  const usedCamera =
+    input.files.length === 1 &&
+    first.type.startsWith("image/") &&
+    first.name.startsWith("image") &&
+    first.lastModified > Date.now() - 5000; // taken within 5 s
+
+  if (usedCamera) {
+    // ✅ User just took a photo — show bottom sheet “Add More / Continue”
+    setTimeout(() => handleCameraFlow(), 300);
+    return;
   }
-})();
+
+  // ✅ Otherwise normal file/library selection
+  ctaBtn.style.display = "none";
+  roleUI.hidden = false;
+});
+
+
+
+
+inputCamera.addEventListener("change", async () => {
+  if (!inputCamera.files || !inputCamera.files.length) return;
+
+  pickedFiles = Array.from(inputCamera.files);
+
+  // ✅ Detect real camera capture (1 image)
+  const first = inputCamera.files[0];
+  const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
+
+  if (usedCamera) {
+    // ✅ Run your bottom sheet "Add More / Continue" flow
+    setTimeout(() => {
+      // This function already exists in your correct version
+      handleCameraFlow();
+    }, 200);
+    return;
+  }
+
+  // ✅ Otherwise normal file selection
+  ctaBtn.style.display = "none";
+  roleUI.hidden = false;
+});
+// === CAMERA FLOW SYSTEM (FULL) ===
+
+const cameraSheet = document.getElementById("cameraSheet");
+const cameraCount = document.getElementById("cameraCount");
+const addMoreBtn = document.getElementById("addMoreBtn");
+const continueBtn = document.getElementById("continueBtn");
+
+function showCameraSheet() {
+  cameraSheet.style.bottom = "0";
+}
+
+function hideCameraSheet() {
+  cameraSheet.style.bottom = "-400px";
+}
+
+function updateCount() {
+  cameraCount.textContent = `${pickedFiles.length}/10 photos added`;
+}
+
+// ✅ Core function that runs when the FIRST camera photo is taken
+window.handleCameraFlow = function () {
+  updateCount();
+  showCameraSheet();
+};
+
+// ✅ Add more photos
+addMoreBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  if (pickedFiles.length >= 10) {
+    alert("Maximum 10 photos.");
+    return;
+  }
+
+  // reopen camera
+  inputCamera.value = "";
+  inputCamera.click();
+});
+
+// ✅ Continue → show role picker
+continueBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  // hide CTA
+  ctaBtn.style.display = "none";
+
+  // show role picker
+  roleUI.hidden = false;
+});
+
+
+    roleUI.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        roleUI.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (!pickedFiles.length) {
+          alert("Please choose a contract file first.");
+          return;
+        }
+        try {
+          const file = pickedFiles[0]; // Use first file
+          if (file.size > 10_000_000) {
+            alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+            return;
+          }
+          const payload = await fileToPayload(file);
+        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
+const body = { 
+  ...payloadArr[0], 
+  role: btn.dataset.role || "signer" 
+};
+
+
+const resp = await fetch("/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body)
+});
+
+if (!resp.ok) {
+  const err = await resp.json().catch(() => ({}));
+  throw new Error(err?.error || "Analysis failed");
+}
+
+const analysisResult = await resp.json();
+localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+window.location.href = "analysis.html";
+
+        } catch (e) {
+          alert(`Error processing file: ${e.message}`);
+        }
+      });
+    });
+  })();
 </script>
     <!-- CAMERA FLOW BOTTOM SHEET -->
 <div id="cameraSheet" style="
