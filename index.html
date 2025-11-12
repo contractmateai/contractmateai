@@ -1554,20 +1554,23 @@ input.addEventListener("change", async () => {
   const first = input.files[0];
   const now = Date.now();
 
-  // ✅ Detect camera capture from "Take Photo"
-  const usedCamera =
+  // ✅ Detect freshly taken photo (from native Take Photo)
+  const justTaken =
     input.files.length === 1 &&
     first.type.startsWith("image/") &&
     (
-      first.name.toLowerCase().startsWith("image") ||
       first.name.toLowerCase().includes("captur") ||
+      first.name.toLowerCase().includes("image") ||
       first.name.toLowerCase().includes("photo")
     ) &&
-    now - first.lastModified < 10000; // captured in the last 10 s
+    now - first.lastModified < 8000; // captured within 8 seconds
 
-  if (usedCamera) {
-    // ✅ User took a photo → show bottom sheet
-    setTimeout(() => handleCameraFlow(), 300);
+  if (justTaken) {
+    // ✅ User took photo via "Take Photo" → trigger bottom sheet
+    pickedFiles = [first];
+    setTimeout(() => {
+      handleCameraFlow();
+    }, 300);
     return;
   }
 
@@ -1575,6 +1578,7 @@ input.addEventListener("change", async () => {
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+
 
 
 
