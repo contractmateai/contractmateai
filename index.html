@@ -1563,74 +1563,20 @@ input.addEventListener("change", async () => {
 inputCamera.addEventListener("change", async () => {
   if (!inputCamera.files || !inputCamera.files.length) return;
 
-  pickedFiles = Array.from(inputCamera.files);
+  const newFile = inputCamera.files[0];
+  pickedFiles.push(newFile);
 
-  // ✅ Detect real camera capture (1 image)
-  const first = inputCamera.files[0];
-  const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
-
-  if (usedCamera) {
-    // ✅ Run your bottom sheet "Add More / Continue" flow
-    setTimeout(() => {
-      // This function already exists in your correct version
-      handleCameraFlow();
-    }, 200);
-    return;
+  // Always trigger camera flow if at least one image from camera
+  if (pickedFiles.length === 1 && newFile.type.startsWith("image/")) {
+    // First photo → start flow
+    handleCameraFlow();
+  } else if (pickedFiles.length > 0) {
+    // Additional photos or non-camera → just continue
+    ctaBtn.style.display = "none";
+    roleUI.hidden = false;
   }
-
-  // ✅ Otherwise normal file selection
-  ctaBtn.style.display = "none";
-  roleUI.hidden = false;
-});
-// === CAMERA FLOW SYSTEM (FULL) ===
-
-const cameraSheet = document.getElementById("cameraSheet");
-const cameraCount = document.getElementById("cameraCount");
-const addMoreBtn = document.getElementById("addMoreBtn");
-const continueBtn = document.getElementById("continueBtn");
-
-function showCameraSheet() {
-  cameraSheet.style.bottom = "0";
-}
-
-function hideCameraSheet() {
-  cameraSheet.style.bottom = "-400px";
-}
-
-function updateCount() {
-  cameraCount.textContent = `${pickedFiles.length}/10 photos added`;
-}
-
-// ✅ Core function that runs when the FIRST camera photo is taken
-window.handleCameraFlow = function () {
-  updateCount();
-  showCameraSheet();
-};
-
-// ✅ Add more photos
-addMoreBtn.addEventListener("click", () => {
-  hideCameraSheet();
-
-  if (pickedFiles.length >= 10) {
-    alert("Maximum 10 photos.");
-    return;
-  }
-
-  // reopen camera
-  inputCamera.value = "";
-  inputCamera.click();
 });
 
-// ✅ Continue → show role picker
-continueBtn.addEventListener("click", () => {
-  hideCameraSheet();
-
-  // hide CTA
-  ctaBtn.style.display = "none";
-
-  // show role picker
-  roleUI.hidden = false;
-});
 
 
     roleUI.querySelectorAll('.role-btn').forEach(btn => {
