@@ -1677,226 +1677,130 @@ window.location.href = "analysis.html";
     });
   })();
 </script>
-    <!-- CAMERA FLOW BOTTOM SHEET -->
-<div id="cameraSheet" style="
-  position: fixed;
-  left: 0; right: 0; bottom: -400px;
-  background: #111;
-  border-radius: 24px 24px 0 0;
-  padding: 24px;
-  box-shadow: 0 -6px 22px rgba(0,0,0,.6);
-  transition: bottom .25s ease;
-  color: white;
-  z-index: 99999;
-">
-  <div id="cameraCount" style="
-    font-size: 20px;
-    margin-bottom: 18px;
-    text-align: center;
-  ">1/10 photos added</div>
-
-  <button id="addMoreBtn" style="
-    width: 100%;
-    background: #adff00;
-    color: black;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 18px;
-    margin-bottom: 12px;
-  ">Add More</button>
-
-  <button id="continueBtn" style="
-    width: 100%;
-    background: white;
-    color: black;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 18px;
-  ">Continue</button>
-</div>
-<!-- iOS Bottom Sheet: Add More Photos -->
+  <!-- CAMERA FLOW BOTTOM SHEET (Correct iOS-style look) -->
 <div id="addMoreSheet" class="sheet-backdrop" style="display:none;">
   <div class="sheet-panel">
+    <div class="sheet-handle"></div>
     <div class="sheet-title" id="sheetCount">1/10 photos added</div>
-    <button class="sheet-btn sheet-yes" id="sheetAddMore">Add More</button>
-    <button class="sheet-btn sheet-no" id="sheetContinue">Continue</button>
+    <button class="sheet-btn sheet-add" id="sheetAddMore">Add More</button>
+    <button class="sheet-btn sheet-continue" id="sheetContinue">Continue</button>
   </div>
 </div>
 
+<style>
+/* --- BOTTOM SHEET DESIGN --- */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity .25s ease;
+  z-index: 99999;
+}
+.sheet-panel {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(20,20,20,0.95);
+  border-radius: 28px 28px 0 0;
+  padding: 24px 20px 32px;
+  box-shadow: 0 -8px 30px rgba(0,0,0,.7);
+  transform: translateY(100%);
+  transition: transform .25s ease;
+  animation: slideUp .25s ease forwards;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-handle {
+  width: 52px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.3);
+  margin: 0 auto 18px;
+}
+.sheet-title {
+  font-size: 20px;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 22px;
+  font-weight: 500;
+}
+.sheet-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+.sheet-add {
+  background: #adff00;
+  color: #000;
+  box-shadow: 0 0 16px rgba(173,255,0,.35);
+}
+.sheet-continue {
+  background: #fff;
+  color: #000;
+}
+.sheet-btn:active {
+  transform: scale(0.98);
+}
+</style>
+
 <script>
 (async () => {
-  const input = document.getElementById("contractFile");
   const inputCamera = document.getElementById("contractCamera");
   const roleUI = document.getElementById("rolePicker");
   const ctaBtn = document.getElementById("reviewBtn");
   const sheet = document.getElementById("addMoreSheet");
   const sheetAddMore = document.getElementById("sheetAddMore");
-  const sheetCont = document.getElementById("sheetContinue");
+  const sheetContinue = document.getElementById("sheetContinue");
   const sheetCount = document.getElementById("sheetCount");
   let pickedFiles = [];
-  let cameraResolve = null;
+  let resolver = null;
 
   function showSheet(count) {
     sheetCount.textContent = `${count}/10 photos added`;
     sheet.style.display = "flex";
+    sheet.style.opacity = "1";
   }
   function hideSheet() {
-    sheet.style.display = "none";
+    sheet.style.opacity = "0";
+    setTimeout(() => sheet.style.display = "none", 200);
   }
 
-  sheetAddMore.onclick = () => {
-    hideSheet();
-    if (cameraResolve) cameraResolve(true);
-  };
-  sheetCont.onclick = () => {
-    hideSheet();
-    if (cameraResolve) cameraResolve(false);
-  };
+  sheetAddMore.onclick = () => { hideSheet(); if (resolver) resolver(true); };
+  sheetContinue.onclick = () => { hideSheet(); if (resolver) resolver(false); };
 
-  async function handleCameraFlow() {
+  window.handleCameraFlow = async function () {
     let count = pickedFiles.length;
     while (count < 10) {
       if (count > 0) {
-        const more = await new Promise(resolve => {
-          cameraResolve = resolve;
-          showSheet(count);
-        });
-        if (!more) break;
+        const addMore = await new Promise(r => { resolver = r; showSheet(count); });
+        if (!addMore) break;
       }
       inputCamera.value = "";
       inputCamera.click();
-      const newPhoto = await new Promise(resolve => {
-        inputCamera.onchange = () => resolve(inputCamera.files?.[0] || null);
-      });
-      if (!newPhoto) break;
-      pickedFiles.push(newPhoto);
+      const newFile = await new Promise(res => inputCamera.onchange = () => res(inputCamera.files?.[0] || null));
+      if (!newFile) break;
+      pickedFiles.push(newFile);
       count++;
     }
-    if (pickedFiles.length) showRolePicker();
-  }
-
-  ctaBtn.addEventListener("click", e => {
-    e.preventDefault();
-    pickedFiles = [];
-    input.value = "";
-    input.click();
-  });
-
-  input.addEventListener("change", () => {
-    if (!input.files.length) return;
-    const first = input.files[0];
-    const fromCamera = inputCamera.capture === "environment";
-    if (fromCamera && first.type.startsWith("image/")) {
-      pickedFiles = [first];
-      setTimeout(handleCameraFlow, 300);
-      return;
+    if (pickedFiles.length) {
+      ctaBtn.style.display = "none";
+      roleUI.hidden = false;
     }
-    pickedFiles = Array.from(input.files).slice(0, 10);
-    showRolePicker();
-  });
-
-  function showRolePicker() {
-    roleUI.hidden = false;
-    document.getElementById("ctaWrap").style.display = "none";
-  }
-
-  async function fileToPayload(file) {
-    const name = file.name || "file";
-    const mime = file.type || "application/octet-stream";
-    if (mime.startsWith("image/")) {
-      return await new Promise(resolve => {
-        const r = new FileReader();
-        r.onload = () => resolve({
-          imageDataURI: r.result,
-          originalName: name,
-          mime
-        });
-        r.readAsDataURL(file);
-      });
-    }
-    if (mime === "application/pdf") {
-      const buf = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-      let full = "";
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const pg = await pdf.getPage(i);
-        const t = await pg.getTextContent();
-        full += t.items.map(a => a.str).join(" ") + "\n";
-      }
-      return { text: full, originalName: name, mime };
-    }
-    if (mime.includes("word")) {
-      const buf = await file.arrayBuffer();
-      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-      return { text: res.value || "", originalName: name, mime };
-    }
-    return { text: await file.text(), originalName: name, mime };
-  }
-
-  roleUI.querySelectorAll(".role-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      roleUI.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      if (!pickedFiles.length) {
-        alert("Please choose a contract file first.");
-        return;
-      }
-      try {
-        const payloadArr = await Promise.all(pickedFiles.map(fileToPayload));
-        const body = { files: payloadArr, role: btn.dataset.role || "signer" };
-        const resp = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-        const result = await resp.json();
-        localStorage.setItem("analysisRaw", JSON.stringify(result));
-        window.location.href = "analysis.html";
-      } catch (e) {
-        alert(e.message);
-      }
-    });
-  });
+  };
 })();
 </script>
 
-<style>
-/* Premium iOS Bottom Sheet – EXACT MATCH to your original design */
-.sheet-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
-  display: flex; align-items: flex-end; justify-content: center;
-  z-index: 99999; backdrop-filter: blur(2px);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-}
-.sheet-panel {
-  width: 100%; max-width: 460px;
-  background: #1e1d24;
-  border-top-left-radius: 22px; border-top-right-radius: 22px;
-  padding: 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-  animation: sheetSlideUp 0.25s ease-out;
-}
-@keyframes sheetSlideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-.sheet-title {
-  font-size: 17px; font-weight: 500; color: #ffffff;
-  text-align: center; margin-bottom: 18px;
-}
-.sheet-btn {
-  width: 100%; padding: 14px 0; border: none; border-radius: 14px;
-  font-size: 17px; font-weight: 600; cursor: pointer;
-  margin-bottom: 10px; transition: opacity 0.15s ease;
-}
-.sheet-yes {
-  background: #007aff; color: white;
-}
-.sheet-no {
-  background: #2c2b33; color: #ffffff;
-}
-.sheet-btn:active { opacity: 0.7; }
-</style>
   </body>
 </html> 
