@@ -1011,10 +1011,7 @@
           <h2>What <span class="green">Our Clients</span> Say</h2>
           <div class="reviews-sub">Hear Directly From Our Satisfied Users</div>
         </div>
-        <div class="review-nav">
-          <button class="nav left" type="button" id="revPrev" aria-label="Previous reviews"><img src="https://imgur.com/nhYxlHX.png" alt="" /></button>
-          <button class="nav right" type="button" id="revNext" aria-label="Next reviews"><img src="https://imgur.com/sRwuJpT.png" alt="" /></button>
-        </div>
+   
       </div>
 
       <div class="reviews-viewport" id="reviewsViewport">
@@ -1285,8 +1282,7 @@
         const track = document.getElementById('logoTrack');
         if (!track) return;
         const src = 'https://i.imgur.com/2SUo8mv.png';
-       const COPIES = 30; // more copies → no empty gap
-
+        const COPIES = 12;
         for (let i = 0; i < COPIES; i++) {
           const img = document.createElement('img');
           img.src = src; img.alt = 'Powered-by logos'; img.className = 'logo-piece'; img.decoding = 'async';
@@ -1874,52 +1870,6 @@ window.location.href = "analysis.html";
   }
 }
 
-@media (max-width: 980px) {
-
-  /* 1. Move “Review a Contract” button lower */
-  .cta-btn,
-  #reviewBtn {
-    position: relative;
-    top: 25px; /* adjust as needed */
-  }
-
-  /* 2. Move logo strip lower */
-  .powered-strip,
-  .logo-strip {
-    margin-top: 35px !important;
-  }
-
-  /* 3. Smooth swipe on reviews */
-  .reviews-track {
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-  }
-
-  .review-card {
-    scroll-snap-align: start;
-  }
-
-  /* 4. Move role picker + YouTube block lower together (same shift amount) */
-  #rolePicker,
-  .yt-wrap {
-    position: relative;
-    top: 40px; /* this is the clean unified shift */
-  }
-}
-@media (min-width: 981px) {
-
-  /* 1. Center title + subtitle */
-  .reviews-section h2,
-  .reviews-section p.subtitle {
-    text-align: center !important;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-
-}
 
 </style>
   </body>
