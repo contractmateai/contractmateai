@@ -1851,6 +1851,13 @@ window.location.href = "analysis.html";
 .sheet-no {
   background: #2c2b33; /* ← Continue button */
 }
+ @media (max-width:980px){
+  .yt-wrap{ transition:margin-top .25s ease; }
+  .role-picker:not([hidden]) + .yt-wrap{
+    margin-top:60px !important; /* push video down */
+  }
+}
+
 </style>
   </body>
 </html> 
