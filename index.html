@@ -1584,10 +1584,11 @@ inputCamera.addEventListener("change", async () => {
 });
 // === CAMERA FLOW SYSTEM (FULL) ===
 
-const cameraSheet = document.getElementById("cameraSheet");
-const cameraCount = document.getElementById("cameraCount");
-const addMoreBtn = document.getElementById("addMoreBtn");
-const continueBtn = document.getElementById("continueBtn");
+const cameraSheet = document.getElementById("addMoreSheet");
+const cameraCount = document.getElementById("sheetCount");
+const addMoreBtn = document.getElementById("sheetAddMore");
+const continueBtn = document.getElementById("sheetContinue");
+
 
 function showCameraSheet() {
   cameraSheet.style.bottom = "0";
@@ -1692,12 +1693,12 @@ window.location.href = "analysis.html";
 .sheet-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.5);
+  background: rgba(0, 0, 0, 0.45); /* semi-transparent black */
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
   transition: opacity .25s ease;
   z-index: 99999;
 }
