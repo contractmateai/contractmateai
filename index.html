@@ -1584,11 +1584,10 @@ inputCamera.addEventListener("change", async () => {
 });
 // === CAMERA FLOW SYSTEM (FULL) ===
 
-const cameraSheet = document.getElementById("addMoreSheet");
-const cameraCount = document.getElementById("sheetCount");
-const addMoreBtn = document.getElementById("sheetAddMore");
-const continueBtn = document.getElementById("sheetContinue");
-
+const cameraSheet = document.getElementById("cameraSheet");
+const cameraCount = document.getElementById("cameraCount");
+const addMoreBtn = document.getElementById("addMoreBtn");
+const continueBtn = document.getElementById("continueBtn");
 
 function showCameraSheet() {
   cameraSheet.style.bottom = "0";
@@ -1678,8 +1677,8 @@ window.location.href = "analysis.html";
     });
   })();
 </script>
-  <!-- CAMERA FLOW BOTTOM SHEET (Correct iOS-style look) -->
-<div id="addMoreSheet" class="sheet-backdrop" style="display:none;">
+<!-- CAMERA FLOW BOTTOM SHEET -->
+<div id="addMoreSheet" class="sheet-backdrop">
   <div class="sheet-panel">
     <div class="sheet-handle"></div>
     <div class="sheet-title" id="sheetCount">1/10 photos added</div>
@@ -1689,121 +1688,80 @@ window.location.href = "analysis.html";
 </div>
 
 <style>
-/* --- BOTTOM SHEET DESIGN --- */
-.sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  opacity: 0;
-  transition: opacity .3s ease;
-  z-index: 999999; /* higher than everything else */
+/* Bottom sheet */
+.sheet-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:99999;opacity:0;pointer-events:none;
+  transition:opacity .25s ease;
 }
-.sheet-backdrop.show {
-  display: flex !important;
-  opacity: 1;
+.sheet-backdrop.show{opacity:1;pointer-events:auto;}
+.sheet-panel{
+  width:100%;max-width:480px;background:#1e1d23;
+  border-radius:28px 28px 0 0;padding:24px 20px 32px;
+  box-shadow:0 -8px 30px rgba(0,0,0,.7);
+  transform:translateY(100%);transition:transform .25s ease;
 }
-
-
-.sheet-panel {
-  width: 100%;
-  max-width: 480px;
- background: #1e1d23;
-  border-radius: 28px 28px 0 0;
-  padding: 24px 20px 32px;
-  box-shadow: 0 -8px 30px rgba(0,0,0,.7);
-  transform: translateY(100%);
-  transition: transform .25s ease;
-  animation: slideUp .25s ease forwards;
+.sheet-backdrop.show .sheet-panel{transform:translateY(0);}
+.sheet-handle{
+  width:52px;height:5px;border-radius:999px;
+  background:rgba(255,255,255,.3);margin:0 auto 18px;
 }
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+.sheet-title{
+  font-size:20px;text-align:center;color:#fff;
+  margin-bottom:22px;font-weight:500;
 }
-.sheet-handle {
-  width: 52px;
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.3);
-  margin: 0 auto 18px;
+.sheet-btn{
+  width:100%;padding:15px;font-size:18px;
+  border:none;border-radius:14px;margin-bottom:14px;
+  cursor:pointer;font-weight:500;letter-spacing:.2px;
 }
-.sheet-title {
-  font-size: 20px;
-  text-align: center;
-  color: #fff;
-  margin-bottom: 22px;
-  font-weight: 500;
-}
-.sheet-btn {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  border: none;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  cursor: pointer;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-}
-.sheet-add {
-  background: #007aff;
-  color: #fff;
-}
-.sheet-continue {
-  background: #2c2b33;
-  color: #fff;
-}
-.sheet-btn:active {
-  transform: scale(0.98);
-}
+.sheet-add{background:#007aff;color:#fff;}
+.sheet-continue{background:#2c2b33;color:#fff;}
+.sheet-btn:active{transform:scale(.98);}
 </style>
 
 <script>
-(async () => {
-  const inputCamera = document.getElementById("contractCamera");
-  const roleUI = document.getElementById("rolePicker");
-  const ctaBtn = document.getElementById("reviewBtn");
-  const sheet = document.getElementById("addMoreSheet");
-  const sheetAddMore = document.getElementById("sheetAddMore");
-  const sheetContinue = document.getElementById("sheetContinue");
-  const sheetCount = document.getElementById("sheetCount");
-  let pickedFiles = [];
-  let resolver = null;
+(async()=>{
+  const inputCamera=document.getElementById("contractCamera");
+  const roleUI=document.getElementById("rolePicker");
+  const ctaBtn=document.getElementById("reviewBtn");
+  const sheet=document.getElementById("addMoreSheet");
+  const sheetAddMore=document.getElementById("sheetAddMore");
+  const sheetContinue=document.getElementById("sheetContinue");
+  const sheetCount=document.getElementById("sheetCount");
+  let pickedFiles=[];
+  let resolver=null;
 
-function showSheet(count) {
-  sheetCount.textContent = `${count}/10 photos added`;
-  sheet.classList.add("show");
-}
+  function showSheet(count){
+    sheetCount.textContent=`${count}/10 photos added`;
+    sheet.classList.add("show");
+  }
+  function hideSheet(){
+    sheet.classList.remove("show");
+    if(resolver)resolver(false);
+  }
+  sheetAddMore.onclick=()=>{ hideSheet(); if(resolver)resolver(true); };
+  sheetContinue.onclick=hideSheet;
 
-function hideSheet() {
-  sheet.classList.remove("show");
-}
-
-
-  sheetAddMore.onclick = () => { hideSheet(); if (resolver) resolver(true); };
-  sheetContinue.onclick = () => { hideSheet(); if (resolver) resolver(false); };
-
-  window.handleCameraFlow = async function () {
-    let count = pickedFiles.length;
-    while (count < 10) {
-      if (count > 0) {
-        const addMore = await new Promise(r => { resolver = r; showSheet(count); });
-        if (!addMore) break;
+  window.handleCameraFlow=async function(){
+    let count=pickedFiles.length;
+    while(count<10){
+      if(count>0){
+        const addMore=await new Promise(r=>{resolver=r;showSheet(count);});
+        if(!addMore)break;
       }
-      inputCamera.value = "";
+      inputCamera.value="";
       inputCamera.click();
-      const newFile = await new Promise(res => inputCamera.onchange = () => res(inputCamera.files?.[0] || null));
-      if (!newFile) break;
+      const newFile=await new Promise(res=>inputCamera.onchange=()=>res(inputCamera.files?.[0]||null));
+      if(!newFile)break;
       pickedFiles.push(newFile);
       count++;
     }
-    if (pickedFiles.length) {
-      ctaBtn.style.display = "none";
-      roleUI.hidden = false;
+    if(pickedFiles.length){
+      ctaBtn.style.display="none";
+      roleUI.hidden=false;
     }
   };
 })();
