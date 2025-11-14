@@ -1169,7 +1169,8 @@
 
 
     <!-- Upload inputs -->
-<input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+<input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
 
 
 
@@ -1791,30 +1792,42 @@ window.location.href = "analysis.html";
 input.addEventListener("change", () => {
   if (!input.files.length) return;
 
-  // Detect if user picked from Photo Library (iOS allows multi-select even without 'multiple')
-  const fromPhotoLibrary = input.files.length > 1;
+  const files = Array.from(input.files);
 
-  if (fromPhotoLibrary) {
-    // LIMIT to 10 photos max
-    const arr = Array.from(input.files);
-    if (arr.length > 10) {
-      alert("You can select a maximum of 10 photos.");
-      pickedFiles = arr.slice(0, 10);
-    } else {
-      pickedFiles = arr;
-    }
+  // Detect captured photo (camera)
+  const cameraCapture =
+    files.length === 1 && files[0].type.startsWith("image/") &&
+    files[0].name === "image.jpg"; // iOS camera usually uses this name
 
+  if (cameraCapture) {
+    // 📸 TAKE PHOTO FLOW
+    // allow user to take up to 10 photos via your bottom sheet
+    pickedFiles.push(files[0]);
+    if (pickedFiles.length > 10) pickedFiles = pickedFiles.slice(0, 10);
+
+    // show your bottom sheet flow
+    handleCameraFlow();
+    return;
+  }
+
+  // Detect multi-select from Photo Library
+  const photoLibrary = files.every(f => f.type.startsWith("image/"));
+
+  if (photoLibrary) {
+    // 🖼 PHOTO LIBRARY FLOW
+    pickedFiles = files.slice(0, 10);
     ctaBtn.style.display = "none";
     roleUI.hidden = false;
     return;
   }
 
-  // Otherwise "Choose File" → only 1 item allowed
-  pickedFiles = [input.files[0]];
-
+  // Otherwise it's a document upload (PDF/DOCX/etc)
+  // 📝 CHOOSE FILE FLOW
+  pickedFiles = [files[0]];
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+
 
 </script>
 
