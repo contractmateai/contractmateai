@@ -1167,25 +1167,13 @@
   </div>
 </footer>
 
-<!-- SINGLE FILE ONLY (PDF/DOCX/TXT) -->
-<input id="fileInput" type="file"
-       accept=".pdf,.doc,.docx,.txt"
-       style="display:none" />
 
-<!-- PHOTO LIBRARY (multi, up to 10) -->
-<input id="photoLibInput" type="file"
-       accept="image/*"
-       multiple
-       style="display:none" />
+    <!-- Upload inputs -->
+ <input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
 
-<!-- CAMERA (single capture each time) -->
-<input id="cameraInput" type="file"
-       accept="image/*"
-       capture="environment"
-       style="display:none" />
 
-<!-- HIDDEN MODE SWITCH -->
-<input id="sourceMode" type="hidden" value="" />
+   <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
+
 
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
@@ -1550,98 +1538,105 @@
       return window.matchMedia('(max-width: 980px)').matches;
     }
 
-ctaBtn.addEventListener("click", () => {
-  // Show native iOS/Android chooser
-  const sheet = document.createElement("div");
-  sheet.style = `
-    position:fixed;left:0;right:0;bottom:0;
-    background:#151515;color:white;
-    padding:22px;border-radius:16px 16px 0 0;
-    z-index:10000;font-size:20px;
-  `;
+ctaBtn.addEventListener("click", (e) => {
+  e.preventDefault();
 
-  sheet.innerHTML = `
-    <div id="pickFile" style="padding:16px 0;border-bottom:1px solid #333;">Choose File (PDF/DOCX/TXT)</div>
-    <div id="pickPhotos" style="padding:16px 0;border-bottom:1px solid #333;">Choose Photos (up to 10)</div>
-    <div id="pickCamera" style="padding:16px 0;">Take Photo</div>
-  `;
+  // ✅ DO NOT HIDE BUTTON YET
+  // ✅ DO NOT SHOW ROLE PICKER YET
 
-  document.body.appendChild(sheet);
+  pickedFiles = [];
 
-  sheet.querySelector("#pickFile").onclick = () => {
-    document.body.removeChild(sheet);
-    document.getElementById("sourceMode").value = "file";
-    fileInput.value = "";
-    fileInput.click();
-  };
-
-  sheet.querySelector("#pickPhotos").onclick = () => {
-    document.body.removeChild(sheet);
-    document.getElementById("sourceMode").value = "photos";
-    photoLibInput.value = "";
-    photoLibInput.click();
-  };
-
-  sheet.querySelector("#pickCamera").onclick = () => {
-    document.body.removeChild(sheet);
-    document.getElementById("sourceMode").value = "camera";
-    cameraInput.value = "";
-    cameraInput.click();
-  };
+  // ✅ ALWAYS show native iOS/Android sheet:
+  input.value = "";
+  input.click();
 });
 
-const fileInput     = document.getElementById("fileInput");
-const photoLibInput = document.getElementById("photoLibInput");
-const cameraInput   = document.getElementById("cameraInput");
-const sourceMode    = document.getElementById("sourceMode");
 
-let pickedFiles = [];
 
-/* FILE INPUT — ONLY 1 FILE */
-fileInput.addEventListener("change", () => {
-  if (!fileInput.files.length) return;
+input.addEventListener("change", async () => {
+  if (!input.files || !input.files.length) return;
 
-  pickedFiles = [fileInput.files[0]]; // always 1
+  pickedFiles = Array.from(input.files);
+
+  // ✅ NOW hide button
   ctaBtn.style.display = "none";
+
+  // ✅ NOW show role picker
   roleUI.hidden = false;
 });
 
 
-/* PHOTO LIBRARY — MULTIPLE UP TO 10 */
-photoLibInput.addEventListener("change", () => {
-  if (!photoLibInput.files.length) return;
 
-  const arr = Array.from(photoLibInput.files);
-  if (arr.length > 10) {
-    alert("Max 10 photos.");
+inputCamera.addEventListener("change", async () => {
+  if (!inputCamera.files || !inputCamera.files.length) return;
+
+  pickedFiles = Array.from(inputCamera.files);
+
+  // ✅ Detect real camera capture (1 image)
+  const first = inputCamera.files[0];
+  const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
+
+  if (usedCamera) {
+    // ✅ Run your bottom sheet "Add More / Continue" flow
+    setTimeout(() => {
+      // This function already exists in your correct version
+      handleCameraFlow();
+    }, 200);
     return;
   }
 
-  pickedFiles = arr;
+  // ✅ Otherwise normal file selection
   ctaBtn.style.display = "none";
   roleUI.hidden = false;
 });
+// === CAMERA FLOW SYSTEM (FULL) ===
 
+const cameraSheet = document.getElementById("cameraSheet");
+const cameraCount = document.getElementById("cameraCount");
+const addMoreBtn = document.getElementById("addMoreBtn");
+const continueBtn = document.getElementById("continueBtn");
 
-/* CAMERA — ALWAYS 1 PHOTO EACH TIME */
-cameraInput.addEventListener("change", () => {
-  if (!cameraInput.files.length) return;
+function showCameraSheet() {
+  cameraSheet.style.bottom = "0";
+}
 
-  const img = cameraInput.files[0];
-  pickedFiles.push(img);
+function hideCameraSheet() {
+  cameraSheet.style.bottom = "-400px";
+}
 
-  if (pickedFiles.length === 1) {
-    setTimeout(() => handleCameraFlow(), 200);
-    return;
-  }
+function updateCount() {
+  cameraCount.textContent = `${pickedFiles.length}/10 photos added`;
+}
 
-  if (pickedFiles.length > 10) {
-    alert("Max 10 photos.");
-    pickedFiles.pop();
-    return;
-  }
-
+// ✅ Core function that runs when the FIRST camera photo is taken
+window.handleCameraFlow = function () {
   updateCount();
+  showCameraSheet();
+};
+
+// ✅ Add more photos
+addMoreBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  if (pickedFiles.length >= 10) {
+    alert("Maximum 10 photos.");
+    return;
+  }
+
+  // reopen camera
+  inputCamera.value = "";
+  inputCamera.click();
+});
+
+// ✅ Continue → show role picker
+continueBtn.addEventListener("click", () => {
+  hideCameraSheet();
+
+  // hide CTA
+  ctaBtn.style.display = "none";
+
+  // show role picker
+  roleUI.hidden = false;
 });
 
 
@@ -1792,46 +1787,22 @@ window.location.href = "analysis.html";
     }
   }
 
-input.addEventListener("change", () => {
-  if (!input.files.length) return;
-
-  const files = Array.from(input.files);
-
-  // Detect captured photo (camera)
-  const cameraCapture =
-    files.length === 1 && files[0].type.startsWith("image/") &&
-    files[0].name === "image.jpg"; // iOS camera usually uses this name
-
-  if (cameraCapture) {
-    // 📸 TAKE PHOTO FLOW
-    // allow user to take up to 10 photos via your bottom sheet
-    pickedFiles.push(files[0]);
-    if (pickedFiles.length > 10) pickedFiles = pickedFiles.slice(0, 10);
-
-    // show your bottom sheet flow
-    handleCameraFlow();
-    return;
-  }
-
-  // Detect multi-select from Photo Library
-  const photoLibrary = files.every(f => f.type.startsWith("image/"));
-
-  if (photoLibrary) {
-    // 🖼 PHOTO LIBRARY FLOW
-    pickedFiles = files.slice(0, 10);
+  input.addEventListener("change", () => {
+    if (!input.files.length) return;
+    const first = input.files[0];
+    const fromCamera = inputCamera.capture === "environment";
+    if (fromCamera && first.type.startsWith("image/")) {
+      pickedFiles = [first];
+      setTimeout(handleCameraFlow, 300);
+      return;
+    }
+    pickedFiles = Array.from(input.files).slice(0, 10);
     ctaBtn.style.display = "none";
     roleUI.hidden = false;
-    return;
-  }
+  });
 
-  // Otherwise it's a document upload (PDF/DOCX/etc)
-  // 📝 CHOOSE FILE FLOW
-  pickedFiles = [files[0]];
-  ctaBtn.style.display = "none";
-  roleUI.hidden = false;
-});
-
-
+  window.handleCameraFlow = handleCameraFlow;
+})();
 </script>
 
 <style>
