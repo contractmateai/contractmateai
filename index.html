@@ -1169,7 +1169,8 @@
 
 
     <!-- Upload inputs -->
- <input id="contractFile" type="file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+<input id="contractFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,image/*" style="display: none" />
+
 
 
    <input id="contractCamera" type="file" accept="image/*" capture="environment" style="display:none" />
@@ -1787,22 +1788,34 @@ window.location.href = "analysis.html";
     }
   }
 
-  input.addEventListener("change", () => {
-    if (!input.files.length) return;
-    const first = input.files[0];
-    const fromCamera = inputCamera.capture === "environment";
-    if (fromCamera && first.type.startsWith("image/")) {
-      pickedFiles = [first];
-      setTimeout(handleCameraFlow, 300);
-      return;
+input.addEventListener("change", () => {
+  if (!input.files.length) return;
+
+  // Detect if user picked from Photo Library (iOS allows multi-select even without 'multiple')
+  const fromPhotoLibrary = input.files.length > 1;
+
+  if (fromPhotoLibrary) {
+    // LIMIT to 10 photos max
+    const arr = Array.from(input.files);
+    if (arr.length > 10) {
+      alert("You can select a maximum of 10 photos.");
+      pickedFiles = arr.slice(0, 10);
+    } else {
+      pickedFiles = arr;
     }
-    pickedFiles = Array.from(input.files).slice(0, 10);
+
     ctaBtn.style.display = "none";
     roleUI.hidden = false;
-  });
+    return;
+  }
 
-  window.handleCameraFlow = handleCameraFlow;
-})();
+  // Otherwise "Choose File" → only 1 item allowed
+  pickedFiles = [input.files[0]];
+
+  ctaBtn.style.display = "none";
+  roleUI.hidden = false;
+});
+
 </script>
 
 <style>
