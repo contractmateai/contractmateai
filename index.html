@@ -319,6 +319,20 @@
         display: none !important;
       }
 
+      .file-count-badge {
+        margin-top: 16px;
+        display: inline-block;
+        background: #007aff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .file-count-badge[hidden] {
+        display: none !important;
+      }
+
       .cta-btn:hover {
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
       }
@@ -2316,6 +2330,9 @@
             <span class="animated-arrow diag" aria-hidden="true">↗</span>
           </button>
         </div>
+        <div id="fileCount" class="file-count-badge" hidden>
+          <span id="fileCountText">0 files selected</span>
+        </div>
         <div id="rolePicker" class="role-picker" hidden>
           <span class="role-title">You are:</span>
           <div class="role-buttons">
@@ -3350,317 +3367,342 @@
       document.addEventListener("DOMContentLoaded", () => {
         (async () => {
           async function fileToPayload(file) {
-          try {
-            const name = file.name || "file";
-            const mime = file.type || "application/octet-stream";
-            const ext = name.toLowerCase();
-            if (mime === "text/plain" || ext.endsWith(".txt")) {
-              return { text: await file.text(), originalName: name, mime };
-            }
-            if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-              const buf = await file.arrayBuffer();
-              const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-              let full = "";
-              for (let p = 1; p <= pdf.numPages; p++) {
-                const page = await pdf.getPage(p);
-                const content = await page.getTextContent();
-                full += content.items.map((i) => i.str).join(" ") + "\n";
+            try {
+              const name = file.name || "file";
+              const mime = file.type || "application/octet-stream";
+              const ext = name.toLowerCase();
+              if (mime === "text/plain" || ext.endsWith(".txt")) {
+                return { text: await file.text(), originalName: name, mime };
               }
-              return { text: full, originalName: name, mime };
+              if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+                const buf = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+                let full = "";
+                for (let p = 1; p <= pdf.numPages; p++) {
+                  const page = await pdf.getPage(p);
+                  const content = await page.getTextContent();
+                  full += content.items.map((i) => i.str).join(" ") + "\n";
+                }
+                return { text: full, originalName: name, mime };
+              }
+              if (
+                mime ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                ext.endsWith(".docx")
+              ) {
+                const buf = await file.arrayBuffer();
+                const res = await window.mammoth.extractRawText({
+                  arrayBuffer: buf,
+                });
+                return { text: res.value || "", originalName: name, mime };
+              }
+              if (
+                mime.startsWith("image/") ||
+                /\.(png|jpe?g|webp)$/i.test(ext)
+              ) {
+                const dataUrl = await new Promise((resolve) => {
+                  const r = new FileReader();
+                  r.onload = () => resolve(r.result);
+                  r.readAsDataURL(file);
+                });
+                return { imageDataURI: dataUrl, originalName: name, mime };
+              }
+              throw new Error("Unsupported file type: " + mime);
+            } catch (e) {
+              console.error("fileToPayload error:", e.message);
+              throw e;
             }
-            if (
-              mime ===
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-              ext.endsWith(".docx")
-            ) {
-              const buf = await file.arrayBuffer();
-              const res = await window.mammoth.extractRawText({
-                arrayBuffer: buf,
-              });
-              return { text: res.value || "", originalName: name, mime };
-            }
-            if (mime.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(ext)) {
-              const dataUrl = await new Promise((resolve) => {
-                const r = new FileReader();
-                r.onload = () => resolve(r.result);
-                r.readAsDataURL(file);
-              });
-              return { imageDataURI: dataUrl, originalName: name, mime };
-            }
-            throw new Error("Unsupported file type: " + mime);
-          } catch (e) {
-            console.error("fileToPayload error:", e.message);
-            throw e;
           }
-        }
 
-        const demoData = {
-          contractName: "Uploaded Contract",
-          detectedLang: "en",
-          analysis: {
-            summary: [
-              "Contract appears standard with clear terms.",
-              "Some clauses need review for fairness.",
-            ],
-            risk: 20,
-            clarity: 85,
-            compliance: 90,
-            keyClauses: [
-              "Payment: Net 30 days.",
-              "Termination: 30-day notice.",
-            ],
-            potentialIssues: [
-              "Ambiguous termination clause.",
-              "Unclear penalty terms.",
-            ],
-            smartSuggestions: [
-              "Clarify termination conditions.",
-              "Cap penalties.",
-            ],
-          },
-          translations: {},
-        };
+          const demoData = {
+            contractName: "Uploaded Contract",
+            detectedLang: "en",
+            analysis: {
+              summary: [
+                "Contract appears standard with clear terms.",
+                "Some clauses need review for fairness.",
+              ],
+              risk: 20,
+              clarity: 85,
+              compliance: 90,
+              keyClauses: [
+                "Payment: Net 30 days.",
+                "Termination: 30-day notice.",
+              ],
+              potentialIssues: [
+                "Ambiguous termination clause.",
+                "Unclear penalty terms.",
+              ],
+              smartSuggestions: [
+                "Clarify termination conditions.",
+                "Cap penalties.",
+              ],
+            },
+            translations: {},
+          };
 
-        const input = document.getElementById("contractFile");
-        const inputCamera = document.getElementById("contractCamera");
-        const roleUI = document.getElementById("rolePicker");
-        const ctaBtn = document.getElementById("reviewBtn");
-        const sheet = document.getElementById("addMoreSheet");
-        const sheetAddMore = document.getElementById("sheetAddMore");
-        const sheetCont = document.getElementById("sheetContinue");
-        const sheetCount = document.getElementById("sheetCount");
-        
-        // Debug: Check if elements exist
-        if (!input || !ctaBtn || !roleUI) {
-          console.error("Required elements not found:", { input, ctaBtn, roleUI });
-          return;
-        }
-        
-        let pickedFiles = [];
-        let cameraResolve = null;
+          const input = document.getElementById("contractFile");
+          const inputCamera = document.getElementById("contractCamera");
+          const roleUI = document.getElementById("rolePicker");
+          const ctaBtn = document.getElementById("reviewBtn");
+          const sheet = document.getElementById("addMoreSheet");
+          const sheetAddMore = document.getElementById("sheetAddMore");
+          const sheetCont = document.getElementById("sheetContinue");
+          const sheetCount = document.getElementById("sheetCount");
+          const fileCountBadge = document.getElementById("fileCount");
+          const fileCountText = document.getElementById("fileCountText");
 
-        function isMobile() {
-          return window.matchMedia("(max-width: 980px)").matches;
-        }
-
-        function showSheet(count) {
-          sheetCount.textContent = `${count}/10 photos added`;
-          sheet.style.display = "flex";
-        }
-        
-        function hideSheet() {
-          sheet.style.display = "none";
-        }
-
-        sheetAddMore.onclick = () => {
-          hideSheet();
-          if (cameraResolve) cameraResolve(true);
-        };
-        
-        sheetCont.onclick = () => {
-          hideSheet();
-          if (cameraResolve) cameraResolve(false);
-        };
-
-        async function handleCameraFlow() {
-          let count = pickedFiles.length;
-          while (count < 10) {
-            if (count > 0) {
-              const more = await new Promise((resolve) => {
-                cameraResolve = resolve;
-                showSheet(count);
-              });
-              if (!more) break;
-            }
-            inputCamera.value = "";
-            inputCamera.click();
-            const newPhoto = await new Promise((resolve) => {
-              inputCamera.onchange = () =>
-                resolve(inputCamera.files?.[0] || null);
+          // Debug: Check if elements exist
+          if (!input || !ctaBtn || !roleUI) {
+            console.error("Required elements not found:", {
+              input,
+              ctaBtn,
+              roleUI,
             });
-            if (!newPhoto) break;
-            pickedFiles.push(newPhoto);
-            count++;
-          }
-          if (pickedFiles.length) {
-            ctaBtn.style.display = "none";
-            roleUI.hidden = false;
-          }
-        }
-
-        ctaBtn.addEventListener("click", (e) => {
-          console.log("Review button clicked!"); // Debug
-          e.preventDefault();
-          pickedFiles = [];
-
-          // Native iOS/Android sheet will show:
-          // 1. Photo Library (multiple photos, max 10)
-          // 2. Take Photo (camera, handled separately)
-          // 3. Choose Files (single document file)
-          // 4. Google Drive (if installed)
-          input.value = "";
-          console.log("Opening file picker..."); // Debug
-          input.click();
-        });
-
-        input.addEventListener("change", async () => {
-          if (!input.files || !input.files.length) return;
-
-          const files = Array.from(input.files);
-          const firstFile = files[0];
-
-          // Check if user selected images (Photo Library option)
-          const allImages = files.every((f) => f.type.startsWith("image/"));
-
-          if (allImages && files.length > 1) {
-            // Photo Library: User selected MULTIPLE photos
-            // This is clearly from Photo Library, NOT camera
-            // Limit to maximum 10 photos
-            pickedFiles = files.slice(0, 10);
-
-            if (files.length > 10) {
-              alert(
-                `You selected ${files.length} photos. Only the first 10 will be used.`
-              );
-            }
-
-            // Show role picker immediately for Photo Library selection
-            ctaBtn.style.display = "none";
-            roleUI.hidden = false;
-          } else if (allImages && files.length === 1) {
-            // Single image: Could be camera or Photo Library (single)
-            // For single images, we can't reliably detect if it's from camera
-            // So just proceed to role picker directly
-            pickedFiles = [firstFile];
-            ctaBtn.style.display = "none";
-            roleUI.hidden = false;
-          } else {
-            // Choose Files: User selected document file(s)
-            // Only allow ONE file for documents
-            pickedFiles = [firstFile];
-
-            if (files.length > 1) {
-              alert(
-                "Only one document file is allowed. Using the first file selected."
-              );
-            }
-
-            // Show role picker
-            ctaBtn.style.display = "none";
-            roleUI.hidden = false;
-          }
-        });
-
-        inputCamera.addEventListener("change", async () => {
-          if (!inputCamera.files || !inputCamera.files.length) return;
-
-          pickedFiles = Array.from(inputCamera.files);
-
-          // Detect real camera capture (1 image)
-          const first = inputCamera.files[0];
-          const usedCamera =
-            inputCamera.files.length === 1 && first.type.startsWith("image/");
-
-          if (usedCamera) {
-            // Run bottom sheet "Add More / Continue" flow
-            setTimeout(() => {
-              handleCameraFlow();
-            }, 200);
             return;
           }
 
-          // Otherwise normal file selection
-          ctaBtn.style.display = "none";
-          roleUI.hidden = false;
-        });
-        // === CAMERA FLOW SYSTEM (FULL) ===
+          let pickedFiles = [];
+          let cameraResolve = null;
 
-        roleUI.querySelectorAll(".role-btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            roleUI
-              .querySelectorAll(".role-btn")
-              .forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            if (!pickedFiles.length) {
-              alert("Please choose a contract file first.");
-              return;
-            }
-            try {
-              // Check if we have multiple files (Photo Library with multiple images)
-              if (pickedFiles.length > 1) {
-                // Process all images (max 10)
-                const payloadArr = await Promise.all(
-                  pickedFiles.map(async (file) => {
-                    if (file.size > 10_000_000) {
-                      throw new Error(
-                        `File ${file.name} is too large. Maximum size is 10MB.`
-                      );
-                    }
-                    return await fileToPayload(file);
-                  })
-                );
+          function isMobile() {
+            return window.matchMedia("(max-width: 980px)").matches;
+          }
 
-                const body = {
-                  files: payloadArr,
-                  role: btn.dataset.role || "signer",
-                  multipleImages: true,
-                };
+          function showSheet(count) {
+            sheetCount.textContent = `${count}/10 photos added`;
+            sheet.style.display = "flex";
+          }
 
-                const resp = await fetch("/api/analyze", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(body),
+          function hideSheet() {
+            sheet.style.display = "none";
+          }
+
+          sheetAddMore.onclick = () => {
+            hideSheet();
+            if (cameraResolve) cameraResolve(true);
+          };
+
+          sheetCont.onclick = () => {
+            hideSheet();
+            if (cameraResolve) cameraResolve(false);
+          };
+
+          async function handleCameraFlow() {
+            let count = pickedFiles.length;
+            while (count < 10) {
+              if (count > 0) {
+                const more = await new Promise((resolve) => {
+                  cameraResolve = resolve;
+                  showSheet(count);
                 });
-
-                if (!resp.ok) {
-                  const err = await resp.json().catch(() => ({}));
-                  throw new Error(err?.error || "Analysis failed");
-                }
-
-                const analysisResult = await resp.json();
-                localStorage.setItem(
-                  "analysisRaw",
-                  JSON.stringify(analysisResult)
-                );
-                window.location.href = "analysis.html";
-              } else {
-                // Single file (Choose Files OR single photo)
-                const file = pickedFiles[0];
-                if (file.size > 10_000_000) {
-                  alert(
-                    `File ${file.name} is too large. Maximum size is 10MB.`
-                  );
-                  return;
-                }
-                const payload = await fileToPayload(file);
-                const body = {
-                  ...payload,
-                  role: btn.dataset.role || "signer",
-                };
-
-                const resp = await fetch("/api/analyze", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(body),
-                });
-
-                if (!resp.ok) {
-                  const err = await resp.json().catch(() => ({}));
-                  throw new Error(err?.error || "Analysis failed");
-                }
-
-                const analysisResult = await resp.json();
-                localStorage.setItem(
-                  "analysisRaw",
-                  JSON.stringify(analysisResult)
-                );
-                window.location.href = "analysis.html";
+                if (!more) break;
               }
-            } catch (e) {
-              alert(`Error processing file: ${e.message}`);
+              inputCamera.value = "";
+              inputCamera.click();
+              const newPhoto = await new Promise((resolve) => {
+                inputCamera.onchange = () =>
+                  resolve(inputCamera.files?.[0] || null);
+              });
+              if (!newPhoto) break;
+              pickedFiles.push(newPhoto);
+              count++;
+            }
+            if (pickedFiles.length) {
+              ctaBtn.style.display = "none";
+              roleUI.hidden = false;
+            }
+          }
+
+          ctaBtn.addEventListener("click", (e) => {
+            console.log("Review button clicked!"); // Debug
+            e.preventDefault();
+            pickedFiles = [];
+            
+            // Hide file count badge
+            fileCountBadge.hidden = true;
+
+            // Native iOS/Android sheet will show:
+            // 1. Photo Library (multiple photos, max 10)
+            // 2. Take Photo (camera, handled separately)
+            // 3. Choose Files (single document file)
+            // 4. Google Drive (if installed)
+            input.value = "";
+            console.log("Opening file picker..."); // Debug
+            input.click();
+          });
+
+          input.addEventListener("change", async () => {
+            if (!input.files || !input.files.length) return;
+
+            const files = Array.from(input.files);
+            const firstFile = files[0];
+
+            // Check if user selected images (Photo Library option)
+            const allImages = files.every((f) => f.type.startsWith("image/"));
+
+            if (allImages && files.length > 1) {
+              // Photo Library: User selected MULTIPLE photos
+              // This is clearly from Photo Library, NOT camera
+              // Limit to maximum 10 photos
+              pickedFiles = files.slice(0, 10);
+
+              if (files.length > 10) {
+                alert(
+                  `You selected ${files.length} photos. Only the first 10 will be used.`
+                );
+              }
+
+              // Show file count badge
+              fileCountText.textContent = `${pickedFiles.length} photo${pickedFiles.length > 1 ? 's' : ''} selected`;
+              fileCountBadge.hidden = false;
+
+              // Show role picker immediately for Photo Library selection
+              ctaBtn.style.display = "none";
+              roleUI.hidden = false;
+            } else if (allImages && files.length === 1) {
+              // Single image: Could be camera or Photo Library (single)
+              // For single images, we can't reliably detect if it's from camera
+              // So just proceed to role picker directly
+              pickedFiles = [firstFile];
+              
+              // Show file count badge
+              fileCountText.textContent = "1 photo selected";
+              fileCountBadge.hidden = false;
+              
+              ctaBtn.style.display = "none";
+              roleUI.hidden = false;
+            } else {
+              // Choose Files: User selected document file(s)
+              // Only allow ONE file for documents
+              pickedFiles = [firstFile];
+
+              if (files.length > 1) {
+                alert(
+                  "Only one document file is allowed. Using the first file selected."
+                );
+              }
+
+              // Show file count badge
+              fileCountText.textContent = "1 file selected";
+              fileCountBadge.hidden = false;
+
+              // Show role picker
+              ctaBtn.style.display = "none";
+              roleUI.hidden = false;
             }
           });
-        });
+
+          inputCamera.addEventListener("change", async () => {
+            if (!inputCamera.files || !inputCamera.files.length) return;
+
+            pickedFiles = Array.from(inputCamera.files);
+
+            // Detect real camera capture (1 image)
+            const first = inputCamera.files[0];
+            const usedCamera =
+              inputCamera.files.length === 1 && first.type.startsWith("image/");
+
+            if (usedCamera) {
+              // Run bottom sheet "Add More / Continue" flow
+              setTimeout(() => {
+                handleCameraFlow();
+              }, 200);
+              return;
+            }
+
+            // Otherwise normal file selection
+            ctaBtn.style.display = "none";
+            roleUI.hidden = false;
+          });
+          // === CAMERA FLOW SYSTEM (FULL) ===
+
+          roleUI.querySelectorAll(".role-btn").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+              roleUI
+                .querySelectorAll(".role-btn")
+                .forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+              if (!pickedFiles.length) {
+                alert("Please choose a contract file first.");
+                return;
+              }
+              try {
+                // Check if we have multiple files (Photo Library with multiple images)
+                if (pickedFiles.length > 1) {
+                  // Process all images (max 10)
+                  const payloadArr = await Promise.all(
+                    pickedFiles.map(async (file) => {
+                      if (file.size > 10_000_000) {
+                        throw new Error(
+                          `File ${file.name} is too large. Maximum size is 10MB.`
+                        );
+                      }
+                      return await fileToPayload(file);
+                    })
+                  );
+
+                  const body = {
+                    files: payloadArr,
+                    role: btn.dataset.role || "signer",
+                    multipleImages: true,
+                  };
+
+                  const resp = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                  });
+
+                  if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err?.error || "Analysis failed");
+                  }
+
+                  const analysisResult = await resp.json();
+                  localStorage.setItem(
+                    "analysisRaw",
+                    JSON.stringify(analysisResult)
+                  );
+                  window.location.href = "analysis.html";
+                } else {
+                  // Single file (Choose Files OR single photo)
+                  const file = pickedFiles[0];
+                  if (file.size > 10_000_000) {
+                    alert(
+                      `File ${file.name} is too large. Maximum size is 10MB.`
+                    );
+                    return;
+                  }
+                  const payload = await fileToPayload(file);
+                  const body = {
+                    ...payload,
+                    role: btn.dataset.role || "signer",
+                  };
+
+                  const resp = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                  });
+
+                  if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err?.error || "Analysis failed");
+                  }
+
+                  const analysisResult = await resp.json();
+                  localStorage.setItem(
+                    "analysisRaw",
+                    JSON.stringify(analysisResult)
+                  );
+                  window.location.href = "analysis.html";
+                }
+              } catch (e) {
+                alert(`Error processing file: ${e.message}`);
+              }
+            });
+          });
         })(); // End async IIFE
       }); // End DOMContentLoaded
     </script>
