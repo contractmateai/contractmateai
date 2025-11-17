@@ -231,31 +231,7 @@
   font-size: 20px !important;
   margin-left: 4px;
 }
-    @media (max-width: 980px) {
-      .sidebar {
-  display: none !important;
-}
-
-      .layout { grid-template-columns: 1fr; }
-      .sidebar, .modal { display: none !important; }
-      .main { padding: 0; }
-      .download-wrap { left: 0; }
-      .circle { width: 110px; height: 110px; flex: 0 0 110px; }
-      .circle .val { font-size: 26px; }
-      .card h3 { font-size: 18px; }
-      .card h3 img { width: 24px; height: 24px; }
-      .list p, .bullets li { font-size: 16px; }
-      .meter-title { font-size: 16px; }
-      .meter-title img { width: 24px; height: 24px; }
-      .muted { font-size: 15px; }
-      .status span { font-size: 15px; }
-      .score-pct { font-size: 30px; }
-      .score-remark { font-size: 16px; }
-      .score-bar { height: 20px; }
-      .score-ind { height: 30px; }
-      .score-scale { font-size: 14px; }
-      .card { padding: 14px; }
-    }
+ 
     @media (max-width: 420px) {
       .email-row { flex-wrap: nowrap; }
       .email-inline { width: min(92vw, 320px); }
@@ -269,6 +245,17 @@
   font-size: 24px;
   position: relative;
   top: -5px;
+}
+/* MOBILE FIX — COMPLETELY HIDE DESKTOP SIDEBAR */
+@media (max-width: 980px) {
+
+  .sidebar {
+    display: none !important;
+  }
+
+  .layout { grid-template-columns: 1fr !important; }
+  .main { padding: 0 !important; }
+  .download-wrap { left: 0 !important; }
 }
 
 
