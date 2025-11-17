@@ -198,11 +198,27 @@ export default async function handler(req, res) {
       originalName = "Contract",
       mime = "",
       role = "signer",
-      targetLang = "en"
+      targetLang = "en",
+      files = [],
+      multipleImages = false
     } = body || {};
 
-    if (!text && !imageDataURI) {
-      return send(res, 400, { error: "Provide either text or imageDataURI" });
+    // Check if we have multiple images
+    if (multipleImages && Array.isArray(files) && files.length > 0) {
+      // Handle multiple images - combine them
+      const imageFiles = files.filter(f => f.imageDataURI);
+      if (imageFiles.length === 0) {
+        return send(res, 400, { error: "No images found in files array" });
+      }
+      // We'll process the first image for now, but indicate multiple images in the prompt
+      const firstImage = imageFiles[0];
+      body.imageDataURI = firstImage.imageDataURI;
+      body.originalName = `${imageFiles.length} Images`;
+      body.text = `[Multiple images uploaded: ${imageFiles.length} total]`;
+    }
+
+    if (!text && !imageDataURI && !body.imageDataURI) {
+      return send(res, 400, { error: "Provide either text, imageDataURI, or files array" });
     }
 
     const lang = UI[targetLang] ? targetLang : "en";
@@ -238,13 +254,17 @@ Rules:
 - No extra explanations.`;
 
     // --- User content ---
-    const userContent = imageDataURI
+    const actualImageURI = body.imageDataURI || imageDataURI;
+    const actualText = body.text || text;
+    const actualName = body.originalName || originalName;
+    
+    const userContent = actualImageURI
       ? [
-          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}\nOCR if needed then analyze.` },
-          { type: "image_url", image_url: { url: imageDataURI } }
+          { type: "text", text: `Role: ${role}\nOriginal file: ${actualName}\nOCR if needed then analyze.` },
+          { type: "image_url", image_url: { url: actualImageURI } }
         ]
       : [
-          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\nAnalyze this contract:\n${String(text).slice(0, 110000)}` }
+          { type: "text", text: `Role: ${role}\nOriginal file: ${actualName}, mime: ${mime}\nAnalyze this contract:\n${String(actualText).slice(0, 110000)}` }
         ];
 
     // --- OpenAI call ---
