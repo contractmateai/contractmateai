@@ -853,8 +853,7 @@ document.querySelector('#scaleVerySafe').textContent = ss.verysafe;
     const clarVal = clamp01(data.clarity.value);
     setArc($('#riskArc'), 'risk', riskVal, $('#riskVal'));
     setArc($('#clarArc'), 'clarity', clarVal, $('#clarVal'));
-    setArc($('#scoreArc'), 'score', overall, $('#scorePct'));
-
+    setArc($('#scoreArc'), 'clarity', clarVal, $('#scorePct'));
     $('#riskNote').textContent = data.risk.note;
     $('#clarNote').textContent = data.clarity.note;
     setSafetyStatus('risk', riskVal, lang);
