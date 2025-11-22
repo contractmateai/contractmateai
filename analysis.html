@@ -466,7 +466,12 @@
                 <div class="score-remark" id="scoreRemark">Determines the overall score.</div>
 
                 <div class="score-bar"><span class="score-ind" id="scoreInd"></span></div>
-                <div class="score-scale"><span>Unsafe</span><span>Safe</span><span>Very Safe</span></div>
+                <div class="score-scale">
+  <span id="scaleUnsafe">Unsafe</span>
+  <span id="scaleSafe">Safe</span>
+  <span id="scaleVerySafe">Very Safe</span>
+</div>
+
               </div>
             </div>
           </section>
@@ -526,7 +531,8 @@
       conf: "Confidence to sign freely"
     },
     it: { overview: "Panoramica", title: "Titolo:", summary: "Riepilogo", prof: "Professionalità", fav: "Indice di favore", deadline: "Pressione delle scadenze", issues: "Problemi potenziali", suggestions: "Suggerimenti intelligenti", risk: "Livello di rischio", clarity: "Chiarezza delle clausole", clauses: "Clausole principali", score: "Controllo del punteggio", unsafe: "Non sicuro", safe: "Sicuro", verysafe: "Molto sicuro", conf: "Fiducia per firmare liberamente" },
-    de: { overview: "Übersicht", title: "Titel:", summary: "Zusammenfassung", prof: "Professionalität", fav: "Günstigkeitsindex", deadline: "Fristdruck", issues: "Mögliche Probleme", suggestions: "Intelligente Vorschläge", risk: "Risikostufe", clarity: "Klauselklarheit", clauses: "Hauptklauseln", score: "Punktprüfer", unsafe: "Unsicher", safe: "Sicher", verysafe: "Sehr sicher", conf: "Vertrauen zum freien Unterzeichnen" },
+    de: { overview: "Übersicht", title: "Titel:", summary: "Zusammenfassung", prof: "Professionalität", fav: "Günstigkeitsindex", deadline: "Fristdruck", issues: "Mögliche Probleme", suggestions: "Intelligente Vorschläge", risk: "Risikostufe", clarity: "Klauselklarheit", clauses: "Hauptklauseln", score: "Punktprüfer", unsafe: "schlecht", safe: "gut", verysafe: "sehr gut", conf: "Unterschrifts-Sicherheit"
+ },
     es: { overview: "Resumen", title: "Título:", summary: "Resumen", prof: "Profesionalismo", fav: "Índice de favorabilidad", deadline: "Presión de plazos", issues: "Problemas potenciales", suggestions: "Sugerencias inteligentes", risk: "Nivel de riesgo", clarity: "Claridad de las cláusulas", clauses: "Cláusulas principales", score: "Verificador de puntaje", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muy seguro", conf: "Confianza para firmar libremente" },
     fr: { overview: "Aperçu", title: "Titre:", summary: "Résumé", prof: "Professionnalisme", fav: "Indice de favorabilité", deadline: "Pression des délais", issues: "Problèmes potentiels", suggestions: "Suggestions intelligentes", risk: "Niveau de risque", clarity: "Clarté des clauses", clauses: "Clauses principales", score: "Vérificateur de score", unsafe: "Non sécurisé", safe: "Sûr", verysafe: "Très sûr", conf: "Confiance pour signer librement" },
     pt: { overview: "Visão geral", title: "Título:", summary: "Resumo", prof: "Profissionalismo", fav: "Índice de favorabilidade", deadline: "Pressão de prazos", issues: "Problemas potenciais", suggestions: "Sugestões inteligentes", risk: "Nível de risco", clarity: "Clareza das cláusulas", clauses: "Cláusulas principais", score: "Verificador de pontuação", unsafe: "Inseguro", safe: "Seguro", verysafe: "Muito seguro", conf: "Confiança para assinar livremente" },
@@ -554,7 +560,8 @@
   const RISK_NOTE_BY_LANG = {
     en: "The contract risk score is based on the clauses' fairness and obligations.",
     it: "Il punteggio di rischio del contratto si basa sull'equità e sugli obblighi delle clausole.",
-    de: "Die Risikobewertung des Vertrags basiert auf der Fairness und den Verpflichtungen der Klauseln.",
+   de: "Die Risikobewertung basiert auf Fairness und Pflichten der Klauseln.",
+
     es: "La puntuación de riesgo del contrato se basa en la equidad y las obligaciones de las cláusulas.",
     fr: "Le score de risque du contrat est basé sur l'équité et les obligations des clauses.",
     pt: "A pontuação de risco do contrato é baseada na equidade e nas obrigações das cláusulas.",
@@ -568,7 +575,8 @@
   const CLAR_NOTE_BY_LANG = {
     en: "The clarity score reflects how easy it is to understand the terms.",
     it: "Il punteggio di chiarezza riflette quanto sia facile comprendere i termini.",
-    de: "Die Klarheitsbewertung zeigt, wie leicht die Bedingungen zu verstehen sind.",
+    de: "Die Klarheitswertung zeigt, wie leicht die Vertragsregeln verständlich sind.",
+
     es: "La puntuación de claridad refleja lo fácil que es entender los términos.",
     fr: "Le score de clarté reflète la facilité de compréhension des termes.",
     pt: "A pontuação de clareza reflete o quão fácil é entender os termos.",
@@ -593,6 +601,35 @@
     zh: "合同几乎完美完成。",
     ja: "契約はほぼ完璧に作成されています。"
   };
+  const SCORE_LINE_BY_LANG = {
+  en: "Overall Score",
+  it: "Punteggio complessivo",
+  de: "Gesamtwertung",
+  es: "Puntuación general",
+  fr: "Score global",
+  pt: "Pontuação geral",
+  nl: "Totale score",
+  ro: "Scor general",
+  sq: "Rezultati i përgjithshëm",
+  tr: "Genel puan",
+  zh: "总体评分",
+  ja: "総合スコア"
+};
+const SAFETY_SCALE_BY_LANG = {
+  en: { unsafe: "Unsafe", safe: "Safe", verysafe: "Very Safe" },
+  it: { unsafe: "Non sicuro", safe: "Sicuro", verysafe: "Molto sicuro" },
+  de: { unsafe: "schlecht", safe: "gut", verysafe: "sehr gut" },
+  es: { unsafe: "Inseguro", safe: "Seguro", verysafe: "Muy seguro" },
+  fr: { unsafe: "Dangereux", safe: "Sûr", verysafe: "Très sûr" },
+  pt: { unsafe: "Inseguro", safe: "Seguro", verysafe: "Muito seguro" },
+  nl: { unsafe: "Onveilig", safe: "Veilig", verysafe: "Zeer veilig" },
+  ro: { unsafe: "Nesigur", safe: "Sigur", verysafe: "Foarte sigur" },
+  sq: { unsafe: "e keqe", safe: "e mirë", verysafe: "shumë e mirë" },
+  tr: { unsafe: "Güvensiz", safe: "Güvenli", verysafe: "Çok güvenli" },
+  zh: { unsafe: "不安全", safe: "安全", verysafe: "非常安全" },
+  ja: { unsafe: "危険", safe: "安全", verysafe: "非常に安全" }
+};
+
   const drawer = document.getElementById('drawer');
   const scrim = document.getElementById('scrim');
   const menuBtn = document.getElementById('menuBtn');
@@ -786,6 +823,12 @@ const setMeter = (fillEl, labelEl, metric, value) => {
   };
   const renderAll = lang => {
     renderUILabels(lang);
+    // SAFETY SCALE TRANSLATIONS (Unsafe / Safe / Very Safe)
+const ss = SAFETY_SCALE_BY_LANG[lang] || SAFETY_SCALE_BY_LANG.en;
+document.querySelector('#scaleUnsafe').textContent = ss.unsafe;
+document.querySelector('#scaleSafe').textContent = ss.safe;
+document.querySelector('#scaleVerySafe').textContent = ss.verysafe;
+
     $('#langNow').textContent = lang.toUpperCase();
     const data = getLocalizedContent(lang);
     $('#uiTitleValue').textContent = data.title || '—';
@@ -821,10 +864,9 @@ let scoreMsg;
 if (overall <= 33) scoreMsg = (UI[lang]?.unsafe || UI.en.unsafe);        // "Unsafe"
 else if (overall <= 66) scoreMsg = (UI[lang]?.safe || UI.en.safe);        // "Safe"
 else scoreMsg = (UI[lang]?.verysafe || UI.en.verysafe);                   // "Very Safe"
-$('#scoreRemark').textContent = `Determines the overall score.`;
-$('#scoreInd').style.left = `calc(${overall}% - 1.5px)`;
+$('#scoreRemark').textContent = SCORE_LINE_BY_LANG[lang] || SCORE_LINE_BY_LANG.en;
 
-    $('#scoreInd').style.left = `calc(${clarVal}% - 1.5px)`;
+$('#scoreInd').style.left = `calc(${overall}% - 1.5px)`;
     setMeter($('#confFill'), $('#confVal'), 'professionalism', normalized.meters.professionalism);
     setMeter($('#favFill'), $('#favVal'), 'favorability', normalized.meters.favorability);
     setMeter($('#deadFill'), $('#deadVal'), 'deadline', normalized.meters.deadline);
