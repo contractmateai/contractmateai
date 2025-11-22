@@ -258,20 +258,31 @@
   .main { padding: 0 !important; }
   .download-wrap { left: 0 !important; }
   /* FIX CIRCLE SIZE ON MOBILE */
+/* PERFECT MOBILE CIRCLE FIX */
 .circle {
-  width: 120px !important;
-  height: 120px !important;
-  flex: 0 0 120px !important;
-}
-
-.circle .val {
-  font-size: 26px !important;
+  width: 100px !important;
+  height: 100px !important;
+  flex: 0 0 100px !important;
+  position: relative !important;
 }
 
 .circle canvas {
-  width: 120px !important;
-  height: 120px !important;
+  width: 100px !important;
+  height: 100px !important;
 }
+
+.circle .val {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  color: white !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
 
 }
 
