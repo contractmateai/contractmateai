@@ -259,18 +259,24 @@
   .download-wrap { left: 0 !important; }
   /* FIX CIRCLE SIZE ON MOBILE */
 /* PERFECT MOBILE CIRCLE FIX */
+/* SHRINK THE SVG ITSELF ON MOBILE */
+.circle svg {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+/* Keep the circle container consistent */
 .circle {
   width: 100px !important;
   height: 100px !important;
-  flex: 0 0 100px !important;
   position: relative !important;
+  flex: 0 0 100px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.circle canvas {
-  width: 100px !important;
-  height: 100px !important;
-}
-
+/* PERFECTLY center the % value */
 .circle .val {
   position: absolute !important;
   top: 50% !important;
@@ -278,10 +284,8 @@
   transform: translate(-50%, -50%) !important;
   font-size: 22px !important;
   font-weight: 600 !important;
-  color: white !important;
-  text-align: center !important;
-  width: 100% !important;
 }
+
 
 
 }
