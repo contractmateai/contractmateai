@@ -8,7 +8,7 @@ function send(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
-// Static UI translations
+// Static UI translations for verdict labels + score line
 const UI = {
   en: {
     summary: "Summary",
@@ -21,7 +21,8 @@ const UI = {
     unsafe: "Unsafe",
     safe: "Safe",
     verySafe: "Very Safe",
-    scoreLine: "Determines the overall score."
+    scoreLine: "Determines the overall score.",
+    conf: "Confidence to sign freely"
   },
   it: {
     summary: "Riassunto",
@@ -34,8 +35,10 @@ const UI = {
     unsafe: "Non Sicuro",
     safe: "Sicuro",
     verySafe: "Molto Sicuro",
-    scoreLine: "Determina il punteggio complessivo."
+    scoreLine: "Determina il punteggio complessivo.",
+    conf: "Fiducia per firmare liberamente"
   },
+  // ✅ UPDATED GERMAN STRINGS
   de: {
     summary: "Zusammenfassung",
     risk: "Risiko",
@@ -44,10 +47,11 @@ const UI = {
     potentialIssues: "Mögliche Probleme",
     smartSuggestions: "Intelligente Vorschläge",
     score: "Gesamtwertung",
-    unsafe: "Unsicher",
-    safe: "Sicher",
-    verySafe: "Sehr Sicher",
-    scoreLine: "Bestimmt die Gesamtbewertung."
+    unsafe: "schlecht",
+    safe: "gut",
+    verySafe: "sehr gut",
+    scoreLine: "Gesamtwertung",
+    conf: "Unterschrifts-Sicherheit"
   },
   es: {
     summary: "Resumen",
@@ -60,7 +64,8 @@ const UI = {
     unsafe: "Inseguro",
     safe: "Seguro",
     verySafe: "Muy Seguro",
-    scoreLine: "Determina la puntuación general."
+    scoreLine: "Determina la puntuación general.",
+    conf: "Confianza para firmar libremente"
   },
   fr: {
     summary: "Résumé",
@@ -73,7 +78,8 @@ const UI = {
     unsafe: "Dangereux",
     safe: "Sûr",
     verySafe: "Très Sûr",
-    scoreLine: "Détermine le score global."
+    scoreLine: "Détermine le score global.",
+    conf: "Confiance pour signer librement"
   },
   pt: {
     summary: "Resumo",
@@ -86,7 +92,8 @@ const UI = {
     unsafe: "Inseguro",
     safe: "Seguro",
     verySafe: "Muito Seguro",
-    scoreLine: "Determina a pontuação geral."
+    scoreLine: "Determina a pontuação geral.",
+    conf: "Confiança para assinar livremente"
   },
   nl: {
     summary: "Samenvatting",
@@ -99,7 +106,8 @@ const UI = {
     unsafe: "Onveilig",
     safe: "Veilig",
     verySafe: "Zeer Veilig",
-    scoreLine: "Bepaalt de totale score."
+    scoreLine: "Bepaalt de totale score.",
+    conf: "Vertrouwen om vrij te ondertekenen"
   },
   ro: {
     summary: "Rezumat",
@@ -112,7 +120,8 @@ const UI = {
     unsafe: "Nesigur",
     safe: "Sigur",
     verySafe: "Foarte Sigur",
-    scoreLine: "Determină scorul general."
+    scoreLine: "Determină scorul general.",
+    conf: "Încredere pentru a semna liber"
   },
   sq: {
     summary: "Përmbledhje",
@@ -122,10 +131,11 @@ const UI = {
     potentialIssues: "Probleme të Mundshme",
     smartSuggestions: "Sugjerime të Zgjuara",
     score: "Rezultati i Përgjithshëm",
-    unsafe: "E pasigurt",
-    safe: "E sigurt",
-    verySafe: "Shumë e sigurt",
-    scoreLine: "Përcakton rezultatin e përgjithshëm."
+    unsafe: "e keqe",
+    safe: "e mirë",
+    verySafe: "shumë e mirë",
+    scoreLine: "Përcakton rezultatin e përgjithshëm.",
+    conf: "Besim për të nënshkruar lirisht"
   },
   tr: {
     summary: "Özet",
@@ -138,7 +148,8 @@ const UI = {
     unsafe: "Güvensiz",
     safe: "Güvenli",
     verySafe: "Çok Güvenli",
-    scoreLine: "Genel puanı belirler."
+    scoreLine: "Genel puanı belirler.",
+    conf: "Serbestçe imzalama güveni"
   },
   ja: {
     summary: "要約",
@@ -151,7 +162,8 @@ const UI = {
     unsafe: "危険",
     safe: "安全",
     verySafe: "非常に安全",
-    scoreLine: "総合スコアを決定します。"
+    scoreLine: "総合スコアを決定します。",
+    conf: "自由に署名する自信"
   },
   zh: {
     summary: "摘要",
@@ -164,9 +176,14 @@ const UI = {
     unsafe: "不安全",
     safe: "安全",
     verySafe: "非常安全",
-    scoreLine: "确定总体评分。"
+    scoreLine: "确定总体评分。",
+    conf: "自由签署的信心"
   }
 };
+
+const SUPPORTED_LANGS = [
+  "en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"
+];
 
 export default async function handler(req, res) {
   // --- CORS ---
@@ -184,10 +201,12 @@ export default async function handler(req, res) {
       req.on("data", (c) => (raw += c));
       req.on("end", resolve);
     });
+
     const ct = (req.headers["content-type"] || "").toLowerCase();
     if (!ct.includes("application/json")) {
       return send(res, 415, { error: `Send application/json. Got: ${ct || "unknown"}` });
     }
+
     let body = {};
     try { body = raw ? JSON.parse(raw) : {}; }
     catch { return send(res, 400, { error: "Invalid JSON body" }); }
@@ -198,18 +217,23 @@ export default async function handler(req, res) {
       originalName = "Contract",
       mime = "",
       role = "signer",
-      targetLang = "en"
+      targetLang = "en" // still used for ui labels only
     } = body || {};
 
     if (!text && !imageDataURI) {
       return send(res, 400, { error: "Provide either text or imageDataURI" });
     }
 
-    const lang = UI[targetLang] ? targetLang : "en";
-    const t = UI[lang];
+    const uiLang = UI[targetLang] ? targetLang : "en";
+    const t = UI[uiLang];
 
-    // --- System prompt — EXACTLY as you had before, but with dynamic language ---
-    const system = `You are a contract analyst. Return STRICT JSON only:
+    // --- System prompt ---
+    // IMPORTANT:
+    // 1) First detect language of contract => detectedLang
+    // 2) Main "analysis" content must be in detectedLang
+    // 3) ALSO return "translations" for all SUPPORTED_LANGS (en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh)
+    const system = `You are a contract analyst. Return STRICT JSON only in this structure:
+
 {
   "contractName": "string",
   "contractTitle": "string",
@@ -228,14 +252,39 @@ export default async function handler(req, res) {
     ],
     "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
     "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
+  },
+  "translations": {
+    "en": {
+      "title": "string",
+      "summary": ["string","string","string"],
+      "mainClauses": ["string","string","string","string","string"],
+      "potentialIssues": ["string","string","string","string","string"],
+      "smartSuggestions": ["string","string","string"],
+      "scoreLine": "string"
+    },
+    "it": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "de": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "es": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "fr": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "pt": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "nl": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "ro": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "sq": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "tr": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "ja": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" },
+    "zh": { "title": "string", "summary": [...], "mainClauses": [...], "potentialIssues": [...], "smartSuggestions": [...], "scoreLine": "string" }
   }
 }
+
 Rules:
-- SUMMARY = 3 clear sentences.
-- Smart Suggestions must be EXACTLY 3 and must include short “e.g.,” examples (or language-appropriate equivalent).
-- scoreChecker.line MUST match verdict.
-- Detect the language of the input contract and set detectedLang accordingly. Output all textual content (contractName, contractTitle, summary, risk.note, clarity.note, mainClauses, potentialIssues, smartSuggestions, scoreChecker.line) in **${lang}**.
-- No extra explanations.`;
+- First detect the language of the contract text and set "detectedLang" correctly.
+- The main "analysis" content (summary, risk.note, clarity.note, mainClauses, potentialIssues, smartSuggestions, scoreChecker.line) must be written in the detectedLang.
+- SUMMARY must be exactly 3 clear sentences.
+- "smartSuggestions" must be EXACTLY 3 items and each must contain a short “e.g.,” example (or equivalent in that language).
+- "scoreChecker.line" MUST logically match the "verdict" (unsafe / safe / very safe).
+- In the "translations" object, create high-quality translations of title, summary, mainClauses, potentialIssues, smartSuggestions and scoreLine into each listed language code.
+- Make the German ("de") translations slightly concise: keep each sentence about 10–15 characters shorter than the original, but still natural.
+- Do NOT include any extra keys, comments or prose outside this JSON structure.`;
 
     // --- User content ---
     const userContent = imageDataURI
@@ -244,7 +293,13 @@ Rules:
           { type: "image_url", image_url: { url: imageDataURI } }
         ]
       : [
-          { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\nAnalyze this contract:\n${String(text).slice(0, 110000)}` }
+          {
+            type: "text",
+            text:
+              `Role: ${role}\nOriginal file: ${originalName}, mime: ${mime}\n` +
+              `Analyze this contract and follow the JSON spec precisely:\n` +
+              String(text).slice(0, 110000)
+          }
         ];
 
     // --- OpenAI call ---
@@ -269,50 +324,94 @@ Rules:
     } catch (err) {
       return send(res, 500, { error: "OpenAI network error: " + err.message });
     }
+
     if (!openaiResp.ok) {
       const errTxt = await openaiResp.text().catch(() => "");
       return send(res, 502, { error: "OpenAI request failed: " + errTxt });
     }
+
     const resp = await openaiResp.json().catch(() => ({}));
     const content = resp?.choices?.[0]?.message?.content || "{}";
+
     let parsed = {};
     try { parsed = JSON.parse(content); }
-    catch { return send(res, 500, { error: "Invalid JSON returned by model" }); }
+    catch {
+      return send(res, 500, { error: "Invalid JSON returned by model" });
+    }
 
     // --- Normalize ---
     const cap = (s, n) => (s || "").trim().slice(0, n);
     const clamp = (v) => Math.max(0, Math.min(100, Number(v || 0)));
     const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
 
+    const baseSummary = Array.isArray(parsed?.analysis?.summary)
+      ? parsed.analysis.summary.slice(0, 3)
+      : [];
+
     const mainClauses = (parsed?.analysis?.mainClauses || [])
-      .filter(Boolean).map(s => stripLead(cap(s, 900))).slice(0,5);
+      .filter(Boolean)
+      .map(s => stripLead(cap(s, 900)))
+      .slice(0, 5);
+
     const potentialIssues = (parsed?.analysis?.potentialIssues || [])
-      .filter(Boolean).map(s => stripLead(cap(s, 1000))).slice(0,5);
+      .filter(Boolean)
+      .map(s => stripLead(cap(s, 1000)))
+      .slice(0, 5);
+
     const smartSuggestions = (parsed?.analysis?.smartSuggestions || [])
-      .filter(Boolean).map(s => stripLead(cap(s, 250))).slice(0,3);
+      .filter(Boolean)
+      .map(s => stripLead(cap(s, 250)))
+      .slice(0, 3);
 
     const scIn = parsed?.analysis?.scoreChecker || {};
     const scVal = clamp(scIn.value);
+
     let verdict =
       scVal < 34 ? "unsafe" :
       scVal < 67 ? "safe" :
       "verySafe";
+
     let band =
       verdict === "unsafe" ? "red" :
       verdict === "safe" ? "orange" :
       "green";
 
+    const barsIn = parsed?.analysis?.bars || {};
+
+    // --- Translations normalization (for Option A on the report page) ---
+    const trIn = parsed?.translations || {};
+    const translations = {};
+
+    SUPPORTED_LANGS.forEach(code => {
+      const src = trIn[code] || {};
+      const sumArr = Array.isArray(src.summary) ? src.summary : (src.summary ? [String(src.summary)] : []);
+      const mcArr = Array.isArray(src.mainClauses) ? src.mainClauses : (src.mainClauses ? [String(src.mainClauses)] : []);
+      const piArr = Array.isArray(src.potentialIssues) ? src.potentialIssues : (src.potentialIssues ? [String(src.potentialIssues)] : []);
+      const ssArr = Array.isArray(src.smartSuggestions) ? src.smartSuggestions : (src.smartSuggestions ? [String(src.smartSuggestions)] : []);
+
+      translations[code] = {
+        title: cap(src.title || "", 200),
+        summary: sumArr.map(s => cap(s, 320)).slice(0, 3),
+        mainClauses: mcArr.map(s => stripLead(cap(s, 900))).slice(0, 5),
+        potentialIssues: piArr.map(s => stripLead(cap(s, 1000))).slice(0, 5),
+        smartSuggestions: ssArr.map(s => stripLead(cap(s, 250))).slice(0, 3),
+        scoreLine: cap(src.scoreLine || "", 280)
+      };
+    });
+
+    const detectedLang = parsed.detectedLang && SUPPORTED_LANGS.includes(parsed.detectedLang)
+      ? parsed.detectedLang
+      : "en";
+
     const normalized = {
       contractName: parsed.contractName || originalName || "Contract",
       contractTitle: parsed.contractTitle || parsed.contractName || originalName,
       role: parsed.role === "writer" ? "writer" : "signer",
-      detectedLang: parsed.detectedLang || "en",
-      targetLang: lang,
+      detectedLang,
+      targetLang: uiLang,
       ui: t,
       analysis: {
-        summary: Array.isArray(parsed?.analysis?.summary)
-          ? parsed.analysis.summary.slice(0,3)
-          : [],
+        summary: baseSummary,
         risk: {
           value: clamp(parsed?.analysis?.risk?.value),
           note: cap(parsed?.analysis?.risk?.note, 280),
@@ -329,19 +428,20 @@ Rules:
         potentialIssues,
         smartSuggestions,
         bars: {
-          professionalism: clamp(parsed?.analysis?.bars?.professionalism),
-          favorabilityIndex: clamp(parsed?.analysis?.bars?.favorabilityIndex),
-          deadlinePressure: clamp(parsed?.analysis?.bars?.deadlinePressure),
-          confidenceToSign: clamp(parsed?.analysis?.bars?.confidenceToSign)
+          professionalism: clamp(barsIn.professionalism),
+          favorabilityIndex: clamp(barsIn.favorabilityIndex),
+          deadlinePressure: clamp(barsIn.deadlinePressure),
+          confidenceToSign: clamp(barsIn.confidenceToSign)
         },
         scoreChecker: {
           value: scVal,
           band,
           verdict,
           line: cap(scIn.line || t.scoreLine, 280),
-          verdictLabel: t[verdict]
+          verdictLabel: t[verdict] || t.safe
         }
-      }
+      },
+      translations
     };
 
     return send(res, 200, normalized);
