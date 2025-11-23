@@ -710,23 +710,23 @@ const SAFETY_SCALE_BY_LANG = {
 
       normalized.issues = normalized.analysis.potentialIssues || fallbackDemo.issues;
       normalized.suggestions = normalized.analysis.smartSuggestions || fallbackDemo.suggestions;
-      normalized.risk = {
-        value: Number(normalized.analysis.risk) || 0,
-        note: "The contract risk score is based on the clauses' fairness and obligations."
-      };
-      normalized.clarity = {
-        value: Number(normalized.analysis.clarity) || 0,
-        note: "The clarity score reflects how easy it is to understand the terms."
-      };
-      const riskV = clamp01(Number(normalized.analysis.risk));
-      const clarV = clamp01(Number(normalized.analysis.clarity));
-      const compV = clamp01(Number(normalized.analysis.compliance));
-      normalized.meters = {
-        professionalism: compV,
-        favorability: Math.round(((100 - riskV) + clarV) / 2),
-        deadline: clamp01(Math.round(40 + (riskV * 0.4))),
-        confidence: clamp01(Math.round((clarV * 0.6) + ((100 - riskV) * 0.4)))
-      };
+normalized.risk = {
+  value: clamp01(parsed.analysis.risk.value),
+  note: parsed.analysis.risk.note || ""
+};
+
+normalized.clarity = {
+  value: clamp01(parsed.analysis.clarity.value),
+  note: parsed.analysis.clarity.note || ""
+};
+
+normalized.meters = {
+  professionalism: clamp01(parsed.analysis.bars.professionalism),
+  favorability: clamp01(parsed.analysis.bars.favorabilityIndex),
+  deadline: clamp01(parsed.analysis.bars.deadlinePressure),
+  confidence: clamp01(parsed.analysis.bars.confidenceToSign)
+};
+
     } catch {
       normalized = fallbackDemo;
     }
@@ -753,28 +753,29 @@ const SAFETY_SCALE_BY_LANG = {
     badge.textContent = dict[band] || SAFETY_LABELS.en[band];
   };
 const getLocalizedContent = (lang) => {
-  const origLang = normalized.meta.detectedLang || 'en';
   const trAll = normalized.translations || {};
   const trL = trAll[lang] || {};
-
-  // Always prefer translation when lang != detected
-  const useTr = lang !== origLang;
-
-  const arr = (v) => Array.isArray(v) ? v : (v ? [String(v)] : []);
+  const arr = v => Array.isArray(v) ? v : (v ? [String(v)] : []);
 
   return {
-    title: useTr ? (trL.title || normalized.meta.title || "") : (normalized.meta.title || ""),
-    summary: useTr ? (arr(trL.summary).length ? trL.summary : arr(normalized.analysis.summary)) : arr(normalized.analysis.summary),
-   clauses: useTr
-  ? (arr(trL.mainClauses).length ? trL.mainClauses : arr(normalized.analysis.mainClauses))
-  : arr(normalized.analysis.mainClauses),
+    title: trL.title || normalized.meta.title || "",
+    summary: trL.summary?.length ? trL.summary : arr(normalized.analysis.summary),
+    clauses: trL.mainClauses?.length ? trL.mainClauses : arr(normalized.analysis.mainClauses),
+    issues: trL.potentialIssues?.length ? trL.potentialIssues : arr(normalized.analysis.potentialIssues),
+    suggestions: trL.smartSuggestions?.length ? trL.smartSuggestions : arr(normalized.analysis.smartSuggestions),
 
-    issues: useTr ? (arr(trL.potentialIssues).length ? trL.potentialIssues : arr(normalized.analysis.potentialIssues)) : arr(normalized.analysis.potentialIssues),
-    suggestions: useTr ? (arr(trL.smartSuggestions).length ? trL.smartSuggestions : arr(normalized.analysis.smartSuggestions)) : arr(normalized.analysis.smartSuggestions),
-    risk: { value: Number(normalized.risk.value) || 0, note: RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en },
-    clarity: { value: Number(normalized.clarity.value) || 0, note: CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en }
+    risk: {
+      value: normalized.risk.value,
+      note: RISK_NOTE_BY_LANG[lang] || RISK_NOTE_BY_LANG.en
+    },
+
+    clarity: {
+      value: normalized.clarity.value,
+      note: CLAR_NOTE_BY_LANG[lang] || CLAR_NOTE_BY_LANG.en
+    }
   };
 };
+
 
 const setArc = (arcEl, metric, value, valEl) => {
   const v = clamp01(value);
