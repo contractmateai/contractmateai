@@ -63,8 +63,6 @@ const UI = {
     verySafe: "sehr gut",
     scoreLine: "Gesamtwertung",
     conf: "Unterschrifts-Sicherheit",
-
-    // EXACT WORDING YOU REQUESTED:
     riskLineStatic: "Die Risikobewertung basiert auf Fairness und Pflichten der Klauseln.",
     clarityLineStatic: "Die Klarheitswertung zeigt, wie leicht die Vertragsregeln verständlich sind."
   },
