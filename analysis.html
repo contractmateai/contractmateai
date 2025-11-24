@@ -876,7 +876,9 @@ $('#scoreInd').style.left = `calc(${overall}% - 1.5px)`;
   renderAll(currentLang);
   document.querySelectorAll('.lang-item').forEach(item => {
     item.addEventListener('click', e => {
-      currentLang = e.currentTarget.getAttribute('data-code') || e.currentTarget.getAttribute('data-lang').toLowerCase();
+      currentLang = e.currentTarget.getAttribute('data-code');
+renderAll(currentLang);
+
       renderAll(currentLang);
     });
   });
