@@ -1,154 +1,445 @@
-// /pages/api/analyze.js  (or /api/analyze.js on Vercel)
-// Node 18+ runtime
+// api/analyze.js — FINAL FULL VERSION
+// Requires env: OPENAI_API_KEY
+const SECRET = process.env.OPENAI_API_KEY;
+
+function send(res, code, obj) {
+  res.statusCode = code;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(obj));
+}
+
+// -------------------------------------------
+// STATIC UI LABEL TRANSLATIONS
+// (ALL FIXED EXACTLY AS USER REQUESTED)
+// -------------------------------------------
+const UI = {
+  en: {
+    summary: "Summary",
+    risk: "Risk",
+    clarity: "Clarity",
+    mainClauses: "Main Clauses",
+    potentialIssues: "Potential Issues",
+    smartSuggestions: "Smart Suggestions",
+    score: "Overall Score",
+    unsafe: "Unsafe",
+    safe: "Safe",
+    verySafe: "Very Safe",
+    scoreLine: "Determines the overall score.",
+    conf: "Confidence to sign freely",
+    riskLineStatic: "The contract risk score is based on the clauses' fairness and obligations.",
+    clarityLineStatic: "The clarity score reflects how easy it is to understand the terms."
+  },
+
+  it: {
+    summary: "Riassunto",
+    risk: "Rischio",
+    clarity: "Chiarezza",
+    mainClauses: "Clausole Principali",
+    potentialIssues: "Problemi Potenziali",
+    smartSuggestions: "Suggerimenti Intelligenti",
+    score: "Punteggio Complessivo",
+    unsafe: "Non Sicuro",
+    safe: "Sicuro",
+    verySafe: "Molto Sicuro",
+    scoreLine: "Determina il punteggio complessivo.",
+    conf: "Fiducia per firmare liberamente",
+    riskLineStatic: "La valutazione del rischio si basa sull'equità delle clausole e sugli obblighi.",
+    clarityLineStatic: "La chiarezza indica quanto siano comprensibili i termini."
+  },
+
+  // -------------------------
+  // FIXED GERMAN (YOUR RULES)
+  // -------------------------
+  de: {
+    summary: "Zusammenfassung",
+    risk: "Risiko",
+    clarity: "Klarheit",
+    mainClauses: "Hauptklauseln",
+    potentialIssues: "Mögliche Probleme",
+    smartSuggestions: "Intelligente Vorschläge",
+    score: "Gesamtwertung",
+    unsafe: "schlecht",
+    safe: "gut",
+    verySafe: "sehr gut",
+    scoreLine: "Gesamtwertung",
+    conf: "Unterschrifts-Sicherheit",
+    riskLineStatic: "Die Risikobewertung basiert auf Fairness und Pflichten der Klauseln.",
+    clarityLineStatic: "Die Klarheitswertung zeigt, wie leicht die Vertragsregeln verständlich sind."
+  },
+
+  es: {
+    summary: "Resumen",
+    risk: "Riesgo",
+    clarity: "Claridad",
+    mainClauses: "Cláusulas Principales",
+    potentialIssues: "Problemas Potenciales",
+    smartSuggestions: "Sugerencias Inteligentes",
+    score: "Puntuación General",
+    unsafe: "Inseguro",
+    safe: "Seguro",
+    verySafe: "Muy Seguro",
+    scoreLine: "Determina la puntuación general.",
+    conf: "Confianza para firmar libremente",
+    riskLineStatic: "La puntuación de riesgo se basa en la equidad y obligaciones de las cláusulas.",
+    clarityLineStatic: "La claridad refleja lo fácil que es entender los términos."
+  },
+
+  fr: {
+    summary: "Résumé",
+    risk: "Risque",
+    clarity: "Clarté",
+    mainClauses: "Clauses Principales",
+    potentialIssues: "Problèmes Potentiels",
+    smartSuggestions: "Suggestions Intelligentes",
+    score: "Score Global",
+    unsafe: "Dangereux",
+    safe: "Sûr",
+    verySafe: "Très Sûr",
+    scoreLine: "Détermine le score global.",
+    conf: "Confiance pour signer librement",
+    riskLineStatic: "L'évaluation du risque repose sur l'équité et les obligations des clauses.",
+    clarityLineStatic: "La clarté indique la facilité de compréhension des termes."
+  },
+
+  pt: {
+    summary: "Resumo",
+    risk: "Risco",
+    clarity: "Clareza",
+    mainClauses: "Cláusulas Principais",
+    potentialIssues: "Problemas Potenciais",
+    smartSuggestions: "Sugestões Inteligentes",
+    score: "Pontuação Geral",
+    unsafe: "Inseguro",
+    safe: "Seguro",
+    verySafe: "Muito Seguro",
+    scoreLine: "Determina a pontuação geral.",
+    conf: "Confiança para assinar livremente",
+    riskLineStatic: "A pontuação de risco é baseada na equidade e obrigações das cláusulas.",
+    clarityLineStatic: "A clareza reflete a facilidade de entender os termos."
+  },
+
+  nl: {
+    summary: "Samenvatting",
+    risk: "Risico",
+    clarity: "Duidelijkheid",
+    mainClauses: "Hoofdclausules",
+    potentialIssues: "Mogelijke Problemen",
+    smartSuggestions: "Slimme Suggesties",
+    score: "Totale Score",
+    unsafe: "Onveilig",
+    safe: "Veilig",
+    verySafe: "Zeer Veilig",
+    scoreLine: "Bepaalt de totale score.",
+    conf: "Vertrouwen om vrij te ondertekenen",
+    riskLineStatic: "De risicoanalyse is gebaseerd op eerlijkheid en verplichtingen van de clausules.",
+    clarityLineStatic: "De duidelijkheid toont hoe begrijpelijk de voorwaarden zijn."
+  },
+
+  ro: {
+    summary: "Rezumat",
+    risk: "Risc",
+    clarity: "Claritate",
+    mainClauses: "Clauze Principale",
+    potentialIssues: "Probleme Potențiale",
+    smartSuggestions: "Sugestii Inteligente",
+    score: "Scor General",
+    unsafe: "Nesigur",
+    safe: "Sigur",
+    verySafe: "Foarte Sigur",
+    scoreLine: "Determină scorul general.",
+    conf: "Încredere pentru a semna liber",
+    riskLineStatic: "Scorul de risc se bazează pe echitatea și obligațiile clauzelor.",
+    clarityLineStatic: "Claritatea arată cât de ușor sunt de înțeles termenii."
+  },
+
+  sq: {
+    summary: "Përmbledhje",
+    risk: "Rrezik",
+    clarity: "Qartësi",
+    mainClauses: "Klauzola Kryesore",
+    potentialIssues: "Probleme të Mundshme",
+    smartSuggestions: "Sugjerime të Zgjuara",
+    score: "Rezultati i Përgjithshëm",
+    unsafe: "e keqe",
+    safe: "e mirë",
+    verySafe: "shumë e mirë",
+    scoreLine: "Përcakton rezultatin e përgjithshëm.",
+    conf: "Besim për të nënshkruar lirisht",
+    riskLineStatic: "Vlerësimi i rrezikut bazohet në drejtësinë dhe detyrimet e klauzolave.",
+    clarityLineStatic: "Qartësia tregon sa lehtë kuptohen termat."
+  },
+
+  tr: {
+    summary: "Özet",
+    risk: "Risk",
+    clarity: "Netlik",
+    mainClauses: "Ana Maddeler",
+    potentialIssues: "Potansiyel Sorunlar",
+    smartSuggestions: "Akıllı Öneriler",
+    score: "Genel Puan",
+    unsafe: "Güvensiz",
+    safe: "Güvenli",
+    verySafe: "Çok Güvenli",
+    scoreLine: "Genel puanı belirler.",
+    conf: "Serbestçe imzalama güveni",
+    riskLineStatic: "Risk puanı, maddelerin adaleti ve yükümlülüklerine dayanır.",
+    clarityLineStatic: "Netlik, şartların anlaşılabilirliğini gösterir."
+  },
+
+  ja: {
+    summary: "要約",
+    risk: "リスク",
+    clarity: "明瞭さ",
+    mainClauses: "主要条項",
+    potentialIssues: "潜在的問題",
+    smartSuggestions: "スマートな提案",
+    score: "総合スコア",
+    unsafe: "危険",
+    safe: "安全",
+    verySafe: "非常に安全",
+    scoreLine: "総合スコアを決定します。",
+    conf: "自由に署名する自信",
+    riskLineStatic: "リスク評価は条項の公平性と義務に基づきます。",
+    clarityLineStatic: "明瞭性は条項の理解しやすさを示します。"
+  },
+
+  zh: {
+    summary: "摘要",
+    risk: "风险",
+    clarity: "清晰度",
+    mainClauses: "主要条款",
+    potentialIssues: "潜在问题",
+    smartSuggestions: "智能建议",
+    score: "总体评分",
+    unsafe: "不安全",
+    safe: "安全",
+    verySafe: "非常安全",
+    scoreLine: "确定总体评分。",
+    conf: "自由签署的信心",
+    riskLineStatic: "风险评分基于条款的公平性和义务。",
+    clarityLineStatic: "清晰度表示条款的易懂程度。"
+  }
+};
+
+// languages allowed for first-render
+const SUPPORTED_LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
 
 export default async function handler(req, res) {
-  // Basic CORS for your static site
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    return res.status(204).end();
-  }
+
+  // ----------------------------------
+  // CORS + METHOD HANDLING
+  // ----------------------------------
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  // Toggle testing mode here
-  const TESTING = true; // ⬅️ set to false in production
+  if (req.method === "OPTIONS") return send(res, 204, {});
+  if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
+  if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
-    const { text } = req.body || {};
-    if (!text && !TESTING) {
-      return res.status(400).json({ error: "Missing 'text' in request body." });
+    let raw = "";
+    await new Promise((resolve) => {
+      req.on("data", (c) => (raw += c));
+      req.on("end", resolve);
+    });
+
+    const ct = (req.headers["content-type"] || "").toLowerCase();
+    if (!ct.includes("application/json")) {
+      return send(res, 415, { error: `Send application/json. Got: ${ct}` });
     }
 
-    // ---------- Testing mode (no cost) ----------
-    if (TESTING) {
-      const fake = {
-        summary: [
-          "This contract is generally favorable with low overall risk, but several timing and remedy definitions should be tightened.",
-          "Payment terms and termination rights are clear, yet a few legacy phrases can be simplified for non-lawyers.",
-          "Define “material breach” objectively and control late-fee compounding to avoid disputes."
-        ],
-        risk: { value: 25, note: "Termination, dispute handling and scope changes need to be tightened a bit better." },
-        clarity: { value: 80, note: "Some provisions are thin on definitions which reduces predictability in changes." },
-        clauses: [
-          "Payment Terms: Net 30; add short grace period and a cap on late fees.",
-          "Scope: Deliverables in Schedule A; include objective acceptance criteria.",
-          "IP & Licensing: Client owns final assets; creator retains pre-existing know-how.",
-          "Termination: 30-day convenience; add 10-day cure for minor issues.",
-          "Confidentiality: Standard carve-outs; reasonable survival period."
-        ],
-        issues: [
-          "Compounding late fees can escalate costs; use simple interest with a cap.",
-          "Indemnity is one-sided; replace with mutual indemnity and a commercial cap.",
-          "No defined cure periods for minor breaches; add a standard 10-day cure."
-        ],
-        suggestions: [
-          "Add objective test for 'material breach' and carve-out for trivial delays.",
-          "Insert 5–7 day grace period before late fees accrue and cap total fees.",
-          "Define milestone acceptance and a short user-testing window."
-        ],
-        meters: { professionalism: 95, confidence: 75, favorability: 75, deadline: 18 }
-      };
-      return res.status(200).json(fake);
+    let body = {};
+    try { body = raw ? JSON.parse(raw) : {}; }
+    catch { return send(res, 400, { error: "Invalid JSON body" }); }
+
+    const {
+      text = "",
+      imageDataURI = "",
+      originalName = "Contract",
+      mime = "",
+      role = "signer",
+      targetLang = "en"       // UI language selector
+    } = body || {};
+
+    if (!text && !imageDataURI) {
+      return send(res, 400, { error: "Provide text or imageDataURI" });
     }
 
-    // ---------- Real API call ----------
-    const openaiKey = process.env.OPENAI_API_KEY;
-    if (!openaiKey) {
-      return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
-    }
+    const uiLang = UI[targetLang] ? targetLang : "en";
+    const t = UI[uiLang];
 
-    // Prompt asks for the exact shape your UI expects.
-    const prompt = `
-You are a contract analyst. Return ONLY a strict JSON object with this exact shape and constraints:
+    // ------------------------------------------------------------------
+    // SYSTEM PROMPT — returns main analysis + translations in all langs
+    // ------------------------------------------------------------------
+    const system = `You are a contract analyst. Return STRICT JSON only using this exact structure:
 
 {
-  "summary": string[] (3-5 short bullets, <= 32 words each),
-  "risk": { "value": number (0-100), "note": string (<= 30 words) },
-  "clarity": { "value": number (0-100), "note": string (<= 30 words) },
-  "clauses": string[] (3-8 items, <= 28 words each),
-  "issues": string[] (3-8 items, <= 28 words each),
-  "suggestions": string[] (3-8 items, <= 28 words each),
-  "meters": {
-    "professionalism": number (0-100),
-    "confidence": number (0-100),
-    "favorability": number (0-100),
-    "deadline": number (0-100)
+  "contractName": "string",
+  "contractTitle": "string",
+  "role": "signer|writer",
+  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
+  "analysis": {
+    "summary": ["string","string","string"],
+    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
+    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
+    "mainClauses": ["string","string","string","string","string"],
+    "potentialIssues": ["string","string","string","string","string"],
+    "smartSuggestions": [
+      "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
+      "Clarify opt-outs, e.g., 'Parties may opt-out of certain liability clauses.'",
+      "Add dispute mechanism, e.g., 'Disputes resolved through arbitration in Vienna.'"
+    ],
+    "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
+    "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
+  },
+  "translations": {
+    "en": {...}, "it": {...}, "de": {...}, "es": {...}, "fr": {...}, "pt": {...},
+    "nl": {...}, "ro": {...}, "sq": {...}, "tr": {...}, "ja": {...}, "zh": {...}
   }
 }
 
-Analyze the following contract text:
+RULES:
+- Detect language of contract text properly.
+- Main “analysis” must be in detectedLang.
+- If detectedLang is NOT one of: en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh → use **English**.
+- summary must be exactly 3 clean sentences.
+- smartSuggestions exactly 3, each with e.g.
+- scoreChecker.line must logically match verdict.
+- translations.* must contain translated fields.
+- German translations must be concise (10–15 chars shorter).`;
 
-"""${text || ""}"""
-`.trim();
+    // USER CONTENT FOR MODEL
+    const userContent =
+      imageDataURI
+        ? [
+            { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}\nOCR then analyze.` },
+            { type: "image_url", image_url: { url: imageDataURI } }
+          ]
+        : [
+            {
+              type: "text",
+              text:
+                `Role: ${role}\nOriginal file: ${originalName}\nAnalyze this contract:\n` +
+                String(text).slice(0, 110000)
+            }
+          ];
 
-    // Using Chat Completions with JSON response format (widely supported).
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${openaiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini", // light + cheap; switch to a larger model if you want
-        response_format: { type: "json_object" },
-        temperature: 0.2,
-        messages: [
-          { role: "system", content: "You are a precise legal contract analyzer. Output only valid JSON per the schema." },
-          { role: "user", content: prompt }
-        ]
-      }),
+    // --------------------------------------
+    // OPENAI CALL — FAST MODEL
+    // --------------------------------------
+    let openaiResp;
+    try {
+      openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${SECRET}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-4.1-mini",
+          temperature: 0.15,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: userContent }
+          ]
+        })
+      });
+    } catch (err) {
+      return send(res, 500, { error: "OpenAI network error: " + err.message });
+    }
+
+    if (!openaiResp.ok) {
+      const errTxt = await openaiResp.text().catch(() => "");
+      return send(res, 502, { error: "OpenAI request failed: " + errTxt });
+    }
+
+    let parsed = {};
+    try {
+      const resp = await openaiResp.json();
+      parsed = JSON.parse(resp?.choices?.[0]?.message?.content || "{}");
+    } catch {
+      return send(res, 500, { error: "Invalid JSON returned by model" });
+    }
+
+    // --------------------------------------
+    // NORMALIZATION
+    // --------------------------------------
+    const cap = (s, n) => (s || "").trim().slice(0, n);
+    const clamp = (v) => Math.max(0, Math.min(100, Number(v || 0)));
+    const stripLead = (s) => String(s || "").replace(/^\s*\d+\s*[.)-]\s*/, "");
+
+    let detectedLang =
+      parsed.detectedLang && SUPPORTED_LANGS.includes(parsed.detectedLang)
+        ? parsed.detectedLang
+        : "en";
+
+    // FIRST RENDER = detectedLang
+    const firstRenderLang = detectedLang;
+
+    const trIn = parsed.translations || {};
+    const translationsOut = {};
+
+    SUPPORTED_LANGS.forEach(code => {
+      const src = trIn[code] || {};
+      translationsOut[code] = {
+        title: cap(src.title || "", 200),
+        summary: (src.summary || []).map(s => cap(s, 320)).slice(0, 3),
+        mainClauses: (src.mainClauses || []).map(s => stripLead(cap(s, 900))).slice(0, 5),
+        potentialIssues: (src.potentialIssues || []).map(s => stripLead(cap(s, 1000))).slice(0, 5),
+        smartSuggestions: (src.smartSuggestions || []).map(s => stripLead(cap(s, 250))).slice(0, 3),
+        scoreLine: cap(src.scoreLine || "", 280)
+      };
     });
 
-    const data = await resp.json();
-    if (!resp.ok) {
-      return res.status(502).json({
-        error: "OpenAI API Error",
-        details: data?.error?.message || "Unknown error",
-      });
-    }
+    const sc = parsed.analysis.scoreChecker || {};
+    const scVal = clamp(sc.value);
 
-    // Parse JSON safely
-    let parsed;
-    try {
-      const content = data?.choices?.[0]?.message?.content || "{}";
-      parsed = JSON.parse(content);
-    } catch (e) {
-      return res.status(500).json({ error: "Failed to parse model JSON." });
-    }
+    let verdict =
+      scVal < 34 ? "unsafe" :
+      scVal < 67 ? "safe" :
+      "verySafe";
 
-    // ---------- Minimal validation / clamping ----------
-    const clamp = (n) => Math.max(0, Math.min(100, Number.isFinite(+n) ? +n : 0));
-    const arr = (v) => Array.isArray(v) ? v.map(x => String(x)).filter(Boolean) : [];
+    return send(res, 200, {
+      contractName: parsed.contractName || originalName,
+      contractTitle: parsed.contractTitle || parsed.contractName || originalName,
+      role: parsed.role === "writer" ? "writer" : "signer",
+      detectedLang: firstRenderLang,
+      targetLang: uiLang,
+      ui: UI[firstRenderLang],  // FIRST RENDER IN DETECTED LANGUAGE
 
-    const out = {
-      summary: arr(parsed.summary).slice(0, 5),
-      risk: {
-        value: clamp(parsed?.risk?.value),
-        note: String(parsed?.risk?.note || "")
+      analysis: {
+        summary: parsed.analysis.summary || [],
+        risk: {
+          value: clamp(parsed.analysis.risk.value),
+          note: cap(parsed.analysis.risk.note, 280),
+          band: parsed.analysis.risk.band,
+          safety: parsed.analysis.risk.safety
+        },
+        clarity: {
+          value: clamp(parsed.analysis.clarity.value),
+          note: cap(parsed.analysis.clarity.note, 280),
+          band: parsed.analysis.clarity.band,
+          safety: parsed.analysis.clarity.safety
+        },
+        mainClauses: parsed.analysis.mainClauses || [],
+        potentialIssues: parsed.analysis.potentialIssues || [],
+        smartSuggestions: parsed.analysis.smartSuggestions || [],
+        bars: parsed.analysis.bars || {},
+        scoreChecker: {
+          value: scVal,
+          band: parsed.analysis.scoreChecker.band,
+          verdict,
+          line: cap(parsed.analysis.scoreChecker.line, 280),
+          verdictLabel: UI[firstRenderLang][verdict]
+        }
       },
-      clarity: {
-        value: clamp(parsed?.clarity?.value),
-        note: String(parsed?.clarity?.note || "")
-      },
-      clauses: arr(parsed.clauses).slice(0, 8),
-      issues: arr(parsed.issues).slice(0, 8),
-      suggestions: arr(parsed.suggestions).slice(0, 8),
-      meters: {
-        professionalism: clamp(parsed?.meters?.professionalism),
-        confidence:      clamp(parsed?.meters?.confidence),
-        favorability:    clamp(parsed?.meters?.favorability),
-        deadline:        clamp(parsed?.meters?.deadline)
-      }
-    };
 
-    return res.status(200).json(out);
-  } catch (error) {
-    console.error("🔥 analyze error:", error);
-    return res.status(500).json({ error: "Failed to analyze contract", details: error?.message || String(error) });
+      translations: translationsOut
+    });
+
+  } catch (err) {
+    return send(res, 500, { error: "Could not analyze this file. Details: " + err.message });
   }
 }
