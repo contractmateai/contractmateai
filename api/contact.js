@@ -10,21 +10,20 @@ export default async function handler(req, res) {
   try {
     const { name, phone, email, message, to } = req.body || {};
 
-    // Basic validation (same rules as the frontend)
     if (!name || !phone || !email || !message) {
       return res.status(400).json({ ok: false, error: "Missing fields" });
     }
 
-    // Namecheap PrivateEmail SMTP (mail.privateemail.com)
-    // Use 465 (secure) by default. If your account prefers 587, see note below.
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,       // e.g. "mail.privateemail.com"
-      port: Number(process.env.SMTP_PORT || 465),
+      host: process.env.SMTP_HOST,                   // e.g. mail.privateemail.com
+      port: Number(process.env.SMTP_PORT || 465),    // 465 (secure) or 587
       secure: String(process.env.SMTP_SECURE || "true") === "true", // true for 465
       auth: {
-        user: process.env.SMTP_USER,     // e.g. "support@signsense.io"
+        user: process.env.SMTP_USER,                 // e.g. support@signsense.io
         pass: process.env.SMTP_PASS
       }
+      // Optional TLS tweak if your host needs it:
+      // tls: { rejectUnauthorized: false }
     });
 
     const toEmail = process.env.TO_EMAIL || to || "support@signsense.io";
@@ -55,7 +54,7 @@ export default async function handler(req, res) {
       subject,
       text,
       html,
-      replyTo: email // lets you reply directly to the sender
+      replyTo: email
     });
 
     return res.status(200).json({ ok: true });
@@ -65,9 +64,8 @@ export default async function handler(req, res) {
   }
 }
 
-// tiny helper to avoid HTML injection
 function escapeHtml(str = "") {
-  return str
+  return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
