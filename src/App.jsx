@@ -1,14 +1,16 @@
 // src/App.jsx
 import React from "react";
-import Topbar from "./components/Topbar.jsx";
-import Hero from "./components/Hero.jsx";
-import LogoStrip from "./components/LogoStrip.jsx";
-import Insights from "./components/Insights.jsx";
-import FeaturesScroll from "./components/FeaturesScroll.jsx";
-import Reviews from "./components/Reviews.jsx";
-import Faq from "./components/Faq.jsx";
-import Footer from "./components/Footer.jsx";
-import UploadLogic from "./components/UploadLogic.jsx";
+
+import Topbar from "./Topbar.jsx";
+import Hero from "./Hero.jsx";
+import LogoStrip from "./LogoStrip.jsx";
+import Insights from "./Insights.jsx";
+import FeaturesScroll from "./FeaturesScroll.jsx";
+import Reviews from "./Reviews.jsx";
+import Faq from "./Faq.jsx";
+import Footer from "./Footer.jsx";
+import UploadLogic from "./UploadLogic.jsx";
+
 
 export default function App() {
   return (
