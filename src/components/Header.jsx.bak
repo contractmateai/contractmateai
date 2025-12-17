@@ -1,0 +1,44 @@
+import React, { useState } from 'react'
+
+export default function Header() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <div className="fixed top-4 left-0 right-0 z-50 flex justify-center">
+        <div className="bg-[#04040e] border border-[#3f3f3f] rounded-2xl px-6 py-4 w-full max-w-5xl flex items-center justify-between shadow-2xl">
+          <div className="flex items-center gap-3">
+            <img src="https://i.imgur.com/t8UWYN3.png" className="h-9 rounded-lg" alt="SignSense" />
+            <a href="/" className="text-3xl">SignSense</a>
+          </div>
+
+          <nav className="hidden md:flex gap-8 text-xl text-[#d8cccc]">
+            <a href="https://youtube.com" target="_blank">See How It Works</a>
+            <a href="/">Home</a>
+            <a href="/contact.html">Contact</a>
+          </nav>
+
+          <button onClick={() => setOpen(!open)} className="md:hidden w-9 h-6 relative">
+            <span className={`absolute w-full h-0.5 bg-white transition-all ${open ? 'top-2.5 rotate-45' : 'top-1'}`} />
+            <span className={`absolute w-full h-0.5 bg-white top-2.5 transition ${open ? 'opacity-0' : ''}`} />
+            <span className={`absolute w-full h-0.5 bg-white transition-all ${open ? 'top-2.5 -rotate-45' : 'bottom-1'}`} />
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 bg-black/60 z-50" onClick={() => setOpen(false)} />
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[92%] max-w-3xl bg-[#04040e] border border-[#3f3f3f] rounded-b-2xl p-6 z-50">
+            <div className="space-y-4 text-2xl">
+              <a href="https://youtube.com" className="flex justify-between">See How It Works <span>›</span></a>
+              <a href="/" className="flex justify-between">Home <span>›</span></a>
+              <a href="/contact.html" className="flex justify-between">Contact <span>›</span></a>
+            </div>
+            <div className="text-center text-[#cfcfcf] mt-6 text-base">Not legal advice.<br/>© 2025 SignSense</div>
+          </div>
+        </>
+      )}
+    </>
+  )
+}
