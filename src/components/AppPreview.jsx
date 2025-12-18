@@ -1,23 +1,46 @@
-import React, { useEffect } from 'react'
+// src/components/AppPreview.jsx
+import React, { useRef, useEffect } from 'react';
 
-export default function AppPreview() {
+const AppPreview = () => {
+  const wrapperRef = useRef(null);
+
   useEffect(() => {
-    const wrapper = document.getElementById('appWrapper')
-    const onScroll = () => {
-      wrapper.style.transform = window.scrollY > 50 ? 'rotateX(0deg)' : 'rotateX(12deg)'
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (wrapperRef.current) {
+        // When scrolled more than 50px → flat (0deg), otherwise tilted (12deg)
+        wrapperRef.current.style.transform =
+          scrollY > 50 ? 'rotateX(0deg)' : 'rotateX(12deg)';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Initial check on mount
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <div className="max-w-5xl mx-auto mt-8 perspective-1000">
-      <div id="appWrapper" className="transition-transform duration-800">
-        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-          <div className="animate-glint" />
-          <img src="https://i.imgur.com/slsiM6i.png" alt="App" className="w-full rounded-3xl" />
+    <div className="app-container">
+      <div className="app-wrapper" ref={wrapperRef}>
+        <div className="app-frame">
+          {/* Glint animation - pure CSS */}
+          <div className="glint-line" aria-hidden="true"></div>
+
+          <img
+            className="app-preview"
+            src="https://i.imgur.com/slsiM6i.png"
+            alt="SignSense app preview showing contract analysis interface"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default AppPreview;
