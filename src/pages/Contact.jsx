@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "../styles/home.css";
+import "../styles/contact.css";
 
 const Contact = () => {
   const formRef = useRef(null);

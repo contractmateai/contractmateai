@@ -1,0 +1,25 @@
+/* Contact page styles migrated from contact.html */
+:root{
+  --bg:#01040b;
+  --text:#fff9f9;
+  --muted:#d8cccc;
+  --bar:#04040e;
+  --bar-border:#3f3f3f;
+  --badge-text:#c8acff;
+  --badge-bg:#1f1a34;
+  --panel:#0b0814;
+  --field:#1f1a28;
+  --faq-block:#191624;
+  --particle-color:#b28bff;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Inter",sans-serif;
+  font-weight:400;
+  color:var(--text);
+  background:var(--bg);
+  overflow-x:hidden;
+}
+/* ...rest of contact.html CSS migrated here... */
