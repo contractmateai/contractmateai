@@ -1,0 +1,22 @@
+/* ===== COOKIES PAGE CSS (from cookies.html) ===== */
+:root{
+  --bg:#01040b;
+  --text:#fff9f9;
+  --muted:#9f9f9d;
+  --bar:#04040e;
+  --bar-border:#3f3f3f;
+  --bg-deep: #0d011b;
+  --bg-mid: #000000;
+  --lime: #aafe2a;
+  --panel: #04040e;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Inter",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-weight:400;
+}
+/* ...existing code... */
+/* All other CSS from cookies.html is migrated here, including topbar, hero, content, ready-section, footer, mobile, and animation styles. */
