@@ -861,7 +861,7 @@ export default function Home() {
               See How It Works
             </a>
             <a href="index.html">Home</a>
-            <a href="contact.html">Contact</a>
+            <a href="/contact">Contact</a>
           </nav>
 
           <button className="menu-toggle" id="menuToggle" aria-label="Menu" ref={menuToggleRef}>
@@ -882,7 +882,7 @@ export default function Home() {
           <a className="menu-item" href="index.html">
             Home <span className="chev">›</span>
           </a>
-          <a className="menu-item" href="contact.html">
+          <a className="menu-item" href="/contact">
             Contact <span className="chev">›</span>
           </a>
         </nav>
@@ -1262,7 +1262,7 @@ export default function Home() {
           <div className="footer-col">
             <div className="footer-title">Information</div>
             <nav className="footer-links">
-              <a href="contact.html">Contact</a>
+              <a href="/contact">Contact</a>
               <a href="index.html">Home</a>
             </nav>
           </div>
@@ -1335,7 +1335,7 @@ export default function Home() {
           <div className="footer-cols">
             <div className="footer-col">
               <h4>Help</h4>
-              <a className="footer-link" href="contact.html">
+              <a className="footer-link" href="/contact">
                 Contact us
               </a>
               <a className="footer-link" href="https://youtube.com" target="_blank" rel="noopener">

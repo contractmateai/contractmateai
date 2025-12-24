@@ -45,7 +45,7 @@ const Topbar = forwardRef(({ menuOpen, setMenuOpen }, ref) => {
             See How It Works
           </a>
           <a href="index.html">Home</a>
-          <a href="contact.html">Contact</a>
+          <a href="/contact">Contact</a>
         </nav>
 
         <button
