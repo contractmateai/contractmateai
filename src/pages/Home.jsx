@@ -826,7 +826,7 @@ export default function Home() {
 
       const analysisResult = await resp.json();
       localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-      window.location.href = "analysis.html";
+      window.location.href = "/analysis";
     } catch (e) {
       alert(`Error processing file: ${e.message}`);
     }
