@@ -331,7 +331,7 @@ const Contact = () => {
           <div className="footer-bottom-links">
             <a href="/privacy.html">Privacy Policy</a>
             <a href="/terms.html">Terms & Conditions</a>
-            <a href="/cookies.html">Cookie Policy</a>
+            <a href="/cookies">Cookie Policy</a>
             <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
           </div>
         </div>
@@ -372,7 +372,7 @@ const Contact = () => {
               <h4>Legal</h4>
               <a className="footer-link" href="/terms.html">Terms of Service</a>
               <a className="footer-link" href="/privacy.html">Privacy Policy</a>
-              <a className="footer-link" href="/cookies.html">Cookie Policy</a>
+              <a className="footer-link" href="/cookies">Cookie Policy</a>
             </div>
           </div>
           <div className="footer-bottom-space"></div>

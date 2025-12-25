@@ -1288,7 +1288,7 @@ export default function Home() {
           <div className="footer-bottom-links">
             <a href="privacy.html">Privacy Policy</a>
             <a href="terms.html">Terms of Service</a>
-            <a href="cookies.html">Cookie Policy</a>
+            <a href="/cookies">Cookie Policy</a>
             <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
           </div>
         </div>
@@ -1358,7 +1358,7 @@ export default function Home() {
               <a className="footer-link" href="privacy.html">
                 Privacy Policy
               </a>
-              <a className="footer-link" href="cookies.html">
+              <a className="footer-link" href="/cookies">
                 Cookie Policy
               </a>
             </div>
