@@ -1,15 +1,56 @@
 
 import "../styles/contact.css";
 import React, { useRef, useEffect } from "react";
+// Helper for FAQ toggle
+function setupFAQToggle() {
+  const faqItems = document.querySelectorAll(".faq-item");
+  faqItems.forEach(item => {
+    item.addEventListener("click", () => {
+      if (!item.classList.contains("open")) {
+        faqItems.forEach(i => i.classList.remove("open"));
+      }
+      item.classList.toggle("open");
+    });
+  });
+}
+
+// Helper for topbar scroll animation
+function setupTopbarScroll() {
+  const bar = document.getElementById("topbarWrap");
+  let lastY = window.scrollY;
+  let ticking = false;
+  function onScroll() {
+    const y = window.scrollY;
+    if (y > lastY && y > 80) {
+      bar && bar.classList.add("hide");
+    } else {
+      bar && bar.classList.remove("hide");
+    }
+    lastY = y <= 0 ? 0 : y;
+    ticking = false;
+  }
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
+}
 
 function Contact() {
   const formRef = useRef();
   const btnRef = useRef();
   const alertRef = useRef();
 
+  // Hero particles effect
   useEffect(() => {
     const container = document.getElementById("heroParticles");
     if (!container) return;
+    container.innerHTML = "";
     const NUM = 35;
     const DURATION = 16;
     function sideBiasedPercent() {
@@ -31,6 +72,16 @@ function Contact() {
       p.style.animationDelay = (-Math.random() * DURATION) + "s";
       container.appendChild(p);
     }
+  }, []);
+
+  // FAQ toggle effect
+  useEffect(() => {
+    setupFAQToggle();
+  }, []);
+
+  // Topbar scroll animation
+  useEffect(() => {
+    setupTopbarScroll();
   }, []);
 
   // Contact form submit handler
