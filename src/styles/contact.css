@@ -124,10 +124,10 @@ body{
   background:var(--badge-bg); color:var(--badge-text); font-size:15px; font-weight:400;
 }
 .hero-title{
-  margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+  margin:18px 0 10px; font-size:64px; line-height:1.12; color:#fff9f9; font-weight:500;
 }
 .hero-sub{
-  color:var(--muted); font-size:20px; font-weight:400;
+  color:var(--muted); font-size:26px; font-weight:500;
 }
 .after-hero-spacer{height:72px}
 /* ===== CONTACT ===== */
@@ -161,15 +161,15 @@ textarea.field{min-height:220px; resize:none; margin-bottom:20px}
 .send-btn:hover{box-shadow:0 0 16px rgba(255,255,255,.9);}
 .sla{color:#9a9a9a; font-size:14px; margin-top:18px; text-align:center; font-weight:400;}
 aside.contact-info{padding-left:48px;}
-.info-title{font-size:28px; margin:0 0 4px; color:#ffffff; font-weight:400;}
+.info-title{font-size:32px; margin:0 0 4px; color:#ffffff; font-weight:500;}
 .info-sub{display:flex; flex-direction:column; gap:8px; color:#9fa0a7; font-size:16px; margin:0 0 8px; max-width:520px; font-weight:400;}
 .info-sub div{text-align:left;}
 .info-list{display:flex; flex-direction:column; gap:66px; margin-top:50px;}
 .info-item{display:flex; align-items:center; gap:18px}
 .info-icon{width:48px; height:48px; display:block}
 .info-text{display:flex; flex-direction:column; gap:4px}
-.info-label{color:#ffffff; font-size:18px; font-weight:400;}
-.info-value a{color:#d8cccc; text-decoration:none; font-size:20px; font-weight:400;}
+.info-label{color:#ffffff; font-size:22px; font-weight:500;}
+.info-value a{color:#d8cccc; text-decoration:none; font-size:24px; font-weight:500;}
 .mobile-contact-info{display:none;}
 /* ===== FAQ ===== */
 .faq-section{max-width:1120px; margin:120px auto 0; padding:0 24px 110px;}
