@@ -1,13 +1,31 @@
-import React, { useEffect, useRef } from "react";
-import "../styles/home.css";
-        const p = document.createElement("div");
-        p.className = "particle";
-        p.style.left = sideBiasedPercent() + "%";
-        p.style.bottom = -20 + "px";
-        p.style.animationDuration = DURATION + "s";
-        p.style.animationDelay = (-Math.random() * DURATION) + "s";
-        container.appendChild(p);
+function Contact() {
+  const formRef = useRef();
+  const btnRef = useRef();
+  const alertRef = useRef();
+
+  useEffect(() => {
+    const container = document.getElementById("heroParticles");
+    if (!container) return;
+    const NUM = 35;
+    const DURATION = 16;
+    function sideBiasedPercent() {
+      const r = Math.random();
+      if (r < 0.375) {
+        return Math.random() * 20;
+      } else if (r < 0.75) {
+        return 80 + Math.random() * 20;
+      } else {
+        return 20 + Math.random() * 60;
       }
+    }
+    for (let i = 0; i < NUM; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.style.left = sideBiasedPercent() + "%";
+      p.style.bottom = -20 + "px";
+      p.style.animationDuration = DURATION + "s";
+      p.style.animationDelay = (-Math.random() * DURATION) + "s";
+      container.appendChild(p);
     }
   }, []);
 
@@ -288,8 +306,9 @@ import "../styles/home.css";
           <div className="footer-bottom-space"></div>
         </div>
       </footer>
+
     </>
   );
-};
+}
 
 export default Contact;
