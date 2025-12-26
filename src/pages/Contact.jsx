@@ -1,3 +1,5 @@
+
+import "../styles/contact.css";
 import React, { useRef, useEffect } from "react";
 
 function Contact() {
