@@ -1,6 +1,22 @@
 // contractmateai/src/pages/Home.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import "../styles/home.css";
+
+// Feature rows for the homepage ticker
+const featuresTop = [
+  { icon: "https://imgur.com/1.png", label: "AI Contract Analysis" },
+  { icon: "https://imgur.com/2.png", label: "Instant Summaries" },
+  { icon: "https://imgur.com/3.png", label: "Clause Detection" },
+  { icon: "https://imgur.com/4.png", label: "Risk Warnings" },
+  { icon: "https://imgur.com/5.png", label: "Upload PDF/DOCX" },
+  { icon: "https://imgur.com/6.png", label: "Mobile Friendly" },
+];
+const featuresBottom = [
+  { icon: "https://imgur.com/7.png", label: "No Signup Needed" },
+  { icon: "https://imgur.com/8.png", label: "Secure & Private" },
+  { icon: "https://imgur.com/9.png", label: "Multi-language" },
+  { icon: "https://imgur.com/10.png", label: "Free to Use" },
+  { icon: "https://imgur.com/11.png", label: "Shareable Results" },
+  { icon: "https://imgur.com/12.png", label: "Legal Jargon Explained" },
+];
 
 // NOTE: This Home.jsx expects these to be available globally (like you had in HTML):
 // - AOS (optional; if you don't use it in React, nothing breaks)
