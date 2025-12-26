@@ -50,7 +50,10 @@ function Contact() {
   // Hero particles effect
   useEffect(() => {
     const container = particlesRef.current;
-    if (!container) return;
+    if (!container) {
+      console.warn('Particles container ref not found');
+      return;
+    }
     container.innerHTML = "";
     const NUM = 35;
     const DURATION = 16;
@@ -73,6 +76,7 @@ function Contact() {
       p.style.animationDelay = (-Math.random() * DURATION) + "s";
       container.appendChild(p);
     }
+    console.log('Particles created:', container.childNodes.length);
   }, []);
 
   // FAQ toggle effect
@@ -167,7 +171,17 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg">
+        <div
+          className="hero-bg"
+          style={{
+            background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat, #01040b',
+            position: 'absolute',
+            inset: 0,
+            minHeight: '480px',
+            width: '100%',
+            zIndex: 0
+          }}
+        >
           <div className="hero-particles" ref={particlesRef}></div>
         </div>
         <div className="hero-content" data-aos="fade-up">
