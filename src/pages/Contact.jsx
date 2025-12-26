@@ -217,8 +217,8 @@ function Contact() {
           </div>
         </div>
       </section>
-      {/* FOOTER (DESKTOP) */}
-      <div className="site-footer-wrap" data-aos="fade-in">
+      {/* FOOTER (desktop) */}
+      <div className="site-footer-wrap">
         <footer className="site-footer">
           <div className="footer-left">
             <a href="/">
@@ -258,14 +258,16 @@ function Contact() {
         <div className="footer-bottom">
           <div className="footer-divider"></div>
           <div className="footer-bottom-links">
-            <a href="/privacy.html">Privacy Policy</a>
-            <a href="/terms.html">Terms & Conditions</a>
-            <a href="/cookies">Cookie Policy</a>
+            <div className="footer-links-group">
+              <a href="/privacy">Privacy Policy</a>
+              <a href="/terms">Terms of Service</a>
+              <a href="/cookies">Cookie Policy</a>
+            </div>
             <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
           </div>
         </div>
       </div>
-      {/* FOOTER (MOBILE) */}
+      {/* FOOTER (mobile) */}
       <footer className="site-footer-mobile">
         <div className="footer-wrap">
           <div className="footer-brandrow">
@@ -299,8 +301,8 @@ function Contact() {
             </div>
             <div className="footer-col">
               <h4>Legal</h4>
-              <a className="footer-link" href="/terms.html">Terms of Service</a>
-              <a className="footer-link" href="/privacy.html">Privacy Policy</a>
+              <a className="footer-link" href="/terms">Terms of Service</a>
+              <a className="footer-link" href="/privacy">Privacy Policy</a>
               <a className="footer-link" href="/cookies">Cookie Policy</a>
             </div>
           </div>
