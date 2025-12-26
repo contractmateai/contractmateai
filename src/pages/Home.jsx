@@ -180,6 +180,10 @@ export default function Home() {
           <div className="footer-bottom-space"></div>
         </div>
       </footer>
+
+    // Get the ticker row elements by ID
+    const topRow = document.getElementById("featuresTopRow");
+    const bottomRow = document.getElementById("featuresBottomRow");
     if (!topRow || !bottomRow) return;
 
     // populate rows (duplicate twice for seamless ticker)
@@ -1120,8 +1124,8 @@ export default function Home() {
         <div className="scroll-wrapper">
           <section className="scroll-section" data-aos="fade-up">
             <h3>Everything you need for clarity &amp; security in one seamless experience.</h3>
-            <div className="scroll-strip top-row"></div>
-            <div className="scroll-strip bottom-row"></div>
+            <div className="scroll-strip top-row" id="featuresTopRow"></div>
+            <div className="scroll-strip bottom-row" id="featuresBottomRow"></div>
             <div className="scroll-shadow-left"></div>
             <div className="scroll-shadow-right"></div>
           </section>
