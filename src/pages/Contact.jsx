@@ -127,31 +127,30 @@ function Contact() {
       <section className="contact-section" data-aos="fade-up">
         <div className="contact-wrap" id="contact">
           <div className="contact-card">
-            <div>
-              <form id="contactForm" ref={formRef} noValidate autoComplete="off" onSubmit={handleSubmit}>
-                <div className="row">
-                  <input className="field" type="text" id="name" name="name" placeholder="Name" required />
-                  <input className="field" type="tel" id="phone" name="phone" placeholder="Phone" required />
-                </div>
-                <input
-                  className="field email"
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Email"
-                  required
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  spellCheck="false"
-                  inputMode="email"
-                />
-                <textarea className="field" id="message" name="message" placeholder="Message" required></textarea>
-                <button className="send-btn" id="sendBtn" ref={btnRef} type="submit">Send</button>
-                <div className="sla">We will contact you within 24 hours.</div>
-                <div id="formAlert" ref={alertRef} style={{ marginTop: 10, fontSize: 14, color: '#d8cccc' }}></div>
-              </form>
-            </div>
+            {/* Form and aside are siblings in the grid */}
+            <form id="contactForm" ref={formRef} noValidate autoComplete="off" onSubmit={handleSubmit}>
+              <div className="row">
+                <input className="field" type="text" id="name" name="name" placeholder="Name" required />
+                <input className="field" type="tel" id="phone" name="phone" placeholder="Phone" required />
+              </div>
+              <input
+                className="field email"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Email"
+                required
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
+                inputMode="email"
+              />
+              <textarea className="field" id="message" name="message" placeholder="Message" required></textarea>
+              <button className="send-btn" id="sendBtn" ref={btnRef} type="submit">Send</button>
+              <div className="sla">We will contact you within 24 hours.</div>
+              <div id="formAlert" ref={alertRef} style={{ marginTop: 10, fontSize: 14, color: '#d8cccc' }}></div>
+            </form>
             <aside className="contact-info">
               <div className="info-title">Contact Information</div>
               <div className="info-sub">
