@@ -1,4 +1,5 @@
 // contractmateai/src/pages/Home.jsx
+import React, { useRef, useState, useEffect, useMemo } from "react";
 
 // Feature rows for the homepage ticker
 const featuresTop = [
