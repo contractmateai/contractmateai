@@ -166,13 +166,17 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg">
+        <div className="hero-bg" style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat'
+        }}>
           <div className="hero-particles" id="heroParticles"></div>
         </div>
         <div className="hero-content" data-aos="fade-up">
-          <div className="badge">We’re Here For You</div>
-          <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
+          <div className="badge" style={{ fontSize: 18, padding: '10px 18px' }}>We’re Here For You</div>
+          <h1 className="hero-title" style={{ fontSize: 64, margin: '24px 0 16px', fontWeight: 500 }}>We’re Ready To<br />Listen And Respond</h1>
+          <div className="hero-sub" style={{ fontSize: 26, fontWeight: 500 }}>Whether it's feedback, questions, or ideas — we're just a message away.</div>
         </div>
       </section>
       <div className="after-hero-spacer"></div>
@@ -183,8 +187,8 @@ function Contact() {
             {/* Form and aside are siblings in the grid */}
             <form id="contactForm" ref={formRef} noValidate autoComplete="off" onSubmit={handleSubmit}>
               <div className="row">
-                <input className="field" type="text" id="name" name="name" placeholder="Name" required />
-                <input className="field" type="tel" id="phone" name="phone" placeholder="Phone" required />
+                <input className="field" type="text" id="name" name="name" placeholder="Name" required style={{ fontSize: 20, padding: 20 }} />
+                <input className="field" type="tel" id="phone" name="phone" placeholder="Phone" required style={{ fontSize: 20, padding: 20 }} />
               </div>
               <input
                 className="field email"
@@ -198,11 +202,12 @@ function Contact() {
                 autoCorrect="off"
                 spellCheck="false"
                 inputMode="email"
+                style={{ fontSize: 20, padding: 20 }}
               />
-              <textarea className="field" id="message" name="message" placeholder="Message" required></textarea>
-              <button className="send-btn" id="sendBtn" ref={btnRef} type="submit">Send</button>
-              <div className="sla">We will contact you within 24 hours.</div>
-              <div id="formAlert" ref={alertRef} style={{ marginTop: 10, fontSize: 14, color: '#d8cccc' }}></div>
+              <textarea className="field" id="message" name="message" placeholder="Message" required style={{ fontSize: 20, padding: 20, minHeight: 240 }}></textarea>
+              <button className="send-btn" id="sendBtn" ref={btnRef} type="submit" style={{ fontSize: 20, padding: '20px 32px' }}>Send</button>
+              <div className="sla" style={{ fontSize: 16 }}>We will contact you within 24 hours.</div>
+              <div id="formAlert" ref={alertRef} style={{ marginTop: 10, fontSize: 16, color: '#d8cccc' }}></div>
             </form>
             <aside className="contact-info">
               <div className="info-title">Contact Information</div>
