@@ -45,10 +45,11 @@ function Contact() {
   const formRef = useRef();
   const btnRef = useRef();
   const alertRef = useRef();
+  const particlesRef = useRef();
 
   // Hero particles effect
   useEffect(() => {
-    const container = document.getElementById("heroParticles");
+    const container = particlesRef.current;
     if (!container) return;
     container.innerHTML = "";
     const NUM = 35;
@@ -67,7 +68,7 @@ function Contact() {
       const p = document.createElement("div");
       p.className = "particle";
       p.style.left = sideBiasedPercent() + "%";
-      p.style.bottom = -20 + "px";
+      p.style.bottom = "-20px";
       p.style.animationDuration = DURATION + "s";
       p.style.animationDelay = (-Math.random() * DURATION) + "s";
       container.appendChild(p);
@@ -166,17 +167,13 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg" style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat'
-        }}>
-          <div className="hero-particles" id="heroParticles"></div>
+        <div className="hero-bg">
+          <div className="hero-particles" ref={particlesRef}></div>
         </div>
         <div className="hero-content" data-aos="fade-up">
-          <div className="badge" style={{ fontSize: 18, padding: '10px 18px' }}>We’re Here For You</div>
-          <h1 className="hero-title" style={{ fontSize: 64, margin: '24px 0 16px', fontWeight: 500 }}>We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub" style={{ fontSize: 26, fontWeight: 500 }}>Whether it's feedback, questions, or ideas — we're just a message away.</div>
+          <div className="badge">We’re Here For You</div>
+          <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
+          <div className="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
         </div>
       </section>
       <div className="after-hero-spacer"></div>
