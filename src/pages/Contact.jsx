@@ -170,21 +170,10 @@ function Contact() {
       </div>
       <div className="pad-top"></div>
       {/* HERO */}
-      <section className="hero-frame" data-aos="fade-in">
-        <div
-          className="hero-bg"
-          style={{
-            background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat, #01040b',
-            position: 'absolute',
-            inset: 0,
-            minHeight: '480px',
-            width: '100%',
-            zIndex: 0
-          }}
-        >
-          <div className="hero-particles" ref={particlesRef}></div>
-        </div>
-        <div className="hero-content" data-aos="fade-up">
+      <section className="hero-frame" data-aos="fade-in" style={{position: 'relative', minHeight: '480px', width: '100%', overflow: 'hidden', marginTop: '-120px', paddingBottom: '60px', zIndex: 0}}>
+        <div className="hero-bg" style={{position: 'absolute', inset: 0, background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat', zIndex: 0}}></div>
+        <div className="hero-particles" ref={particlesRef} style={{position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1}}></div>
+        <div className="hero-content" data-aos="fade-up" style={{position: 'relative', zIndex: 2}}>
           <div className="badge">We’re Here For You</div>
           <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
           <div className="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
