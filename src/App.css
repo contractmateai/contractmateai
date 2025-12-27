@@ -1,7 +1,7 @@
 /* Ensure footer links group is tight */
 .footer-links-group {
   display: flex;
-  gap: 0.5em;
+  gap: 0;
 }
 /* src/App.css  */
 
@@ -224,11 +224,15 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
 .footer-links a { color: #c5c5c5; text-decoration: none; font-size: 18px; font-weight: 400; margin: 0; }
 .footer-bottom { margin-top: 24px; }
 .footer-divider { width: 100%; height: 1px; background: #c5c5c5; opacity: .28; margin-bottom: 12px; }
-.footer-bottom-links { display: flex; align-items: center; gap: 28px; color: #c5c5c5; font-size: 16px; font-weight: 400; }
-.footer-bottom-links a { color: #c5c5c5; text-decoration: none; }
-.footer-copy { margin-left: auto; }
-.watch-btn, .leave-review { text-decoration: none !important; }
-.watch-btn:hover, .leave-review:hover { text-decoration: none !important; }
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  color: #c5c5c5;
+  font-size: 16px;
+  font-weight: 400;
+  justify-content: flex-start;
+  gap: 0;
+}
 .site-footer .footer-links a, .site-footer .footer-links a:visited, .footer-bottom-links a, .footer-bottom-links a:visited { color: #c5c5c5; text-decoration: none; }
 .menu-toggle{
   position:relative; width:34px; height:24px;
@@ -366,19 +370,13 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
 .footer-bottom-links {
   display: flex;
   align-items: center;
-  gap: 8px;
   color: #c5c5c5;
   font-size: 16px;
   font-weight: 400;
+  justify-content: flex-start;
+  gap: 0;
 }
-.footer-copy {
-  margin-left: auto;
-}
-.site-footer .footer-links a,
-.site-footer .footer-links a:visited {
-  color: #c5c5c5;
-  text-decoration: none;
-}
+.site-footer .footer-links a, .site-footer .footer-links a:visited, .footer-bottom-links a, .footer-bottom-links a:visited { color: #c5c5c5; text-decoration: none; }
 .site-footer .footer-links a:hover {
   text-decoration: none;
   opacity: 0.9;
