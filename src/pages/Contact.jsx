@@ -171,8 +171,9 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg"></div>
-        <div className="hero-particles" ref={particlesRef}></div>
+        <div className="hero-bg">
+          <div className="hero-particles" ref={particlesRef}></div>
+        </div>
         <div className="hero-content" data-aos="fade-up">
           <div className="badge">We’re Here For You</div>
           <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
@@ -181,7 +182,7 @@ function Contact() {
       </section>
       <div className="after-hero-spacer"></div>
       {/* CONTACT */}
-      <section className="contact-section" data-aos="fade-up">
+      <section className="contact-section" data-aos="fade-up" style={{marginTop: '32px'}}>
         <div className="contact-wrap" id="contact">
           <div className="contact-card">
             {/* Form and aside are siblings in the grid */}

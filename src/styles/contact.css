@@ -128,9 +128,14 @@ body{
   margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
 }
 .hero-sub{
-  color:var(--muted); font-size:20px; font-weight:400;
+  color:var(--muted);
+  font-size:36px;
+  font-weight:600;
+  line-height:1.3;
+  margin-top:28px;
+  margin-bottom:18px;
 }
-.after-hero-spacer{height:72px}
+.after-hero-spacer{height:140px}
 /* ===== CONTACT ===== */
 .contact-section{ background:transparent; }
 .contact-wrap{ max-width:1160px; margin:0 auto; padding:0 24px 110px; }
