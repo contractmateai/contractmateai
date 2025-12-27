@@ -1,6 +1,5 @@
-/* src/App.css - EXACT COPY OF YOUR ORIGINAL <style> TAG */
-/* This is 100% identical to the <style> block in your HTML. No changes, no removals, no additions. */
-/* Copy-paste this entire file exactly as-is into src/App.css */
+/* src/App.css  */
+
 
 :root {
   --bg-dark: #01040b;
@@ -362,7 +361,7 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
 .footer-bottom-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 8px;
   color: #c5c5c5;
   font-size: 16px;
   font-weight: 400;
@@ -688,4 +687,6 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
     position: relative;
     top: 20px;
   }
+  display: flex;
+  gap: 8px;
 }
