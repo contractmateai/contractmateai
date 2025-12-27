@@ -25,6 +25,18 @@ const featuresBottom = [
 // You can keep them via <script> in index.html, OR install/import them properly later.
 
 export default function Home() {
+    // ===== app preview tilt on scroll =====
+    useEffect(() => {
+      const wrapper = appWrapperRef.current;
+      if (!wrapper) return;
+      const handleScroll = () => {
+        const st = window.scrollY;
+        wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+      };
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll();
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
   const topbarWrapRef = useRef(null);
   const topbarRef = useRef(null);
   const menuToggleRef = useRef(null);
