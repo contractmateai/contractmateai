@@ -170,13 +170,13 @@ function Contact() {
       </div>
       <div className="pad-top"></div>
       {/* HERO */}
-      <section className="hero-frame" data-aos="fade-in" style={{position: 'relative', minHeight: '480px', width: '100%', overflow: 'hidden', marginTop: '-120px', paddingBottom: '60px', zIndex: 0}}>
-        <div className="hero-bg" style={{position: 'absolute', inset: 0, background: 'url(https://imgur.com/RWQXFbb.png) center/cover no-repeat', zIndex: 0}}></div>
-        <div className="hero-particles" ref={particlesRef} style={{position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1}}></div>
-        <div className="hero-content" data-aos="fade-up" style={{position: 'relative', zIndex: 2, maxWidth: 1160, margin: '0 auto', padding: '0 24px', textAlign: 'center', paddingTop: 'calc(120px + 66px)'}}>
-          <div className="badge" style={{display: 'inline-block', padding: '8px 14px', borderRadius: 999, background: '#1f1a34', color: '#c8acff', fontSize: 15, fontWeight: 400}}>We’re Here For You</div>
-          <h1 className="hero-title" style={{margin: '18px 0 10px', fontSize: 56, lineHeight: 1.15, color: '#fff9f9', fontWeight: 400}}>We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub" style={{color: '#d8cccc', fontSize: 20, fontWeight: 400}}>Whether it's feedback, questions, or ideas — we're just a message away.</div>
+      <section className="hero-frame" data-aos="fade-in">
+        <div className="hero-bg"></div>
+        <div className="hero-particles" ref={particlesRef}></div>
+        <div className="hero-content" data-aos="fade-up">
+          <div className="badge">We’re Here For You</div>
+          <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
+          <div className="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
         </div>
       </section>
       <div className="after-hero-spacer"></div>
