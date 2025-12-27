@@ -3,20 +3,24 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 
 // Feature rows for the homepage ticker
 const featuresTop = [
-  { icon: "https://imgur.com/1.png", label: "AI Contract Analysis" },
-  { icon: "https://imgur.com/2.png", label: "Instant Summaries" },
-  { icon: "https://imgur.com/3.png", label: "Clause Detection" },
-  { icon: "https://imgur.com/4.png", label: "Risk Warnings" },
-  { icon: "https://imgur.com/5.png", label: "Upload PDF/DOCX" },
-  { icon: "https://imgur.com/6.png", label: "Mobile Friendly" },
+  { icon: "https://imgur.com/dKG0KXh.png", label: "No Signup" },
+  { icon: "https://imgur.com/Cbflaz5.png", label: "Secure Processing" },
+  { icon: "https://imgur.com/RozMHbN.png", label: "PDF Export" },
+  { icon: "https://imgur.com/hDBmbBP.png", label: "Risk Indicator" },
+  { icon: "https://imgur.com/SaW85D2.png", label: "Your Data Stays Yours" },
+  { icon: "https://imgur.com/dPCWJg7.png", label: "Smart Summary" },
+  { icon: "https://imgur.com/Xv2u5Mz.png", label: "Language Detection" },
+  { icon: "https://imgur.com/cv1DrX1.png", label: "Key Clauses" },
 ];
 const featuresBottom = [
-  { icon: "https://imgur.com/7.png", label: "No Signup Needed" },
-  { icon: "https://imgur.com/8.png", label: "Secure & Private" },
-  { icon: "https://imgur.com/9.png", label: "Multi-language" },
-  { icon: "https://imgur.com/10.png", label: "Free to Use" },
-  { icon: "https://imgur.com/11.png", label: "Shareable Results" },
-  { icon: "https://imgur.com/12.png", label: "Legal Jargon Explained" },
+  { icon: "https://imgur.com/0TgzL8P.png", label: "Legal Insights" },
+  { icon: "https://imgur.com/JMV0gKS.png", label: "Suggestions Engine" },
+  { icon: "https://imgur.com/MAZkZHs.png", label: "Clause Warnings" },
+  { icon: "https://imgur.com/o8K46Sk.png", label: "AI Review" },
+  { icon: "https://imgur.com/3PU7xU0.png", label: "No legal jargon" },
+  { icon: "https://imgur.com/rlaNjHT.png", label: "Deadline Pressure" },
+  { icon: "https://imgur.com/Ie8CwXO.png", label: "Modern Design" },
+  { icon: "https://imgur.com/5DGepME.png", label: "Confidence to Sign" },
 ];
 
 // NOTE: This Home.jsx expects these to be available globally (like you had in HTML):
