@@ -1,7 +1,9 @@
 /* Ensure footer links group is tight */
 .footer-links-group {
   display: flex;
-  gap: 0;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 /* src/App.css  */
 
@@ -231,7 +233,9 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
   font-size: 16px;
   font-weight: 400;
   justify-content: flex-start;
-  gap: 0;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .site-footer .footer-links a, .site-footer .footer-links a:visited, .footer-bottom-links a, .footer-bottom-links a:visited { color: #c5c5c5; text-decoration: none; }
 .menu-toggle{
@@ -385,6 +389,8 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
 .footer-bottom-links a:visited {
   color: #c5c5c5;
   text-decoration: none;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .footer-bottom-links a:hover {
   text-decoration: none;
@@ -690,6 +696,4 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
     position: relative;
     top: 20px;
   }
-  display: flex;
-  gap: 8px;
 }
