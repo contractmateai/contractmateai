@@ -1,3 +1,8 @@
+/* Ensure footer links group is tight */
+.footer-links-group {
+  display: flex;
+  gap: 0.5em;
+}
 /* src/App.css  */
 
 
