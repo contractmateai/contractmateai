@@ -1,3 +1,8 @@
+/* Remove all margin/padding from direct children of .footer-links-group to eliminate any gap */
+.footer-links-group > * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 /* Ensure footer links group is tight */
 .footer-links-group {
   display: flex;
