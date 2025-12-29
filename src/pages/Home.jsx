@@ -128,7 +128,73 @@ export default function Home() {
     setParticles(arr);
   }, []);
 
-  // (features ticker logic is handled elsewhere)
+  // ===== features ticker (rolling features) =====
+  useEffect(() => {
+    const topRow = document.getElementById("featuresTopRow");
+    const bottomRow = document.getElementById("featuresBottomRow");
+    if (!topRow || !bottomRow) return;
+
+    // Helper to populate a row with features, duplicated for seamless scroll
+    const populateRow = (row, features) => {
+      if (!row) return;
+      row.innerHTML = "";
+      const makeSet = () => {
+        const frag = document.createDocumentFragment();
+        features.forEach((f) => {
+          const el = document.createElement("div");
+          el.className = "scroll-item";
+          el.innerHTML = `<img src="${f.icon}" alt="" loading="lazy"><span>${f.label}</span>`;
+          frag.appendChild(el);
+        });
+        return frag;
+      };
+      row.appendChild(makeSet());
+      row.appendChild(makeSet());
+    };
+    populateRow(topRow, featuresTop);
+    populateRow(bottomRow, featuresBottom);
+
+    // Ticker animation
+    const makeTicker = (row, { pxPerSecond = 36, direction = "left" } = {}) => {
+      const speed = direction === "left" ? -pxPerSecond : pxPerSecond;
+      let x = 0;
+      let w = 0;
+      let raf = 0;
+      let last = performance.now();
+      const measure = () => {
+        w = row.scrollWidth / 2;
+        if (!w) setTimeout(measure, 60);
+      };
+      const tick = (now) => {
+        const dt = (now - last) / 1000;
+        last = now;
+        x += speed * dt;
+        if (x <= -w) x += w;
+        if (x > 0) x -= w;
+        row.style.transform = `translateX(${x}px)`;
+        raf = requestAnimationFrame(tick);
+      };
+      const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const start = () => {
+        if (media.matches) {
+          row.style.transform = "none";
+          return;
+        }
+        measure();
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      };
+      const stop = () => { if (raf) cancelAnimationFrame(raf); };
+      const onResize = () => measure();
+      window.addEventListener("resize", onResize, { passive: true });
+      media.addEventListener?.("change", () => { stop(); start(); });
+      start();
+      return () => { stop(); window.removeEventListener("resize", onResize); };
+    };
+    const cleanTop = makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
+    const cleanBot = makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
+    return () => { cleanTop?.(); cleanBot?.(); };
+  }, []);
 
   // ===== logo strip ticker =====
   useEffect(() => {

@@ -5,9 +5,9 @@
 
 /* ---------- Base tokens ---------- */
 :root {
-  --bg-dark: #01040b;
-  --bg-deep: #0d011b;
-  --bg-mid: #000000;
+  --bg-dark: #000008;
+  --bg-deep: #090016;
+  --bg-mid: #050505;
   --text-light: #fff9f9;
   --text: #fff9f9;
   --text-muted: #d8cccc;
