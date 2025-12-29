@@ -4,6 +4,7 @@ import Home from "./pages/Home.jsx";
 import Contact from "./pages/Contact.jsx";
 import Analysis from "./pages/Analysis.jsx";
 import Cookies from "./pages/Cookies.jsx";
+import Terms from "./pages/Terms.jsx";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/analysis" element={<Analysis />} />
         <Route path="/cookies" element={<Cookies />} />
-        {/* Add more routes as needed */}
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </BrowserRouter>
   );
