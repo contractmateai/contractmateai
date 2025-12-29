@@ -1348,7 +1348,7 @@ export default function Home() {
           <div className="footer-bottom-links">
             <div className="footer-links-group">
               <a href="privacy.html">Privacy Policy</a>
-              <a href="terms.html">Terms of Service</a>
+              <a href="/terms">Terms of Service</a>
               <a href="/cookies">Cookie Policy</a>
             </div>
             <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
@@ -1414,7 +1414,7 @@ export default function Home() {
 
             <div className="footer-col">
               <h4>Legal</h4>
-              <a className="footer-link" href="terms.html">
+              <a className="footer-link" href="/terms">
                 Terms of Service
               </a>
               <a className="footer-link" href="privacy.html">
