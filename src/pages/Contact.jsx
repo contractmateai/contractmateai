@@ -171,18 +171,20 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg">
+        <div className="hero-bg" style={{ background: 'url("https://imgur.com/RWQXFbb.png") center/cover no-repeat' }}>
           <div className="hero-particles" ref={particlesRef}></div>
         </div>
         <div className="hero-content" data-aos="fade-up">
           <div className="badge">We’re Here For You</div>
-          <h1 className="hero-title">We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub">Whether it's feedback, questions, or ideas — we're just a message away.</div>
+          <h1 className="hero-title" style={{ marginTop: 32, marginBottom: 18 }}>We’re Ready To<br />Listen And Respond</h1>
+          <div className="hero-sub" style={{ fontSize: 36, fontWeight: 600, marginTop: 36, marginBottom: 18 }}>
+            Whether it's feedback, questions, or ideas — we're just a message away.
+          </div>
         </div>
       </section>
       <div className="after-hero-spacer"></div>
       {/* CONTACT */}
-      <section className="contact-section" data-aos="fade-up" style={{marginTop: '32px'}}>
+      <section className="contact-section" data-aos="fade-up" style={{ marginTop: '64px' }}>
         <div className="contact-wrap" id="contact">
           <div className="contact-card">
             {/* Form and aside are siblings in the grid */}
@@ -368,7 +370,6 @@ function Contact() {
           <div className="footer-bottom-space"></div>
         </div>
       </footer>
-
     </>
   );
 }
