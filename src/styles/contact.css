@@ -88,18 +88,12 @@ body{
 }
 /* DEBUG: FORCE HERO VISIBILITY */
 .hero-bg{
-  position:fixed !important;
-  inset:0 !important;
-  min-height: 300px !important;
-  width: 100vw !important;
-  background:url("https://i.imgur.com/RWQXFbb.png") center/cover no-repeat !important;
-  z-index:99999 !important;
-  border: 8px solid #ff0 !important;
-  background-color: #ff00ffcc !important;
-  opacity: 1 !important;
-  display: block !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
+  position:absolute;
+  inset:0;
+  min-height: 300px;
+  width: 100%;
+  background:url("https://i.imgur.com/RWQXFbb.png") center/cover no-repeat;
+  z-index:0;
 }
 .hero-bg::after{
   content:""; position:absolute; left:0; right:0; bottom:0; height:170px;
@@ -107,17 +101,12 @@ body{
 }
 /* DEBUG: FORCE PARTICLES VISIBILITY */
 .hero-particles{
-  position:fixed !important;
-  inset:0 !important;
-  min-height: 100px !important;
-  width: 100vw !important;
-  pointer-events:auto !important;
-  z-index:100000 !important;
-  border: 8px solid #0ff !important;
-  background-color: #00ffffcc !important;
-  opacity: 1 !important;
-  display: block !important;
-  visibility: visible !important;
+  position:absolute;
+  inset:0;
+  min-height: 100px;
+  width: 100%;
+  pointer-events:none;
+  z-index:1;
 }
 .particle{
   position:absolute;
