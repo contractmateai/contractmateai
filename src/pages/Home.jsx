@@ -1347,7 +1347,7 @@ export default function Home() {
           <div className="footer-divider"></div>
           <div className="footer-bottom-links">
             <div className="footer-links-group">
-              <a href="privacy.html">Privacy Policy</a>
+              <a href="/privacy">Privacy Policy</a>
               <a href="/terms">Terms of Service</a>
               <a href="/cookies">Cookie Policy</a>
             </div>
@@ -1417,7 +1417,7 @@ export default function Home() {
               <a className="footer-link" href="/terms">
                 Terms of Service
               </a>
-              <a className="footer-link" href="privacy.html">
+              <a className="footer-link" href="/privacy">
                 Privacy Policy
               </a>
               <a className="footer-link" href="/cookies">
