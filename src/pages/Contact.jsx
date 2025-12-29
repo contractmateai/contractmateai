@@ -171,7 +171,7 @@ function Contact() {
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">
-        <div className="hero-bg" style={{ background: 'url("https://imgur.com/RWQXFbb.png") center/cover no-repeat' }}>
+        <div className="hero-bg">
           <div className="hero-particles" ref={particlesRef}></div>
         </div>
         <div className="hero-content" data-aos="fade-up">
