@@ -1,69 +1,7 @@
-  // ===== MOBILE MENU LOGIC =====
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    function setupMenu() {
-      const menuToggle = document.getElementById('menuToggle');
-      const menuPanel = document.getElementById('menuPanel');
-      const menuOverlay = document.getElementById('menuOverlay');
-      let open = false;
-      function setMenu(openState) {
-        open = openState;
-        if (open) {
-          menuPanel && menuPanel.classList.add('open');
-          menuOverlay && menuOverlay.classList.add('show');
-          menuToggle && menuToggle.classList.add('open');
-          menuPanel && menuPanel.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-        } else {
-          menuPanel && menuPanel.classList.remove('open');
-          menuOverlay && menuOverlay.classList.remove('show');
-          menuToggle && menuToggle.classList.remove('open');
-          menuPanel && menuPanel.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = '';
-        }
-      }
-      function handleToggle(e) {
-        e.preventDefault();
-        setMenu(!open);
-      }
-      function handleOverlay(e) {
-        setMenu(false);
-      }
-      function handleLink(e) {
-        setMenu(false);
-      }
-      menuToggle && menuToggle.addEventListener('click', handleToggle);
-      menuOverlay && menuOverlay.addEventListener('click', handleOverlay);
-      const menuLinks = menuPanel ? menuPanel.querySelectorAll('a.menu-item') : [];
-      menuLinks.forEach(link => link.addEventListener('click', handleLink));
-      function handleEsc(e) {
-        if (e.key === 'Escape') setMenu(false);
-      }
-      document.addEventListener('keydown', handleEsc);
-      // Clean up
-      return () => {
-        menuToggle && menuToggle.removeEventListener('click', handleToggle);
-        menuOverlay && menuOverlay.removeEventListener('click', handleOverlay);
-        menuLinks.forEach(link => link.removeEventListener('click', handleLink));
-        document.removeEventListener('keydown', handleEsc);
-        document.body.style.overflow = '';
-      };
-    }
-    if (document.readyState !== 'loading') {
-      setupMenu();
-    } else {
-      document.addEventListener('DOMContentLoaded', setupMenu);
-    }
-    // Clean up event on unmount
-    return () => {
-      document.removeEventListener('DOMContentLoaded', setupMenu);
-    };
-  }, []);
-
-
 
 import React, { useRef, useEffect } from "react";
 import "../styles/contact.css";
+
 // Helper for FAQ toggle
 function setupFAQToggle() {
   const faqItems = document.querySelectorAll(".faq-item");
@@ -103,6 +41,53 @@ function setupTopbarScroll() {
     { passive: true }
   );
 }
+
+function Contact() {
+  const formRef = useRef();
+  const btnRef = useRef();
+  const alertRef = useRef();
+  const particlesRef = useRef();
+
+  // ===== MOBILE MENU LOGIC =====
+  useEffect(() => {
+    const menuToggle = document.getElementById('menuToggle');
+    const menuPanel = document.getElementById('menuPanel');
+    const menuOverlay = document.getElementById('menuOverlay');
+    if (!menuToggle || !menuPanel || !menuOverlay) return;
+
+    const openMenu = () => {
+      menuPanel.classList.add('open');
+      menuOverlay.classList.add('show');
+      menuToggle.classList.add('open');
+      menuPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+    const closeMenu = () => {
+      menuPanel.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      menuToggle.classList.remove('open');
+      menuPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+    const onToggle = (e) => {
+      e.preventDefault();
+      if (menuPanel.classList.contains('open')) closeMenu();
+      else openMenu();
+    };
+    const onOverlay = () => closeMenu();
+    const onKey = (e) => { if (e.key === 'Escape') closeMenu(); };
+
+    menuToggle.addEventListener('click', onToggle);
+    menuOverlay.addEventListener('click', onOverlay);
+    document.addEventListener('keydown', onKey);
+
+    return () => {
+      menuToggle.removeEventListener('click', onToggle);
+      menuOverlay.removeEventListener('click', onOverlay);
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, []);
 
 function Contact() {
   const formRef = useRef();
