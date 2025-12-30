@@ -1,3 +1,64 @@
+  // ===== MOBILE MENU LOGIC =====
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    function setupMenu() {
+      const menuToggle = document.getElementById('menuToggle');
+      const menuPanel = document.getElementById('menuPanel');
+      const menuOverlay = document.getElementById('menuOverlay');
+      let open = false;
+      function setMenu(openState) {
+        open = openState;
+        if (open) {
+          menuPanel && menuPanel.classList.add('open');
+          menuOverlay && menuOverlay.classList.add('show');
+          menuToggle && menuToggle.classList.add('open');
+          menuPanel && menuPanel.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        } else {
+          menuPanel && menuPanel.classList.remove('open');
+          menuOverlay && menuOverlay.classList.remove('show');
+          menuToggle && menuToggle.classList.remove('open');
+          menuPanel && menuPanel.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        }
+      }
+      function handleToggle(e) {
+        e.preventDefault();
+        setMenu(!open);
+      }
+      function handleOverlay(e) {
+        setMenu(false);
+      }
+      function handleLink(e) {
+        setMenu(false);
+      }
+      menuToggle && menuToggle.addEventListener('click', handleToggle);
+      menuOverlay && menuOverlay.addEventListener('click', handleOverlay);
+      const menuLinks = menuPanel ? menuPanel.querySelectorAll('a.menu-item') : [];
+      menuLinks.forEach(link => link.addEventListener('click', handleLink));
+      function handleEsc(e) {
+        if (e.key === 'Escape') setMenu(false);
+      }
+      document.addEventListener('keydown', handleEsc);
+      // Clean up
+      return () => {
+        menuToggle && menuToggle.removeEventListener('click', handleToggle);
+        menuOverlay && menuOverlay.removeEventListener('click', handleOverlay);
+        menuLinks.forEach(link => link.removeEventListener('click', handleLink));
+        document.removeEventListener('keydown', handleEsc);
+        document.body.style.overflow = '';
+      };
+    }
+    if (document.readyState !== 'loading') {
+      setupMenu();
+    } else {
+      document.addEventListener('DOMContentLoaded', setupMenu);
+    }
+    // Clean up event on unmount
+    return () => {
+      document.removeEventListener('DOMContentLoaded', setupMenu);
+    };
+  }, []);
 
 
 

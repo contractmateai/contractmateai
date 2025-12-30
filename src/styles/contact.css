@@ -143,15 +143,16 @@ body{
   }
 @media (max-width: 640px) {
   .hero-title {
-    font-size: 28px;
-    line-height: 1.22;
+    font-size: 22px;
+    line-height: 1.18;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;
     margin-top: 18px;
     margin-bottom: 10px;
-    max-width: 95vw;
+    max-width: 98vw;
     display: block;
+    font-weight: 400;
   }
 }
 .hero-sub{
