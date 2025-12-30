@@ -159,15 +159,17 @@ function Contact() {
       <div className="menu-overlay" id="menuOverlay"></div>
       <div className="menu-panel" id="menuPanel" aria-hidden="true">
         <nav className="menu-list">
-          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span className="chev">›</span></a>
-          <a className="menu-item" href="/">Home <span className="chev">›</span></a>
-          <a className="menu-item" href="/contact">Contact <span className="chev">›</span></a>
+          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
+          <a className="menu-item" href="/">Home <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
+          <a className="menu-item" href="/contact">Contact <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
         </nav>
         <div className="menu-disclaimer">
           <div>Not legal advice.</div>
           <div>© 2025 SignSense. All rights reserved.</div>
         </div>
       </div>
+
+
       <div className="pad-top"></div>
       {/* HERO */}
       <section className="hero-frame" data-aos="fade-in">

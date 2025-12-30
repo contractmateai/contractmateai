@@ -132,8 +132,25 @@ body{
   display:inline-block; padding:8px 14px; border-radius:999px;
   background:var(--badge-bg); color:var(--badge-text); font-size:15px; font-weight:400;
 }
-.hero-title{
-  margin:18px 0 10px; font-size:56px; line-height:1.15; color:#fff9f9; font-weight:400;
+  .hero-title{
+    margin:18px 0 10px;
+    font-size:56px;
+    line-height:1.15;
+    color:#fff9f9;
+    font-weight:400;
+    word-break:break-word;
+    overflow-wrap:break-word;
+  }
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 32px;
+    line-height: 1.18;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
 }
 .hero-sub{
   color:var(--muted);
