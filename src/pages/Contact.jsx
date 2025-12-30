@@ -3,8 +3,8 @@ import "../styles/contact.css";
 
 
 
-import "../styles/contact.css";
 import React, { useRef, useEffect } from "react";
+import "../styles/contact.css";
 // Helper for FAQ toggle
 function setupFAQToggle() {
   const faqItems = document.querySelectorAll(".faq-item");
