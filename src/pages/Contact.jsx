@@ -43,6 +43,46 @@ function setupTopbarScroll() {
 
 
 function Contact() {
+    // Mobile menu logic
+    useEffect(() => {
+      const menuToggle = document.getElementById('menuToggle');
+      const menuPanel = document.getElementById('menuPanel');
+      const menuOverlay = document.getElementById('menuOverlay');
+      if (!menuToggle || !menuPanel || !menuOverlay) return;
+
+      const openMenu = () => {
+        menuPanel.classList.add('open');
+        menuOverlay.classList.add('show');
+        menuToggle.classList.add('open');
+        menuPanel.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+      const closeMenu = () => {
+        menuPanel.classList.remove('open');
+        menuOverlay.classList.remove('show');
+        menuToggle.classList.remove('open');
+        menuPanel.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      };
+      const onToggle = (e) => {
+        e.preventDefault();
+        if (menuPanel.classList.contains('open')) closeMenu();
+        else openMenu();
+      };
+      const onOverlay = () => closeMenu();
+      const onKey = (e) => { if (e.key === 'Escape') closeMenu(); };
+
+      menuToggle.addEventListener('click', onToggle);
+      menuOverlay.addEventListener('click', onOverlay);
+      document.addEventListener('keydown', onKey);
+
+      return () => {
+        menuToggle.removeEventListener('click', onToggle);
+        menuOverlay.removeEventListener('click', onOverlay);
+        document.removeEventListener('keydown', onKey);
+        document.body.style.overflow = '';
+      };
+    }, []);
   const formRef = useRef();
   const btnRef = useRef();
   const alertRef = useRef();

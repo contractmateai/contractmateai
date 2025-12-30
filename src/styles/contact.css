@@ -143,16 +143,19 @@ body{
   }
 @media (max-width: 640px) {
   .hero-title {
-    font-size: 18px;
-    line-height: 1.22;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    margin-top: 18px;
-    margin-bottom: 10px;
-    max-width: 98vw;
-    display: block;
-    font-weight: 400;
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    margin-top: 18px !important;
+    margin-bottom: 10px !important;
+    max-width: 98vw !important;
+    display: block !important;
+    font-weight: 400 !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
   }
 }
 .hero-sub{
