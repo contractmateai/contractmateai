@@ -60,6 +60,7 @@
     };
   }, []);
 
+
 import "../styles/contact.css";
 import React, { useRef, useEffect } from "react";
 // Helper for FAQ toggle
