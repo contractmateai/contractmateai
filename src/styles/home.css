@@ -1,3 +1,9 @@
+@media (max-width: 700px) {
+  .tagline-absolute .animated-arrow,
+  .leave-review .animated-arrow {
+    display: none !important;
+  }
+}
 /* =========================
    SignSense Home — home.css
    (moved from <style> blocks)
