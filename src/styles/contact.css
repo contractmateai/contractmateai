@@ -143,8 +143,8 @@ body{
   }
 @media (max-width: 640px) {
   .hero-title {
-    font-size: 22px !important;
-    line-height: 1.25 !important;
+    font-size: 34px !important;
+    line-height: 1.15 !important;
     word-break: break-word !important;
     overflow-wrap: break-word !important;
     white-space: normal !important;
@@ -152,9 +152,12 @@ body{
     margin-bottom: 10px !important;
     max-width: 98vw !important;
     display: block !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important;
     overflow: visible !important;
     text-overflow: unset !important;
+  }
+  .contact-section {
+    margin-top: 16px !important;
   }
 }
  .hero-sub{
