@@ -262,6 +262,11 @@ h1 { font-size: 68px; margin: 0; color: var(--text-light); font-weight: 400; lin
 .leave-review:hover .animated-arrow::before,
 .section-badge:hover .animated-arrow::before,
 .tagline-absolute:hover .animated-arrow::before { visibility: visible; }
+@media (max-width: 700px) {
+  .section-badge .animated-arrow {
+    display: none !important;
+  }
+}
 
 /* ---------- Reviews ---------- */
 .reviews-section { padding: 80px 40px 120px; background: transparent; max-width: 1400px; margin: 0 auto; }
