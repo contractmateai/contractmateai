@@ -43,44 +43,45 @@ function setupTopbarScroll() {
 
 
 function Contact() {
-    // Mobile menu logic
+    // Mobile menu logic (copied from Cookies.jsx)
     useEffect(() => {
+      const topbar = document.getElementById('topbar');
       const menuToggle = document.getElementById('menuToggle');
       const menuPanel = document.getElementById('menuPanel');
       const menuOverlay = document.getElementById('menuOverlay');
-      if (!menuToggle || !menuPanel || !menuOverlay) return;
-
-      const openMenu = () => {
-        menuPanel.classList.add('open');
-        menuOverlay.classList.add('show');
-        menuToggle.classList.add('open');
-        menuPanel.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      };
-      const closeMenu = () => {
-        menuPanel.classList.remove('open');
-        menuOverlay.classList.remove('show');
-        menuToggle.classList.remove('open');
-        menuPanel.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      };
-      const onToggle = (e) => {
-        e.preventDefault();
-        if (menuPanel.classList.contains('open')) closeMenu();
-        else openMenu();
-      };
-      const onOverlay = () => closeMenu();
-      const onKey = (e) => { if (e.key === 'Escape') closeMenu(); };
-
-      menuToggle.addEventListener('click', onToggle);
-      menuOverlay.addEventListener('click', onOverlay);
-      document.addEventListener('keydown', onKey);
-
+      function positionPanel() {
+        if (!topbar || !menuPanel) return;
+        const r = topbar.getBoundingClientRect();
+        menuPanel.style.top = (r.top + r.height + 0) + 'px';
+      }
+      if (menuToggle && menuPanel && menuOverlay) {
+        positionPanel();
+        window.addEventListener('resize', positionPanel);
+        function openMenu() {
+          positionPanel();
+          menuPanel.classList.add('open');
+          menuOverlay.classList.add('show');
+          menuToggle.classList.add('open');
+          topbar.classList.add('merged');
+        }
+        function closeMenu() {
+          menuPanel.classList.remove('open');
+          menuOverlay.classList.remove('show');
+          menuToggle.classList.remove('open');
+          topbar.classList.remove('merged');
+        }
+        menuToggle.addEventListener('click', () => {
+          if (menuPanel.classList.contains('open')) closeMenu(); else openMenu();
+        });
+        menuOverlay.addEventListener('click', closeMenu);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+        window.addEventListener('scroll', () => {
+          if (menuPanel.classList.contains('open')) closeMenu();
+        }, { passive: true });
+      }
+      // Cleanup
       return () => {
-        menuToggle.removeEventListener('click', onToggle);
-        menuOverlay.removeEventListener('click', onOverlay);
-        document.removeEventListener('keydown', onKey);
-        document.body.style.overflow = '';
+        window.removeEventListener('resize', positionPanel);
       };
     }, []);
   const formRef = useRef();
@@ -200,9 +201,9 @@ function Contact() {
       <div className="menu-overlay" id="menuOverlay"></div>
       <div className="menu-panel" id="menuPanel" aria-hidden="true">
         <nav className="menu-list">
-          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
-          <a className="menu-item" href="/">Home <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
-          <a className="menu-item" href="/contact">Contact <span className="chev"><svg width="18" height="18" viewBox="0 0 24 24" style={{display:'inline',verticalAlign:'middle'}}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span></a>
+          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">See How It Works <span className="chev">›</span></a>
+          <a className="menu-item" href="/">Home <span className="chev">›</span></a>
+          <a className="menu-item" href="/contact">Contact <span className="chev">›</span></a>
         </nav>
         <div className="menu-disclaimer">
           <div>Not legal advice.</div>
@@ -220,7 +221,7 @@ function Contact() {
         <div className="hero-content" data-aos="fade-up">
           <div className="badge">We’re Here For You</div>
           <h1 className="hero-title" style={{ marginTop: 32, marginBottom: 18 }}>We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub" style={{ fontSize: 36, fontWeight: 600, marginTop: 36, marginBottom: 18 }}>
+          <div className="hero-sub mobile-hide" style={{ fontSize: 36, fontWeight: 600, marginTop: 36, marginBottom: 18 }}>
             Whether it's feedback, questions, or ideas — we're just a message away.
           </div>
         </div>
