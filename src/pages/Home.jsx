@@ -28,8 +28,7 @@ const featuresBottom = [
 // - pdfjsLib (PDF.js) and mammoth (DOCX)
 // PDF.js import (local, not global)
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js?worker';
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
 
 export default function Home() {
     // ===== app preview tilt on scroll =====
