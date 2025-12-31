@@ -221,8 +221,8 @@ function Contact() {
         <div className="hero-content" data-aos="fade-up">
           <div className="badge">We’re Here For You</div>
           <h1 className="hero-title" style={{ marginTop: 32, marginBottom: 18 }}>We’re Ready To<br />Listen And Respond</h1>
-          <div className="hero-sub mobile-hide" style={{ fontSize: 36, fontWeight: 600, marginTop: 36, marginBottom: 18 }}>
-            Whether it's feedback, questions, or ideas — we're just a message away.
+          <div className="hero-sub-alt" style={{ fontSize: 18, fontWeight: 400, marginTop: 10, marginBottom: 10, color: '#bdbdbd' }}>
+            Weather you have any questions or ideas we're here for you.
           </div>
         </div>
       </section>

@@ -1,3 +1,11 @@
+.hero-sub-alt {
+  color: #bdbdbd;
+  font-size: 18px;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
 /* Contact page styles migrated from contact.html */
 :root{
   --bg:#000008;
