@@ -26,7 +26,10 @@ const featuresBottom = [
 // NOTE: This Home.jsx expects these to be available globally (like you had in HTML):
 // - AOS (optional; if you don't use it in React, nothing breaks)
 // - pdfjsLib (PDF.js) and mammoth (DOCX)
-// You can keep them via <script> in index.html, OR install/import them properly later.
+// PDF.js import (local, not global)
+import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function Home() {
     // ===== app preview tilt on scroll =====
@@ -627,8 +630,7 @@ export default function Home() {
       if (mime === "application/pdf" || ext.endsWith(".pdf")) {
         const buf = await file.arrayBuffer();
 
-        const pdfjsLib = window.pdfjsLib;
-        if (!pdfjsLib) throw new Error("pdfjsLib not found. Include PDF.js in your app.");
+        // Use imported pdfjsLib directly
 
         const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
         let full = "";
