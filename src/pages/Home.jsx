@@ -27,8 +27,8 @@ const featuresBottom = [
 // - AOS (optional; if you don't use it in React, nothing breaks)
 // - pdfjsLib (PDF.js) and mammoth (DOCX)
 // PDF.js import (local, not global)
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js?worker';
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function Home() {
