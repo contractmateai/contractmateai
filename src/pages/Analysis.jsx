@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
 import AnalysisTopbar from "../components/AnalysisTopbar";
-import "../styles/home.css";
+import "../styles/analysis.css";
 
 const Analysis = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
