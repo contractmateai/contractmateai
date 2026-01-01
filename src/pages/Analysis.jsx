@@ -374,6 +374,17 @@ const Analysis = () => {
                     </svg>
                     <div className="val" id="scorePct">{clamp(analysis.scoreChecker?.value)}%</div>
                   </div>
+                  <div className="score-side">
+                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/mFvyCj7.png" alt="" /><span id="uiScoreChecker">{t.score || "Score Checker"}</span></h3>
+                    <div className="score-remark" id="scoreRemark">{tr.scoreLine || analysis.scoreChecker?.line || "Determines the overall score."}</div>
+                    <div className="score-bar"><span className="score-ind" id="scoreInd" style={{left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)`}}></span></div>
+                    <div className="score-scale">
+                      <span id="scaleUnsafe">{t.unsafe || "Unsafe"}</span>
+                      <span id="scaleSafe">{t.safe || "Safe"}</span>
+                      <span id="scaleVerySafe">{t.verysafe || "Very Safe"}</span>
+                    </div>
+                  </div>
+                </div>
               </section>
               <section className="card meter-block" id="confRightCard">
                 <div className="meter-head">
