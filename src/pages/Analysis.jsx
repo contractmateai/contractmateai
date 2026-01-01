@@ -371,9 +371,9 @@ const Analysis = () => {
                     <svg width="140" height="140" viewBox="0 0 140 140">
                       <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
                       <circle ref={scoreArcRef} id="scoreArc" className="arc" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
-                      // ...existing code...
+                    </svg>
+                    <div className="val" id="scorePct">{clamp(analysis.scoreChecker?.value)}%</div>
                   </div>
-                </div>
               </section>
               <section className="card meter-block" id="confRightCard">
                 <div className="meter-head">
