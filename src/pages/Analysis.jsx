@@ -2,7 +2,7 @@
 
 
 import React, { useState, useEffect, useRef } from "react";
-// For PDF generation (assume window.PDFGenerator is loaded as in HTML)
+import PDFGenerator from '../../js/pdf-generator.js';
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
 
@@ -87,9 +87,14 @@ const Analysis = () => {
     setEmailError("");
     setDownloading(true);
     try {
-      // PDF generation logic (assume window.PDFGenerator is loaded)
-      if (window.PDFGenerator) {
-        const pdfGen = new window.PDFGenerator();
+      // PDF generation logic
+      let pdfGen;
+      if (typeof PDFGenerator === 'function') {
+        pdfGen = new PDFGenerator();
+      } else if (window.PDFGenerator) {
+        pdfGen = new window.PDFGenerator();
+      }
+      if (pdfGen) {
         // Compose data for PDF (use current language)
         const pdfData = {
           ...data,
@@ -139,14 +144,24 @@ const Analysis = () => {
       ref.current.setAttribute("stroke", color);
     }
     // Color logic for bands (match Analyze.js/HTML)
-    function getBandColor(val) {
-      if (val >= 80) return bandColor.green;
-      if (val >= 50) return bandColor.orange;
+    function getRiskColor(val) {
+      if (val <= 25) return bandColor.green;
+      if (val <= 58) return bandColor.orange;
       return bandColor.red;
     }
-    setArc(riskArcRef, analysis?.risk?.value, getBandColor(analysis?.risk?.value));
-    setArc(clarArcRef, analysis?.clarity?.value, getBandColor(analysis?.clarity?.value));
-    setArc(scoreArcRef, analysis?.scoreChecker?.value, getBandColor(analysis?.scoreChecker?.value));
+    function getClarityColor(val) {
+      if (val >= 78) return bandColor.green;
+      if (val >= 49) return bandColor.orange;
+      return bandColor.red;
+    }
+    function getScoreColor(val) {
+      if (val >= 75) return bandColor.green;
+      if (val >= 49) return bandColor.orange;
+      return bandColor.red;
+    }
+    setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
+    setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
+    setArc(scoreArcRef, analysis?.scoreChecker?.value, getScoreColor(analysis?.scoreChecker?.value));
   }, [data]);
 
   // Language switching (UI only)
@@ -215,7 +230,7 @@ const Analysis = () => {
                   aria-expanded={langMenuOpen}
                   aria-haspopup="listbox"
                 >
-                  <span id="langNow">{lang.toUpperCase()}</span><span className="caret" aria-hidden="true"></span>
+                  <span id="langNow" style={{fontFamily:'Inter, sans-serif',fontWeight:400,fontSize:'20px'}}>{lang.toUpperCase()}</span><span className="caret" aria-hidden="true"></span>
                 </button>
                 {langMenuOpen && (
                   <div
@@ -231,7 +246,7 @@ const Analysis = () => {
                         data-code={code}
                         key={code}
                         onClick={() => handleLangClick(code)}
-                        style={{fontWeight: lang === code ? 600 : 400, background: lang === code ? '#e2e2e2' : 'transparent', color: lang === code ? '#000' : undefined}}
+                        style={{fontFamily:'Inter, sans-serif',fontWeight: lang === code ? 600 : 400, fontSize:'20px', background: lang === code ? '#e2e2e2' : 'transparent', color: lang === code ? '#000' : undefined}}
                         tabIndex={0}
                         role="option"
                         aria-selected={lang === code}
@@ -253,9 +268,9 @@ const Analysis = () => {
             <div className="left">
               <section className="card" id="summaryCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{t.summary || "Summary"}</span></h3>
-                <div className="list" id="summaryText">
+                <div className="list" id="summaryText" style={{fontSize: '20px'}}>
                   {(tr.summary || analysis.summary || []).map((s, i) => (
-                    <div key={i} style={mutedStyle}>{s}</div>
+                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
                   ))}
                 </div>
               </section>
@@ -282,17 +297,17 @@ const Analysis = () => {
               </section>
               <section className="card" id="issuesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{t.potentialIssues || "Potential Issues"}</span></h3>
-                <ul className="bullets" id="issuesList">
+                <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
                   {(tr.potentialIssues || analysis.potentialIssues || []).map((issue, i) => (
-                    <li key={i} style={mutedStyle}>{issue}</li>
+                    <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
                   ))}
                 </ul>
               </section>
               <section className="card" id="suggestionsCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{t.smartSuggestions || "Smart Suggestions"}</span></h3>
-                <div className="list numbered" id="suggestionsList">
+                <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
                   {(tr.smartSuggestions || analysis.smartSuggestions || []).map((s, i) => (
-                    <div key={i} style={mutedStyle}>{s}</div>
+                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
                   ))}
                 </div>
               </section>
@@ -332,9 +347,9 @@ const Analysis = () => {
               </section>
               <section className="card" id="clausesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{t.mainClauses || "Main Clauses"}</span></h3>
-                <div className="list numbered" id="clausesList">
+                <div className="list numbered" id="clausesList" style={{fontSize: '20px'}}>
                   {(tr.mainClauses || analysis.mainClauses || []).map((c, i) => (
-                    <div key={i} style={mutedStyle}>{c}</div>
+                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
                   ))}
                 </div>
               </section>
@@ -377,7 +392,7 @@ const Analysis = () => {
           <form id="emailInline" className="email-inline" noValidate style={{display:'flex',flexDirection:'column',gap:'8px',width:'min(92vw,340px)',background:'#141319',border:'1px solid var(--border)',borderRadius:'14px',padding:'10px 12px',boxShadow:'0 6px 28px rgba(0,0,0,.28)',position:'absolute',bottom:'70px'}} onSubmit={handleEmailSubmit}>
             <div className="email-title">Insert email to download</div>
             <div className="email-row" style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <input id="emailInputInline" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'10px 12px',color:'#fff',font:'400 16px/1 Inter'}} />
+              <input id="emailInputInline" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'10px 12px',color:'#fff',fontFamily:'Inter, sans-serif',fontWeight:400,fontSize:'18px'}} />
               <button className="btn primary" id="emailGo" type="submit" disabled={downloading} style={{padding:'7px 8px',borderRadius:'8px',fontSize:'15px',fontWeight:500}}>{downloading ? '...' : 'Done'}</button>
             </div>
             {emailError && <div id="emailErrInline" className="email-err" style={{color:'#ff6b6b',fontSize:'13px',display:'block'}}>{emailError}</div>}
@@ -387,9 +402,9 @@ const Analysis = () => {
       {showEmailModal && (
         <div className="modal" id="emailModal" aria-modal="true" role="dialog" style={{position:'fixed',inset:0,background:'rgba(0,0,0,.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}}>
           <div className="modal-card" style={{background:'#141319',border:'1px solid var(--border)',borderRadius:'18px',padding:'18px',width:'min(480px,92vw)'}}>
-            <h4 style={{margin:'0 0 10px',fontSize:'18px',fontWeight:400}}>Enter your email to download the PDF report</h4>
+            <h4 style={{margin:'0 0 10px',fontSize:'20px',fontWeight:400,fontFamily:'Inter, sans-serif'}}>Enter your email to download the PDF report</h4>
             <div className="modal-row" style={{display:'flex',gap:'10px',marginTop:'12px'}}>
-              <input id="emailInputModal" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'12px',color:'#fff',font:'400 15px/1 Inter'}} />
+              <input id="emailInputModal" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'12px',color:'#fff',fontFamily:'Inter, sans-serif',fontWeight:400,fontSize:'18px'}} />
               <button className="btn primary" id="emailSubmit" onClick={handleEmailSubmit} disabled={downloading} style={{background:'#f2f9fe',color:'#000',borderColor:'#cfcfcf',padding:'12px 14px',borderRadius:'10px'}}>{downloading ? '...' : 'Download'}</button>
               <button className="btn" id="emailCancel" onClick={closeEmailForm} style={{background:'#0f0e14',color:'#fff',border:'1px solid var(--border)',borderRadius:'10px',padding:'12px 14px'}}>Cancel</button>
             </div>
