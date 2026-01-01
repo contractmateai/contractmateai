@@ -403,8 +403,8 @@ const Analysis = () => {
                 </div>
                 <div className="meter"><div id="conf2Fill" className="fill" style={{width: `${clamp(analysis.bars?.confidenceToSign)}%`, background: bandColor[analysis.risk?.band]}}></div></div>
               </section>
-            </div>
-          </div>
+            </div> {/* End .right */}
+          </div> {/* End .grid */}
         </main>
       </div>
       {/* Download and Email Modal (functionality to be restored next) */}
@@ -433,8 +433,8 @@ const Analysis = () => {
             {emailError && <div id="emailErrModal" className="email-err" style={{color:'#ff6b6b',fontSize:'13px',display:'block'}}>{emailError}</div>}
           </div>
         </div>
-        )}
-  );
+      )}
+    </>
 };
 
 export default Analysis;
