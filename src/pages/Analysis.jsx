@@ -427,4 +427,6 @@ const Analysis = () => {
 
     </>
   );
+}
 export default Analysis;
+// End of file
