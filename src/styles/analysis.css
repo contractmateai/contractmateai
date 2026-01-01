@@ -212,7 +212,7 @@ body, .analysis-root {
 .circle svg { transform: rotate(-90deg); }
 .circle .val { position: absolute; font-weight: 400; font-size: 26px; }
 .circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
-.circle circle.arc { stroke-width: 14; fill: none; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px); }
+.circle circle.arc { stroke-width: 14; fill: none; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1.8s ease; filter: blur(0.5px); /* stroke is set dynamically by React */ }
 .htext { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .muted { color: var(--muted); font-size: 15px; }
 .status { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
