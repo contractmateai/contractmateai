@@ -197,14 +197,29 @@ const Analysis = () => {
   // Static sentences (from Analyze.js/HTML)
   const staticRiskNote = {
     en: "The contract risk score is based on the clauses' fairness and obligations.",
-    // Add more languages as needed
+    it: "Il punteggio di rischio del contratto si basa sull'equità delle clausole.",
+    de: "Der Vertragsrisikowert basiert auf Fairness und Verpflichtungen.",
+    es: "La puntuación de riesgo se basa en la equidad de las cláusulas.",
+    fr: "Le score de risque du contrat est basé sur l'équité des clauses.",
+    zh: "合同风险分数基于条款的公平性和义务。"
   };
   const staticClarityNote = {
     en: "The clarity score reflects how easy it is to understand the terms.",
-    // Add more languages as needed
+    it: "Il punteggio di chiarezza riflette la facilità di comprensione.",
+    de: "Der Klarheitswert zeigt, wie einfach die Bedingungen zu verstehen sind.",
+    es: "La puntuación de claridad refleja la facilidad de comprensión.",
+    fr: "Le score de clarté reflète la facilité de compréhension.",
+    zh: "清晰度分数反映了理解条款的难易程度。"
   };
   // Use static muted color for all explanations
   const mutedStyle = { color: 'var(--muted)', fontSize: 15 };
+
+  // Helper to always show fallback/defaults for boxes
+  function fallbackArr(arr, def) {
+    if (Array.isArray(arr) && arr.length) return arr;
+    if (typeof def === 'string') return [def];
+    return def || ["—"];
+  }
 
   return (
     <>
@@ -266,7 +281,7 @@ const Analysis = () => {
               <section className="card" id="summaryCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{t.summary || "Summary"}</span></h3>
                 <div className="list" id="summaryText" style={{fontSize: '20px'}}>
-                  {(tr.summary || analysis.summary || []).map((s, i) => (
+                  {fallbackArr(tr.summary || analysis.summary, "No summary available.").map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
                   ))}
                 </div>
@@ -295,7 +310,7 @@ const Analysis = () => {
               <section className="card" id="issuesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{t.potentialIssues || "Potential Issues"}</span></h3>
                 <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
-                  {(tr.potentialIssues || analysis.potentialIssues || []).map((issue, i) => (
+                  {fallbackArr(tr.potentialIssues || analysis.potentialIssues, "No issues detected.").map((issue, i) => (
                     <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
                   ))}
                 </ul>
@@ -303,7 +318,7 @@ const Analysis = () => {
               <section className="card" id="suggestionsCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{t.smartSuggestions || "Smart Suggestions"}</span></h3>
                 <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
-                  {(tr.smartSuggestions || analysis.smartSuggestions || []).map((s, i) => (
+                  {fallbackArr(tr.smartSuggestions || analysis.smartSuggestions, "No suggestions available.").map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
                   ))}
                 </div>
@@ -345,7 +360,7 @@ const Analysis = () => {
               <section className="card" id="clausesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{t.mainClauses || "Main Clauses"}</span></h3>
                 <div className="list numbered" id="clausesList" style={{fontSize: '20px'}}>
-                  {(tr.mainClauses || analysis.mainClauses || []).map((c, i) => (
+                  {fallbackArr(tr.mainClauses || analysis.mainClauses, "No main clauses found.").map((c, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
                   ))}
                 </div>
@@ -356,18 +371,28 @@ const Analysis = () => {
                     <svg width="140" height="140" viewBox="0 0 140 140">
                       <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
                       <circle ref={scoreArcRef} id="scoreArc" className="arc" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
-                    </svg>
-                    <div className="val" id="scorePct">{clamp(analysis.scoreChecker?.value)}%</div>
-                  </div>
-                  <div className="score-side">
-                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/mFvyCj7.png" alt="" /><span id="uiScoreChecker">{t.score || "Score Checker"}</span></h3>
-                    <div className="score-remark" id="scoreRemark">{tr.scoreLine || analysis.scoreChecker?.line || "Determines the overall score."}</div>
-                    <div className="score-bar"><span className="score-ind" id="scoreInd" style={{left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)`}}></span></div>
-                    <div className="score-scale">
-                      <span id="scaleUnsafe">{t.unsafe || "Unsafe"}</span>
-                      <span id="scaleSafe">{t.safe || "Safe"}</span>
-                      <span id="scaleVerySafe">{t.verysafe || "Very Safe"}</span>
-                    </div>
+                      <div
+                        className="lang-item"
+                        data-code={code}
+                        key={code}
+                        onClick={() => handleLangClick(code)}
+                        style={{
+                          fontFamily:'Inter, sans-serif',
+                          fontWeight:400,
+                          fontSize:'15px',
+                          color:'var(--muted)',
+                          border: lang === code ? '1.5px solid var(--border)' : '1.5px solid transparent',
+                          background: lang === code ? 'rgba(255,255,255,0.04)' : 'transparent',
+                          boxShadow: lang === code ? '0 0 0 2px #23232a' : 'none',
+                          transition:'all .18s',
+                          outline:'none'
+                        }}
+                        tabIndex={0}
+                        role="option"
+                        aria-selected={lang === code}
+                      >
+                        {label}
+                      </div>
                   </div>
                 </div>
               </section>

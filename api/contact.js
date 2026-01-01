@@ -14,15 +14,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: "Missing fields" });
     }
 
+    // Check for SMTP config
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
+      // Fallback: log message and return success for dev/local
+      console.warn("SMTP config missing. Logging contact form message instead of sending email.");
+      console.log({ name, phone, email, message });
+      return res.status(200).json({ ok: true, dev: true, message: "SMTP config missing. Message logged only." });
+    }
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,                   // e.g. mail.privateemail.com
-      port: Number(process.env.SMTP_PORT || 465),    // 465 (secure) or 587
-      secure: String(process.env.SMTP_SECURE || "true") === "true", // true for 465
+      host: smtpHost,
+      port: Number(smtpPort || 465),
+      secure: String(process.env.SMTP_SECURE || "true") === "true",
       auth: {
-        user: process.env.SMTP_USER,                 // e.g. support@signsense.io
-        pass: process.env.SMTP_PASS
+        user: smtpUser,
+        pass: smtpPass
       }
-      // Optional TLS tweak if your host needs it:
       // tls: { rejectUnauthorized: false }
     });
 
@@ -49,7 +60,7 @@ export default async function handler(req, res) {
     `;
 
     await transporter.sendMail({
-      from: `"SignSense Contact" <${process.env.SMTP_USER}>`,
+      from: `"SignSense Contact" <${smtpUser}>`,
       to: toEmail,
       subject,
       text,

@@ -181,10 +181,12 @@ body, .analysis-root {
 .lang { position: relative; }
 .lang-btn { display: flex; align-items: center; gap: 8px; background: transparent; border: none; color: var(--white); font: 400 20px/1 Inter; cursor: pointer; padding: 6px 10px; min-width: 40px; user-select: none; }
 .lang-btn .caret { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid #fff; opacity: .9; }
-.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 240px; max-height: 260px; overflow: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); padding: 6px; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; min-width: 240px; max-height: 260px; overflow-y: auto; overflow-x: hidden; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); padding: 6px; scrollbar-width: none; }
+.lang-menu::-webkit-scrollbar { width: 0 !important; display: none; }
 .lang.open .lang-menu { display: block; }
-.lang-item { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; color: var(--white); cursor: pointer; }
-.lang-item:hover { background: #17161e; }
+.lang-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; color: var(--muted); cursor: pointer; font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 400; border: 1.5px solid transparent; transition: all .18s; }
+.lang-item:hover { background: #17161e; color: #fff; }
+.lang-item[aria-selected="true"] { border: 1.5px solid var(--border); background: rgba(255,255,255,0.04); color: #fff; box-shadow: 0 0 0 2px #23232a; }
 .card {
   background: var(--card);
   border: 1px solid var(--border);
