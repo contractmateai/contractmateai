@@ -1,3 +1,25 @@
+/* Header row for Overview and language dropdown */
+.analysis-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 0 0;
+  padding: 0 0 10px 0;
+}
+.analysis-header-left {
+  display: flex;
+  align-items: center;
+}
+.analysis-overview-label {
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.analysis-header-right {
+  display: flex;
+  align-items: center;
+}
 /* analysis.css - Styles for the Analysis page, matching the original HTML layout and responsive behavior */
 :root {
   --bg: #0e0c13;
@@ -23,12 +45,12 @@ body, .analysis-root {
   font: 400 16px/1.7 Inter, system-ui, Segoe UI, Roboto, Arial;
   overflow-x: hidden;
 }
+
 .layout {
-  display: grid;
-  grid-template-columns: var(--sidebar) 1fr;
   min-height: 100vh;
 }
 .main {
+  margin-left: var(--sidebar);
   padding: 0 20px 140px;
   display: grid;
   grid-template-rows: auto auto 1fr;
@@ -38,12 +60,15 @@ body, .analysis-root {
   background: #0f0e14;
   border-right: 1px solid var(--border);
   padding: 12px 16px 16px;
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 0;
+  width: var(--sidebar);
   height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  z-index: 100;
 }
 .drawer {
   position: fixed;
@@ -70,6 +95,7 @@ body, .analysis-root {
   z-index: 70;
 }
 .scrim.show { opacity: 1; visibility: visible; }
+
 .brand, .brand-row {
   display: flex;
   align-items: center;
@@ -77,7 +103,20 @@ body, .analysis-root {
   padding-top: 4px;
 }
 .brand img, .brand-row img { width: 34px; height: 34px; }
-.brand span, .brand-row span { font-size: 24px; font-weight: 400; }
+.brand a {
+  text-decoration: none !important;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand span {
+  color: #fff !important;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  top: -2px;
+}
 .nav {
   display: flex;
   flex-direction: column;
