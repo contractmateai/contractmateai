@@ -2,7 +2,7 @@
 
 
 import React, { useState, useEffect, useRef } from "react";
-import PDFGenerator from '../../js/pdf-generator.js';
+
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
 
@@ -88,13 +88,9 @@ const Analysis = () => {
     setDownloading(true);
     try {
       // PDF generation logic
-      let pdfGen;
-      if (typeof PDFGenerator === 'function') {
-        pdfGen = new PDFGenerator();
-      } else if (window.PDFGenerator) {
-        pdfGen = new window.PDFGenerator();
-      }
-      if (pdfGen) {
+      // PDF generation logic (window.PDFGenerator loaded via script)
+      if (window.PDFGenerator) {
+        const pdfGen = new window.PDFGenerator();
         // Compose data for PDF (use current language)
         const pdfData = {
           ...data,
