@@ -2,6 +2,7 @@
 
 
 import React, { useState, useEffect, useRef } from "react";
+// For PDF generation (assume window.PDFGenerator is loaded as in HTML)
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
 
@@ -31,6 +32,80 @@ const Analysis = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [data, setData] = useState(null);
   const [lang, setLang] = useState("en");
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showEmailInline, setShowEmailInline] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [downloading, setDownloading] = useState(false);
+  // Show/hide download bar based on scroll (like original)
+  useEffect(() => {
+    const handleScroll = () => {
+      const dlWrap = document.getElementById("dlWrap");
+      if (!dlWrap) return;
+      const scrolledFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      const show = scrolledFromBottom <= 320;
+      dlWrap.style.display = show ? "flex" : "none";
+      dlWrap.style.opacity = show ? 1 : 0;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    setTimeout(handleScroll, 200);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+  // Email modal/inline logic
+  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
+  const openEmailForm = () => {
+    if (isMobile()) {
+      setShowEmailInline(true);
+    } else {
+      setShowEmailModal(true);
+    }
+    setEmail("");
+    setEmailError("");
+  };
+  const closeEmailForm = () => {
+    setShowEmailModal(false);
+    setShowEmailInline(false);
+    setEmail("");
+    setEmailError("");
+  };
+  const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setEmailError("");
+  };
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    if (!validEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    setEmailError("");
+    setDownloading(true);
+    try {
+      // PDF generation logic (assume window.PDFGenerator is loaded)
+      if (window.PDFGenerator) {
+        const pdfGen = new window.PDFGenerator();
+        // Compose data for PDF (use current language)
+        const pdfData = {
+          ...data,
+          lang,
+          email,
+        };
+        await pdfGen.generatePDF('SignSense_Report', pdfData, lang);
+      } else {
+        alert("PDF generator not loaded.");
+      }
+    } catch (err) {
+      alert("Could not generate the PDF.");
+    }
+    setDownloading(false);
+    closeEmailForm();
+  };
 
   // For animating SVG arcs
   const riskArcRef = useRef();
@@ -63,20 +138,61 @@ const Analysis = () => {
       ref.current.setAttribute("stroke-dashoffset", c * (1 - pct));
       ref.current.setAttribute("stroke", color);
     }
-    setArc(riskArcRef, analysis?.risk?.value, bandColor[analysis?.risk?.band] || "var(--green)");
-    setArc(clarArcRef, analysis?.clarity?.value, bandColor[analysis?.clarity?.band] || "var(--green)");
-    setArc(scoreArcRef, analysis?.scoreChecker?.value, bandColor[analysis?.scoreChecker?.band] || "var(--green)");
+    // Color logic for bands (match Analyze.js/HTML)
+    function getBandColor(val) {
+      if (val >= 80) return bandColor.green;
+      if (val >= 50) return bandColor.orange;
+      return bandColor.red;
+    }
+    setArc(riskArcRef, analysis?.risk?.value, getBandColor(analysis?.risk?.value));
+    setArc(clarArcRef, analysis?.clarity?.value, getBandColor(analysis?.clarity?.value));
+    setArc(scoreArcRef, analysis?.scoreChecker?.value, getBandColor(analysis?.scoreChecker?.value));
   }, [data]);
 
   // Language switching (UI only)
   const handleLangClick = (code) => {
     setLang(code);
+    setLangMenuOpen(false);
   };
+
+  // Dropdown open/close logic
+  const langBtnRef = useRef();
+  const langMenuRef = useRef();
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        langMenuRef.current &&
+        !langMenuRef.current.contains(e.target) &&
+        langBtnRef.current &&
+        !langBtnRef.current.contains(e.target)
+      ) {
+        setLangMenuOpen(false);
+      }
+    }
+    if (langMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [langMenuOpen]);
 
   // Helper for translation fields
   const t = data?.ui || {};
   const tr = data?.translations?.[lang] || {};
   const analysis = data?.analysis || {};
+
+  // Static sentences (from Analyze.js/HTML)
+  const staticRiskNote = {
+    en: "The contract risk score is based on the clauses' fairness and obligations.",
+    // Add more languages as needed
+  };
+  const staticClarityNote = {
+    en: "The clarity score reflects how easy it is to understand the terms.",
+    // Add more languages as needed
+  };
+  // Use static muted color for all explanations
+  const mutedStyle = { color: 'var(--muted)', fontSize: 15 };
 
   return (
     <>
@@ -90,28 +206,56 @@ const Analysis = () => {
             </div>
             <div className="analysis-header-right">
               <div className="lang" id="lang">
-                <button className="lang-btn" id="langBtn" type="button">
+                <button
+                  className="lang-btn"
+                  id="langBtn"
+                  type="button"
+                  ref={langBtnRef}
+                  onClick={() => setLangMenuOpen((v) => !v)}
+                  aria-expanded={langMenuOpen}
+                  aria-haspopup="listbox"
+                >
                   <span id="langNow">{lang.toUpperCase()}</span><span className="caret" aria-hidden="true"></span>
                 </button>
-                <div className="lang-menu" id="langMenu" role="listbox" aria-label="Report Language">
-                  {Object.entries({en:"English",it:"Italiano",de:"Deutsch",es:"Español",fr:"Français",pt:"Português",nl:"Nederlands",ro:"Română",sq:"Shqip",tr:"Türkçe",zh:"中文",ja:"日本語"}).map(([code, label]) => (
-                    <div className="lang-item" data-code={code} key={code} onClick={() => handleLangClick(code)}>{label}</div>
-                  ))}
-                </div>
+                {langMenuOpen && (
+                  <div
+                    className="lang-menu"
+                    id="langMenu"
+                    role="listbox"
+                    aria-label="Report Language"
+                    ref={langMenuRef}
+                  >
+                    {Object.entries({en:"English",it:"Italiano",de:"Deutsch",es:"Español",fr:"Français",pt:"Português",nl:"Nederlands",ro:"Română",sq:"Shqip",tr:"Türkçe",zh:"中文",ja:"日本語"}).map(([code, label]) => (
+                      <div
+                        className="lang-item"
+                        data-code={code}
+                        key={code}
+                        onClick={() => handleLangClick(code)}
+                        style={{fontWeight: lang === code ? 600 : 400, background: lang === code ? '#e2e2e2' : 'transparent', color: lang === code ? '#000' : undefined}}
+                        tabIndex={0}
+                        role="option"
+                        aria-selected={lang === code}
+                      >
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
+          <div style={{borderBottom:'1px solid #e2e2e2',margin:'0 0 18px 0',height:0}}></div>
           <div className="doc-title">
             <span className="label" id="uiTitleLabel">{t.title || "Title:"}</span>
-            <span className="value" id="uiTitleValue">{data?.contractTitle || data?.contractName || "—"}</span>
+            <span className="value" id="uiTitleValue"> {' '}{data?.contractTitle || data?.contractName || "—"}</span>
           </div>
           <div className="grid">
             <div className="left">
               <section className="card" id="summaryCard">
-                <h3><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{t.summary || "Summary"}</span></h3>
+                <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{t.summary || "Summary"}</span></h3>
                 <div className="list" id="summaryText">
                   {(tr.summary || analysis.summary || []).map((s, i) => (
-                    <div key={i}>{s}</div>
+                    <div key={i} style={mutedStyle}>{s}</div>
                   ))}
                 </div>
               </section>
@@ -137,18 +281,18 @@ const Analysis = () => {
                 <div className="meter"><div id="deadFill" className="fill" style={{width: `${clamp(analysis.bars?.deadlinePressure)}%`, background: bandColor[analysis.risk?.band]}}></div></div>
               </section>
               <section className="card" id="issuesCard">
-                <h3><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{t.potentialIssues || "Potential Issues"}</span></h3>
+                <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{t.potentialIssues || "Potential Issues"}</span></h3>
                 <ul className="bullets" id="issuesList">
                   {(tr.potentialIssues || analysis.potentialIssues || []).map((issue, i) => (
-                    <li key={i}>{issue}</li>
+                    <li key={i} style={mutedStyle}>{issue}</li>
                   ))}
                 </ul>
               </section>
               <section className="card" id="suggestionsCard">
-                <h3><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{t.smartSuggestions || "Smart Suggestions"}</span></h3>
+                <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{t.smartSuggestions || "Smart Suggestions"}</span></h3>
                 <div className="list numbered" id="suggestionsList">
                   {(tr.smartSuggestions || analysis.smartSuggestions || []).map((s, i) => (
-                    <div key={i}>{s}</div>
+                    <div key={i} style={mutedStyle}>{s}</div>
                   ))}
                 </div>
               </section>
@@ -164,9 +308,9 @@ const Analysis = () => {
                     <div className="val" id="riskVal">{clamp(analysis.risk?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">{t.risk || "Risk Level"}</span></h3>
-                    <div className="muted" id="riskNote">{analysis.risk?.note}</div>
-                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{analysis.risk?.safety || "Generally Safe"}</span></div>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">Risk Level</span></h3>
+                    <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote[lang] || staticRiskNote.en}</div>
+                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{(analysis.risk?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
                   </div>
                 </div>
               </section>
@@ -180,17 +324,17 @@ const Analysis = () => {
                     <div className="val" id="clarVal">{clamp(analysis.clarity?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{t.clarity || "Clause Clarity"}</span></h3>
-                    <div className="muted" id="clarNote">{analysis.clarity?.note}</div>
-                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{analysis.clarity?.safety || "Generally Safe"}</span></div>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">Clause Clarity</span></h3>
+                    <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote[lang] || staticClarityNote.en}</div>
+                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{(analysis.clarity?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
                   </div>
                 </div>
               </section>
               <section className="card" id="clausesCard">
-                <h3><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{t.mainClauses || "Main Clauses"}</span></h3>
+                <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{t.mainClauses || "Main Clauses"}</span></h3>
                 <div className="list numbered" id="clausesList">
                   {(tr.mainClauses || analysis.mainClauses || []).map((c, i) => (
-                    <div key={i}>{c}</div>
+                    <div key={i} style={mutedStyle}>{c}</div>
                   ))}
                 </div>
               </section>
@@ -227,28 +371,32 @@ const Analysis = () => {
         </main>
       </div>
       {/* Download and Email Modal (functionality to be restored next) */}
-      <div className="download-wrap" id="dlWrap">
-        <button className="download" id="downloadBtn">Download Report</button>
-        <form id="emailInline" className="email-inline" noValidate>
-          <div className="email-title">Insert email to download</div>
-          <div className="email-row">
-            <input id="emailInputInline" className="input" type="email" inputMode="email" placeholder="you@example.com" />
-            <button className="btn primary" id="emailGo" type="submit">Done</button>
-          </div>
-          <div id="emailErrInline" className="email-err">Please enter a valid email address.</div>
-        </form>
+      <div className="download-wrap" id="dlWrap" style={{display:'flex',justifyContent:'center',zIndex:60,opacity:1}}>
+        <button className="download" id="downloadBtn" onClick={openEmailForm} style={{background:'#f2f9fe',color:'#000',border:'1px solid #cfcfcf',borderRadius:'16px',padding:'16px 26px',display:'inline-flex',gap:'12px',alignItems:'center',cursor:'pointer',fontWeight:400,fontSize:'18px',boxShadow:'0 6px 28px rgba(0,0,0,.28)'}}>Download Report</button>
+        {showEmailInline && (
+          <form id="emailInline" className="email-inline" noValidate style={{display:'flex',flexDirection:'column',gap:'8px',width:'min(92vw,340px)',background:'#141319',border:'1px solid var(--border)',borderRadius:'14px',padding:'10px 12px',boxShadow:'0 6px 28px rgba(0,0,0,.28)',position:'absolute',bottom:'70px'}} onSubmit={handleEmailSubmit}>
+            <div className="email-title">Insert email to download</div>
+            <div className="email-row" style={{display:'flex',alignItems:'center',gap:'8px'}}>
+              <input id="emailInputInline" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'10px 12px',color:'#fff',font:'400 16px/1 Inter'}} />
+              <button className="btn primary" id="emailGo" type="submit" disabled={downloading} style={{padding:'7px 8px',borderRadius:'8px',fontSize:'15px',fontWeight:500}}>{downloading ? '...' : 'Done'}</button>
+            </div>
+            {emailError && <div id="emailErrInline" className="email-err" style={{color:'#ff6b6b',fontSize:'13px',display:'block'}}>{emailError}</div>}
+          </form>
+        )}
       </div>
-      <div className="modal" id="emailModal" aria-modal="true" role="dialog">
-        <div className="modal-card">
-          <h4>Enter your email to download the PDF report</h4>
-          <div className="modal-row">
-            <input id="emailInputModal" className="input" type="email" inputMode="email" placeholder="you@example.com" />
-            <button className="btn primary" id="emailSubmit">Download</button>
-            <button className="btn" id="emailCancel">Cancel</button>
+      {showEmailModal && (
+        <div className="modal" id="emailModal" aria-modal="true" role="dialog" style={{position:'fixed',inset:0,background:'rgba(0,0,0,.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}}>
+          <div className="modal-card" style={{background:'#141319',border:'1px solid var(--border)',borderRadius:'18px',padding:'18px',width:'min(480px,92vw)'}}>
+            <h4 style={{margin:'0 0 10px',fontSize:'18px',fontWeight:400}}>Enter your email to download the PDF report</h4>
+            <div className="modal-row" style={{display:'flex',gap:'10px',marginTop:'12px'}}>
+              <input id="emailInputModal" className="input" type="email" inputMode="email" placeholder="you@example.com" value={email} onChange={handleEmailChange} style={{flex:1,background:'#0f0e14',border:'1px solid #5a5a5a',borderRadius:'10px',padding:'12px',color:'#fff',font:'400 15px/1 Inter'}} />
+              <button className="btn primary" id="emailSubmit" onClick={handleEmailSubmit} disabled={downloading} style={{background:'#f2f9fe',color:'#000',borderColor:'#cfcfcf',padding:'12px 14px',borderRadius:'10px'}}>{downloading ? '...' : 'Download'}</button>
+              <button className="btn" id="emailCancel" onClick={closeEmailForm} style={{background:'#0f0e14',color:'#fff',border:'1px solid var(--border)',borderRadius:'10px',padding:'12px 14px'}}>Cancel</button>
+            </div>
+            {emailError && <div id="emailErrModal" className="email-err" style={{color:'#ff6b6b',fontSize:'13px',display:'block'}}>{emailError}</div>}
           </div>
-          <div id="emailErrModal" className="email-err">Please enter a valid email address.</div>
         </div>
-      </div>
+      )}
     </>
   );
 };
