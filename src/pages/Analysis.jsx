@@ -371,28 +371,7 @@ const Analysis = () => {
                     <svg width="140" height="140" viewBox="0 0 140 140">
                       <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
                       <circle ref={scoreArcRef} id="scoreArc" className="arc" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
-                      <div
-                        className="lang-item"
-                        data-code={code}
-                        key={code}
-                        onClick={() => handleLangClick(code)}
-                        style={{
-                          fontFamily:'Inter, sans-serif',
-                          fontWeight:400,
-                          fontSize:'15px',
-                          color:'var(--muted)',
-                          border: lang === code ? '1.5px solid var(--border)' : '1.5px solid transparent',
-                          background: lang === code ? 'rgba(255,255,255,0.04)' : 'transparent',
-                          boxShadow: lang === code ? '0 0 0 2px #23232a' : 'none',
-                          transition:'all .18s',
-                          outline:'none'
-                        }}
-                        tabIndex={0}
-                        role="option"
-                        aria-selected={lang === code}
-                      >
-                        {label}
-                      </div>
+                      // ...existing code...
                   </div>
                 </div>
               </section>
