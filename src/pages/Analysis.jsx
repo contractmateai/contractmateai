@@ -424,6 +424,8 @@ const Analysis = () => {
           </div>
         </div>
       )}
+
     </>
+  );
 
 export default Analysis;
