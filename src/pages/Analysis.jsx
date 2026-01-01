@@ -132,7 +132,8 @@ const Analysis = () => {
     // Helper for arc
     function setArc(ref, value, color) {
       if (!ref.current) return;
-      const pct = clamp(value, 0, 100) / 100;
+      // Always show at least 2% arc for visibility
+      const pct = Math.max(clamp(value, 0, 100), 2) / 100;
       const r = 64;
       const c = 2 * Math.PI * r;
       ref.current.setAttribute("stroke-dasharray", c);
@@ -216,7 +217,7 @@ const Analysis = () => {
               <span className="analysis-overview-label" id="uiOverview">{t.overview || "Overview"}</span>
             </div>
             <div className="analysis-header-right">
-              <div className="lang" id="lang">
+              <div className={`lang${langMenuOpen ? ' open' : ''}`} id="lang">
                 <button
                   className="lang-btn"
                   id="langBtn"
