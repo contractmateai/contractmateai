@@ -433,8 +433,7 @@ const Analysis = () => {
             {emailError && <div id="emailErrModal" className="email-err" style={{color:'#ff6b6b',fontSize:'13px',display:'block'}}>{emailError}</div>}
           </div>
         </div>
-      )}
-    </>
+        )}
   );
 };
 
