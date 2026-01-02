@@ -425,9 +425,9 @@ if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
       return verdictMap.verysafe;
     }
 
-    setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
-    setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
-    setArc(scoreArcRef, analysis?.scoreChecker?.value, getScoreColor(analysis?.scoreChecker?.value));
+      setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
+      setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
+      setArc(scoreArcRef, analysis?.scoreChecker?.value, getClarityColor(analysis?.scoreChecker?.value));
   }, [data]);
 
   // Language switching (UI only)
