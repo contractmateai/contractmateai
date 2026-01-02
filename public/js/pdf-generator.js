@@ -1,3 +1,4 @@
+import { jsPDF } from "jspdf";
 // This is a copy of the PDF generator for public serving
 // Original: js/pdf-generator.js
 // (Ensure this is kept in sync with the main version)
@@ -19,16 +20,16 @@ class PDFGenerator {
     //   score: "https://i.imgur.com/H47wt5e.png",
     //   confidence: "https://i.imgur.com/GzPeaz5.png",
     // };
-    this.ASSETS = {
-      logo: "assets/icons/logo.png",
-      risk: "assets/icons/riskIcon.png",
-      clarity: "assets/icons/clarityIcon.png",
-      pro: "assets/icons/proIcon.png",
-      fav: "assets/icons/favIcon.png",
-      dead: "assets/icons/deadIcon.png",
-      score: "assets/icons/scoreIcon.png",
-      confidence: "assets/icons/confidenceIcon.png",
-    };
+this.ASSETS = {
+  logo: "/assets/icons/logo.png",
+  risk: "/assets/icons/riskIcon.png",
+  clarity: "/assets/icons/clarityIcon.png",
+  pro: "/assets/icons/proIcon.png",
+  fav: "/assets/icons/favIcon.png",
+  dead: "/assets/icons/deadIcon.png",
+  score: "/assets/icons/scoreIcon.png",
+  confidence: "/assets/icons/confidenceIcon.png",
+};
 
     // Centralized Style Configuration
     this.STYLE = {
@@ -621,14 +622,7 @@ class PDFGenerator {
 
   /* ===== Main PDF Generation Function ===== */
   async generatePDF(filename, data, lang) {
-    if (!window.jspdf) {
-      throw new Error(
-        "jsPDF library not loaded. Please include jsPDF before using this module."
-      );
-    }
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
+const doc = new jsPDF({ unit: "pt", format: "a4" });
 
     // Setup fonts
     await this.ensurePoppins(doc);
@@ -1304,11 +1298,4 @@ class PDFGenerator {
 }
 
 // Export for use in other files
-if (typeof window !== "undefined") {
-  window.PDFGenerator = PDFGenerator;
-}
-
-// Also support module export if needed
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = PDFGenerator;
-}
+export default PDFGenerator;
