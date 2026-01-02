@@ -203,10 +203,20 @@ const Analysis = () => {
     verysafe: "var(--green)"
   };
 
+
   // Helper to always show fallback/defaults for boxes
   function fallbackArr(arr) {
     // Only show AI data, never fallback
     if (Array.isArray(arr) && arr.length) return arr;
+    return [];
+  }
+
+  // For summary, merge translation and AI summary if both exist
+  function getSummaryArr() {
+    const aiSummary = analysis.summary;
+    const trSummary = tr.summary;
+    if (Array.isArray(trSummary) && trSummary.length) return trSummary;
+    if (Array.isArray(aiSummary) && aiSummary.length) return aiSummary;
     return [];
   }
 
@@ -270,7 +280,7 @@ const Analysis = () => {
               <section className="card" id="summaryCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{ui.summary || "Summary"}</span></h3>
                 <div className="list" id="summaryText" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.summary || analysis.summary, "—").map((s, i) => (
+                  {getSummaryArr().map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
                   ))}
                 </div>

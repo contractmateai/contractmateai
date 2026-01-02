@@ -1,6 +1,12 @@
 import { jsPDF } from "jspdf";
-// This is the full PDF Generator Module for SignSense Analysis Reports
-// Handles all PDF generation functionality independently from the web interface
+// This is a copy of the PDF generator for public serving
+// Original: js/pdf-generator.js
+// (Ensure this is kept in sync with the main version)
+
+/**
+ * PDF Generator Module for SignSense Analysis Reports
+ * Handles all PDF generation functionality independently from the web interface
+ */
 
 class PDFGenerator {
   constructor() {
