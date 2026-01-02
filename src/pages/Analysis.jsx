@@ -140,25 +140,14 @@ const Analysis = () => {
       ref.current.setAttribute("stroke-dashoffset", c * (1 - pct));
       ref.current.setAttribute("stroke", color);
     }
-    // Color logic for bands (match Analyze.js/HTML)
-    function getRiskColor(val) {
-      if (val <= 25) return bandColor.green;
-      if (val <= 58) return bandColor.orange;
-      return bandColor.red;
-    }
-    function getClarityColor(val) {
-      if (val >= 78) return bandColor.green;
-      if (val >= 49) return bandColor.orange;
-      return bandColor.red;
-    }
-    function getScoreColor(val) {
-      if (val >= 75) return bandColor.green;
-      if (val >= 49) return bandColor.orange;
-      return bandColor.red;
-    }
-    setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
-    setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
-    setArc(scoreArcRef, analysis?.scoreChecker?.value, getScoreColor(analysis?.scoreChecker?.value));
+    // Use band from API for color
+    const getBandColor = (band) => {
+      if (!band) return bandColor.green;
+      return bandColor[band] || bandColor.green;
+    };
+    setArc(riskArcRef, analysis?.risk?.value, getBandColor(analysis?.risk?.band));
+    setArc(clarArcRef, analysis?.clarity?.value, getBandColor(analysis?.clarity?.band));
+    setArc(scoreArcRef, analysis?.scoreChecker?.value, getBandColor(analysis?.scoreChecker?.band));
   }, [data]);
 
   // Language switching (UI only)
@@ -335,10 +324,10 @@ const Analysis = () => {
                     <div className="val" id="riskVal">{clamp(analysis.risk?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">Risk Level</span></h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">{t.risk || "Risk Level"}</span></h3>
                       <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
-                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{(analysis.risk?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
-                                      <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{verdictMap[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
+                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{(analysis.risk?.safety || "Generally Safe").replace(/^()/, c => c.toUpperCase())}</span></div>
+                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{verdictMap[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
                   </div>
                 </div>
               </section>
@@ -352,10 +341,10 @@ const Analysis = () => {
                     <div className="val" id="clarVal">{clamp(analysis.clarity?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">Clause Clarity</span></h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{t.clarity || "Clause Clarity"}</span></h3>
                       <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote}</div>
-                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{(analysis.clarity?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
-                                      <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{verdictMap[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
+                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{(analysis.clarity?.safety || "Generally Safe").replace(/^()/, c => c.toUpperCase())}</span></div>
+                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{verdictMap[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
                   </div>
                 </div>
               </section>
@@ -377,13 +366,13 @@ const Analysis = () => {
                     <div className="val" id="scorePct">{clamp(analysis.scoreChecker?.value)}%</div>
                   </div>
                   <div className="score-side">
-                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/mFvyCj7.png" alt="" /><span id="uiScoreChecker">{t.score || "Score Checker"}</span></h3>
+                    <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/mFvyCj7.png" alt="" /><span id="uiScoreChecker">{t.score || "Overall Score"}</span></h3>
                       <div className="score-remark" id="scoreRemark">{staticScoreNote}</div>
                     <div className="score-bar"><span className="score-ind" id="scoreInd" style={{left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)`}}></span></div>
                     <div className="score-scale">
                       <span id="scaleUnsafe">{t.unsafe || "Unsafe"}</span>
                       <span id="scaleSafe">{t.safe || "Safe"}</span>
-                      <span id="scaleVerySafe">{t.verysafe || "Very Safe"}</span>
+                      <span id="scaleVerySafe">{t.verySafe || "Very Safe"}</span>
                     </div>
                   </div>
                 </div>
