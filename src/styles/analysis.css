@@ -220,13 +220,14 @@ body, .analysis-root {
 .circle .val { position: absolute; font-weight: 400; font-size: 26px; }
 .circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
 .circle circle.arc {
-  stroke: var(--green);
+  /* stroke is set dynamically by React, do not set a default color here */
   stroke-linecap: round;
   transition: stroke-dashoffset 900ms ease, stroke 250ms ease;
   stroke-width: 14;
   fill: none;
   stroke-dasharray: 440;
-  stroke-dashoffset: 440;
+  /* stroke-dashoffset is set dynamically by React, but default to 431 for 2% arc */
+  stroke-dashoffset: 431;
   filter: blur(0.5px);
   /* stroke is set dynamically by React */
 }

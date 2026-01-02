@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect, useRef } from "react";
 
 
@@ -207,10 +204,10 @@ const Analysis = () => {
   };
 
   // Helper to always show fallback/defaults for boxes
-  function fallbackArr(arr, def) {
+  function fallbackArr(arr) {
+    // Only show AI data, never fallback
     if (Array.isArray(arr) && arr.length) return arr;
-    if (typeof def === 'string') return [def];
-    return def || ["—"];
+    return [];
   }
 
   return (
@@ -302,7 +299,7 @@ const Analysis = () => {
               <section className="card" id="issuesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{ui.potentialIssues || "Potential Issues"}</span></h3>
                 <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.potentialIssues || analysis.potentialIssues, "—").map((issue, i) => (
+                  {fallbackArr(analysis.potentialIssues).map((issue, i) => (
                     <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
                   ))}
                 </ul>
@@ -310,7 +307,7 @@ const Analysis = () => {
               <section className="card" id="suggestionsCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{ui.smartSuggestions || "Smart Suggestions"}</span></h3>
                 <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.smartSuggestions || analysis.smartSuggestions, "—").map((s, i) => (
+                  {fallbackArr(analysis.smartSuggestions).map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
                   ))}
                 </div>
@@ -352,7 +349,7 @@ const Analysis = () => {
               <section className="card" id="clausesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{ui.mainClauses || "Main Clauses"}</span></h3>
                 <div className="list numbered" id="clausesList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.mainClauses || analysis.mainClauses, "No main clauses found.").map((c, i) => (
+                  {fallbackArr(analysis.mainClauses).map((c, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
                   ))}
                 </div>
