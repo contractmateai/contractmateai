@@ -380,7 +380,7 @@ const Analysis = () => {
               </section>
               <section className="card meter-block" id="confRightCard">
                 <div className="meter-head">
-                  <div className="meter-title"><img src="https://imgur.com/nUGfg96.png" alt="" /><span id="uiConfidence">{t.conf || "Confidence to sign freely"}</span></div>
+                  <div className="meter-title"><img src="https://imgur.com/nUGfg96.png" alt="" /><span id="uiConfidence">{ui.conf || "Confidence to sign freely"}</span></div>
                   <div id="conf2Val">{clamp(analysis.bars?.confidenceToSign)}%</div>
                 </div>
                 <div className="meter"><div id="conf2Fill" className="fill" style={{width: `${clamp(analysis.bars?.confidenceToSign)}%`, background: bandColor[analysis.risk?.band]}}></div></div>
