@@ -1,3 +1,234 @@
+  // Static translations for all supported languages
+  const STATIC_TRANSLATIONS = {
+    en: {
+      summary: "Summary",
+      professionalism: "Professionalism",
+      favorability: "Favorability",
+      deadlinePressure: "Deadline Pressure",
+      potentialIssues: "Potential Issues",
+      riskLevel: "Risk Level",
+      clauseClarity: "Clause Clarity",
+      smartSuggestions: "Suggestions",
+      mainClauses: "Main Clauses",
+      overallScore: "Final Score",
+      confidenceToSign: "Confidence to Sign",
+      riskStatic: "Based on clause fairness and obligations.",
+      clarityStatic: "Reflects how easy the terms are to understand.",
+      scoreStatic: "Determines the final score.",
+      unsafe: "Unsafe",
+      safe: "Safe",
+      verySafe: "Very Safe"
+    },
+    es: {
+      summary: "Resumen",
+      professionalism: "Profesionalismo",
+      favorability: "Favorabilidad",
+      deadlinePressure: "Presión de plazo",
+      potentialIssues: "Posibles problemas",
+      riskLevel: "Nivel de riesgo",
+      clauseClarity: "Claridad de cláusulas",
+      smartSuggestions: "Sugerencias",
+      mainClauses: "Cláusulas principales",
+      overallScore: "Puntuación final",
+      confidenceToSign: "Confianza para firmar",
+      riskStatic: "Basado en equidad y obligaciones.",
+      clarityStatic: "Indica qué tan claros son los términos.",
+      scoreStatic: "Determina la puntuación final.",
+      unsafe: "No seguro",
+      safe: "Seguro",
+      verySafe: "Muy seguro"
+    },
+    de: {
+      summary: "Zusammenfassung",
+      professionalism: "Professionalität",
+      favorability: "Vorteilhaftigkeit",
+      deadlinePressure: "Zeitdruck",
+      potentialIssues: "Mögliche Probleme",
+      riskLevel: "Risikostufe",
+      clauseClarity: "Klauselklarheit",
+      smartSuggestions: "Vorschläge",
+      mainClauses: "Hauptklauseln",
+      overallScore: "Endbewertung",
+      confidenceToSign: "Unterschriftssicherheit",
+      riskStatic: "Basierend auf Fairness und Pflichten.",
+      clarityStatic: "Zeigt Verständlichkeit der Klauseln.",
+      scoreStatic: "Bestimmt die Endbewertung.",
+      unsafe: "Unsicher",
+      safe: "Sicher",
+      verySafe: "Sehr sicher"
+    },
+    fr: {
+      summary: "Résumé",
+      professionalism: "Professionnalisme",
+      favorability: "Avantage",
+      deadlinePressure: "Pression de délai",
+      potentialIssues: "Problèmes potentiels",
+      riskLevel: "Niveau de risque",
+      clauseClarity: "Clarté des clauses",
+      smartSuggestions: "Suggestions",
+      mainClauses: "Clauses principales",
+      overallScore: "Score final",
+      confidenceToSign: "Confiance pour signer",
+      riskStatic: "Basé sur l’équité et les obligations.",
+      clarityStatic: "Indique la clarté des termes.",
+      scoreStatic: "Détermine le score final.",
+      unsafe: "Risqué",
+      safe: "Sûr",
+      verySafe: "Très sûr"
+    },
+    it: {
+      summary: "Riepilogo",
+      professionalism: "Professionalità",
+      favorability: "Convenienza",
+      deadlinePressure: "Pressione scadenze",
+      potentialIssues: "Problemi potenziali",
+      riskLevel: "Livello di rischio",
+      clauseClarity: "Chiarezza clausole",
+      smartSuggestions: "Suggerimenti",
+      mainClauses: "Clausole principali",
+      overallScore: "Punteggio finale",
+      confidenceToSign: "Fiducia alla firma",
+      riskStatic: "Basato su equità e obblighi.",
+      clarityStatic: "Indica quanto sono chiari i termini.",
+      scoreStatic: "Determina il punteggio finale.",
+      unsafe: "Rischioso",
+      safe: "Sicuro",
+      verySafe: "Molto sicuro"
+    },
+    pt: {
+      summary: "Resumo",
+      professionalism: "Profissionalismo",
+      favorability: "Vantagem",
+      deadlinePressure: "Pressão de prazo",
+      potentialIssues: "Possíveis problemas",
+      riskLevel: "Nível de risco",
+      clauseClarity: "Clareza das cláusulas",
+      smartSuggestions: "Sugestões",
+      mainClauses: "Cláusulas principais",
+      overallScore: "Pontuação final",
+      confidenceToSign: "Confiança para assinar",
+      riskStatic: "Baseado em justiça e obrigações.",
+      clarityStatic: "Mostra a clareza dos termos.",
+      scoreStatic: "Define a pontuação final.",
+      unsafe: "Arriscado",
+      safe: "Seguro",
+      verySafe: "Muito seguro"
+    },
+    nl: {
+      summary: "Samenvatting",
+      professionalism: "Professionaliteit",
+      favorability: "Voordeel",
+      deadlinePressure: "Tijdsdruk",
+      potentialIssues: "Mogelijke problemen",
+      riskLevel: "Risiconiveau",
+      clauseClarity: "Clausuleduidelijkheid",
+      smartSuggestions: "Suggesties",
+      mainClauses: "Hoofdclausules",
+      overallScore: "Eindscore",
+      confidenceToSign: "Vertrouwen om te tekenen",
+      riskStatic: "Gebaseerd op eerlijkheid en plichten.",
+      clarityStatic: "Geeft duidelijkheid van voorwaarden aan.",
+      scoreStatic: "Bepaalt de eindscore.",
+      unsafe: "Onveilig",
+      safe: "Veilig",
+      verySafe: "Zeer veilig"
+    },
+    ro: {
+      summary: "Rezumat",
+      professionalism: "Profesionalism",
+      favorability: "Avantaj",
+      deadlinePressure: "Presiune termen",
+      potentialIssues: "Probleme posibile",
+      riskLevel: "Nivel de risc",
+      clauseClarity: "Claritate clauze",
+      smartSuggestions: "Sugestii",
+      mainClauses: "Clauze principale",
+      overallScore: "Scor final",
+      confidenceToSign: "Încredere la semnare",
+      riskStatic: "Bazat pe echitate și obligații.",
+      clarityStatic: "Arată cât de clare sunt condițiile.",
+      scoreStatic: "Determină scorul final.",
+      unsafe: "Nesigur",
+      safe: "Sigur",
+      verySafe: "Foarte sigur"
+    },
+    sq: {
+      summary: "Përmbledhje",
+      professionalism: "Profesionalizëm",
+      favorability: "Përfitim",
+      deadlinePressure: "Presion afati",
+      potentialIssues: "Probleme të mundshme",
+      riskLevel: "Niveli i rrezikut",
+      clauseClarity: "Qartësi klauzolash",
+      smartSuggestions: "Sugjerime",
+      mainClauses: "Klauzola kryesore",
+      overallScore: "Rezultati final",
+      confidenceToSign: "Besim për nënshkrim",
+      riskStatic: "Bazuar në drejtësi dhe detyrime.",
+      clarityStatic: "Tregon sa të qarta janë kushtet.",
+      scoreStatic: "Përcakton rezultatin final.",
+      unsafe: "I pasigurt",
+      safe: "I sigurt",
+      verySafe: "Shumë i sigurt"
+    },
+    zh: {
+      summary: "摘要",
+      professionalism: "专业性",
+      favorability: "有利性",
+      deadlinePressure: "期限压力",
+      potentialIssues: "潜在问题",
+      riskLevel: "风险等级",
+      clauseClarity: "条款清晰度",
+      smartSuggestions: "建议",
+      mainClauses: "主要条款",
+      overallScore: "最终评分",
+      confidenceToSign: "签署信心",
+      riskStatic: "基于条款公平性和义务。",
+      clarityStatic: "反映条款理解难度。",
+      scoreStatic: "决定最终评分。",
+      unsafe: "不安全",
+      safe: "安全",
+      verySafe: "非常安全"
+    },
+    ja: {
+      summary: "要約",
+      professionalism: "専門性",
+      favorability: "有利性",
+      deadlinePressure: "期限圧力",
+      potentialIssues: "潜在的な問題",
+      riskLevel: "リスクレベル",
+      clauseClarity: "条項の明確さ",
+      smartSuggestions: "提案",
+      mainClauses: "主要条項",
+      overallScore: "最終スコア",
+      confidenceToSign: "署名の信頼度",
+      riskStatic: "条項の公平性と義務に基づく。",
+      clarityStatic: "条項の分かりやすさを示す。",
+      scoreStatic: "最終スコアを決定。",
+      unsafe: "危険",
+      safe: "安全",
+      verySafe: "非常に安全"
+    },
+    tr: {
+      summary: "Özet",
+      professionalism: "Profesyonellik",
+      favorability: "Avantaj",
+      deadlinePressure: "Süre baskısı",
+      potentialIssues: "Olası sorunlar",
+      riskLevel: "Risk seviyesi",
+      clauseClarity: "Madde açıklığı",
+      smartSuggestions: "Öneriler",
+      mainClauses: "Ana maddeler",
+      overallScore: "Final puanı",
+      confidenceToSign: "İmzalama güveni",
+      riskStatic: "Adalet ve yükümlülüklere dayanır.",
+      clarityStatic: "Şartların anlaşılmasını gösterir.",
+      scoreStatic: "Final puanı belirler.",
+      unsafe: "Riskli",
+      safe: "Güvenli",
+      verySafe: "Çok güvenli"
+    }
+  };
   // Helper for risk verdict color and label
 import React, { useState, useEffect, useRef } from "react";
 
@@ -159,22 +390,40 @@ if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
   ref.current.style.stroke = color;
 }
 
-    // Color logic for bands (match Analyze.js/HTML)
+    // Professionalism & Favorability bar color logic
+    function getProfFavColor(val) {
+      if (val <= 29) return bandColor.red;
+      if (val <= 70) return bandColor.orange;
+      return bandColor.green;
+    }
+    // Deadline pressure bar color logic
+    function getDeadlineColor(val) {
+      if (val <= 29) return bandColor.green;
+      if (val <= 64) return bandColor.orange;
+      return bandColor.red;
+    }
+    // Risk Level circle chart: green 0-29% very safe, orange 30-62% safe, 63-100 red unsafe
     function getRiskColor(val) {
-      if (val <= 25) return bandColor.green;
-      if (val <= 58) return bandColor.orange;
+      if (val <= 29) return bandColor.green;
+      if (val <= 62) return bandColor.orange;
       return bandColor.red;
     }
+    function getRiskVerdict(val) {
+      if (val <= 29) return verdictMap.verysafe;
+      if (val <= 62) return verdictMap.safe;
+      return verdictMap.unsafe;
+    }
+    // Clause Clarity & Overall Score chart: red 0-29% unsafe, orange 30-62% safe, green 63-100 very safe
     function getClarityColor(val) {
-      if (val >= 78) return bandColor.green;
-      if (val >= 49) return bandColor.orange;
-      return bandColor.red;
+      if (val <= 29) return bandColor.red;
+      if (val <= 62) return bandColor.orange;
+      return bandColor.green;
     }
- function getScoreColor(val) {
-  if (val >= 78) return bandColor.green;
-  if (val >= 49) return bandColor.orange;
-  return bandColor.red;
-}
+    function getClarityVerdict(val) {
+      if (val <= 29) return verdictMap.unsafe;
+      if (val <= 62) return verdictMap.safe;
+      return verdictMap.verysafe;
+    }
 
     setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
     setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
@@ -209,22 +458,12 @@ if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [langMenuOpen]);
 
+
   // Helper for translation fields
-const baseUI = data?.ui || {};
-
-// accept lowercase OR uppercase keys (JA vs ja)
-const tr =
-  data?.translations?.[lang] ||
-  data?.translations?.[String(lang || "").toUpperCase()] ||
-  {};
-
-const ui =
-  tr.ui ||
-  tr.UI ||
-  tr.labels ||
-  tr.strings ||
-  tr.text ||
-  baseUI;
+  const baseUI = data?.ui || {};
+  const tr = data?.translations?.[lang] || data?.translations?.[String(lang || "").toUpperCase()] || {};
+  const staticTr = STATIC_TRANSLATIONS[lang] || STATIC_TRANSLATIONS.en;
+  const ui = tr.ui || tr.UI || tr.labels || tr.strings || tr.text || baseUI;
 
 
 const analysis = data?.analysis || {};
@@ -239,13 +478,14 @@ const tSummary =
   analysis.summaryLines ??
   [];
 
+
 const tIssues =
-  tAnalysis.potentialIssues ??
-  tr.potentialIssues ??
-  analysis.potentialIssues ??
-  analysis.issues ??
-  analysis.potentialIssuesText ??
-  [];
+  (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length ? tAnalysis.potentialIssues :
+    Array.isArray(tr.potentialIssues) && tr.potentialIssues.length ? tr.potentialIssues :
+    Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length ? analysis.potentialIssues :
+    Array.isArray(analysis.issues) && analysis.issues.length ? analysis.issues :
+    Array.isArray(analysis.potentialIssuesText) && analysis.potentialIssuesText.length ? analysis.potentialIssuesText :
+    ["—"]);
 
 const tSuggestions =
   tAnalysis.smartSuggestions ??
@@ -255,13 +495,14 @@ const tSuggestions =
   analysis.smartSuggestionsText ??
   [];
 
+
 const tClauses =
-  tAnalysis.mainClauses ??
-  tr.mainClauses ??
-  analysis.mainClauses ??
-  analysis.clauses ??
-  analysis.mainClausesText ??
-  [];
+  (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length ? tAnalysis.mainClauses :
+    Array.isArray(tr.mainClauses) && tr.mainClauses.length ? tr.mainClauses :
+    Array.isArray(analysis.mainClauses) && analysis.mainClauses.length ? analysis.mainClauses :
+    Array.isArray(analysis.clauses) && analysis.clauses.length ? analysis.clauses :
+    Array.isArray(analysis.mainClausesText) && analysis.mainClausesText.length ? analysis.mainClausesText :
+    ["—"]);
 
 
 // translated title (fallback to original)
@@ -445,8 +686,7 @@ function fallbackArr(v) {
                     <div className="val" id="riskVal">{clamp(analysis.risk?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiClarity">{ui.clauseClarity || ui.clarity || "Clause Clarity"}</span>
-</h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">Risk Level</span></h3>
                     <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
                     <div className="status">
                       <span
@@ -482,8 +722,7 @@ function fallbackArr(v) {
                     <div className="val" id="clarVal">{clamp(analysis.clarity?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{ui.clauseClarity || ui.clarity || "Clause Clarity"}</span>
-</h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">Clause Clarity</span></h3>
                       <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote}</div>
                     <div className="status">
   <span
