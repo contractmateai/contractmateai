@@ -193,26 +193,26 @@ const Analysis = () => {
   const t = data?.ui || {};
   const tr = data?.translations?.[lang] || {};
   const analysis = data?.analysis || {};
-
-  // Static sentences (from Analyze.js/HTML)
-  const staticRiskNote = {
-    en: "The contract risk score is based on the clauses' fairness and obligations.",
-    it: "Il punteggio di rischio del contratto si basa sull'equità delle clausole.",
-    de: "Der Vertragsrisikowert basiert auf Fairness und Verpflichtungen.",
-    es: "La puntuación de riesgo se basa en la equidad de las cláusulas.",
-    fr: "Le score de risque du contrat est basé sur l'équité des clauses.",
-    zh: "合同风险分数基于条款的公平性和义务。"
-  };
-  const staticClarityNote = {
-    en: "The clarity score reflects how easy it is to understand the terms.",
-    it: "Il punteggio di chiarezza riflette la facilità di comprensione.",
-    de: "Der Klarheitswert zeigt, wie einfach die Bedingungen zu verstehen sind.",
-    es: "La puntuación de claridad refleja la facilidad de comprensión.",
-    fr: "Le score de clarté reflète la facilité de compréhension.",
-    zh: "清晰度分数反映了理解条款的难易程度。"
-  };
   // Use static muted color for all explanations
   const mutedStyle = { color: 'var(--muted)', fontSize: 15 };
+
+  // Static sentences from analyze.js (always translated)
+  const staticRiskNote = t.riskLineStatic || "";
+  const staticClarityNote = t.clarityLineStatic || "";
+  const staticScoreNote = t.scoreLine || "";
+
+  // Only allow 'unsafe', 'safe', 'very safe' verdicts
+  const verdictMap = {
+    unsafe: t.unsafe || "Unsafe",
+    safe: t.safe || "Safe",
+    verysafe: t.verySafe || "Very Safe"
+  };
+  // Dot color logic for verdicts
+  const dotColor = {
+    unsafe: "var(--red)",
+    safe: "var(--green)",
+    verysafe: "var(--green)"
+  };
 
   // Helper to always show fallback/defaults for boxes
   function fallbackArr(arr, def) {
@@ -281,7 +281,7 @@ const Analysis = () => {
               <section className="card" id="summaryCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{t.summary || "Summary"}</span></h3>
                 <div className="list" id="summaryText" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.summary || analysis.summary, "No summary available.").map((s, i) => (
+                  {fallbackArr(tr.summary || analysis.summary, "—").map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
                   ))}
                 </div>
@@ -310,7 +310,7 @@ const Analysis = () => {
               <section className="card" id="issuesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{t.potentialIssues || "Potential Issues"}</span></h3>
                 <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.potentialIssues || analysis.potentialIssues, "No issues detected.").map((issue, i) => (
+                  {fallbackArr(tr.potentialIssues || analysis.potentialIssues, "—").map((issue, i) => (
                     <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
                   ))}
                 </ul>
@@ -318,7 +318,7 @@ const Analysis = () => {
               <section className="card" id="suggestionsCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{t.smartSuggestions || "Smart Suggestions"}</span></h3>
                 <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tr.smartSuggestions || analysis.smartSuggestions, "No suggestions available.").map((s, i) => (
+                  {fallbackArr(tr.smartSuggestions || analysis.smartSuggestions, "—").map((s, i) => (
                     <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
                   ))}
                 </div>
@@ -336,8 +336,9 @@ const Analysis = () => {
                   </div>
                   <div className="htext">
                     <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">Risk Level</span></h3>
-                    <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote[lang] || staticRiskNote.en}</div>
+                      <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
                     <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{(analysis.risk?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
+                                      <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{verdictMap[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
                   </div>
                 </div>
               </section>
@@ -352,8 +353,9 @@ const Analysis = () => {
                   </div>
                   <div className="htext">
                     <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">Clause Clarity</span></h3>
-                    <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote[lang] || staticClarityNote.en}</div>
+                      <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote}</div>
                     <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{(analysis.clarity?.safety || "Generally Safe").replace(/^(\w)/, c => c.toUpperCase())}</span></div>
+                                      <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{verdictMap[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
                   </div>
                 </div>
               </section>
@@ -376,7 +378,7 @@ const Analysis = () => {
                   </div>
                   <div className="score-side">
                     <h3 style={{ marginBottom: 0 }}><img src="https://imgur.com/mFvyCj7.png" alt="" /><span id="uiScoreChecker">{t.score || "Score Checker"}</span></h3>
-                    <div className="score-remark" id="scoreRemark">{tr.scoreLine || analysis.scoreChecker?.line || "Determines the overall score."}</div>
+                      <div className="score-remark" id="scoreRemark">{staticScoreNote}</div>
                     <div className="score-bar"><span className="score-ind" id="scoreInd" style={{left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)`}}></span></div>
                     <div className="score-scale">
                       <span id="scaleUnsafe">{t.unsafe || "Unsafe"}</span>
