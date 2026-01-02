@@ -1,4 +1,7 @@
   // Helper for risk verdict color and label
+import React, { useState, useEffect, useRef } from "react";
+
+// Helper for risk verdict color and label
 function riskVerdictKey(val) {
   const v = clamp(val);
   if (v <= 25) return "safe";
@@ -6,7 +9,14 @@ function riskVerdictKey(val) {
   return "unsafe";
 }
 
-import React, { useState, useEffect, useRef } from "react";
+// Helper for clarity verdict color and label
+function clarityVerdictKey(val) {
+  const v = clamp(val);
+  if (v >= 78) return "safe";
+  if (v >= 49) return "not_safe";
+  return "unsafe";
+}
+
 
 
 import AnalysisSidebar from "../components/AnalysisSidebar";
@@ -93,9 +103,17 @@ const Analysis = () => {
     setEmailError("");
     setDownloading(true);
     try {
-      const pdfGen = new PDFGenerator();
-      const pdfData = { ...data, lang, email };
-      await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
+ const pdfData = { ...data, lang, email };
+
+// supports: export default class { generatePDF(){} }
+// AND: export default { generatePDF(){} }
+if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
+  await PDFGenerator.generatePDF("SignSense_Report", pdfData, lang);
+} else {
+  const pdfGen = new PDFGenerator();
+  await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
+}
+
     } catch (err) {
       console.error(err);
       alert("Could not generate PDF report.");
@@ -126,19 +144,21 @@ const Analysis = () => {
     if (!data) return;
     const { analysis } = data;
     // Helper for arc
-    function setArc(ref, value, color) {
-      if (!ref.current) return;
-      // Always show at least 2% arc for visibility
-     const raw = clamp(value, 0, 100);
-// only force 1% arc when exactly 0, otherwise use real value
-const pct = (raw === 0 ? 1 : raw) / 100;
+ function setArc(ref, value, color) {
+  if (!ref.current) return;
 
-      const r = 64;
-      const c = 2 * Math.PI * r;
-      ref.current.setAttribute("stroke-dasharray", c);
-      ref.current.setAttribute("stroke-dashoffset", c * (1 - pct));
-      ref.current.setAttribute("stroke", color);
-    }
+  const raw = clamp(value, 0, 100);
+  const pct = (raw === 0 ? 1 : raw) / 100;
+
+  const r = 64;
+  const c = 2 * Math.PI * r;
+
+  // INLINE style wins over CSS for SVG presentation props
+  ref.current.style.strokeDasharray = `${c}`;
+  ref.current.style.strokeDashoffset = `${c * (1 - pct)}`;
+  ref.current.style.stroke = color;
+}
+
     // Color logic for bands (match Analyze.js/HTML)
     function getRiskColor(val) {
       if (val <= 25) return bandColor.green;
@@ -198,23 +218,51 @@ const tr =
   data?.translations?.[String(lang || "").toUpperCase()] ||
   {};
 
-const ui = tr.ui || tr.UI || baseUI;
+const ui =
+  tr.ui ||
+  tr.UI ||
+  tr.labels ||
+  tr.strings ||
+  tr.text ||
+  baseUI;
+
 
 const analysis = data?.analysis || {};
 const tAnalysis = tr.analysis || {}; // translated dynamic content (if present)
 
 // translated dynamic arrays (fallback to original if missing)
 const tSummary =
-  tAnalysis.summary ?? tr.summary ?? analysis.summary ?? [];
+  tAnalysis.summary ??
+  tr.summary ??
+  analysis.summary ??
+  analysis.summaryText ??
+  analysis.summaryLines ??
+  [];
 
 const tIssues =
-  tAnalysis.potentialIssues ?? tr.potentialIssues ?? analysis.potentialIssues ?? [];
+  tAnalysis.potentialIssues ??
+  tr.potentialIssues ??
+  analysis.potentialIssues ??
+  analysis.issues ??
+  analysis.potentialIssuesText ??
+  [];
 
 const tSuggestions =
-  tAnalysis.smartSuggestions ?? tr.smartSuggestions ?? analysis.smartSuggestions ?? [];
+  tAnalysis.smartSuggestions ??
+  tr.smartSuggestions ??
+  analysis.smartSuggestions ??
+  analysis.suggestions ??
+  analysis.smartSuggestionsText ??
+  [];
 
 const tClauses =
-  tAnalysis.mainClauses ?? tr.mainClauses ?? analysis.mainClauses ?? [];
+  tAnalysis.mainClauses ??
+  tr.mainClauses ??
+  analysis.mainClauses ??
+  analysis.clauses ??
+  analysis.mainClausesText ??
+  [];
+
 
 // translated title (fallback to original)
 const tTitle =
@@ -247,11 +295,29 @@ const tTitle =
 
 
   // Helper to always show fallback/defaults for boxes
-  function fallbackArr(arr) {
-    // Only show AI data, never fallback
-    if (Array.isArray(arr) && arr.length) return arr;
-    return [];
+  function normalizeList(v) {
+  if (Array.isArray(v)) return v.filter(Boolean).map(x => String(x).trim()).filter(Boolean);
+
+  if (typeof v === "string") {
+    return v
+      .split(/\r?\n|•|- /g)
+      .map(s => String(s).trim())
+      .filter(Boolean);
   }
+
+  // sometimes API sends { items: [...] }
+  if (v && typeof v === "object") {
+    const maybe = v.items || v.list || v.values;
+    if (Array.isArray(maybe)) return maybe.filter(Boolean).map(x => String(x).trim()).filter(Boolean);
+  }
+
+  return [];
+}
+
+function fallbackArr(v) {
+  return normalizeList(v);
+}
+
 
   // For summary, merge translation and AI summary if both exist
   function getSummaryArr() {
@@ -379,7 +445,8 @@ const tTitle =
                     <div className="val" id="riskVal">{clamp(analysis.risk?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">{ui.riskLevel || ui.risk || "Risk Level"}</span></h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiClarity">{ui.clauseClarity || ui.clarity || "Clause Clarity"}</span>
+</h3>
                     <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
                     <div className="status">
                       <span
@@ -418,7 +485,28 @@ const tTitle =
                     <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{ui.clauseClarity || ui.clarity || "Clause Clarity"}</span>
 </h3>
                       <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote}</div>
-                    <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{verdictMap[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
+                    <div className="status">
+  <span
+    className="dot"
+    id="clarDot"
+    style={{
+      background:
+        clarityVerdictKey(analysis?.clarity?.value) === "unsafe"
+          ? "var(--red)"
+          : clarityVerdictKey(analysis?.clarity?.value) === "not_safe"
+          ? "var(--orange)"
+          : "var(--green)"
+    }}
+  />
+  <span id="clarBadge">
+    {clarityVerdictKey(analysis?.clarity?.value) === "unsafe"
+      ? (ui.unsafe || "Unsafe")
+      : clarityVerdictKey(analysis?.clarity?.value) === "not_safe"
+      ? (ui.notThatSafe || "Not that safe")
+      : (ui.safe || "Safe")}
+  </span>
+</div>
+
                   </div>
                 </div>
               </section>
