@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
-import PDFGenerator from "../../public/js/pdf-generator";
+import PDFGenerator from "../utils/pdf-generator";
 import "../styles/analysis.css";
 
 
