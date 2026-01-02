@@ -1,4 +1,3 @@
-import { jsPDF } from "jspdf";
 // This is a copy of the PDF generator for public serving
 // Original: js/pdf-generator.js
 // (Ensure this is kept in sync with the main version)
@@ -1297,5 +1296,7 @@ const doc = new jsPDF({ unit: "pt", format: "a4" });
   }
 }
 
-// Export for use in other files
-export default PDFGenerator;
+// Remove import/export statements from this file. It must be plain JS for public serving.
+// If you need to use PDFGenerator in the browser, load jsPDF via CDN and attach PDFGenerator to window.
+// Example:
+// window.PDFGenerator = PDFGenerator;
