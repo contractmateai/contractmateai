@@ -1,3 +1,11 @@
+  // Helper for risk verdict color and label
+function riskVerdictKey(val) {
+  const v = clamp(val);
+  if (v <= 25) return "safe";
+  if (v <= 58) return "not_safe";
+  return "unsafe";
+}
+
 import React, { useState, useEffect, useRef } from "react";
 
 
@@ -121,7 +129,10 @@ const Analysis = () => {
     function setArc(ref, value, color) {
       if (!ref.current) return;
       // Always show at least 2% arc for visibility
-      const pct = Math.max(clamp(value, 0, 100), 2) / 100;
+     const raw = clamp(value, 0, 100);
+// only force 1% arc when exactly 0, otherwise use real value
+const pct = (raw === 0 ? 1 : raw) / 100;
+
       const r = 64;
       const c = 2 * Math.PI * r;
       ref.current.setAttribute("stroke-dasharray", c);
@@ -139,11 +150,12 @@ const Analysis = () => {
       if (val >= 49) return bandColor.orange;
       return bandColor.red;
     }
-    function getScoreColor(val) {
-      if (val >= 75) return bandColor.green;
-      if (val >= 49) return bandColor.orange;
-      return bandColor.red;
-    }
+ function getScoreColor(val) {
+  if (val >= 78) return bandColor.green;
+  if (val >= 49) return bandColor.orange;
+  return bandColor.red;
+}
+
     setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
     setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
     setArc(scoreArcRef, analysis?.scoreChecker?.value, getScoreColor(analysis?.scoreChecker?.value));
@@ -178,10 +190,40 @@ const Analysis = () => {
   }, [langMenuOpen]);
 
   // Helper for translation fields
-  const baseUI = data?.ui || {};
-  const tr = data?.translations?.[lang] || {};
-  const ui = tr.ui || tr.UI || baseUI;
-  const analysis = data?.analysis || {};
+const baseUI = data?.ui || {};
+
+// accept lowercase OR uppercase keys (JA vs ja)
+const tr =
+  data?.translations?.[lang] ||
+  data?.translations?.[String(lang || "").toUpperCase()] ||
+  {};
+
+const ui = tr.ui || tr.UI || baseUI;
+
+const analysis = data?.analysis || {};
+const tAnalysis = tr.analysis || {}; // translated dynamic content (if present)
+
+// translated dynamic arrays (fallback to original if missing)
+const tSummary =
+  tAnalysis.summary ?? tr.summary ?? analysis.summary ?? [];
+
+const tIssues =
+  tAnalysis.potentialIssues ?? tr.potentialIssues ?? analysis.potentialIssues ?? [];
+
+const tSuggestions =
+  tAnalysis.smartSuggestions ?? tr.smartSuggestions ?? analysis.smartSuggestions ?? [];
+
+const tClauses =
+  tAnalysis.mainClauses ?? tr.mainClauses ?? analysis.mainClauses ?? [];
+
+// translated title (fallback to original)
+const tTitle =
+  tAnalysis.contractTitle ??
+  tr.contractTitle ??
+  data?.contractTitle ??
+  data?.contractName ??
+  "—";
+
   // Use static muted color for all explanations
   const mutedStyle = { color: 'var(--muted)', fontSize: 15 };
 
@@ -196,12 +238,12 @@ const Analysis = () => {
     safe: ui.safe || "Safe",
     verysafe: ui.verySafe || "Very Safe"
   };
-  // Dot color logic for verdicts
-  const dotColor = {
-    unsafe: "var(--red)",
-    safe: "var(--green)",
-    verysafe: "var(--green)"
-  };
+ const verdictDotColor = {
+  unsafe: "var(--red)",
+  safe: "var(--green)",
+  verysafe: "var(--green)"
+};
+
 
 
   // Helper to always show fallback/defaults for boxes
@@ -273,16 +315,17 @@ const Analysis = () => {
           <div style={{borderBottom:'1px solid #e2e2e2',margin:'0 0 18px 0',height:0}}></div>
           <div className="doc-title">
             <span className="label" id="uiTitleLabel">{ui.title || "Title:"}</span>
-            <span className="value" id="uiTitleValue"> {' '}{data?.contractTitle || data?.contractName || "—"}</span>
+<span className="value" id="uiTitleValue"> {' '}{tTitle}</span>
           </div>
           <div className="grid">
             <div className="left">
               <section className="card" id="summaryCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{ui.summary || "Summary"}</span></h3>
                 <div className="list" id="summaryText" style={{fontSize: '20px'}}>
-                  {getSummaryArr().map((s, i) => (
-                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
-                  ))}
+                  {fallbackArr(tSummary).map((s, i) => (
+  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
+))}
+
                 </div>
               </section>
               <section className="card meter-block" id="profCard">
@@ -309,17 +352,19 @@ const Analysis = () => {
               <section className="card" id="issuesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{ui.potentialIssues || "Potential Issues"}</span></h3>
                 <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
-                  {fallbackArr(analysis.potentialIssues).map((issue, i) => (
-                    <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
-                  ))}
+                {fallbackArr(tIssues).map((issue, i) => (
+  <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
+))}
+
                 </ul>
               </section>
               <section className="card" id="suggestionsCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{ui.smartSuggestions || "Smart Suggestions"}</span></h3>
                 <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
-                  {fallbackArr(analysis.smartSuggestions).map((s, i) => (
-                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
-                  ))}
+                  {fallbackArr(tSuggestions).map((s, i) => (
+  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
+))}
+
                 </div>
               </section>
             </div>
@@ -334,9 +379,29 @@ const Analysis = () => {
                     <div className="val" id="riskVal">{clamp(analysis.risk?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">{ui.risk || "Risk Level"}</span></h3>
-                      <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
-                    <div className="status"><span className="dot" id="riskDot" style={{background: dotColor[analysis.risk?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="riskBadge">{verdictMap[(analysis.risk?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/Myp6Un4.png" alt="" /><span id="uiRisk">{ui.riskLevel || ui.risk || "Risk Level"}</span></h3>
+                    <div className="muted" id="riskNote" style={mutedStyle}>{staticRiskNote}</div>
+                    <div className="status">
+                      <span
+                        className="dot"
+                        id="riskDot"
+                        style={{
+                          background:
+                            riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
+                              ? "var(--red)"
+                              : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
+                              ? "var(--orange)"
+                              : "var(--green)"
+                        }}
+                      ></span>
+                      <span id="riskBadge">
+                        {riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
+                          ? verdictMap.unsafe
+                          : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
+                          ? (ui.notThatSafe || "Not that safe")
+                          : verdictMap.safe}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -350,7 +415,8 @@ const Analysis = () => {
                     <div className="val" id="clarVal">{clamp(analysis.clarity?.value)}%</div>
                   </div>
                   <div className="htext">
-                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{ui.clarity || "Clause Clarity"}</span></h3>
+                    <h3 style={{ marginBottom: 0, fontWeight:400 }}><img src="https://imgur.com/o39xZtC.png" alt="" /><span id="uiClarity">{ui.clauseClarity || ui.clarity || "Clause Clarity"}</span>
+</h3>
                       <div className="muted" id="clarNote" style={mutedStyle}>{staticClarityNote}</div>
                     <div className="status"><span className="dot" id="clarDot" style={{background: dotColor[analysis.clarity?.safety?.toLowerCase()] || "var(--green)"}}></span><span id="clarBadge">{verdictMap[(analysis.clarity?.safety || '').replace(/\s/g, '').toLowerCase()] || verdictMap.safe}</span></div>
                   </div>
@@ -359,9 +425,10 @@ const Analysis = () => {
               <section className="card" id="clausesCard">
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{ui.mainClauses || "Main Clauses"}</span></h3>
                 <div className="list numbered" id="clausesList" style={{fontSize: '20px'}}>
-                  {fallbackArr(analysis.mainClauses).map((c, i) => (
-                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
-                  ))}
+                {fallbackArr(tClauses).map((c, i) => (
+  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
+))}
+
                 </div>
               </section>
               <section className="card" id="scoreCard">
