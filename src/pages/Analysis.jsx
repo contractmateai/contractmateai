@@ -1,236 +1,28 @@
-  // Static translations for all supported languages
-  const STATIC_TRANSLATIONS = {
+import React, { useState, useEffect, useRef } from "react";
+import AnalysisSidebar from "../components/AnalysisSidebar";
+import AnalysisDrawer from "../components/AnalysisDrawer";
+import PDFGenerator from "../utils/pdf-generator";
+import "../styles/analysis.css";
+
+// Static translations for all supported languages
+const STATIC_TRANSLATIONS = {
     en: {
       summary: "Summary",
       professionalism: "Professionalism",
-      favorability: "Favorability",
-      deadlinePressure: "Deadline Pressure",
-      potentialIssues: "Potential Issues",
-      riskLevel: "Risk Level",
-      clauseClarity: "Clause Clarity",
-      smartSuggestions: "Suggestions",
-      mainClauses: "Main Clauses",
-      overallScore: "Final Score",
-      confidenceToSign: "Confidence to Sign",
-      riskStatic: "Based on clause fairness and obligations.",
-      clarityStatic: "Reflects how easy the terms are to understand.",
-      scoreStatic: "Determines the final score.",
-      unsafe: "Unsafe",
-      safe: "Safe",
-      verySafe: "Very Safe"
-    },
-    es: {
-      summary: "Resumen",
-      professionalism: "Profesionalismo",
-      favorability: "Favorabilidad",
-      deadlinePressure: "Presión de plazo",
-      potentialIssues: "Posibles problemas",
-      riskLevel: "Nivel de riesgo",
-      clauseClarity: "Claridad de cláusulas",
-      smartSuggestions: "Sugerencias",
       mainClauses: "Cláusulas principales",
+      overview: "Resumen",
       overallScore: "Puntuación final",
       confidenceToSign: "Confianza para firmar",
-      riskStatic: "Basado en equidad y obligaciones.",
-      clarityStatic: "Indica qué tan claros son los términos.",
-      scoreStatic: "Determina la puntuación final.",
-      unsafe: "No seguro",
+      riskStatic: "Basado en justicia y obligaciones.",
+      clarityStatic: "Muestra la claridad de los términos.",
+      scoreStatic: "Define la puntuación final.",
+      unsafe: "Inseguro",
+      notThatSafe: "No tan seguro",
       safe: "Seguro",
-      verySafe: "Muy seguro"
+      verySafe: "Muy seguro",
+      titleLabel: "Título:",
+      overview: "Resumen"
     },
-    de: {
-      summary: "Zusammenfassung",
-      professionalism: "Professionalität",
-      favorability: "Vorteilhaftigkeit",
-      deadlinePressure: "Zeitdruck",
-      potentialIssues: "Mögliche Probleme",
-      riskLevel: "Risikostufe",
-      clauseClarity: "Klauselklarheit",
-      smartSuggestions: "Vorschläge",
-      mainClauses: "Hauptklauseln",
-      overallScore: "Endbewertung",
-      confidenceToSign: "Unterschriftssicherheit",
-      riskStatic: "Basierend auf Fairness und Pflichten.",
-      clarityStatic: "Zeigt Verständlichkeit der Klauseln.",
-      scoreStatic: "Bestimmt die Endbewertung.",
-      unsafe: "Unsicher",
-      safe: "Sicher",
-      verySafe: "Sehr sicher"
-    },
-    fr: {
-      summary: "Résumé",
-      professionalism: "Professionnalisme",
-      favorability: "Avantage",
-      deadlinePressure: "Pression de délai",
-      potentialIssues: "Problèmes potentiels",
-      riskLevel: "Niveau de risque",
-      clauseClarity: "Clarté des clauses",
-      smartSuggestions: "Suggestions",
-      mainClauses: "Clauses principales",
-      overallScore: "Score final",
-      confidenceToSign: "Confiance pour signer",
-      riskStatic: "Basé sur l’équité et les obligations.",
-      clarityStatic: "Indique la clarté des termes.",
-      scoreStatic: "Détermine le score final.",
-      unsafe: "Risqué",
-      safe: "Sûr",
-      verySafe: "Très sûr"
-    },
-    it: {
-      summary: "Riepilogo",
-      professionalism: "Professionalità",
-      favorability: "Convenienza",
-      deadlinePressure: "Pressione scadenze",
-      potentialIssues: "Problemi potenziali",
-      riskLevel: "Livello di rischio",
-      clauseClarity: "Chiarezza clausole",
-      smartSuggestions: "Suggerimenti",
-      mainClauses: "Clausole principali",
-      overallScore: "Punteggio finale",
-      confidenceToSign: "Fiducia alla firma",
-      riskStatic: "Basato su equità e obblighi.",
-      clarityStatic: "Indica quanto sono chiari i termini.",
-      scoreStatic: "Determina il punteggio finale.",
-      unsafe: "Rischioso",
-      safe: "Sicuro",
-      verySafe: "Molto sicuro"
-    },
-    pt: {
-      summary: "Resumo",
-      professionalism: "Profissionalismo",
-      favorability: "Vantagem",
-      deadlinePressure: "Pressão de prazo",
-      potentialIssues: "Possíveis problemas",
-      riskLevel: "Nível de risco",
-      clauseClarity: "Clareza das cláusulas",
-      smartSuggestions: "Sugestões",
-      mainClauses: "Cláusulas principais",
-      overallScore: "Pontuação final",
-      confidenceToSign: "Confiança para assinar",
-      riskStatic: "Baseado em justiça e obrigações.",
-      clarityStatic: "Mostra a clareza dos termos.",
-      scoreStatic: "Define a pontuação final.",
-      unsafe: "Arriscado",
-      safe: "Seguro",
-      verySafe: "Muito seguro"
-    },
-    nl: {
-      summary: "Samenvatting",
-      professionalism: "Professionaliteit",
-      favorability: "Voordeel",
-      deadlinePressure: "Tijdsdruk",
-      potentialIssues: "Mogelijke problemen",
-      riskLevel: "Risiconiveau",
-      clauseClarity: "Clausuleduidelijkheid",
-      smartSuggestions: "Suggesties",
-      mainClauses: "Hoofdclausules",
-      overallScore: "Eindscore",
-      confidenceToSign: "Vertrouwen om te tekenen",
-      riskStatic: "Gebaseerd op eerlijkheid en plichten.",
-      clarityStatic: "Geeft duidelijkheid van voorwaarden aan.",
-      scoreStatic: "Bepaalt de eindscore.",
-      unsafe: "Onveilig",
-      safe: "Veilig",
-      verySafe: "Zeer veilig"
-    },
-    ro: {
-      summary: "Rezumat",
-      professionalism: "Profesionalism",
-      favorability: "Avantaj",
-      deadlinePressure: "Presiune termen",
-      potentialIssues: "Probleme posibile",
-      riskLevel: "Nivel de risc",
-      clauseClarity: "Claritate clauze",
-      smartSuggestions: "Sugestii",
-      mainClauses: "Clauze principale",
-      overallScore: "Scor final",
-      confidenceToSign: "Încredere la semnare",
-      riskStatic: "Bazat pe echitate și obligații.",
-      clarityStatic: "Arată cât de clare sunt condițiile.",
-      scoreStatic: "Determină scorul final.",
-      unsafe: "Nesigur",
-      safe: "Sigur",
-      verySafe: "Foarte sigur"
-    },
-    sq: {
-      summary: "Përmbledhje",
-      professionalism: "Profesionalizëm",
-      favorability: "Përfitim",
-      deadlinePressure: "Presion afati",
-      potentialIssues: "Probleme të mundshme",
-      riskLevel: "Niveli i rrezikut",
-      clauseClarity: "Qartësi klauzolash",
-      smartSuggestions: "Sugjerime",
-      mainClauses: "Klauzola kryesore",
-      overallScore: "Rezultati final",
-      confidenceToSign: "Besim për nënshkrim",
-      riskStatic: "Bazuar në drejtësi dhe detyrime.",
-      clarityStatic: "Tregon sa të qarta janë kushtet.",
-      scoreStatic: "Përcakton rezultatin final.",
-      unsafe: "I pasigurt",
-      safe: "I sigurt",
-      verySafe: "Shumë i sigurt"
-    },
-    zh: {
-      summary: "摘要",
-      professionalism: "专业性",
-      favorability: "有利性",
-      deadlinePressure: "期限压力",
-      potentialIssues: "潜在问题",
-      riskLevel: "风险等级",
-      clauseClarity: "条款清晰度",
-      smartSuggestions: "建议",
-      mainClauses: "主要条款",
-      overallScore: "最终评分",
-      confidenceToSign: "签署信心",
-      riskStatic: "基于条款公平性和义务。",
-      clarityStatic: "反映条款理解难度。",
-      scoreStatic: "决定最终评分。",
-      unsafe: "不安全",
-      safe: "安全",
-      verySafe: "非常安全"
-    },
-    ja: {
-      summary: "要約",
-      professionalism: "専門性",
-      favorability: "有利性",
-      deadlinePressure: "期限圧力",
-      potentialIssues: "潜在的な問題",
-      riskLevel: "リスクレベル",
-      clauseClarity: "条項の明確さ",
-      smartSuggestions: "提案",
-      mainClauses: "主要条項",
-      overallScore: "最終スコア",
-      confidenceToSign: "署名の信頼度",
-      riskStatic: "条項の公平性と義務に基づく。",
-      clarityStatic: "条項の分かりやすさを示す。",
-      scoreStatic: "最終スコアを決定。",
-      unsafe: "危険",
-      safe: "安全",
-      verySafe: "非常に安全"
-    },
-    tr: {
-      summary: "Özet",
-      professionalism: "Profesyonellik",
-      favorability: "Avantaj",
-      deadlinePressure: "Süre baskısı",
-      potentialIssues: "Olası sorunlar",
-      riskLevel: "Risk seviyesi",
-      clauseClarity: "Madde açıklığı",
-      smartSuggestions: "Öneriler",
-      mainClauses: "Ana maddeler",
-      overallScore: "Final puanı",
-      confidenceToSign: "İmzalama güveni",
-      riskStatic: "Adalet ve yükümlülüklere dayanır.",
-      clarityStatic: "Şartların anlaşılmasını gösterir.",
-      scoreStatic: "Final puanı belirler.",
-      unsafe: "Riskli",
-      safe: "Güvenli",
-      verySafe: "Çok güvenli"
-    }
-  };
-  // Helper for risk verdict color and label
-import React, { useState, useEffect, useRef } from "react";
 
 // Helper for risk verdict color and label
 function riskVerdictKey(val) {
@@ -249,14 +41,7 @@ function clarityVerdictKey(val) {
   return "unsafe";
 }
 
-
-
-
-import AnalysisSidebar from "../components/AnalysisSidebar";
-import AnalysisDrawer from "../components/AnalysisDrawer";
-import PDFGenerator from "../utils/pdf-generator";
-import "../styles/analysis.css";
-
+// ...existing code...
 
 function clamp(val, min = 0, max = 100) {
   return Math.max(min, Math.min(max, Number(val) || 0));
@@ -305,226 +90,183 @@ const Analysis = () => {
       window.removeEventListener("resize", handleScroll);
     };
   }, []);
-  // Email modal/inline logic
-  const isMobile = () => window.matchMedia('(max-width: 980px)').matches;
-  const openEmailForm = () => {
-    if (isMobile()) {
-      setShowEmailInline(true);
-    } else {
-      setShowEmailModal(true);
-    }
-    setEmail("");
-    setEmailError("");
-  };
-  const closeEmailForm = () => {
-    setShowEmailModal(false);
-    setShowEmailInline(false);
-    setEmail("");
-    setEmailError("");
-  };
-  const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((e || '').trim());
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setEmailError("");
-  };
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     if (!validEmail(email)) {
       setEmailError("Please enter a valid email address.");
-      return;
-    }
-    setEmailError("");
-    setDownloading(true);
-    try {
- const pdfData = { ...data, lang, email };
-
-// supports: export default class { generatePDF(){} }
-// AND: export default { generatePDF(){} }
-if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
-  await PDFGenerator.generatePDF("SignSense_Report", pdfData, lang);
-} else {
-  const pdfGen = new PDFGenerator();
-  await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
-}
-
-    } catch (err) {
-      console.error(err);
-      alert("Could not generate PDF report.");
-    }
-    setDownloading(false);
-    closeEmailForm();
+      // ...existing code...
   };
 
-  // For animating SVG arcs
-  const riskArcRef = useRef();
-  const clarArcRef = useRef();
-  const scoreArcRef = useRef();
+// Static translations for all supported languages
+const STATIC_TRANSLATIONS = {
+  en: {
+    summary: "Summary",
+    professionalism: "Professionalism",
+  }
 
-  useEffect(() => {
-    // Load analysis result from localStorage (as in original HTML)
-    let raw = localStorage.getItem("analysisRaw");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setData(parsed);
-        setLang(parsed.targetLang || parsed.detectedLang || "en");
-      } catch {}
-    }
-  }, []);
-
-  // Animate SVG arcs when data changes
-  useEffect(() => {
-    if (!data) return;
-    const { analysis } = data;
-    // Helper for arc
- function setArc(ref, value, color) {
-  if (!ref.current) return;
-
-  const raw = clamp(value, 0, 100);
-  const pct = (raw === 0 ? 1 : raw) / 100;
-
-  const r = 64;
-  const c = 2 * Math.PI * r;
-
-  // INLINE style wins over CSS for SVG presentation props
-  ref.current.style.strokeDasharray = `${c}`;
-  ref.current.style.strokeDashoffset = `${c * (1 - pct)}`;
-  ref.current.style.stroke = color;
-}
-
-    // Professionalism & Favorability bar color logic
-    function getProfFavColor(val) {
-      if (val <= 29) return bandColor.red;
-      if (val <= 70) return bandColor.orange;
-      return bandColor.green;
-    }
-    // Deadline pressure bar color logic
-    function getDeadlineColor(val) {
-      if (val <= 29) return bandColor.green;
-      if (val <= 64) return bandColor.orange;
-      return bandColor.red;
-    }
-    // Risk Level circle chart: green 0-29% very safe, orange 30-62% safe, 63-100 red unsafe
-    function getRiskColor(val) {
-      if (val <= 29) return bandColor.green;
-      if (val <= 62) return bandColor.orange;
-      return bandColor.red;
-    }
-    
-    // Clause Clarity & Overall Score chart: red 0-29% unsafe, orange 30-62% safe, green 63-100 very safe
-    function getClarityColor(val) {
-      if (val <= 29) return bandColor.red;
-      if (val <= 62) return bandColor.orange;
-      return bandColor.green;
-    }
-   
-
-      setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
-      setArc(clarArcRef, analysis?.clarity?.value, getClarityColor(analysis?.clarity?.value));
-      setArc(scoreArcRef, analysis?.scoreChecker?.value, getClarityColor(analysis?.scoreChecker?.value));
-  }, [data]);
-
-  // Language switching (UI only)
-  const handleLangClick = (code) => {
-    setLang(code);
-    setLangMenuOpen(false);
-  };
-
-  // Dropdown open/close logic
-  const langBtnRef = useRef();
-  const langMenuRef = useRef();
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (
-        langMenuRef.current &&
-        !langMenuRef.current.contains(e.target) &&
-        langBtnRef.current &&
-        !langBtnRef.current.contains(e.target)
-      ) {
-        setLangMenuOpen(false);
-      }
-    }
-    if (langMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [langMenuOpen]);
-
-
-  // Helper for translation fields
-  const baseUI = data?.ui || {};
-  const tr = data?.translations?.[lang] || data?.translations?.[String(lang || "").toUpperCase()] || {};
-const staticTr = STATIC_TRANSLATIONS[lang] || STATIC_TRANSLATIONS.en;
-const ui = tr.ui || tr.UI || tr.labels || tr.strings || tr.text || baseUI;
-
-// ALWAYS pull box titles + static lines from STATIC_TRANSLATIONS first
-const tLabel = (k, fallback) => ui?.[k] || staticTr?.[k] || fallback;
-
-// Static sentences (always translated)
-const staticRiskNote = staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
-const staticClarityNote = staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
-const staticScoreNote = staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
-
-
-
-// Verdict words
-const verdictText = {
-  unsafe: tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe),
-  notThatSafe: ui?.notThatSafe || "Not that safe",
-  safe: tLabel("safe", STATIC_TRANSLATIONS.en.safe),
-  verySafe: tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)
+  // Helper for risk verdict color and label
+    unsafe: "Inseguro",
+    notThatSafe: "No tan seguro",
+    safe: "Seguro",
+    verySafe: "Muy seguro",
+    titleLabel: "Título:",
+    overview: "Resumen"
+  },
+  pt: {
+    summary: "Resumo",
+    professionalism: "Profissionalismo",
+    favorability: "Vantagem",
+    deadlinePressure: "Pressão de prazo",
+    potentialIssues: "Possíveis problemas",
+    riskLevel: "Nível de risco",
+    clauseClarity: "Clareza das cláusulas",
+    smartSuggestions: "Sugestões",
+    mainClauses: "Cláusulas principais",
+    overallScore: "Pontuação final",
+    confidenceToSign: "Confiança para assinar",
+    riskStatic: "Baseado em justiça e obrigações.",
+    clarityStatic: "Mostra a clareza dos termos.",
+    scoreStatic: "Define a pontuação final.",
+    unsafe: "Arriscado",
+    notThatSafe: "Não tão seguro",
+    safe: "Seguro",
+    verySafe: "Muito seguro",
+    titleLabel: "Título:",
+    overview: "Resumo"
+  },
+  nl: {
+    summary: "Samenvatting",
+    professionalism: "Professionaliteit",
+    favorability: "Voordeel",
+    deadlinePressure: "Tijdsdruk",
+    potentialIssues: "Mogelijke problemen",
+    riskLevel: "Risiconiveau",
+    clauseClarity: "Clausuleduidelijkheid",
+    smartSuggestions: "Suggesties",
+    mainClauses: "Hoofdclausules",
+    overallScore: "Eindscore",
+    confidenceToSign: "Vertrouwen om te tekenen",
+    riskStatic: "Gebaseerd op eerlijkheid en plichten.",
+    clarityStatic: "Geeft duidelijkheid van voorwaarden aan.",
+    scoreStatic: "Bepaalt de eindscore.",
+    unsafe: "Onveilig",
+    notThatSafe: "Niet zo veilig",
+    safe: "Veilig",
+    verySafe: "Zeer veilig",
+    titleLabel: "Titel:",
+    overview: "Samenvatting"
+  },
+  ro: {
+    summary: "Rezumat",
+    professionalism: "Profesionalism",
+    favorability: "Avantaj",
+    deadlinePressure: "Presiune termen",
+    potentialIssues: "Probleme posibile",
+    riskLevel: "Nivel de risc",
+    clauseClarity: "Claritate clauze",
+    smartSuggestions: "Sugestii",
+    mainClauses: "Clauze principale",
+    overallScore: "Scor final",
+    confidenceToSign: "Încredere la semnare",
+    riskStatic: "Bazat pe echitate și obligații.",
+    clarityStatic: "Arată cât de clare sunt condițiile.",
+    scoreStatic: "Determină scorul final.",
+    unsafe: "Nesigur",
+    notThatSafe: "Nu prea sigur",
+    safe: "Sigur",
+    verySafe: "Foarte sigur",
+    titleLabel: "Titlu:",
+    overview: "Rezumat"
+  },
+  sq: {
+    summary: "Përmbledhje",
+    professionalism: "Profesionalizëm",
+    favorability: "Përfitim",
+    deadlinePressure: "Presion afati",
+    potentialIssues: "Probleme të mundshme",
+    riskLevel: "Niveli i rrezikut",
+    clauseClarity: "Qartësi klauzolash",
+    smartSuggestions: "Sugjerime",
+    mainClauses: "Klauzola kryesore",
+    overallScore: "Rezultati final",
+    confidenceToSign: "Besim për nënshkrim",
+    riskStatic: "Bazuar në drejtësi dhe detyrime.",
+    clarityStatic: "Tregon sa të qarta janë kushtet.",
+    scoreStatic: "Përcakton rezultatin final.",
+    unsafe: "I pasigurt",
+    notThatSafe: "Jo shumë i sigurt",
+    safe: "I sigurt",
+    verySafe: "Shumë i sigurt",
+    titleLabel: "Titulli:",
+    overview: "Përmbledhje"
+  },
+  zh: {
+    summary: "摘要",
+    professionalism: "专业性",
+    favorability: "有利性",
+    deadlinePressure: "期限压力",
+    potentialIssues: "潜在问题",
+    riskLevel: "风险等级",
+    clauseClarity: "条款清晰度",
+    smartSuggestions: "智能建议",
+    mainClauses: "主要条款",
+    overallScore: "总分",
+    confidenceToSign: "签署信心",
+    riskStatic: "基于公平和义务。",
+    clarityStatic: "显示条款的清晰度。",
+    scoreStatic: "定义最终分数。",
+    unsafe: "不安全",
+    notThatSafe: "不太安全",
+    safe: "安全",
+    verySafe: "非常安全",
+    titleLabel: "标题：",
+    overview: "概览"
+  },
+  ja: {
+    summary: "要約",
+    professionalism: "専門性",
+    favorability: "有利性",
+    deadlinePressure: "期限圧力",
+    potentialIssues: "潜在的な問題",
+    riskLevel: "リスクレベル",
+    clauseClarity: "条項の明確さ",
+    smartSuggestions: "スマートな提案",
+    mainClauses: "主な条項",
+    overallScore: "総合得点",
+    confidenceToSign: "署名の自信",
+    riskStatic: "公正と義務に基づく。",
+    clarityStatic: "条件の明確さを示します。",
+    scoreStatic: "最終スコアを定義します。",
+    unsafe: "安全ではない",
+    notThatSafe: "あまり安全ではない",
+    safe: "安全",
+    verySafe: "とても安全",
+    titleLabel: "タイトル：",
+    overview: "概要"
+  },
+  tr: {
+    summary: "Özet",
+    professionalism: "Profesyonellik",
+    favorability: "Avantaj",
+    deadlinePressure: "Süre baskısı",
+    potentialIssues: "Olası sorunlar",
+    riskLevel: "Risk seviyesi",
+    clauseClarity: "Madde açıklığı",
+    smartSuggestions: "Akıllı öneriler",
+    mainClauses: "Ana maddeler",
+    overallScore: "Genel puan",
+    confidenceToSign: "İmzalama güveni",
+    riskStatic: "Adalet ve yükümlülüklere dayalıdır.",
+    clarityStatic: "Şartların açıklığını gösterir.",
+    scoreStatic: "Nihai puanı tanımlar.",
+    unsafe: "Güvensiz",
+    notThatSafe: "Çok güvenli değil",
+    safe: "Güvenli",
+    verySafe: "Çok güvenli",
+    titleLabel: "Başlık:",
+    overview: "Özet"
+  }
 };
-
-
-
-// translated dynamic arrays (fallback to original if missing)
-const analysis = data?.analysis || {};
-const tAnalysis = tr.analysis || {};
-const tSummary =
-  tAnalysis.summary ??
-  tr.summary ??
-  analysis.summary ??
-  analysis.summaryText ??
-  analysis.summaryLines ??
-  [];
-
-
-const tIssues =
-  (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length ? tAnalysis.potentialIssues :
-    Array.isArray(tr.potentialIssues) && tr.potentialIssues.length ? tr.potentialIssues :
-    Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length ? analysis.potentialIssues :
-    Array.isArray(analysis.issues) && analysis.issues.length ? analysis.issues :
-    Array.isArray(analysis.potentialIssuesText) && analysis.potentialIssuesText.length ? analysis.potentialIssuesText :
-    ["—"]);
-
-const tSuggestions =
-  tAnalysis.smartSuggestions ??
-  tr.smartSuggestions ??
-  analysis.smartSuggestions ??
-  analysis.suggestions ??
-  analysis.smartSuggestionsText ??
-  [];
-
-
-const tClauses =
-  (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length ? tAnalysis.mainClauses :
-    Array.isArray(tr.mainClauses) && tr.mainClauses.length ? tr.mainClauses :
-    Array.isArray(analysis.mainClauses) && analysis.mainClauses.length ? analysis.mainClauses :
-    Array.isArray(analysis.clauses) && analysis.clauses.length ? analysis.clauses :
-    Array.isArray(analysis.mainClausesText) && analysis.mainClausesText.length ? analysis.mainClausesText :
-    ["—"]);
-
-
-// translated title (fallback to original)
-const tTitle =
-  tAnalysis.contractTitle ??
-  tr.contractTitle ??
-  data?.contractTitle ??
-  data?.contractName ??
-  "—";
-
   // Use static muted color for all explanations
   const mutedStyle = { color: 'var(--muted)', fontSize: 15 };
 
@@ -547,28 +289,6 @@ const tTitle =
   if (Array.isArray(v)) return v.filter(Boolean).map(x => String(x).trim()).filter(Boolean);
 
   if (typeof v === "string") {
-    return v
-      .split(/\r?\n|•|- /g)
-      .map(s => String(s).trim())
-      .filter(Boolean);
-  }
-
-  // sometimes API sends { items: [...] }
-  if (v && typeof v === "object") {
-    const maybe = v.items || v.list || v.values;
-    if (Array.isArray(maybe)) return maybe.filter(Boolean).map(x => String(x).trim()).filter(Boolean);
-  }
-
-  return [];
-}
-
-function fallbackArr(v) {
-  return normalizeList(v);
-}
-
-
-  // For summary, merge translation and AI summary if both exist
-  function getSummaryArr() {
     const aiSummary = analysis.summary;
     const trSummary = tr.summary;
     if (Array.isArray(trSummary) && trSummary.length) return trSummary;
@@ -576,74 +296,7 @@ function fallbackArr(v) {
     return [];
   }
 
-  return (
-    <>
-      <AnalysisDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-      <div className="layout">
-        <AnalysisSidebar />
-        <main className="main">
-          <div className="analysis-header-row">
-            <div className="analysis-header-left">
-              <span className="analysis-overview-label" id="uiOverview">{ui.overview || "Overview"}</span>
-            </div>
-            <div className="analysis-header-right">
-              <div className={`lang${langMenuOpen ? ' open' : ''}`} id="lang">
-                <button
-                  className="lang-btn"
-                  id="langBtn"
-                  type="button"
-                  ref={langBtnRef}
-                  onClick={() => setLangMenuOpen((v) => !v)}
-                  aria-expanded={langMenuOpen}
-                  aria-haspopup="listbox"
-                >
-                  <span id="langNow" style={{fontFamily:'Inter, sans-serif',fontWeight:400,fontSize:'20px'}}>{lang.toUpperCase()}</span><span className="caret" aria-hidden="true"></span>
-                </button>
-                {langMenuOpen && (
-                  <div
-                    className="lang-menu"
-                    id="langMenu"
-                    role="listbox"
-                    aria-label="Report Language"
-                    ref={langMenuRef}
-                  >
-                    {Object.entries({en:"English",it:"Italiano",de:"Deutsch",es:"Español",fr:"Français",pt:"Português",nl:"Nederlands",ro:"Română",sq:"Shqip",tr:"Türkçe",zh:"中文",ja:"日本語"}).map(([code, label]) => (
-                      <div
-                        className="lang-item"
-                        data-code={code}
-                        key={code}
-                        onClick={() => handleLangClick(code)}
-                        style={{fontFamily:'Inter, sans-serif',fontWeight: lang === code ? 600 : 400, fontSize:'20px', background: lang === code ? '#e2e2e2' : 'transparent', color: lang === code ? '#000' : undefined}}
-                        tabIndex={0}
-                        role="option"
-                        aria-selected={lang === code}
-                      >
-                        {label}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div style={{borderBottom:'1px solid #e2e2e2',margin:'0 0 18px 0',height:0}}></div>
-          <div className="doc-title">
-            <span className="label" id="uiTitleLabel">{ui.title || "Title:"}</span>
-<span className="value" id="uiTitleValue"> {' '}{tTitle}</span>
-          </div>
-          <div className="grid">
-            <div className="left">
-              <section className="card" id="summaryCard">
-                <h3 style={{fontWeight:400}}><img src="https://imgur.com/CuQFbD7.png" alt="" /><span id="uiSummary">{tLabel("summary", "Summary")}</span>
-</h3>
-                <div className="list" id="summaryText" style={{fontSize: '20px'}}>
-                  {fallbackArr(tSummary).map((s, i) => (
-  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{s}</div>
-))}
-
-                </div>
-              </section>
-              <section className="card meter-block" id="profCard">
+    // ...existing code...
                 <div className="meter-head">
                   <div className="meter-title"><img src="https://imgur.com/EdMAMnx.png" alt="" /><span id="uiProfessionalism">{tLabel("professionalism", "Professionalism")}</span>
 </div>
@@ -674,9 +327,9 @@ function fallbackArr(v) {
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/ppLDtiq.png" alt="" /><span id="uiIssues">{tLabel("potentialIssues", "Potential Issues")}</span>
 </h3>
                 <ul className="bullets" id="issuesList" style={{fontSize: '20px'}}>
-                {fallbackArr(tIssues).map((issue, i) => (
-  <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
-))}
+                  {(fallbackArr(tIssues).length ? fallbackArr(tIssues) : ["—"]).map((issue, i) => (
+                    <li key={i} style={{...mutedStyle, fontSize: '20px'}}>{issue}</li>
+                  ))}
 
                 </ul>
               </section>
@@ -684,9 +337,9 @@ function fallbackArr(v) {
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/EoVDfd5.png" alt="" /><span id="uiSuggestions">{tLabel("smartSuggestions", "Suggestions")}</span>
 </h3>
                 <div className="list numbered" id="suggestionsList" style={{fontSize: '20px'}}>
-                  {fallbackArr(tSuggestions).map((s, i) => (
-  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
-))}
+                  {(fallbackArr(tSuggestions).length ? fallbackArr(tSuggestions) : ["—"]).map((s, i) => (
+                    <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${s}`}</div>
+                  ))}
 
                 </div>
               </section>
@@ -709,28 +362,7 @@ function fallbackArr(v) {
                       <span
                         className="dot"
                         id="riskDot"
-                        style={{
-                          background:
-                            riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
-                              ? "var(--red)"
-                              : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
-                              ? "var(--orange)"
-                              : "var(--green)"
-                        }}
-                      ></span>
-                      <span id="riskBadge">
-                       {riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
-  ? verdictText.unsafe
-  : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
-  ? verdictText.notThatSafe
-  : verdictText.verySafe}
-
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <section className="card" id="clarCard">
+                        // ...existing code...
                 <div className="hcard">
                   <div className="circle">
                     <svg width="140" height="140" viewBox="0 0 140 140">
@@ -773,9 +405,9 @@ function fallbackArr(v) {
                 <h3 style={{fontWeight:400}}><img src="https://imgur.com/K04axKU.png" alt="" /><span id="uiClauses">{tLabel("mainClauses", "Main Clauses")}</span>
 </h3>
                 <div className="list numbered" id="clausesList" style={{fontSize: '20px'}}>
-                {fallbackArr(tClauses).map((c, i) => (
-  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
-))}
+                {(fallbackArr(tClauses).length ? fallbackArr(tClauses) : ["—"]).map((c, i) => (
+                  <div key={i} style={{...mutedStyle, fontSize: '20px'}}>{`${i+1}. ${c}`}</div>
+                ))}
 
                 </div>
               </section>
