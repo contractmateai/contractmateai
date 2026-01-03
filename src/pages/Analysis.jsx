@@ -334,10 +334,43 @@ const dotColor = {
 };
 
 const Analysis = () => {
-  // Helper for translated analysis section (can be under tr.analysis or tr)
+  // Translation and verdict helpers (order matters!)
+  // 1. tr: translation object from data
+  const tr =
+    data?.translations?.[lang] ||
+    data?.translations?.[String(lang || "").toUpperCase()] ||
+    {};
+
+  // 2. staticTr: static translations for current lang
+  const staticTr = STATIC_TRANSLATIONS[lang] || STATIC_TRANSLATIONS.en;
+
+  // 3. baseUI: fallback UI labels from data
+  const baseUI = data?.ui || {};
+
+  // 4. ui: UI labels from translation or fallback
+  const ui =
+    tr.ui ||
+    tr.UI ||
+    tr.labels ||
+    tr.strings ||
+    tr.text ||
+    baseUI;
+
+  // 5. tLabel: always prefer static translations for box titles + fixed labels
+  const tLabel = (k, fallback) => staticTr?.[k] || ui?.[k] || fallback;
+
+  // 6. verdictText: translated verdict words
+  const verdictText = {
+    unsafe: tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe),
+    notThatSafe: tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe || "Not that safe"),
+    safe: tLabel("safe", STATIC_TRANSLATIONS.en.safe),
+    verySafe: tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)
+  };
+
+  // 7. tAnalysis: translated analysis section (can be under tr.analysis or tr)
   const tAnalysis = (typeof tr.analysis === 'object' && tr.analysis) || tr;
 
-  // Verdict map for use in color/verdict logic
+  // 8. verdictMap: for use in color/verdict logic
   const verdictMap = {
     unsafe: verdictText.unsafe,
     not_safe: verdictText.notThatSafe,
@@ -491,95 +524,7 @@ const Analysis = () => {
   }, [langMenuOpen]);
 
 
-  // Helper for translation fields
-// Helper for translation fields (supports multiple data shapes)
-const baseUI = data?.ui || {};
 
-const tr =
-  data?.translations?.[lang] ||
-  data?.translations?.[String(lang || "").toUpperCase()] ||
-  {};
-
-const staticTr = STATIC_TRANSLATIONS[lang] || STATIC_TRANSLATIONS.en;
-
-// Some payloads have analysis under data.analysis.analysis
-const analysisRoot = data?.analysis || {};
-const analysis =
-  analysisRoot?.analysis && typeof analysisRoot.analysis === "object"
-    ? analysisRoot.analysis
-    : analysisRoot;
-
-// UI labels can come from translations or static map
-const ui =
-  tr.ui ||
-  tr.UI ||
-  tr.labels ||
-  tr.strings ||
-  tr.text ||
-  baseUI;
-
-// Always prefer STATIC_TRANSLATIONS first for box titles + fixed labels
-const tLabel = (k, fallback) => staticTr?.[k] || ui?.[k] || fallback;
-
-// Static sentences (always translated)
-const staticRiskNote = staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
-const staticClarityNote = staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
-const staticScoreNote = staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
-
-// Verdict words (ALL translated now)
-const verdictText = {
-  unsafe: tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe),
-  notThatSafe: tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe || "Not that safe"),
-  safe: tLabel("safe", STATIC_TRANSLATIONS.en.safe),
-  verySafe: tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)
-};
-
-// Translated dynamic content can live under tr.analysis OR tr directly
-
-// ---- Summary (can be array or string)
-const tSummary =
-  tAnalysis.summary ??
-  tr.summary ??
-  analysis.summary ??
-  analysis.summaryText ??
-  analysis.summaryLines ??
-  [];
-
-// ---- Issues
-const tIssues =
-  (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length ? tAnalysis.potentialIssues :
-  Array.isArray(tr.potentialIssues) && tr.potentialIssues.length ? tr.potentialIssues :
-  Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length ? analysis.potentialIssues :
-  Array.isArray(analysis.issues) && analysis.issues.length ? analysis.issues :
-  Array.isArray(analysis.potentialIssuesText) && analysis.potentialIssuesText.length ? analysis.potentialIssuesText :
-  []);
-
-// ---- Suggestions
-const tSuggestions =
-  tAnalysis.smartSuggestions ??
-  tr.smartSuggestions ??
-  analysis.smartSuggestions ??
-  analysis.suggestions ??
-  analysis.smartSuggestionsText ??
-  [];
-
-// ---- Clauses
-const tClauses =
-  (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length ? tAnalysis.mainClauses :
-  Array.isArray(tr.mainClauses) && tr.mainClauses.length ? tr.mainClauses :
-  Array.isArray(analysis.mainClauses) && analysis.mainClauses.length ? analysis.mainClauses :
-  Array.isArray(analysis.clauses) && analysis.clauses.length ? analysis.clauses :
-  Array.isArray(analysis.mainClausesText) && analysis.mainClausesText.length ? analysis.mainClausesText :
-  []);
-
-// ---- Contract Title (translated if exists)
-const tTitle =
-  tAnalysis.contractTitle ??
-  tr.contractTitle ??
-  data?.contractTitleTranslated?.[lang] ??
-  data?.contractTitle ??
-  data?.contractName ??
-  "—";
 
 
   // Use static muted color for all explanations
