@@ -5,8 +5,7 @@
     return [];
   }
 
-  // Helper for translated analysis section (can be under tr.analysis or tr)
-  const tAnalysis = (typeof tr.analysis === 'object' && tr.analysis) || tr;
+// (moved tAnalysis definition inside component)
   // Static translations for all supported languages
   const STATIC_TRANSLATIONS = {
     en: {
@@ -335,6 +334,8 @@ const dotColor = {
 };
 
 const Analysis = () => {
+  // Helper for translated analysis section (can be under tr.analysis or tr)
+  const tAnalysis = (typeof tr.analysis === 'object' && tr.analysis) || tr;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [data, setData] = useState(null);
   const [lang, setLang] = useState("en");
