@@ -336,6 +336,14 @@ const dotColor = {
 const Analysis = () => {
   // Helper for translated analysis section (can be under tr.analysis or tr)
   const tAnalysis = (typeof tr.analysis === 'object' && tr.analysis) || tr;
+
+  // Verdict map for use in color/verdict logic
+  const verdictMap = {
+    unsafe: verdictText.unsafe,
+    not_safe: verdictText.notThatSafe,
+    safe: verdictText.safe,
+    verysafe: verdictText.verySafe
+  };
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [data, setData] = useState(null);
   const [lang, setLang] = useState("en");
