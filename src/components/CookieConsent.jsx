@@ -22,7 +22,6 @@ export default function CookieConsent() {
   return (
     <div className={`cookie-consent-box${fading ? ' fade-out' : ''}`}> 
       <button className="cookie-close" onClick={handleReject} aria-label="Close">×</button>
-      <h2>Cookies</h2>
       <p>
         We use cookies to personalize content, improve performance, and better understand how visitors interact with our website.<br/>
         Learn more about how we use cookies in our{' '}
@@ -41,4 +40,5 @@ export default function CookieConsent() {
       </div>
     </div>
   );
+}
 }
