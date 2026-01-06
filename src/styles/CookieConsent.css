@@ -1,0 +1,99 @@
+.cookie-consent-box {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1000;
+  background: #18181b;
+  color: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.5);
+  padding: 32px 32px 24px 32px;
+  max-width: 420px;
+  min-width: 340px;
+  font-family: inherit;
+  animation: fadeIn 0.4s;
+}
+
+.cookie-consent-box.fade-out {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(40px); }
+}
+
+.cookie-consent-box h2 {
+  margin: 0 0 12px 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.cookie-consent-box p {
+  margin: 0 0 24px 0;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.cookie-link {
+  color: #b0ff3c;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.cookie-link:hover {
+  color: #8fd62b;
+}
+
+.cookie-buttons {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.cookie-btn {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.cookie-btn.reject {
+  background: #232329;
+  color: #fff;
+}
+.cookie-btn.reject:hover {
+  background: #35353b;
+}
+
+.cookie-btn.accept {
+  background: #b0ff3c;
+  color: #232329;
+}
+.cookie-btn.accept:hover {
+  background: #8fd62b;
+}
+
+.cookie-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.cookie-close:hover {
+  color: #b0ff3c;
+}

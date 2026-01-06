@@ -1,5 +1,6 @@
 // contractmateai/src/pages/Home.jsx
 import React, { useRef, useState, useEffect, useMemo } from "react";
+import CookieConsent from "../components/CookieConsent";
 
 // Feature rows for the homepage ticker
 const featuresTop = [
@@ -1395,6 +1396,9 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Cookie Consent Box */}
+      <CookieConsent />
     </>
   );
 }
