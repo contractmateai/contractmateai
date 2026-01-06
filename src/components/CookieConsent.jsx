@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/CookieConsent.css';
 
-const COOKIE_POLICY_URL = '/cookies.html';
+const COOKIE_POLICY_URL = '/cookies';
 
 export default function CookieConsent() {
   const [visible, setVisible] = useState(true);
