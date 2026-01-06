@@ -529,13 +529,23 @@ const Analysis = () => {
   const analysis = data?.analysis || {};
   const tAnalysis = tr.analysis || {};
 
-  const tSummary =
-    tAnalysis.summary ??
-    tr.summary ??
-    analysis.summary ??
-    analysis.summaryText ??
-    analysis.summaryLines ??
-    [];
+
+  // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
+  function getSummaryArr() {
+    const candidates = [
+      tAnalysis.summary,
+      tr.summary,
+      analysis.summary,
+      analysis.summaryText,
+      analysis.summaryLines
+    ];
+    for (const c of candidates) {
+      if (Array.isArray(c) && c.length) return c;
+      if (typeof c === 'string' && c.trim()) return c.split(/\r?\n|•|- /g).map(s => s.trim()).filter(Boolean);
+    }
+    return [];
+  }
+  const tSummary = getSummaryArr();
 
   const tIssues =
     (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length
@@ -551,13 +561,23 @@ const Analysis = () => {
       ? analysis.potentialIssuesText
       : ["—"]);
 
-  const tSuggestions =
-    tAnalysis.smartSuggestions ??
-    tr.smartSuggestions ??
-    analysis.smartSuggestions ??
-    analysis.suggestions ??
-    analysis.smartSuggestionsText ??
-    [];
+
+  // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
+  function getSuggestionsArr() {
+    const candidates = [
+      tAnalysis.smartSuggestions,
+      tr.smartSuggestions,
+      analysis.smartSuggestions,
+      analysis.suggestions,
+      analysis.smartSuggestionsText
+    ];
+    for (const c of candidates) {
+      if (Array.isArray(c) && c.length) return c;
+      if (typeof c === 'string' && c.trim()) return c.split(/\r?\n|•|- /g).map(s => s.trim()).filter(Boolean);
+    }
+    return [];
+  }
+  const tSuggestions = getSuggestionsArr();
 
   const tClauses =
     (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
@@ -737,11 +757,15 @@ const Analysis = () => {
                 </h3>
 
                 <div className="list" id="summaryText" style={{ fontSize: "20px" }}>
-                  {fallbackArr(tSummary).map((s, i) => (
-                    <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
-                      {s}
-                    </div>
-                  ))}
+                  {tSummary.length > 0 ? (
+                    tSummary.map((s, i) => (
+                      <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
+                        {s}
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ ...mutedStyle, fontSize: "18px" }}>No summary available.</div>
+                  )}
                 </div>
               </section>
 
@@ -851,11 +875,15 @@ const Analysis = () => {
                 </h3>
 
                 <div className="list numbered" id="suggestionsList" style={{ fontSize: "20px" }}>
-                  {fallbackArr(tSuggestions).map((s, i) => (
-                    <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
-                      {`${i + 1}. ${s}`}
-                    </div>
-                  ))}
+                  {tSuggestions.length > 0 ? (
+                    tSuggestions.map((s, i) => (
+                      <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
+                        {`${i + 1}. ${s}`}
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ ...mutedStyle, fontSize: "18px" }}>No suggestions available.</div>
+                  )}
                 </div>
               </section>
             </div>
