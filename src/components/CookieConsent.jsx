@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './CookieConsent.css';
+import '../styles/CookieConsent.css';
 
 const COOKIE_POLICY_URL = '/cookies.html';
 
