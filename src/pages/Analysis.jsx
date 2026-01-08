@@ -529,14 +529,6 @@ const Analysis = () => {
   const staticScoreNote =
     staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
 
-  // Verdict words
-  const verdictText = {
-    unsafe: tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe),
-    notThatSafe: tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe),
-    safe: tLabel("safe", STATIC_TRANSLATIONS.en.safe),
-    verySafe: tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe),
-  };
-
   // translated dynamic arrays (fallback to original if missing)
   const analysis = data?.analysis || {};
   const tAnalysis = tr.analysis || {};
@@ -765,7 +757,7 @@ const Analysis = () => {
               <section className="card" id="summaryCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/CuQFbD7.png" alt="" />
-                  <span id="uiSummary">{tLabel("summary", "Summary")}</span>
+                  <span id="uiSummary">{tLabel("summary", STATIC_TRANSLATIONS.en.summary)}</span>
                 </h3>
 
                 <div className="list" id="summaryText" style={{ fontSize: "20px" }}>
@@ -868,7 +860,7 @@ const Analysis = () => {
               <section className="card" id="issuesCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/ppLDtiq.png" alt="" />
-                  <span id="uiIssues">{tLabel("potentialIssues", "Potential Issues")}</span>
+                  <span id="uiIssues">{tLabel("potentialIssues", STATIC_TRANSLATIONS.en.potentialIssues)}</span>
                 </h3>
 
                 <ul className="bullets" id="issuesList" style={{ fontSize: "20px" }}>
@@ -883,7 +875,7 @@ const Analysis = () => {
               <section className="card" id="suggestionsCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/EoVDfd5.png" alt="" />
-                  <span id="uiSuggestions">{tLabel("smartSuggestions", "Suggestions")}</span>
+                  <span id="uiSuggestions">{tLabel("smartSuggestions", STATIC_TRANSLATIONS.en.smartSuggestions)}</span>
                 </h3>
 
                 <div className="list numbered" id="suggestionsList" style={{ fontSize: "20px" }}>
@@ -948,10 +940,10 @@ const Analysis = () => {
 
                       <span id="riskBadge">
                         {riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
-                          ? verdictText.unsafe
+                          ? tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)
                           : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
-                          ? verdictText.notThatSafe
-                          : verdictText.verySafe}
+                          ? tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe)
+                          : tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}
                       </span>
                     </div>
                   </div>
@@ -982,7 +974,7 @@ const Analysis = () => {
                   <div className="htext">
                     <h3 style={{ marginBottom: 0, fontWeight: 400 }}>
                       <img src="https://imgur.com/o39xZtC.png" alt="" />
-                      <span id="uiClarity">{tLabel("clauseClarity", "Clause Clarity")}</span>
+                      <span id="uiClarity">{tLabel("clauseClarity", STATIC_TRANSLATIONS.en.clauseClarity)}</span>
                     </h3>
 
                     <div className="muted" id="clarNote" style={mutedStyle}>
@@ -1004,10 +996,10 @@ const Analysis = () => {
                       />
                       <span id="clarBadge">
                         {clarityVerdictKey(analysis?.clarity?.value) === "unsafe"
-                          ? verdictText.unsafe
+                          ? tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)
                           : clarityVerdictKey(analysis?.clarity?.value) === "not_safe"
-                          ? verdictText.notThatSafe
-                          : verdictText.verySafe}
+                          ? tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe)
+                          : tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}
                       </span>
                     </div>
                   </div>
@@ -1017,7 +1009,7 @@ const Analysis = () => {
               <section className="card" id="clausesCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/K04axKU.png" alt="" />
-                  <span id="uiClauses">{tLabel("mainClauses", "Main Clauses")}</span>
+                  <span id="uiClauses">{tLabel("mainClauses", STATIC_TRANSLATIONS.en.mainClauses)}</span>
                 </h3>
 
                 <div className="list numbered" id="clausesList" style={{ fontSize: "20px" }}>
@@ -1069,9 +1061,9 @@ const Analysis = () => {
                     </div>
 
                     <div className="score-scale">
-                      <span id="scaleUnsafe">{verdictText.unsafe}</span>
-                      <span id="scaleSafe">{verdictText.safe}</span>
-                      <span id="scaleVerySafe">{verdictText.verySafe}</span>
+                      <span id="scaleUnsafe">{tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)}</span>
+                      <span id="scaleSafe">{tLabel("safe", STATIC_TRANSLATIONS.en.safe)}</span>
+                      <span id="scaleVerySafe">{tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}</span>
                     </div>
                   </div>
                 </div>
