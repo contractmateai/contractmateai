@@ -520,7 +520,10 @@ const Analysis = () => {
   const ui = tr.ui || tr.UI || tr.labels || tr.strings || tr.text || baseUI;
 
   // ALWAYS pull box titles + static lines from STATIC_TRANSLATIONS first
-  const tLabel = (k, fallback) => ui?.[k] || staticTr?.[k] || fallback;
+  const tLabel = (k, fallback) => staticTr?.[k] || ui?.[k] || fallback;
+// Map verdict string to translation key
+const verdictToTrKey = (v) =>
+  v === "very_safe" ? "verySafe" : v === "not_safe" ? "notThatSafe" : "unsafe";
 
   // Static sentences (always translated)
   const staticRiskNote = staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
@@ -635,14 +638,7 @@ const Analysis = () => {
     return normalizeList(v);
   }
 
-  // For summary, merge translation and AI summary if both exist
-  function getSummaryArr() {
-    const aiSummary = analysis.summary;
-    const trSummary = tr.summary;
-    if (Array.isArray(trSummary) && trSummary.length) return trSummary;
-    if (Array.isArray(aiSummary) && aiSummary.length) return aiSummary;
-    return [];
-  }
+
 
   // Prevent unused warnings (kept)
   getSummaryArr();
@@ -939,11 +935,10 @@ const Analysis = () => {
                       ></span>
 
                       <span id="riskBadge">
-                        {riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
-                          ? tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)
-                          : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
-                          ? tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe)
-                          : tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}
+                        {tLabel(
+                          verdictToTrKey(riskVerdictKey(clamp(analysis.risk?.value))),
+                          STATIC_TRANSLATIONS.en.unsafe
+                        )}
                       </span>
                     </div>
                   </div>
@@ -995,11 +990,10 @@ const Analysis = () => {
                         }}
                       />
                       <span id="clarBadge">
-                        {clarityVerdictKey(analysis?.clarity?.value) === "unsafe"
-                          ? tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)
-                          : clarityVerdictKey(analysis?.clarity?.value) === "not_safe"
-                          ? tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe)
-                          : tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}
+                        {tLabel(
+                          verdictToTrKey(clarityVerdictKey(clamp(analysis?.clarity?.value))),
+                          STATIC_TRANSLATIONS.en.unsafe
+                        )}
                       </span>
                     </div>
                   </div>
