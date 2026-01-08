@@ -552,21 +552,28 @@ const verdictToTrKey = (v) =>
     }
     return [];
   }
-  const tSummary = getSummaryArr();
+  // Use translated summary array if available, fallback to English
+  const tSummary =
+    (Array.isArray(tAnalysis.summary) && tAnalysis.summary.length)
+      ? tAnalysis.summary
+      : (Array.isArray(tr.summary) && tr.summary.length)
+      ? tr.summary
+      : (Array.isArray(analysis.summary) && analysis.summary.length)
+      ? analysis.summary
+      : (Array.isArray(STATIC_TRANSLATIONS.en.summary) && STATIC_TRANSLATIONS.en.summary.length)
+      ? STATIC_TRANSLATIONS.en.summary
+      : [];
 
   const tIssues =
-    (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length
+    (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length)
       ? tAnalysis.potentialIssues
-      : Array.isArray(tr.potentialIssues) && tr.potentialIssues.length
+      : (Array.isArray(tr.potentialIssues) && tr.potentialIssues.length)
       ? tr.potentialIssues
-      : Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length
+      : (Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length)
       ? analysis.potentialIssues
-      : Array.isArray(analysis.issues) && analysis.issues.length
-      ? analysis.issues
-      : Array.isArray(analysis.potentialIssuesText) &&
-        analysis.potentialIssuesText.length
-      ? analysis.potentialIssuesText
-      : ["—"]);
+      : (Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) && STATIC_TRANSLATIONS.en.potentialIssues.length)
+      ? STATIC_TRANSLATIONS.en.potentialIssues
+      : ["—"];
 
 
   // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
@@ -584,20 +591,28 @@ const verdictToTrKey = (v) =>
     }
     return [];
   }
-  const tSuggestions = getSuggestionsArr();
+  // Use translated suggestions array if available, fallback to English
+  const tSuggestions =
+    (Array.isArray(tAnalysis.smartSuggestions) && tAnalysis.smartSuggestions.length)
+      ? tAnalysis.smartSuggestions
+      : (Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length)
+      ? tr.smartSuggestions
+      : (Array.isArray(analysis.smartSuggestions) && analysis.smartSuggestions.length)
+      ? analysis.smartSuggestions
+      : (Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) && STATIC_TRANSLATIONS.en.smartSuggestions.length)
+      ? STATIC_TRANSLATIONS.en.smartSuggestions
+      : [];
 
   const tClauses =
-    (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
+    (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length)
       ? tAnalysis.mainClauses
-      : Array.isArray(tr.mainClauses) && tr.mainClauses.length
+      : (Array.isArray(tr.mainClauses) && tr.mainClauses.length)
       ? tr.mainClauses
-      : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+      : (Array.isArray(analysis.mainClauses) && analysis.mainClauses.length)
       ? analysis.mainClauses
-      : Array.isArray(analysis.clauses) && analysis.clauses.length
-      ? analysis.clauses
-      : Array.isArray(analysis.mainClausesText) && analysis.mainClausesText.length
-      ? analysis.mainClausesText
-      : ["—"]);
+      : (Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) && STATIC_TRANSLATIONS.en.mainClauses.length)
+      ? STATIC_TRANSLATIONS.en.mainClauses
+      : ["—"];
 
   // translated title (fallback to original)
   const tTitle =
