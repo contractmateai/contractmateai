@@ -520,7 +520,7 @@ const Analysis = () => {
   // Verdict words
   const verdictText = {
     unsafe: tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe),
-    notThatSafe: ui?.notThatSafe || "Not that safe",
+    notThatSafe: tLabel("notThatSafe", STATIC_TRANSLATIONS.en.notThatSafe),
     safe: tLabel("safe", STATIC_TRANSLATIONS.en.safe),
     verySafe: tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe),
   };
