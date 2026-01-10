@@ -3,6 +3,8 @@
  * Handles all PDF generation functionality independently from the web interface
  */
 
+import { jsPDF } from "jspdf";
+
 class PDFGenerator {
   constructor() {
     // this.ASSETS = {
@@ -617,13 +619,6 @@ class PDFGenerator {
 
   /* ===== Main PDF Generation Function ===== */
   async generatePDF(filename, data, lang) {
-    if (!window.jspdf) {
-      throw new Error(
-        "jsPDF library not loaded. Please include jsPDF before using this module."
-      );
-    }
-
-    const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
     // Setup fonts

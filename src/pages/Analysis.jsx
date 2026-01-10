@@ -375,15 +375,9 @@ const Analysis = () => {
 
     try {
       const pdfData = { ...data, lang, email };
-
-      // supports: export default class { generatePDF(){} }
-      // AND: export default { generatePDF(){} }
-      if (PDFGenerator && typeof PDFGenerator.generatePDF === "function") {
-        await PDFGenerator.generatePDF("SignSense_Report", pdfData, lang);
-      } else {
-        const pdfGen = new PDFGenerator();
-        await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
-      }
+      // pdf-generator exports a class -> must instantiate
+      const pdfGen = new PDFGenerator();
+      await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
     } catch (err) {
       console.error(err);
       alert("Could not generate PDF report.");
