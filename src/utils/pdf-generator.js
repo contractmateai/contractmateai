@@ -9,6 +9,16 @@ import { jsPDF } from "jspdf";
  */
 
 class PDFGenerator {
+    async generatePDF(filename, data, lang) {
+      this.doc = new jsPDF();
+
+      this.addTitle("SignSense Contract Analysis");
+
+      this.addText(`Language: ${lang}`);
+      this.addText(`Email: ${data.email || "-"}`);
+
+      this.savePDF(`${filename}.pdf`);
+    }
   constructor() {
     // Initialize jsPDF document
     this.doc = new jsPDF();
