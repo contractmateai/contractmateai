@@ -13,32 +13,37 @@ class PDFGenerator {
     this.doc.roundedRect(x, y, w, h, 10, 10);
   }
 
+
   // Helper: Draw a bold section title
   sectionTitle(text, x, y) {
+    if (text == null) return;
     this.doc.setFont("helvetica", "bold");
     this.doc.setFontSize(14);
-    this.doc.text(text, x, y);
+    this.doc.text(String(text), x, y);
   }
 
   // Helper: Draw a normal label
   label(text, x, y) {
+    if (text == null) return;
     this.doc.setFont("helvetica", "normal");
     this.doc.setFontSize(12);
-    this.doc.text(text, x, y);
+    this.doc.text(String(text), x, y);
   }
 
   // Helper: Draw a small label
   smallLabel(text, x, y) {
+    if (text == null) return;
     this.doc.setFont("helvetica", "normal");
     this.doc.setFontSize(10);
-    this.doc.text(text, x, y);
+    this.doc.text(String(text), x, y);
   }
 
   // Helper: Draw a bold label
   boldLabel(text, x, y) {
+    if (text == null) return;
     this.doc.setFont("helvetica", "bold");
     this.doc.setFontSize(12);
-    this.doc.text(text, x, y);
+    this.doc.text(String(text), x, y);
   }
 
   // Helper: Draw a footer
@@ -75,6 +80,7 @@ class PDFGenerator {
     }
   }
 
+
   // Helper: Draw a simple donut chart (as a placeholder)
   drawDonut(x, y, percent, color, label) {
     // Outer circle
@@ -89,12 +95,13 @@ class PDFGenerator {
     // Percent text
     this.doc.setFont("helvetica", "bold");
     this.doc.setFontSize(16);
-    this.doc.text(`${percent}%`, x + 30, y + 36, { align: "center" });
+    this.doc.text(String(`${percent}%`), x + 30, y + 36, { align: "center" });
     // Label
     this.doc.setFont("helvetica", "bold");
     this.doc.setFontSize(11);
-    this.doc.text(label, x + 30, y + 60, { align: "center" });
+    this.doc.text(String(label), x + 30, y + 60, { align: "center" });
   }
+
 
   // Helper: Draw a horizontal bar (as a placeholder)
   drawBar(x, y, percent, color, label, valueLabel) {
@@ -105,9 +112,9 @@ class PDFGenerator {
     this.doc.roundedRect(x, y, 90 * percent / 100, 14, 7, 7, "F");
     this.doc.setFont("helvetica", "normal");
     this.doc.setFontSize(10);
-    this.doc.text(label, x - 5, y + 11, { align: "right" });
+    this.doc.text(String(label), x - 5, y + 11, { align: "right" });
     this.doc.setFont("helvetica", "bold");
-    this.doc.text(`${valueLabel}`, x + 95, y + 11);
+    this.doc.text(String(valueLabel), x + 95, y + 11);
   }
 
   // Main PDF generation function
