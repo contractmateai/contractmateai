@@ -8,14 +8,14 @@ import { jsPDF } from "jspdf";
 class PDFGenerator {
   constructor() {
     this.ASSETS = {
-      logo: "assets/icons/logo.png",
-      risk: "assets/icons/riskIcon.png",
-      clarity: "assets/icons/clarityIcon.png",
-      pro: "assets/icons/proIcon.png",
-      fav: "assets/icons/favIcon.png",
-      dead: "assets/icons/deadIcon.png",
-      score: "assets/icons/scoreIcon.png",
-      confidence: "assets/icons/confidenceIcon.png",
+      logo: "https://i.imgur.com/aRIGT9V.png",
+      risk: "https://i.imgur.com/hSkzUQu.png",
+      clarity: "https://i.imgur.com/3J3mzur.png",
+      pro: "https://i.imgur.com/FLqsaQJ.png",
+      fav: "https://i.imgur.com/GIAYFBC.png",
+      dead: "https://i.imgur.com/BbyV5gF.png",
+      score: "https://i.imgur.com/H47wt5e.png",
+      confidence: "https://i.imgur.com/GzPeaz5.png",
     };
     this.STYLE = {
       TITLE_BOTTOM_MARGIN: 10,
