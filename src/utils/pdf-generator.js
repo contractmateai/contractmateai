@@ -81,25 +81,43 @@ class PDFGenerator {
   }
 
 
-  // Helper: Draw a simple donut chart (as a placeholder)
-  drawDonut(x, y, percent, color, label) {
-    // Outer circle
-    this.doc.setDrawColor(0);
-    this.doc.setLineWidth(3);
-    this.doc.setFillColor(255, 255, 255);
-    this.doc.circle(x + 30, y + 30, 30, "FD");
-    // Arc (approximate)
-    this.doc.setDrawColor(color[0], color[1], color[2]);
-    this.doc.setLineWidth(6);
-    this.doc.arc(x + 30, y + 30, 28, -Math.PI / 2, (2 * Math.PI * percent) / 100 - Math.PI / 2, false);
-    // Percent text
-    this.doc.setFont("helvetica", "bold");
-    this.doc.setFontSize(16);
-    this.doc.text(String(`${percent}%`), x + 30, y + 36, { align: "center" });
-    // Label
-    this.doc.setFont("helvetica", "bold");
-    this.doc.setFontSize(11);
-    this.doc.text(String(label), x + 30, y + 60, { align: "center" });
+
+  // Helper: Canvas-based donut chart (from public/pdf-generator.js)
+  donutPNG(pct, color = "#28e070", size = 150) {
+    const c = document.createElement("canvas");
+    const scale = 2;
+    c.width = size * scale;
+    c.height = size * scale;
+    const ctx = c.getContext("2d");
+    ctx.scale(scale, scale);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    const cx = size / 2, cy = size / 2;
+    const ringW = 10;
+    const r = Math.round(size * 0.42);
+    ctx.lineWidth = ringW;
+    ctx.strokeStyle = "#000";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2, false);
+    ctx.stroke();
+    const a0 = -Math.PI / 2;
+    const a1 = a0 + (Math.max(0, Math.min(100, pct)) / 100) * Math.PI * 2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = color;
+    ctx.lineWidth = ringW;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, a0, a1, false);
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - ringW + 4, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.font = `bold ${Math.round(size * 0.26)}px Arial`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${Math.round(pct)}%`, cx, cy);
+    return c.toDataURL("image/png");
   }
 
 
@@ -154,13 +172,16 @@ class PDFGenerator {
     this.drawBox(50, 155, pageWidth - 100, 60 + 16 * (data.summary?.length || 1));
     this.label(Array.isArray(data.summary) ? data.summary.join("\n") : data.summary, 60, 195);
 
+
     // Percentage Breakdown
     this.sectionTitle(lang === "es" ? "Desglose porcentual" : "Percentage Breakdown", 60, 250);
-    // Risk donut
-    this.drawDonut(60, 260, data.risk?.value ?? 0, [0, 200, 0], lang === "es" ? "Nivel de Riesgo" : "Risk Level");
+    // Risk donut (canvas-based)
+    const riskImg = this.donutPNG(data.risk?.value ?? 0, "#28e070", 116);
+    this.doc.addImage(riskImg, "PNG", 60, 260, 116, 116);
     this.label(data.risk?.note || "", 60, 320);
-    // Clarity donut
-    this.drawDonut(180, 260, data.clarity?.value ?? 0, [0, 200, 0], lang === "es" ? "Claridad de Cláusulas" : "Clause Clarity");
+    // Clarity donut (canvas-based)
+    const clarImg = this.donutPNG(data.clarity?.value ?? 0, "#28e070", 116);
+    this.doc.addImage(clarImg, "PNG", 180, 260, 116, 116);
     this.label(data.clarity?.note || "", 180, 320);
 
     // Statistical Bars
@@ -219,7 +240,8 @@ class PDFGenerator {
     });
 
     // Score Checker (Donut)
-    this.drawDonut(60, suggY + 20, data.clarity?.value ?? 0, [0, 200, 0], lang === "es" ? "Score Checker" : "Score Checker");
+    const scoreImg = this.donutPNG(data.clarity?.value ?? 0, "#28e070", 116);
+    this.doc.addImage(scoreImg, "PNG", 60, suggY + 20, 116, 116);
     this.label(data.analysis?.scoreChecker?.line || "", 60, suggY + 80);
     // Confidence Bar
     this.drawBar(200, suggY + 20, data.meters?.confidence ?? 0, [0, 200, 0], lang === "es" ? "Confianza para firmar libremente" : "Confidence to sign freely", `${data.meters?.confidence ?? 0}%`);
