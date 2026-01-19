@@ -1,6 +1,5 @@
 // api/analyze.js — FINAL FULL VERSION
 // Requires env: OPENAI_API_KEY
-const SECRET = process.env.OPENAI_API_KEY;
 
 function send(res, code, obj) {
   res.statusCode = code;
@@ -26,8 +25,10 @@ const UI = {
     verySafe: "Very Safe",
     scoreLine: "Determines the overall score.",
     conf: "Confidence to sign freely",
-    riskLineStatic: "The contract risk score is based on the clauses' fairness and obligations.",
-    clarityLineStatic: "The clarity score reflects how easy it is to understand the terms."
+    riskLineStatic:
+      "The contract risk score is based on the clauses' fairness and obligations.",
+    clarityLineStatic:
+      "The clarity score reflects how easy it is to understand the terms.",
   },
 
   it: {
@@ -43,8 +44,10 @@ const UI = {
     verySafe: "Molto Sicuro",
     scoreLine: "Determina il punteggio complessivo.",
     conf: "Fiducia per firmare liberamente",
-    riskLineStatic: "La valutazione del rischio si basa sull'equità delle clausole e sugli obblighi.",
-    clarityLineStatic: "La chiarezza indica quanto siano comprensibili i termini."
+    riskLineStatic:
+      "La valutazione del rischio si basa sull'equità delle clausole e sugli obblighi.",
+    clarityLineStatic:
+      "La chiarezza indica quanto siano comprensibili i termini.",
   },
 
   // -------------------------
@@ -63,8 +66,10 @@ const UI = {
     verySafe: "sehr gut",
     scoreLine: "Gesamtwertung",
     conf: "Unterschrifts-Sicherheit",
-    riskLineStatic: "Die Risikobewertung basiert auf Fairness und Pflichten der Klauseln.",
-    clarityLineStatic: "Die Klarheitswertung zeigt, wie leicht die Vertragsregeln verständlich sind."
+    riskLineStatic:
+      "Die Risikobewertung basiert auf Fairness und Pflichten der Klauseln.",
+    clarityLineStatic:
+      "Die Klarheitswertung zeigt, wie leicht die Vertragsregeln verständlich sind.",
   },
 
   es: {
@@ -80,8 +85,10 @@ const UI = {
     verySafe: "Muy Seguro",
     scoreLine: "Determina la puntuación general.",
     conf: "Confianza para firmar libremente",
-    riskLineStatic: "La puntuación de riesgo se basa en la equidad y obligaciones de las cláusulas.",
-    clarityLineStatic: "La claridad refleja lo fácil que es entender los términos."
+    riskLineStatic:
+      "La puntuación de riesgo se basa en la equidad y obligaciones de las cláusulas.",
+    clarityLineStatic:
+      "La claridad refleja lo fácil que es entender los términos.",
   },
 
   fr: {
@@ -97,8 +104,10 @@ const UI = {
     verySafe: "Très Sûr",
     scoreLine: "Détermine le score global.",
     conf: "Confiance pour signer librement",
-    riskLineStatic: "L'évaluation du risque repose sur l'équité et les obligations des clauses.",
-    clarityLineStatic: "La clarté indique la facilité de compréhension des termes."
+    riskLineStatic:
+      "L'évaluation du risque repose sur l'équité et les obligations des clauses.",
+    clarityLineStatic:
+      "La clarté indique la facilité de compréhension des termes.",
   },
 
   pt: {
@@ -114,8 +123,9 @@ const UI = {
     verySafe: "Muito Seguro",
     scoreLine: "Determina a pontuação geral.",
     conf: "Confiança para assinar livremente",
-    riskLineStatic: "A pontuação de risco é baseada na equidade e obrigações das cláusulas.",
-    clarityLineStatic: "A clareza reflete a facilidade de entender os termos."
+    riskLineStatic:
+      "A pontuação de risco é baseada na equidade e obrigações das cláusulas.",
+    clarityLineStatic: "A clareza reflete a facilidade de entender os termos.",
   },
 
   nl: {
@@ -131,8 +141,10 @@ const UI = {
     verySafe: "Zeer Veilig",
     scoreLine: "Bepaalt de totale score.",
     conf: "Vertrouwen om vrij te ondertekenen",
-    riskLineStatic: "De risicoanalyse is gebaseerd op eerlijkheid en verplichtingen van de clausules.",
-    clarityLineStatic: "De duidelijkheid toont hoe begrijpelijk de voorwaarden zijn."
+    riskLineStatic:
+      "De risicoanalyse is gebaseerd op eerlijkheid en verplichtingen van de clausules.",
+    clarityLineStatic:
+      "De duidelijkheid toont hoe begrijpelijk de voorwaarden zijn.",
   },
 
   ro: {
@@ -148,8 +160,9 @@ const UI = {
     verySafe: "Foarte Sigur",
     scoreLine: "Determină scorul general.",
     conf: "Încredere pentru a semna liber",
-    riskLineStatic: "Scorul de risc se bazează pe echitatea și obligațiile clauzelor.",
-    clarityLineStatic: "Claritatea arată cât de ușor sunt de înțeles termenii."
+    riskLineStatic:
+      "Scorul de risc se bazează pe echitatea și obligațiile clauzelor.",
+    clarityLineStatic: "Claritatea arată cât de ușor sunt de înțeles termenii.",
   },
 
   sq: {
@@ -165,8 +178,9 @@ const UI = {
     verySafe: "shumë e mirë",
     scoreLine: "Përcakton rezultatin e përgjithshëm.",
     conf: "Besim për të nënshkruar lirisht",
-    riskLineStatic: "Vlerësimi i rrezikut bazohet në drejtësinë dhe detyrimet e klauzolave.",
-    clarityLineStatic: "Qartësia tregon sa lehtë kuptohen termat."
+    riskLineStatic:
+      "Vlerësimi i rrezikut bazohet në drejtësinë dhe detyrimet e klauzolave.",
+    clarityLineStatic: "Qartësia tregon sa lehtë kuptohen termat.",
   },
 
   tr: {
@@ -182,8 +196,9 @@ const UI = {
     verySafe: "Çok Güvenli",
     scoreLine: "Genel puanı belirler.",
     conf: "Serbestçe imzalama güveni",
-    riskLineStatic: "Risk puanı, maddelerin adaleti ve yükümlülüklerine dayanır.",
-    clarityLineStatic: "Netlik, şartların anlaşılabilirliğini gösterir."
+    riskLineStatic:
+      "Risk puanı, maddelerin adaleti ve yükümlülüklerine dayanır.",
+    clarityLineStatic: "Netlik, şartların anlaşılabilirliğini gösterir.",
   },
 
   ja: {
@@ -200,7 +215,7 @@ const UI = {
     scoreLine: "総合スコアを決定します。",
     conf: "自由に署名する自信",
     riskLineStatic: "リスク評価は条項の公平性と義務に基づきます。",
-    clarityLineStatic: "明瞭性は条項の理解しやすさを示します。"
+    clarityLineStatic: "明瞭性は条項の理解しやすさを示します。",
   },
 
   zh: {
@@ -217,14 +232,29 @@ const UI = {
     scoreLine: "确定总体评分。",
     conf: "自由签署的信心",
     riskLineStatic: "风险评分基于条款的公平性和义务。",
-    clarityLineStatic: "清晰度表示条款的易懂程度。"
-  }
+    clarityLineStatic: "清晰度表示条款的易懂程度。",
+  },
 };
 
 // languages allowed for first-render
-const SUPPORTED_LANGS = ["en","it","de","es","fr","pt","nl","ro","sq","tr","ja","zh"];
+const SUPPORTED_LANGS = [
+  "en",
+  "it",
+  "de",
+  "es",
+  "fr",
+  "pt",
+  "nl",
+  "ro",
+  "sq",
+  "tr",
+  "ja",
+  "zh",
+];
 
 export default async function handler(req, res) {
+  // Get API key at runtime (not module load time)
+  const SECRET = process.env.OPENAI_API_KEY;
 
   // ----------------------------------
   // CORS + METHOD HANDLING
@@ -234,7 +264,8 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") return send(res, 204, {});
-  if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
+  if (req.method !== "POST")
+    return send(res, 405, { error: "Method not allowed" });
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
@@ -250,8 +281,11 @@ export default async function handler(req, res) {
     }
 
     let body = {};
-    try { body = raw ? JSON.parse(raw) : {}; }
-    catch { return send(res, 400, { error: "Invalid JSON body" }); }
+    try {
+      body = raw ? JSON.parse(raw) : {};
+    } catch {
+      return send(res, 400, { error: "Invalid JSON body" });
+    }
 
     const {
       text = "",
@@ -259,7 +293,7 @@ export default async function handler(req, res) {
       originalName = "Contract",
       mime = "",
       role = "signer",
-      targetLang = "en"       // UI language selector
+      targetLang = "en", // UI language selector
     } = body || {};
 
     if (!text && !imageDataURI) {
@@ -310,20 +344,22 @@ RULES:
 - German translations must be concise (10–15 chars shorter).`;
 
     // USER CONTENT FOR MODEL
-    const userContent =
-      imageDataURI
-        ? [
-            { type: "text", text: `Role: ${role}\nOriginal file: ${originalName}\nOCR then analyze.` },
-            { type: "image_url", image_url: { url: imageDataURI } }
-          ]
-        : [
-            {
-              type: "text",
-              text:
-                `Role: ${role}\nOriginal file: ${originalName}\nAnalyze this contract:\n` +
-                String(text).slice(0, 110000)
-            }
-          ];
+    const userContent = imageDataURI
+      ? [
+          {
+            type: "text",
+            text: `Role: ${role}\nOriginal file: ${originalName}\nOCR then analyze.`,
+          },
+          { type: "image_url", image_url: { url: imageDataURI } },
+        ]
+      : [
+          {
+            type: "text",
+            text:
+              `Role: ${role}\nOriginal file: ${originalName}\nAnalyze this contract:\n` +
+              String(text).slice(0, 110000),
+          },
+        ];
 
     // --------------------------------------
     // OPENAI CALL — FAST MODEL
@@ -333,8 +369,8 @@ RULES:
       openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${SECRET}`,
-          "Content-Type": "application/json"
+          Authorization: `Bearer ${SECRET}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: "gpt-4.1-mini",
@@ -342,9 +378,9 @@ RULES:
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: system },
-            { role: "user", content: userContent }
-          ]
-        })
+            { role: "user", content: userContent },
+          ],
+        }),
       });
     } catch (err) {
       return send(res, 500, { error: "OpenAI network error: " + err.message });
@@ -381,33 +417,37 @@ RULES:
     const trIn = parsed.translations || {};
     const translationsOut = {};
 
-    SUPPORTED_LANGS.forEach(code => {
+    SUPPORTED_LANGS.forEach((code) => {
       const src = trIn[code] || {};
       translationsOut[code] = {
         title: cap(src.title || "", 200),
-        summary: (src.summary || []).map(s => cap(s, 320)).slice(0, 3),
-        mainClauses: (src.mainClauses || []).map(s => stripLead(cap(s, 900))).slice(0, 5),
-        potentialIssues: (src.potentialIssues || []).map(s => stripLead(cap(s, 1000))).slice(0, 5),
-        smartSuggestions: (src.smartSuggestions || []).map(s => stripLead(cap(s, 250))).slice(0, 3),
-        scoreLine: cap(src.scoreLine || "", 280)
+        summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
+        mainClauses: (src.mainClauses || [])
+          .map((s) => stripLead(cap(s, 900)))
+          .slice(0, 5),
+        potentialIssues: (src.potentialIssues || [])
+          .map((s) => stripLead(cap(s, 1000)))
+          .slice(0, 5),
+        smartSuggestions: (src.smartSuggestions || [])
+          .map((s) => stripLead(cap(s, 250)))
+          .slice(0, 3),
+        scoreLine: cap(src.scoreLine || "", 280),
       };
     });
 
     const sc = parsed.analysis.scoreChecker || {};
     const scVal = clamp(sc.value);
 
-    let verdict =
-      scVal < 34 ? "unsafe" :
-      scVal < 67 ? "safe" :
-      "verySafe";
+    let verdict = scVal < 34 ? "unsafe" : scVal < 67 ? "safe" : "verySafe";
 
     return send(res, 200, {
       contractName: parsed.contractName || originalName,
-      contractTitle: parsed.contractTitle || parsed.contractName || originalName,
+      contractTitle:
+        parsed.contractTitle || parsed.contractName || originalName,
       role: parsed.role === "writer" ? "writer" : "signer",
       detectedLang: firstRenderLang,
       targetLang: uiLang,
-      ui: UI[firstRenderLang],  // FIRST RENDER IN DETECTED LANGUAGE
+      ui: UI[firstRenderLang], // FIRST RENDER IN DETECTED LANGUAGE
 
       analysis: {
         summary: parsed.analysis.summary || [],
@@ -415,13 +455,13 @@ RULES:
           value: clamp(parsed.analysis.risk.value),
           note: cap(parsed.analysis.risk.note, 280),
           band: parsed.analysis.risk.band,
-          safety: parsed.analysis.risk.safety
+          safety: parsed.analysis.risk.safety,
         },
         clarity: {
           value: clamp(parsed.analysis.clarity.value),
           note: cap(parsed.analysis.clarity.note, 280),
           band: parsed.analysis.clarity.band,
-          safety: parsed.analysis.clarity.safety
+          safety: parsed.analysis.clarity.safety,
         },
         mainClauses: parsed.analysis.mainClauses || [],
         potentialIssues: parsed.analysis.potentialIssues || [],
@@ -432,14 +472,15 @@ RULES:
           band: parsed.analysis.scoreChecker.band,
           verdict,
           line: cap(parsed.analysis.scoreChecker.line, 280),
-          verdictLabel: UI[firstRenderLang][verdict]
-        }
+          verdictLabel: UI[firstRenderLang][verdict],
+        },
       },
 
-      translations: translationsOut
+      translations: translationsOut,
     });
-
   } catch (err) {
-    return send(res, 500, { error: "Could not analyze this file. Details: " + err.message });
+    return send(res, 500, {
+      error: "Could not analyze this file. Details: " + err.message,
+    });
   }
 }

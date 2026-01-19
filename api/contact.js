@@ -21,9 +21,17 @@ export default async function handler(req, res) {
     const smtpPass = process.env.SMTP_PASS;
     if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
       // Fallback: log message and return success for dev/local
-      console.warn("SMTP config missing. Logging contact form message instead of sending email.");
+      console.warn(
+        "SMTP config missing. Logging contact form message instead of sending email.",
+      );
       console.log({ name, phone, email, message });
-      return res.status(200).json({ ok: true, dev: true, message: "SMTP config missing. Message logged only." });
+      return res
+        .status(200)
+        .json({
+          ok: true,
+          dev: true,
+          message: "SMTP config missing. Message logged only.",
+        });
     }
 
     const transporter = nodemailer.createTransport({
@@ -32,8 +40,8 @@ export default async function handler(req, res) {
       secure: String(process.env.SMTP_SECURE || "true") === "true",
       auth: {
         user: smtpUser,
-        pass: smtpPass
-      }
+        pass: smtpPass,
+      },
       // tls: { rejectUnauthorized: false }
     });
 
@@ -46,7 +54,7 @@ export default async function handler(req, res) {
       `Email: ${email}`,
       "",
       "Message:",
-      message
+      message,
     ].join("\n");
 
     const html = `
@@ -55,7 +63,7 @@ export default async function handler(req, res) {
         <p><b>Name:</b> ${escapeHtml(name)}</p>
         <p><b>Phone:</b> ${escapeHtml(phone)}</p>
         <p><b>Email:</b> ${escapeHtml(email)}</p>
-        <p><b>Message:</b><br/>${escapeHtml(message).replace(/\n/g,"<br/>")}</p>
+        <p><b>Message:</b><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
       </div>
     `;
 
@@ -65,7 +73,7 @@ export default async function handler(req, res) {
       subject,
       text,
       html,
-      replyTo: email
+      replyTo: email,
     });
 
     return res.status(200).json({ ok: true });
