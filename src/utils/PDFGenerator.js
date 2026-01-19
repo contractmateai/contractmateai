@@ -1,29 +1,21 @@
 /**
  * PDF Generator Module for SignSense Analysis Reports
  * Handles all PDF generation functionality independently from the web interface
+ * This is the proper layout version of the PDF generator
  */
+import { jsPDF } from "jspdf";
 
 class PDFGenerator {
   constructor() {
-    // this.ASSETS = {
-    //   logo: "https://i.imgur.com/aRIGT9V.png",
-    //   risk: "https://i.imgur.com/hSkzUQu.png",
-    //   clarity: "https://i.imgur.com/3J3mzur.png",
-    //   pro: "https://i.imgur.com/FLqsaQJ.png",
-    //   fav: "https://i.imgur.com/GIAYFBC.png",
-    //   dead: "https://i.imgur.com/BbyV5gF.png",
-    //   score: "https://i.imgur.com/H47wt5e.png",
-    //   confidence: "https://i.imgur.com/GzPeaz5.png",
-    // };
     this.ASSETS = {
-      logo: "assets/icons/logo.png",
-      risk: "assets/icons/riskIcon.png",
-      clarity: "assets/icons/clarityIcon.png",
-      pro: "assets/icons/proIcon.png",
-      fav: "assets/icons/favIcon.png",
-      dead: "assets/icons/deadIcon.png",
-      score: "assets/icons/scoreIcon.png",
-      confidence: "assets/icons/confidenceIcon.png",
+      logo: "https://i.imgur.com/aRIGT9V.png",
+      risk: "https://i.imgur.com/hSkzUQu.png",
+      clarity: "https://i.imgur.com/3J3mzur.png",
+      pro: "https://i.imgur.com/FLqsaQJ.png",
+      fav: "https://i.imgur.com/GIAYFBC.png",
+      dead: "https://i.imgur.com/BbyV5gF.png",
+      score: "https://i.imgur.com/H47wt5e.png",
+      confidence: "https://i.imgur.com/GzPeaz5.png",
     };
 
     // Centralized Style Configuration
@@ -45,10 +37,8 @@ class PDFGenerator {
       TITLE_CONTENT_SPACING: 24,
 
       // Layout Gaps
-      // COLUMN_GAP: 24,
       ROW_GAP: 26,
       SMALL_GAP: 14,
-      // MEDIUM_GAP: 22,
 
       // Card & Box Styling
       BOX_BORDER_WIDTH: 2,
@@ -114,14 +104,19 @@ class PDFGenerator {
 
   /* ===== Image Utilities ===== */
   async imgToDataURL(url) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Image fetch failed " + res.status);
-    const buf = await res.arrayBuffer();
-    let binary = "";
-    const bytes = new Uint8Array(buf);
-    for (let i = 0; i < bytes.length; i++)
-      binary += String.fromCharCode(bytes[i]);
-    return "data:image/png;base64," + btoa(binary);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Image fetch failed " + res.status);
+      const buf = await res.arrayBuffer();
+      let binary = "";
+      const bytes = new Uint8Array(buf);
+      for (let i = 0; i < bytes.length; i++)
+        binary += String.fromCharCode(bytes[i]);
+      return "data:image/png;base64," + btoa(binary);
+    } catch (e) {
+      console.warn(`Failed to load image: ${url}`, e);
+      return null;
+    }
   }
 
   /* ===== Color Management ===== */
@@ -167,23 +162,17 @@ class PDFGenerator {
   /* ===== Canvas-based Chart Generation ===== */
   gradientBarPNG(width, height = 15, indPos) {
     const c = document.createElement("canvas");
-    // Use higher resolution for better quality
     const scale = 2;
     c.width = width * scale;
-    c.height = (height + 20) * scale; // extra for indicator
+    c.height = (height + 20) * scale;
     const ctx = c.getContext("2d");
 
-    // Scale context for high-DPI rendering
     ctx.scale(scale, scale);
-
-    // Enable better anti-aliasing
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
-    // Precise rounded bar rendering
     const r = height / 2;
 
-    // Create precise clipping path for rounded rectangle
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(r, 10);
@@ -194,25 +183,23 @@ class PDFGenerator {
     ctx.closePath();
     ctx.clip();
 
-    // Enhanced gradient with smoother transitions
     const grad = ctx.createLinearGradient(0, 0, width, 0);
-    grad.addColorStop(0, "#fe0000"); // Pure red
-    grad.addColorStop(0.45, "#ffd166"); // Gold
-    grad.addColorStop(1, "#28e070"); // Green
+    grad.addColorStop(0, "#fe0000");
+    grad.addColorStop(0.45, "#ffd166");
+    grad.addColorStop(1, "#28e070");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 10, width, height);
 
     ctx.restore();
 
-    // Precise indicator line perfectly centered with the bar
     const pos = Math.max(0, Math.min(1, indPos)) * width;
-    const extension = 2; // Same extension above and below the bar
+    const extension = 2;
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 3;
-    ctx.lineCap = "round"; // Rounded line caps for better appearance
+    ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo(pos, 10 - extension); // Start: bar top (10) minus extension
-    ctx.lineTo(pos, 10 + height + extension); // End: bar bottom (10 + height) plus extension
+    ctx.moveTo(pos, 10 - extension);
+    ctx.lineTo(pos, 10 + height + extension);
     ctx.stroke();
 
     return c.toDataURL("image/png");
@@ -220,32 +207,26 @@ class PDFGenerator {
 
   donutPNG(pct, color = "#28e070", size = 150) {
     const c = document.createElement("canvas");
-    // Use higher resolution for better quality
     const scale = 2;
     c.width = size * scale;
     c.height = size * scale;
     const ctx = c.getContext("2d");
 
-    // Scale context for high-DPI rendering
     ctx.scale(scale, scale);
-
-    // Enable better anti-aliasing
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
     const cx = size / 2,
       cy = size / 2;
-    const ringW = 10; // Fixed 10px stroke width
+    const ringW = 10;
     const r = Math.round(size * 0.42);
 
-    // Background track with precise rendering
     ctx.lineWidth = ringW;
     ctx.strokeStyle = "#000";
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2, false);
     ctx.stroke();
 
-    // Value arc with enhanced precision
     const a0 = -Math.PI / 2;
     const a1 = a0 + (Math.max(0, Math.min(100, pct)) / 100) * Math.PI * 2;
     ctx.lineCap = "round";
@@ -255,13 +236,11 @@ class PDFGenerator {
     ctx.arc(cx, cy, r, a0, a1, false);
     ctx.stroke();
 
-    // White center with precise edges
     ctx.fillStyle = "#fff";
     ctx.beginPath();
     ctx.arc(cx, cy, r - ringW + 4, 0, Math.PI * 2, false);
     ctx.fill();
 
-    // % text
     ctx.fillStyle = "#000";
     ctx.font = `bold ${Math.round(size * 0.26)}px Poppins, Arial`;
     ctx.textAlign = "center";
@@ -273,22 +252,17 @@ class PDFGenerator {
 
   pillBarPNG(pct, width, height = 20, fill = "#9ef0b6") {
     const c = document.createElement("canvas");
-    // Use higher resolution for better quality
     const scale = 2;
     c.width = width * scale;
     c.height = height * scale;
     const ctx = c.getContext("2d");
 
-    // Scale context for high-DPI rendering
     ctx.scale(scale, scale);
-
-    // Enable better anti-aliasing
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
     const r = height / 2;
 
-    // Draw black rounded container background with more precise rendering
     ctx.fillStyle = "#000";
     ctx.beginPath();
     ctx.moveTo(r, 0);
@@ -299,15 +273,13 @@ class PDFGenerator {
     ctx.closePath();
     ctx.fill();
 
-    // Inner progress bar with more precise insets for cleaner appearance
-    const borderWidth = 1.5; // Slightly thicker border for better definition
+    const borderWidth = 1.5;
     const innerWidth = width - borderWidth * 2;
     const innerHeight = height - borderWidth * 2;
     const innerR = innerHeight / 2;
     const offsetX = borderWidth;
     const offsetY = borderWidth;
 
-    // Create precise clipping path for inner rounded shape
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(offsetX + innerR, offsetY);
@@ -330,21 +302,17 @@ class PDFGenerator {
     ctx.closePath();
     ctx.clip();
 
-    // Fill to percentage with more precise rounded edges
     const inner = Math.max(0, Math.min(100, pct)) / 100;
     const progressWidth = innerWidth * inner;
 
     if (progressWidth > 0) {
       ctx.fillStyle = fill;
 
-      // Use sub-pixel precision for smoother curves
       const minRadius = Math.min(innerR, progressWidth / 2);
 
       ctx.beginPath();
 
       if (progressWidth >= innerWidth - 0.1) {
-        // Account for floating point precision
-        // Full progress - complete rounded rectangle with precise curves
         ctx.moveTo(offsetX + innerR, offsetY);
         ctx.lineTo(offsetX + innerWidth - innerR, offsetY);
         ctx.arc(
@@ -365,7 +333,6 @@ class PDFGenerator {
           false,
         );
       } else if (progressWidth > innerR * 1.8) {
-        // Partial progress with precise rounded right edge
         const rightCenterX = offsetX + progressWidth - minRadius;
         ctx.moveTo(offsetX + innerR, offsetY);
         ctx.lineTo(rightCenterX, offsetY);
@@ -387,7 +354,6 @@ class PDFGenerator {
           false,
         );
       } else {
-        // Small progress - smooth left rounded edge only
         ctx.moveTo(offsetX + innerR, offsetY);
         ctx.lineTo(offsetX + progressWidth, offsetY);
         ctx.lineTo(offsetX + progressWidth, offsetY + innerHeight);
@@ -422,18 +388,6 @@ class PDFGenerator {
       this.STYLE.BOX_CORNER_RADIUS,
       this.STYLE.BOX_CORNER_RADIUS,
     );
-  }
-
-  tagWithIcon(doc, x, y, icon, label) {
-    // black chip behind title - reduced padding
-    doc.setFillColor(0, 0, 0);
-    doc.roundedRect(x, y, doc.getTextWidth(label) + 64, 24, 10, 10, "F");
-    if (icon) doc.addImage(icon, "PNG", x + 8, y + 3, 18, 18);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.setFontSize(12);
-    doc.text(label, x + 32, y + 17);
-    doc.setTextColor(0, 0, 0);
   }
 
   tinyText(doc, txt, x, y, w, lh = 14) {
@@ -471,10 +425,6 @@ class PDFGenerator {
     const H = doc.internal.pageSize.getHeight();
     const M = this.STYLE.PAGE_MARGIN;
 
-    // Logo positioned 10px from right edge on both pages
-    // if (logoImg) doc.addImage(logoImg, "PNG", W - 50, H - 120, 40, 40);
-
-    // centered + fully underlined disclaimer with "not" bold
     const parts = [
       "Kindly keep in mind that although you might find this report helpful, this is ",
       "not",
@@ -483,7 +433,7 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "normal");
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    const y = H - 4; // Position text 4px from bottom of page
+    const y = H - 4;
     let w = 0;
     parts.forEach((p) => (w += doc.getTextWidth(p)));
     let xx = (W - w) / 2;
@@ -496,17 +446,13 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "normal");
     doc.text(parts[2], xx, y);
     doc.setLineWidth(0.8);
-    doc.line((W - w) / 2, y + 1, (W + w) / 2, y + 1); // Underline below text
+    doc.line((W - w) / 2, y + 1, (W + w) / 2, y + 1);
 
-    // PAGE container appears on both pages - left aligned with straight left edge, rounded right edge
-    const pageContainerWidth = 100; // Same width as SignSense container
-    const containerHeight = 24; // Same height as other containers
+    const pageContainerWidth = 100;
+    const containerHeight = 24;
     doc.setFillColor(0, 0, 0);
 
-    // Left-aligned: straight left edge (flush with page), rounded right edge
-    // Main rectangle (straight left side)
     doc.rect(0, H - 44, pageContainerWidth - 5, containerHeight, "F");
-    // Right rounded part
     doc.roundedRect(
       pageContainerWidth - 10,
       H - 44,
@@ -525,64 +471,50 @@ class PDFGenerator {
       align: "center",
     });
 
-    // SignSense container - page 1: left side, page 2: right side
-    const pillW = pageContainerWidth - 20; // PAGE container width minus 20px padding (10px each side)
-    const pillX = page === 1 ? 10 : W - pillW - 10; // Page 1: 10px from left, Page 2: 10px from right
-    const pillHeight = 24; // Same height as PAGE container
+    const pillW = pageContainerWidth - 20;
+    const pillX = page === 1 ? 10 : W - pillW - 10;
+    const pillHeight = 24;
     doc.setFillColor(0, 0, 0);
     doc.roundedRect(pillX, H - 78, pillW, pillHeight, 5, 5, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(10);
 
-    // Calculate icon and text positioning
     const containerPadding = 3;
-    const iconSize = pillHeight - 2 * containerPadding - 4; // Smaller icon with additional 4px padding
-    const iconTextGap = 4; // Gap between icon and text
+    const iconSize = pillHeight - 2 * containerPadding - 4;
+    const iconTextGap = 4;
 
     if (logoImg) {
-      // Calculate total content width (icon + gap + text)
       const textWidth = doc.getTextWidth("SignSense");
       const totalContentWidth = iconSize + iconTextGap + textWidth;
-
-      // Center the entire content block within container
       const contentStartX = pillX + (pillW - totalContentWidth) / 2;
 
-      // Position icon on the left
       const iconX = contentStartX;
-      const iconY = H - 78 + (pillHeight - iconSize) / 2; // Vertically center icon within container
+      const iconY = H - 78 + (pillHeight - iconSize) / 2;
       doc.addImage(logoImg, "PNG", iconX, iconY, iconSize, iconSize);
 
-      // Position text next to icon
       const textX = contentStartX + iconSize + iconTextGap;
       const signSenseTextY = H - 78 + pillHeight / 2 + 4;
       doc.text("SignSense", textX, signSenseTextY);
     } else {
-      // No icon - center text as before
       const signSenseTextY = H - 78 + pillHeight / 2 + 4;
       doc.text("SignSense", pillX + pillW / 2, signSenseTextY, {
         align: "center",
       });
     }
 
-    // Page 2 extras: © container
     if (page === 2) {
-      // Copyright text in container with same width as PAGE container - split into 2 rows
       const firstLine = "© 2025 SignSense.";
       const secondLine = "All rights reserved.";
 
-      // Use same width as PAGE container
       doc.setFont(doc.getFont().fontName, "normal");
-      doc.setFontSize(7); // Reduced font size for better spacing
-      const copyrightWidth = 100; // Same width as PAGE container
-      const copyrightHeight = 24; // Same as PAGE container
-      const copyrightX = W - copyrightWidth; // Align to right edge
+      doc.setFontSize(7);
+      const copyrightWidth = 100;
+      const copyrightHeight = 24;
+      const copyrightX = W - copyrightWidth;
 
-      // Draw right-aligned container with rounded left corners only
       doc.setFillColor(0, 0, 0);
 
-      // Right-aligned: straight right edge (flush with page), rounded left edge
-      // Main rectangle (straight right side)
       doc.rect(
         copyrightX + 5,
         H - 44,
@@ -590,25 +522,20 @@ class PDFGenerator {
         copyrightHeight,
         "F",
       );
-      // Left rounded part
       doc.roundedRect(copyrightX, H - 44, 10, copyrightHeight, 5, 5, "F");
       doc.setTextColor(255, 255, 255);
 
-      // Position text with proper vertical centering: center both labels as a block within container
-      const labelMargin = 3; // Small margin between labels
-      const lineHeight = 6; // Height per line of text (reduced for smaller font)
+      const labelMargin = 3;
+      const lineHeight = 6;
       const containerTop = H - 44;
 
-      // Calculate total content height (both lines + margin between them)
       const totalContentHeight = lineHeight * 2 + labelMargin;
 
-      // Center the content block within the 24px container
       const contentStartY =
         containerTop + (copyrightHeight - totalContentHeight) / 2;
 
-      // Position lines from the centered starting point
-      const firstLineY = contentStartY + lineHeight; // First line baseline
-      const secondLineY = firstLineY + labelMargin + lineHeight; // Second line baseline
+      const firstLineY = contentStartY + lineHeight;
+      const secondLineY = firstLineY + labelMargin + lineHeight;
 
       doc.text(firstLine, copyrightX + 10, firstLineY);
       doc.text(secondLine, copyrightX + 10, secondLineY);
@@ -617,25 +544,11 @@ class PDFGenerator {
 
   /* ===== Main PDF Generation Function ===== */
   async generatePDF(filename, data, lang) {
-    if (!window.jspdf) {
-      throw new Error(
-        "jsPDF library not loaded. Please include jsPDF before using this module.",
-      );
-    }
-
-    const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
-    // Setup fonts
     await this.ensurePoppins(doc);
     const FONT =
       doc.getFontList && doc.getFontList().Poppins ? "Poppins" : "helvetica";
-
-    // const drawTestLine = (y) => {
-    //   doc.setDrawColor(255, 0, 0);
-    //   doc.setLineWidth(4);
-    //   doc.line(M, y, W, y);
-    // };
 
     const fonftSize = {
       xsm: 10,
@@ -652,18 +565,14 @@ class PDFGenerator {
 
       doc.setFontSize(size);
       doc.text(text, M, y);
-
-      //   const textHeight = doc.getTextDimensions(text).h;
     };
 
     reg();
 
-    // Page metrics
     const W = doc.internal.pageSize.getWidth();
     const H = doc.internal.pageSize.getHeight();
     const M = this.STYLE.PAGE_MARGIN;
 
-    // Preload icons
     const IM = {};
     for (const k in this.ASSETS) {
       try {
@@ -677,7 +586,6 @@ class PDFGenerator {
     this.drawHeader(doc);
     let y = this.STYLE.CONTENT_START_Y;
 
-    // Title - split into bold label and regular value
     bold();
     doc.setFontSize(fonftSize.lg);
     doc.text("Title: ", M, y);
@@ -687,7 +595,6 @@ class PDFGenerator {
     doc.text(data.title || "—", M + labelWidth, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN + 20;
 
-    // Summary card
     let sTop = y + this.STYLE.SECTION_HEADER_SPACING,
       sY = sTop;
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
@@ -717,45 +624,37 @@ class PDFGenerator {
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
-    // drawTestLine();
-
-    // Percentage Breakdown
-    const extendedMarginPage1 = M - this.STYLE.BOX_MARGIN; // Match the Summary box margin
-    titleText("Percentage Breakdown", extendedMarginPage1, y);
+    titleText("Percentage Breakdown", M - this.STYLE.BOX_MARGIN, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN;
 
     const colGap = this.STYLE.SMALL_GAP;
-    const availableWidthPage1 = W - extendedMarginPage1 * 2; // Total width from extended margins
+    const availableWidthPage1 = W - (M - this.STYLE.BOX_MARGIN) * 2;
     const colW = (availableWidthPage1 - colGap) / 2;
     const cardH = this.STYLE.CARD_HEIGHT_DONUT;
-    const leftX = extendedMarginPage1;
-    const rightX = extendedMarginPage1 + colW + colGap;
+    const leftX = M - this.STYLE.BOX_MARGIN;
+    const rightX = leftX + colW + colGap;
 
-    // RISK card - Two column layout
     this.drawBox(doc, leftX, y, colW, cardH);
 
     const riskPct = Number(data?.risk?.value ?? 0);
     const riskBand = riskPct <= 25 ? "green" : riskPct <= 58 ? "orange" : "red";
     const riskColor = this.getColorFor("risk", riskPct, riskBand);
 
-    // Left column: Donut chart with reduced padding
     const chartSize = 116;
-    const chartX = leftX + 10; // Reduced from 20 to 10
-    const chartY = y + (cardH - chartSize) / 2; // Vertically center the chart
+    const chartX = leftX + 10;
+    const chartY = y + (cardH - chartSize) / 2;
     const riskImg = this.donutPNG(riskPct, riskColor, 150);
     doc.addImage(riskImg, "PNG", chartX, chartY, chartSize, chartSize);
 
-    // Right column: Three components with dynamic height allocation
     const cardPadding = 10;
     const columnGap = 10;
     const rightColX = leftX + cardPadding + chartSize + columnGap;
     const rightColWidth = colW - 2 * cardPadding - chartSize - columnGap;
-    const componentGap = 10; // 10px gap between components
+    const componentGap = 10;
 
-    let rightY = y + 8; // Reduced top padding from 16 to 8
-    const rightColBottom = y + cardH - 8; // Bottom of the right column with padding
+    let rightY = y + 8;
+    const rightColBottom = y + cardH - 8;
 
-    // Component 1: Risk Level tag with black container - constrained width (TOP - FIXED)
     const tagWidth = Math.min(
       doc.getTextWidth("Risk Level") + 64,
       rightColWidth,
@@ -777,15 +676,13 @@ class PDFGenerator {
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
-    // Position text accounting for icon space (icon is 18px wide + 8px left padding + reduced margin)
-    const riskTextStartX = rightColX + 29; // Start after icon space (8px padding + 18px icon + 3px margin)
+    const riskTextStartX = rightColX + 29;
     doc.text("Risk Level", riskTextStartX, rightY + 16);
     doc.setTextColor(0, 0, 0);
 
-    const topComponentHeight = 30; // Fixed height for risk level tag
-    const bottomComponentHeight = 14; // Fixed height for status badge (10px square + some padding)
+    const topComponentHeight = 30;
+    const bottomComponentHeight = 14;
 
-    // Component 3: Status badge with colored square - positioned at bottom (BOTTOM - FIXED)
     const statusY = rightColBottom - bottomComponentHeight;
     const dotCol = this.getDotColor(riskBand);
     doc.setFillColor(...dotCol);
@@ -800,12 +697,9 @@ class PDFGenerator {
       statusY + 11,
     );
 
-    // Component 2: General description text - takes remaining height (MIDDLE - DYNAMIC)
     const textStartY = rightY + topComponentHeight + componentGap;
     const textEndY = statusY - componentGap;
-    const availableTextHeight = textEndY - textStartY;
 
-    // Position text to fill the available middle space
     this.tinyText(
       doc,
       data.risk?.note ||
@@ -816,16 +710,14 @@ class PDFGenerator {
       14,
     );
 
-    // CLARITY card - Two column layout (same structure as RISK card)
     this.drawBox(doc, rightX, y, colW, cardH);
 
     const clarPct = Number(data?.clarity?.value ?? 0);
     const clarBand = clarPct >= 78 ? "green" : clarPct >= 49 ? "orange" : "red";
     const clarColor = this.getColorFor("clarity", clarPct, clarBand);
 
-    // Left column: Donut chart with reduced padding
-    const clarityChartX = rightX + 10; // Reduced from 20 to 10
-    const clarityChartY = y + (cardH - chartSize) / 2; // Vertically center the chart
+    const clarityChartX = rightX + 10;
+    const clarityChartY = y + (cardH - chartSize) / 2;
     const clarImg = this.donutPNG(clarPct, clarColor, 150);
     doc.addImage(
       clarImg,
@@ -836,14 +728,12 @@ class PDFGenerator {
       chartSize,
     );
 
-    // Right column: Three components with dynamic height allocation
     const clarityRightColX = rightX + cardPadding + chartSize + columnGap;
     const clarityRightColWidth = colW - 2 * cardPadding - chartSize - columnGap;
 
-    let clarityRightY = y + 8; // Reduced top padding from 16 to 8
-    const clarityRightColBottom = y + cardH - 8; // Bottom of the right column with padding
+    let clarityRightY = y + 8;
+    const clarityRightColBottom = y + cardH - 8;
 
-    // Component 1: Clause Clarity tag with black container - constrained width (TOP - FIXED)
     const clarityTagWidth = Math.min(
       doc.getTextWidth("Clause Clarity") + 64,
       clarityRightColWidth,
@@ -871,12 +761,10 @@ class PDFGenerator {
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
-    // Position text accounting for icon space (icon is 18px wide + 8px left padding + reduced margin)
-    const textStartX = clarityRightColX + 29; // Start after icon space (8px padding + 18px icon + 3px margin)
-    doc.text("Clause Clarity", textStartX, clarityRightY + 16);
+    const clarityTextStartX = clarityRightColX + 29;
+    doc.text("Clause Clarity", clarityTextStartX, clarityRightY + 16);
     doc.setTextColor(0, 0, 0);
 
-    // Component 3: Status badge with colored square - positioned at bottom (BOTTOM - FIXED)
     const clarityStatusY = clarityRightColBottom - bottomComponentHeight;
     const clarityDotCol = this.getDotColor(clarBand);
     doc.setFillColor(...clarityDotCol);
@@ -891,12 +779,8 @@ class PDFGenerator {
       clarityStatusY + 11,
     );
 
-    // Component 2: General description text - takes remaining height (MIDDLE - DYNAMIC)
     const clarityTextStartY = clarityRightY + topComponentHeight + componentGap;
-    const clarityTextEndY = clarityStatusY - componentGap;
-    const clarityAvailableTextHeight = clarityTextEndY - clarityTextStartY;
 
-    // Position text to fill the available middle space
     this.tinyText(
       doc,
       data.clarity?.note ||
@@ -907,10 +791,8 @@ class PDFGenerator {
       14,
     );
 
-    // Bars + Clauses row
     y += cardH + this.STYLE.ROW_GAP;
 
-    // Extended margin for Statistical Bars and Main Clauses alignment
     const extendedMarginPage1Bars = M - this.STYLE.BOX_MARGIN;
     const availableWidthPage1Bars = W - extendedMarginPage1Bars * 2;
     const colGapBars = this.STYLE.SMALL_GAP;
@@ -919,21 +801,15 @@ class PDFGenerator {
       leftXBars + (availableWidthPage1Bars - colGapBars) / 2 + colGapBars;
     const colWBars = (availableWidthPage1Bars - colGapBars) / 2;
 
-    // Left column: Statistical Bars
-    // bold();
-    // doc.setFontSize(16);
-    // doc.text("Statistical Bars", M, y);
-    // y += 12;
     titleText("Statistical Bars", leftXBars, y);
 
     const barRow = (label, pct, icon, xPos, yTop, width, metric) => {
-      const padding = 4; // Top and bottom padding
-      const rowGap = 5; // Gap between elements
-      const labelHeight = 14; // Font size for label
-      const barHeight = 10; // Progress bar height
-      const percentageHeight = 12; // Font size for percentage
+      const padding = 4;
+      const rowGap = 5;
+      const labelHeight = 14;
+      const barHeight = 10;
+      const percentageHeight = 12;
 
-      // Calculate total container height: padding + label + gap + bar + gap + percentage + padding
       const bH =
         padding +
         labelHeight +
@@ -946,50 +822,41 @@ class PDFGenerator {
 
       this.drawBox(doc, xPos, yTop, bW, bH);
 
-      // Icon circle container (if icon exists)
-      const iconSize = bH - padding * 2; // Circle height = container height minus top/bottom padding
-      const iconPadding = 8; // Padding inside the circle
-      const actualIconSize = iconSize - iconPadding * 2; // Icon size after padding
-      let contentStartX = xPos + 8; // Reduced left padding from 16 to 8
+      const iconSize = bH - padding * 2;
+      const iconPadding = 8;
+      const actualIconSize = iconSize - iconPadding * 2;
+      let contentStartX = xPos + 8;
 
       if (icon) {
-        // Draw circle container for icon
         const iconCenterX = xPos + 8 + iconSize / 2;
-        const iconCenterY = yTop + padding + iconSize / 2; // Respect top padding
+        const iconCenterY = yTop + padding + iconSize / 2;
 
-        // Draw thin black circle border
-        doc.setDrawColor(0, 0, 0); // Black border
-        doc.setLineWidth(2); // Slightly thicker border
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(2);
         doc.circle(iconCenterX, iconCenterY, iconSize / 2, "S");
 
-        // Add icon centered in circle - using full icon space without extra padding
-        const iconX = iconCenterX - (iconSize - 4) / 2; // 2px margin from border on each side
+        const iconX = iconCenterX - (iconSize - 4) / 2;
         const iconY = iconCenterY - (iconSize - 4) / 2;
         doc.addImage(icon, "PNG", iconX, iconY, iconSize - 4, iconSize - 4);
 
-        // Adjust content start position to account for icon circle
-        contentStartX = xPos + 8 + iconSize + 12; // Icon circle + gap
+        contentStartX = xPos + 8 + iconSize + 12;
       }
 
-      let innerY = yTop + padding; // Start with top padding
+      let innerY = yTop + padding;
 
-      // Label on top
       bold();
-      // Use smaller font size for longer "Confidence to sign freely" label
       const fontSize = label === "Confidence to sign freely" ? 12 : 14;
       doc.setFontSize(fontSize);
-      doc.text(label, contentStartX, innerY + labelHeight); // Add font height to Y position
-      innerY += labelHeight + rowGap; // Move down by label height + gap
+      doc.text(label, contentStartX, innerY + labelHeight);
+      innerY += labelHeight + rowGap;
 
-      // Full width bar chart in the middle (adjusted width if icon exists)
       const barColor = this.getColorFor(metric, pct);
       const barStartX = contentStartX;
-      const barWidth = icon ? bW - (contentStartX - xPos) - 8 : bW - 16; // Reduced right padding from 16 to 8
+      const barWidth = icon ? bW - (contentStartX - xPos) - 8 : bW - 16;
       const bar = this.pillBarPNG(pct, barWidth, barHeight, barColor);
       doc.addImage(bar, "PNG", barStartX, innerY, barWidth, barHeight);
-      innerY += barHeight + rowGap; // Move down by bar height + gap
+      innerY += barHeight + rowGap;
 
-      // Percentage aligned right at the bottom
       bold();
       doc.setFontSize(12);
       doc.text(`${pct}%`, xPos + bW - 8, innerY + percentageHeight - 2, {
@@ -997,7 +864,6 @@ class PDFGenerator {
       });
     };
 
-    // Get meter values from data or use defaults
     const meters = data.meters || {};
 
     let barY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
@@ -1035,7 +901,6 @@ class PDFGenerator {
     );
     barY += this.STYLE.BAR_ROW_SPACING;
 
-    // Right column: Main Clauses (aligned to barsTop)
     const clX = rightXBars,
       clY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
 
@@ -1044,7 +909,6 @@ class PDFGenerator {
 
     let listY = clY + 26;
     const listW = colWBars;
-    // Calculate height so bottom border is 20px from page bottom
     const bottomMargin = 20;
     const containerHeight = H - clY - bottomMargin;
     this.drawBox(doc, clX, clY, listW, containerHeight);
@@ -1053,9 +917,9 @@ class PDFGenerator {
     doc.setTextColor(20, 20, 20);
     const items = (Array.isArray(data.clauses) ? data.clauses : []).slice(0, 5);
     items.forEach((t, i) => {
-      doc.text(`${i + 1}.`, clX + 10, listY); // Reduced left padding from 20 to 10
+      doc.text(`${i + 1}.`, clX + 10, listY);
       listY =
-        this.tinyText(doc, String(t), clX + 26, listY, listW - 32, 16) + 8; // Reduced padding: 26 instead of 36, and 32 instead of 48
+        this.tinyText(doc, String(t), clX + 26, listY, listW - 32, 16) + 8;
     });
     doc.setTextColor(0, 0, 0);
 
@@ -1066,7 +930,6 @@ class PDFGenerator {
     this.drawHeader(doc);
     let y2 = this.STYLE.CONTENT_START_Y;
 
-    // Potential Issues
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     doc.text("Potential Issues that might occur", M, y2);
@@ -1074,38 +937,28 @@ class PDFGenerator {
     let iTop = y2 + this.STYLE.SECTION_HEADER_SPACING,
       iY = iTop + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
 
-    // drawTestLine(iTop);
-
     const iW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
-    console.log("iW", iW);
 
     (Array.isArray(data.issues) ? data.issues : []).forEach((it) => {
       reg();
       doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
       doc.setTextColor(20, 20, 20);
-      doc.text("•", M + 10, iY); // Reduced left padding from 16 to 10
+      doc.text("•", M + 10, iY);
       doc.setTextColor(0, 0, 0);
       iY =
         this.tinyText(
           doc,
           String(it),
-          M + 24, // Reduced left padding from 30 to 24
+          M + 24,
           iY,
-          W - M * 2 - 32, // Reduced total horizontal padding from 40 to 32
+          W - M * 2 - 32,
           this.STYLE.TEXT_LINE_HEIGHT,
         ) + this.STYLE.TEXT_ITEM_SPACING;
     });
-    this.drawBox(
-      doc,
-      M - this.STYLE.BOX_MARGIN,
-      iTop, // Start box 6px above the title
-      iW,
-      iY - y2, // Adjust height accordingly
-    );
+    this.drawBox(doc, M - this.STYLE.BOX_MARGIN, iTop, iW, iY - y2);
 
     y2 = iTop + (iY - iTop) + this.STYLE.SECTION_MARGIN_BOTTOM + 8;
 
-    // Smart Suggestions
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     doc.text("Smart Suggestions", M, y2);
@@ -1118,40 +971,31 @@ class PDFGenerator {
         reg();
         doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
         doc.setTextColor(20, 20, 20);
-        doc.text(num, M + 10, s2Y); // Reduced left padding from 16 to 10
+        doc.text(num, M + 10, s2Y);
         doc.setTextColor(0, 0, 0);
         s2Y =
           this.tinyText(
             doc,
             String(s),
-            M + 24, // Reduced left padding from 30 to 24
+            M + 24,
             s2Y,
-            W - M * 2 - 32, // Reduced total horizontal padding from 40 to 32
+            W - M * 2 - 32,
             this.STYLE.TEXT_LINE_HEIGHT,
           ) + this.STYLE.TEXT_ITEM_SPACING;
       },
     );
     const ssCardHeight = s2Y - y2 + this.STYLE.BOX_CONTENT_PADDING;
 
-    this.drawBox(
-      doc,
-      M - this.STYLE.BOX_MARGIN,
-      s2Top, // Start box 6px above the title
-      iW,
-      ssCardHeight, // Adjust height accordingly
-    );
-    // y2 = s2Top + (s2Y - s2Top) - y + this.STYLE.SECTION_MARGIN_BOTTOM;
+    this.drawBox(doc, M - this.STYLE.BOX_MARGIN, s2Top, iW, ssCardHeight);
     y2 += ssCardHeight + this.STYLE.SECTION_MARGIN_BOTTOM;
 
-    // Score + Confidence row
     const gap = this.STYLE.SMALL_GAP;
-    const extendedMargin = M - this.STYLE.BOX_MARGIN; // Match the Smart Suggestions box margin
-    const availableWidth = W - extendedMargin * 2; // Total width from extended margins
+    const extendedMargin = M - this.STYLE.BOX_MARGIN;
+    const availableWidth = W - extendedMargin * 2;
     const leftW = (availableWidth - gap) * 0.58;
     const rightW = availableWidth - gap - leftW;
     const rowH = this.STYLE.SCORE_CARD_HEIGHT;
 
-    // Score card - Two column layout (same structure as RISK/CLARITY cards)
     this.drawBox(doc, extendedMargin, y2, leftW, rowH);
 
     const scorePct = Math.round(Number(data?.clarity?.value ?? 0));
@@ -1159,9 +1003,8 @@ class PDFGenerator {
       scorePct >= 78 ? "green" : scorePct >= 49 ? "orange" : "red";
     const scoreColor = this.getColorFor("score", scorePct, scoreBand);
 
-    // Left column: Donut chart with same style and size as other charts
-    const scoreChartX = extendedMargin + 10; // Same padding as RISK/CLARITY
-    const scoreChartY = y2 + (rowH - chartSize) / 2; // Vertically center the chart
+    const scoreChartX = extendedMargin + 10;
+    const scoreChartY = y2 + (rowH - chartSize) / 2;
     const scoreDonut = this.donutPNG(scorePct, scoreColor, 150);
     doc.addImage(
       scoreDonut,
@@ -1172,15 +1015,13 @@ class PDFGenerator {
       chartSize,
     );
 
-    // Right column: Three components taking full width and remaining height
     const scoreRightColX = extendedMargin + cardPadding + chartSize + columnGap;
     const scoreRightColWidth = leftW - 2 * cardPadding - chartSize - columnGap;
 
-    let scoreRightY = y2 + 8; // Same top padding as other cards
-    const scoreRightColBottom = y2 + rowH - 8; // Bottom of the right column with padding
+    let scoreRightY = y2 + 8;
+    const scoreRightColBottom = y2 + rowH - 8;
 
-    // Component 1: Score Checker tag with black container - full width (TOP - FIXED)
-    const scoreTagWidth = scoreRightColWidth; // Use full width of right column
+    const scoreTagWidth = scoreRightColWidth;
     const scoreTextContainerHeight = 24;
     doc.setFillColor(0, 0, 0);
     doc.roundedRect(
@@ -1214,24 +1055,21 @@ class PDFGenerator {
     );
     doc.setTextColor(0, 0, 0);
 
-    const scoreTopComponentHeight = 30; // Fixed height for score checker tag
-    const scoreBottomComponentHeight = 14; // Fixed height for status badge (10px square + some padding)
+    const scoreTopComponentHeight = 30;
+    const scoreBottomComponentHeight = 14;
 
-    // Component 3: Gradient bar with indicator - positioned above status badge (BOTTOM-1 - FIXED)
-    const gradientBarHeight = 42; // Height including labels
+    const gradientBarHeight = 42;
     const scoreGradientY =
       scoreRightColBottom -
       gradientBarHeight -
       scoreBottomComponentHeight -
       componentGap;
 
-    // Gradient bar with indicator - full width of right column
     const scoreBarW = scoreRightColWidth;
     const indPos = scorePct / 100;
     const gradBar = this.gradientBarPNG(scoreBarW, 15, indPos);
     doc.addImage(gradBar, "PNG", scoreRightColX, scoreGradientY, scoreBarW, 42);
 
-    // Scale labels below gradient bar
     reg();
     doc.setFontSize(9);
     doc.text("Unsafe", scoreRightColX, scoreGradientY + 42);
@@ -1242,7 +1080,6 @@ class PDFGenerator {
       align: "right",
     });
 
-    // Component 4: Status badge with colored square - positioned at bottom (BOTTOM - FIXED)
     const scoreStatusY = scoreRightColBottom - scoreBottomComponentHeight;
     const scoreDotCol = this.getDotColor(scoreBand);
     doc.setFillColor(...scoreDotCol);
@@ -1259,13 +1096,9 @@ class PDFGenerator {
       scoreStatusY + 11,
     );
 
-    // Component 2: Description text - takes remaining height (MIDDLE - DYNAMIC)
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
-    // const scoreTextEndY = scoreGradientY - componentGap;
-    // const scoreAvailableTextHeight = scoreTextEndY - scoreTextStartY;
 
-    // Position text to fill the available middle space - full width
     this.tinyText(
       doc,
       data?.analysis?.scoreChecker?.line ||
@@ -1289,22 +1122,8 @@ class PDFGenerator {
 
     this.drawFooter(doc, 2, IM.logo);
 
-    // Save
     doc.save((filename || "SignSense_Report") + ".pdf");
-
-    // Open in new tab (optional)
-    // const blob = doc.output("blob");
-    // const url = URL.createObjectURL(blob);
-    // window.open(url, "_blank");
   }
 }
 
-// Export for use in other files
-if (typeof window !== "undefined") {
-  window.PDFGenerator = PDFGenerator;
-}
-
-// Also support module export if needed
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = PDFGenerator;
-}
+export default PDFGenerator;
