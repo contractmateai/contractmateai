@@ -269,23 +269,40 @@ export default async function handler(req, res) {
   if (!SECRET) return send(res, 500, { error: "Missing OPENAI_API_KEY" });
 
   try {
-    let raw = "";
-    await new Promise((resolve) => {
-      req.on("data", (c) => (raw += c));
-      req.on("end", resolve);
-    });
+    console.log(`[${new Date().toISOString()}] 📥 Handler called`);
 
-    const ct = (req.headers["content-type"] || "").toLowerCase();
-    if (!ct.includes("application/json")) {
-      return send(res, 415, { error: `Send application/json. Got: ${ct}` });
+    // Support both Express (req.body) and Vercel serverless (stream reading)
+    let body = req.body;
+
+    if (!body || typeof body !== "object") {
+      console.log(`[${new Date().toISOString()}] 📖 Reading request stream...`);
+      let raw = "";
+      await new Promise((resolve, reject) => {
+        req.on("data", (c) => (raw += c));
+        req.on("end", resolve);
+        req.on("error", reject);
+      });
+
+      const ct = (req.headers["content-type"] || "").toLowerCase();
+      if (!ct.includes("application/json")) {
+        return send(res, 415, { error: `Send application/json. Got: ${ct}` });
+      }
+
+      try {
+        body = raw ? JSON.parse(raw) : {};
+      } catch (err) {
+        console.error(
+          `[${new Date().toISOString()}] ❌ JSON parse error: ${err.message}`,
+        );
+        return send(res, 400, { error: "Invalid JSON body" });
+      }
+    } else {
+      console.log(`[${new Date().toISOString()}] ✅ Using Express parsed body`);
     }
 
-    let body = {};
-    try {
-      body = raw ? JSON.parse(raw) : {};
-    } catch {
-      return send(res, 400, { error: "Invalid JSON body" });
-    }
+    console.log(
+      `[${new Date().toISOString()}] 📥 Request body received. Size: ${JSON.stringify(body).length} bytes`,
+    );
 
     const {
       text = "",
@@ -363,40 +380,76 @@ RULES:
 
     // --------------------------------------
     // OPENAI CALL — FAST MODEL
+    // With AbortController timeout (60s)
     // --------------------------------------
     let openaiResp;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
     try {
+      console.log(
+        `[${new Date().toISOString()}] 🚀 Sending OpenAI request. Text length: ${String(text).length} chars`,
+      );
+
+      const requestBody = {
+        model: "gpt-4o-mini",
+        temperature: 0.15,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: userContent },
+        ],
+      };
+
       openaiResp = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${SECRET}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: "gpt-4.1-mini",
-          temperature: 0.15,
-          response_format: { type: "json_object" },
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: userContent },
-          ],
-        }),
+        signal: controller.signal,
+        body: JSON.stringify(requestBody),
       });
+      clearTimeout(timeoutId);
+      console.log(
+        `[${new Date().toISOString()}] ✅ OpenAI response received (status: ${openaiResp.status})`,
+      );
     } catch (err) {
-      return send(res, 500, { error: "OpenAI network error: " + err.message });
+      clearTimeout(timeoutId);
+      const msg =
+        err.name === "AbortError" ? "Request timeout (>60s)" : err.message;
+      console.error(
+        `[${new Date().toISOString()}] ❌ OpenAI network error: ${msg}`,
+      );
+      return send(res, 500, { error: "OpenAI error: " + msg });
     }
 
     if (!openaiResp.ok) {
       const errTxt = await openaiResp.text().catch(() => "");
+      console.error(
+        `[${new Date().toISOString()}] ❌ OpenAI HTTP error ${openaiResp.status}: ${errTxt}`,
+      );
       return send(res, 502, { error: "OpenAI request failed: " + errTxt });
     }
 
     let parsed = {};
     try {
+      console.log(
+        `[${new Date().toISOString()}] 📦 Parsing OpenAI JSON response...`,
+      );
       const resp = await openaiResp.json();
-      parsed = JSON.parse(resp?.choices?.[0]?.message?.content || "{}");
-    } catch {
-      return send(res, 500, { error: "Invalid JSON returned by model" });
+      const content = resp?.choices?.[0]?.message?.content || "{}";
+      parsed = JSON.parse(content);
+      console.log(
+        `[${new Date().toISOString()}] ✅ Successfully parsed analysis data`,
+      );
+    } catch (err) {
+      console.error(
+        `[${new Date().toISOString()}] ❌ Parse error: ${err.message}`,
+      );
+      return send(res, 500, {
+        error: "Invalid JSON returned by model: " + err.message,
+      });
     }
 
     // --------------------------------------

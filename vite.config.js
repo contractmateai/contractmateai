@@ -9,6 +9,11 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
+        timeout: 120000, // 2 minute timeout for slow requests
+        proxyTimeout: 120000,
+        logLevel: "debug",
+        // Prevent Vite from buffering large responses
+        ws: false,
       },
     },
   },
