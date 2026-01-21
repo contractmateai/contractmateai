@@ -917,7 +917,15 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     // Use the same value as the web report for favorability
-    const favorabilityPct = Math.round(Number(data.analysis?.bars?.favorabilityIndex ?? 50));
+    // Always use analysis.bars.favorabilityIndex if present, fallback only if missing
+    let favorabilityPct;
+    if (data.analysis && data.analysis.bars && data.analysis.bars.favorabilityIndex != null) {
+      favorabilityPct = Math.round(Number(data.analysis.bars.favorabilityIndex));
+    } else if (meters && meters.favorability != null) {
+      favorabilityPct = Math.round(Number(meters.favorability));
+    } else {
+      favorabilityPct = 50;
+    }
     barRow(
       "Favorability",
       favorabilityPct,
@@ -1137,7 +1145,15 @@ class PDFGenerator {
     );
 
     // Use the same value as the web report for confidence to sign
-    const confidencePct = Math.round(Number(data.analysis?.bars?.confidenceToSign ?? 70));
+    // Always use analysis.bars.confidenceToSign if present, fallback only if missing
+    let confidencePct;
+    if (data.analysis && data.analysis.bars && data.analysis.bars.confidenceToSign != null) {
+      confidencePct = Math.round(Number(data.analysis.bars.confidenceToSign));
+    } else if (meters && meters.confidence != null) {
+      confidencePct = Math.round(Number(meters.confidence));
+    } else {
+      confidencePct = 70;
+    }
     barRow(
       "Confidence to Sign",
       confidencePct,
