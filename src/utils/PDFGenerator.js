@@ -623,15 +623,16 @@ class PDFGenerator {
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
     sY += this.STYLE.TITLE_CONTENT_SPACING;
-    // Each sentence on a new line, use nearly full width
+    // Each sentence on a new line, use correct text width (subtract left/right padding)
     const summaryArr = Array.isArray(data.summary) ? data.summary : [data.summary];
+    const textWidth = sW - this.STYLE.CARD_PADDING * 2 - this.STYLE.BOX_MARGIN;
     summaryArr.forEach((sentence) => {
       sY = this.tinyText(
         doc,
         String(sentence),
         M + this.STYLE.CARD_PADDING,
         sY,
-        sW - 8, // nearly the full width of the box
+        textWidth,
         this.STYLE.TEXT_LINE_HEIGHT
       ) + this.STYLE.TEXT_ITEM_SPACING;
     });
@@ -916,16 +917,8 @@ class PDFGenerator {
     );
     barY += this.STYLE.BAR_ROW_SPACING;
 
-    // Use the same value as the web report for favorability
-    // Always use analysis.bars.favorabilityIndex if present, fallback only if missing
-    let favorabilityPct;
-    if (data.analysis && data.analysis.bars && data.analysis.bars.favorabilityIndex != null) {
-      favorabilityPct = Math.round(Number(data.analysis.bars.favorabilityIndex));
-    } else if (meters && meters.favorability != null) {
-      favorabilityPct = Math.round(Number(meters.favorability));
-    } else {
-      favorabilityPct = 50;
-    }
+    // Use only the canonical value from analysis.bars.favorabilityIndex
+    const favorabilityPct = Math.round(Number(data.analysis.bars.favorabilityIndex));
     barRow(
       "Favorability",
       favorabilityPct,
@@ -1144,16 +1137,8 @@ class PDFGenerator {
       14,
     );
 
-    // Use the same value as the web report for confidence to sign
-    // Always use analysis.bars.confidenceToSign if present, fallback only if missing
-    let confidencePct;
-    if (data.analysis && data.analysis.bars && data.analysis.bars.confidenceToSign != null) {
-      confidencePct = Math.round(Number(data.analysis.bars.confidenceToSign));
-    } else if (meters && meters.confidence != null) {
-      confidencePct = Math.round(Number(meters.confidence));
-    } else {
-      confidencePct = 70;
-    }
+    // Use only the canonical value from analysis.bars.confidenceToSign
+    const confidencePct = Math.round(Number(data.analysis.bars.confidenceToSign));
     barRow(
       "Confidence to Sign",
       confidencePct,
