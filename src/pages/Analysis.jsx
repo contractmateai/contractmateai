@@ -274,7 +274,7 @@ function clarityVerdictKey(val) {
 
 import AnalysisSidebar from "../components/AnalysisSidebar";
 import AnalysisDrawer from "../components/AnalysisDrawer";
-import PDFGenerator from "../utils/pdf-generator";
+import PDFGenerator from "../utils/PDFGenerator";
 import "../styles/analysis.css";
 
 function clamp(val, min = 0, max = 100) {
@@ -374,7 +374,34 @@ const Analysis = () => {
     setDownloading(true);
 
     try {
-      const pdfData = { ...data, lang, email };
+      // Map API response structure to PDF generator expectations
+      const pdfData = {
+        title: data.contractTitle || data.contractName || "Contract",
+        summary: data.analysis?.summary || [],
+        risk: data.analysis?.risk || { value: 0, note: "", safety: "Unknown" },
+        clarity: data.analysis?.clarity || {
+          value: 0,
+          note: "",
+          safety: "Unknown",
+        },
+        clauses: data.analysis?.mainClauses || [],
+        issues: data.analysis?.potentialIssues || [],
+        suggestions: data.analysis?.smartSuggestions || [],
+        meters: {
+          professionalism: data.analysis?.bars?.professionalism ?? 65,
+          favorability: data.analysis?.bars?.favorability ?? 50,
+          deadline: data.analysis?.bars?.deadline ?? 40,
+          confidence: data.analysis?.bars?.confidence ?? 70,
+        },
+        analysis: {
+          scoreChecker: data.analysis?.scoreChecker || {
+            value: 0,
+            line: "Unable to generate score",
+            safety: "Unknown",
+          },
+        },
+      };
+
       // pdf-generator exports a class -> must instantiate
       const pdfGen = new PDFGenerator();
       await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
@@ -454,16 +481,20 @@ const Analysis = () => {
       return bandColor.green;
     }
 
-    setArc(riskArcRef, analysis?.risk?.value, getRiskColor(analysis?.risk?.value));
+    setArc(
+      riskArcRef,
+      analysis?.risk?.value,
+      getRiskColor(analysis?.risk?.value),
+    );
     setArc(
       clarArcRef,
       analysis?.clarity?.value,
-      getClarityColor(analysis?.clarity?.value)
+      getClarityColor(analysis?.clarity?.value),
     );
     setArc(
       scoreArcRef,
       analysis?.scoreChecker?.value,
-      getClarityColor(analysis?.scoreChecker?.value)
+      getClarityColor(analysis?.scoreChecker?.value),
     );
 
     // Silence unused warnings (kept exactly like your original logic)
@@ -515,12 +546,17 @@ const Analysis = () => {
 
   // ALWAYS pull box titles + static lines from STATIC_TRANSLATIONS first
   const tLabel = (k, fallback) => staticTr?.[k] || ui?.[k] || fallback;
-// Map verdict string to translation key
-const verdictToTrKey = (v) =>
-  v === "very_safe" ? "verySafe" : v === "not_safe" ? "notThatSafe" : "unsafe";
+  // Map verdict string to translation key
+  const verdictToTrKey = (v) =>
+    v === "very_safe"
+      ? "verySafe"
+      : v === "not_safe"
+        ? "notThatSafe"
+        : "unsafe";
 
   // Static sentences (always translated)
-  const staticRiskNote = staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
+  const staticRiskNote =
+    staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
   const staticClarityNote =
     staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
   const staticScoreNote =
@@ -530,7 +566,6 @@ const verdictToTrKey = (v) =>
   const analysis = data?.analysis || {};
   const tAnalysis = tr.analysis || {};
 
-
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {
     const candidates = [
@@ -538,37 +573,43 @@ const verdictToTrKey = (v) =>
       tr.summary,
       analysis.summary,
       analysis.summaryText,
-      analysis.summaryLines
+      analysis.summaryLines,
     ];
     for (const c of candidates) {
       if (Array.isArray(c) && c.length) return c;
-      if (typeof c === 'string' && c.trim()) return c.split(/\r?\n|•|- /g).map(s => s.trim()).filter(Boolean);
+      if (typeof c === "string" && c.trim())
+        return c
+          .split(/\r?\n|•|- /g)
+          .map((s) => s.trim())
+          .filter(Boolean);
     }
     return [];
   }
   // Use translated summary array if available, fallback to English
   const tSummary =
-    (Array.isArray(tAnalysis.summary) && tAnalysis.summary.length)
+    Array.isArray(tAnalysis.summary) && tAnalysis.summary.length
       ? tAnalysis.summary
-      : (Array.isArray(tr.summary) && tr.summary.length)
-      ? tr.summary
-      : (Array.isArray(analysis.summary) && analysis.summary.length)
-      ? analysis.summary
-      : (Array.isArray(STATIC_TRANSLATIONS.en.summary) && STATIC_TRANSLATIONS.en.summary.length)
-      ? STATIC_TRANSLATIONS.en.summary
-      : [];
+      : Array.isArray(tr.summary) && tr.summary.length
+        ? tr.summary
+        : Array.isArray(analysis.summary) && analysis.summary.length
+          ? analysis.summary
+          : Array.isArray(STATIC_TRANSLATIONS.en.summary) &&
+              STATIC_TRANSLATIONS.en.summary.length
+            ? STATIC_TRANSLATIONS.en.summary
+            : [];
 
   const tIssues =
-    (Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length)
+    Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length
       ? tAnalysis.potentialIssues
-      : (Array.isArray(tr.potentialIssues) && tr.potentialIssues.length)
-      ? tr.potentialIssues
-      : (Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length)
-      ? analysis.potentialIssues
-      : (Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) && STATIC_TRANSLATIONS.en.potentialIssues.length)
-      ? STATIC_TRANSLATIONS.en.potentialIssues
-      : ["—"];
-
+      : Array.isArray(tr.potentialIssues) && tr.potentialIssues.length
+        ? tr.potentialIssues
+        : Array.isArray(analysis.potentialIssues) &&
+            analysis.potentialIssues.length
+          ? analysis.potentialIssues
+          : Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) &&
+              STATIC_TRANSLATIONS.en.potentialIssues.length
+            ? STATIC_TRANSLATIONS.en.potentialIssues
+            : ["—"];
 
   // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
   function getSuggestionsArr() {
@@ -577,40 +618,52 @@ const verdictToTrKey = (v) =>
       tr.smartSuggestions,
       analysis.smartSuggestions,
       analysis.suggestions,
-      analysis.smartSuggestionsText
+      analysis.smartSuggestionsText,
     ];
     for (const c of candidates) {
       if (Array.isArray(c) && c.length) return c;
-      if (typeof c === 'string' && c.trim()) return c.split(/\r?\n|•|- /g).map(s => s.trim()).filter(Boolean);
+      if (typeof c === "string" && c.trim())
+        return c
+          .split(/\r?\n|•|- /g)
+          .map((s) => s.trim())
+          .filter(Boolean);
     }
     return [];
   }
   // Use translated suggestions array if available, fallback to English
   const tSuggestions =
-    (Array.isArray(tAnalysis.smartSuggestions) && tAnalysis.smartSuggestions.length)
+    Array.isArray(tAnalysis.smartSuggestions) &&
+    tAnalysis.smartSuggestions.length
       ? tAnalysis.smartSuggestions
-      : (Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length)
-      ? tr.smartSuggestions
-      : (Array.isArray(analysis.smartSuggestions) && analysis.smartSuggestions.length)
-      ? analysis.smartSuggestions
-      : (Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) && STATIC_TRANSLATIONS.en.smartSuggestions.length)
-      ? STATIC_TRANSLATIONS.en.smartSuggestions
-      : [];
+      : Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length
+        ? tr.smartSuggestions
+        : Array.isArray(analysis.smartSuggestions) &&
+            analysis.smartSuggestions.length
+          ? analysis.smartSuggestions
+          : Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) &&
+              STATIC_TRANSLATIONS.en.smartSuggestions.length
+            ? STATIC_TRANSLATIONS.en.smartSuggestions
+            : [];
 
   const tClauses =
-    (Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length)
+    Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
       ? tAnalysis.mainClauses
-      : (Array.isArray(tr.mainClauses) && tr.mainClauses.length)
-      ? tr.mainClauses
-      : (Array.isArray(analysis.mainClauses) && analysis.mainClauses.length)
-      ? analysis.mainClauses
-      : (Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) && STATIC_TRANSLATIONS.en.mainClauses.length)
-      ? STATIC_TRANSLATIONS.en.mainClauses
-      : ["—"];
+      : Array.isArray(tr.mainClauses) && tr.mainClauses.length
+        ? tr.mainClauses
+        : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+          ? analysis.mainClauses
+          : Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) &&
+              STATIC_TRANSLATIONS.en.mainClauses.length
+            ? STATIC_TRANSLATIONS.en.mainClauses
+            : ["—"];
 
   // translated title (fallback to original)
   const tTitle =
-    tAnalysis.contractTitle ?? tr.contractTitle ?? data?.contractTitle ?? data?.contractName ?? "—";
+    tAnalysis.contractTitle ??
+    tr.contractTitle ??
+    data?.contractTitle ??
+    data?.contractName ??
+    "—";
 
   // Use static muted color for all explanations
   const mutedStyle = { color: "var(--muted)", fontSize: 15 };
@@ -624,7 +677,11 @@ const verdictToTrKey = (v) =>
 
   // Helper to always show fallback/defaults for boxes
   function normalizeList(v) {
-    if (Array.isArray(v)) return v.filter(Boolean).map((x) => String(x).trim()).filter(Boolean);
+    if (Array.isArray(v))
+      return v
+        .filter(Boolean)
+        .map((x) => String(x).trim())
+        .filter(Boolean);
 
     if (typeof v === "string") {
       return v
@@ -637,7 +694,10 @@ const verdictToTrKey = (v) =>
     if (v && typeof v === "object") {
       const maybe = v.items || v.list || v.values;
       if (Array.isArray(maybe))
-        return maybe.filter(Boolean).map((x) => String(x).trim()).filter(Boolean);
+        return maybe
+          .filter(Boolean)
+          .map((x) => String(x).trim())
+          .filter(Boolean);
     }
 
     return [];
@@ -646,8 +706,6 @@ const verdictToTrKey = (v) =>
   function fallbackArr(v) {
     return normalizeList(v);
   }
-
-
 
   // Prevent unused warnings (kept)
   getSummaryArr();
@@ -762,10 +820,16 @@ const verdictToTrKey = (v) =>
               <section className="card" id="summaryCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/CuQFbD7.png" alt="" />
-                  <span id="uiSummary">{tLabel("summary", STATIC_TRANSLATIONS.en.summary)}</span>
+                  <span id="uiSummary">
+                    {tLabel("summary", STATIC_TRANSLATIONS.en.summary)}
+                  </span>
                 </h3>
 
-                <div className="list" id="summaryText" style={{ fontSize: "20px" }}>
+                <div
+                  className="list"
+                  id="summaryText"
+                  style={{ fontSize: "20px" }}
+                >
                   {tSummary.length > 0 ? (
                     tSummary.map((s, i) => (
                       <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
@@ -773,7 +837,9 @@ const verdictToTrKey = (v) =>
                       </div>
                     ))
                   ) : (
-                    <div style={{ ...mutedStyle, fontSize: "18px" }}>No summary available.</div>
+                    <div style={{ ...mutedStyle, fontSize: "18px" }}>
+                      No summary available.
+                    </div>
                   )}
                 </div>
               </section>
@@ -786,7 +852,9 @@ const verdictToTrKey = (v) =>
                       {tLabel("professionalism", "Professionalism")}
                     </span>
                   </div>
-                  <div id="confVal">{clamp(analysis.bars?.professionalism)}%</div>
+                  <div id="confVal">
+                    {clamp(analysis.bars?.professionalism)}%
+                  </div>
                 </div>
 
                 <div className="meter">
@@ -799,8 +867,8 @@ const verdictToTrKey = (v) =>
                         clamp(analysis.bars?.professionalism) <= 29
                           ? bandColor.red
                           : clamp(analysis.bars?.professionalism) <= 70
-                          ? bandColor.orange
-                          : bandColor.green,
+                            ? bandColor.orange
+                            : bandColor.green,
                     }}
                   ></div>
                 </div>
@@ -814,7 +882,9 @@ const verdictToTrKey = (v) =>
                       {tLabel("favorability", "Favorability")}
                     </span>
                   </div>
-                  <div id="favVal">{clamp(analysis.bars?.favorabilityIndex)}%</div>
+                  <div id="favVal">
+                    {clamp(analysis.bars?.favorabilityIndex)}%
+                  </div>
                 </div>
 
                 <div className="meter">
@@ -827,8 +897,8 @@ const verdictToTrKey = (v) =>
                         clamp(analysis.bars?.favorabilityIndex) <= 29
                           ? bandColor.red
                           : clamp(analysis.bars?.favorabilityIndex) <= 70
-                          ? bandColor.orange
-                          : bandColor.green,
+                            ? bandColor.orange
+                            : bandColor.green,
                     }}
                   ></div>
                 </div>
@@ -842,7 +912,9 @@ const verdictToTrKey = (v) =>
                       {tLabel("deadlinePressure", "Deadline Pressure")}
                     </span>
                   </div>
-                  <div id="deadVal">{clamp(analysis.bars?.deadlinePressure)}%</div>
+                  <div id="deadVal">
+                    {clamp(analysis.bars?.deadlinePressure)}%
+                  </div>
                 </div>
 
                 <div className="meter">
@@ -855,8 +927,8 @@ const verdictToTrKey = (v) =>
                         clamp(analysis.bars?.deadlinePressure) <= 29
                           ? bandColor.green
                           : clamp(analysis.bars?.deadlinePressure) <= 64
-                          ? bandColor.orange
-                          : bandColor.red,
+                            ? bandColor.orange
+                            : bandColor.red,
                     }}
                   ></div>
                 </div>
@@ -865,10 +937,19 @@ const verdictToTrKey = (v) =>
               <section className="card" id="issuesCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/ppLDtiq.png" alt="" />
-                  <span id="uiIssues">{tLabel("potentialIssues", STATIC_TRANSLATIONS.en.potentialIssues)}</span>
+                  <span id="uiIssues">
+                    {tLabel(
+                      "potentialIssues",
+                      STATIC_TRANSLATIONS.en.potentialIssues,
+                    )}
+                  </span>
                 </h3>
 
-                <ul className="bullets" id="issuesList" style={{ fontSize: "20px" }}>
+                <ul
+                  className="bullets"
+                  id="issuesList"
+                  style={{ fontSize: "20px" }}
+                >
                   {fallbackArr(tIssues).map((issue, i) => (
                     <li key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
                       {issue}
@@ -880,10 +961,19 @@ const verdictToTrKey = (v) =>
               <section className="card" id="suggestionsCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/EoVDfd5.png" alt="" />
-                  <span id="uiSuggestions">{tLabel("smartSuggestions", STATIC_TRANSLATIONS.en.smartSuggestions)}</span>
+                  <span id="uiSuggestions">
+                    {tLabel(
+                      "smartSuggestions",
+                      STATIC_TRANSLATIONS.en.smartSuggestions,
+                    )}
+                  </span>
                 </h3>
 
-                <div className="list numbered" id="suggestionsList" style={{ fontSize: "20px" }}>
+                <div
+                  className="list numbered"
+                  id="suggestionsList"
+                  style={{ fontSize: "20px" }}
+                >
                   {tSuggestions.length > 0 ? (
                     tSuggestions.map((s, i) => (
                       <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
@@ -891,7 +981,9 @@ const verdictToTrKey = (v) =>
                       </div>
                     ))
                   ) : (
-                    <div style={{ ...mutedStyle, fontSize: "18px" }}>No suggestions available.</div>
+                    <div style={{ ...mutedStyle, fontSize: "18px" }}>
+                      No suggestions available.
+                    </div>
                   )}
                 </div>
               </section>
@@ -902,7 +994,14 @@ const verdictToTrKey = (v) =>
                 <div className="hcard">
                   <div className="circle">
                     <svg width="140" height="140" viewBox="0 0 140 140">
-                      <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
+                      <circle
+                        className="track"
+                        cx="70"
+                        cy="70"
+                        r="64"
+                        strokeWidth="12"
+                        fill="none"
+                      ></circle>
                       <circle
                         ref={riskArcRef}
                         id="riskArc"
@@ -922,7 +1021,9 @@ const verdictToTrKey = (v) =>
                   <div className="htext">
                     <h3 style={{ marginBottom: 0, fontWeight: 400 }}>
                       <img src="https://imgur.com/Myp6Un4.png" alt="" />
-                      <span id="uiRisk">{tLabel("riskLevel", "Risk Level")}</span>
+                      <span id="uiRisk">
+                        {tLabel("riskLevel", "Risk Level")}
+                      </span>
                     </h3>
 
                     <div className="muted" id="riskNote" style={mutedStyle}>
@@ -935,18 +1036,22 @@ const verdictToTrKey = (v) =>
                         id="riskDot"
                         style={{
                           background:
-                            riskVerdictKey(clamp(analysis.risk?.value)) === "unsafe"
+                            riskVerdictKey(clamp(analysis.risk?.value)) ===
+                            "unsafe"
                               ? "var(--red)"
-                              : riskVerdictKey(clamp(analysis.risk?.value)) === "not_safe"
-                              ? "var(--orange)"
-                              : "var(--green)",
+                              : riskVerdictKey(clamp(analysis.risk?.value)) ===
+                                  "not_safe"
+                                ? "var(--orange)"
+                                : "var(--green)",
                         }}
                       ></span>
 
                       <span id="riskBadge">
                         {tLabel(
-                          verdictToTrKey(riskVerdictKey(clamp(analysis.risk?.value))),
-                          STATIC_TRANSLATIONS.en.unsafe
+                          verdictToTrKey(
+                            riskVerdictKey(clamp(analysis.risk?.value)),
+                          ),
+                          STATIC_TRANSLATIONS.en.unsafe,
                         )}
                       </span>
                     </div>
@@ -958,7 +1063,14 @@ const verdictToTrKey = (v) =>
                 <div className="hcard">
                   <div className="circle">
                     <svg width="140" height="140" viewBox="0 0 140 140">
-                      <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
+                      <circle
+                        className="track"
+                        cx="70"
+                        cy="70"
+                        r="64"
+                        strokeWidth="12"
+                        fill="none"
+                      ></circle>
                       <circle
                         ref={clarArcRef}
                         id="clarArc"
@@ -978,7 +1090,12 @@ const verdictToTrKey = (v) =>
                   <div className="htext">
                     <h3 style={{ marginBottom: 0, fontWeight: 400 }}>
                       <img src="https://imgur.com/o39xZtC.png" alt="" />
-                      <span id="uiClarity">{tLabel("clauseClarity", STATIC_TRANSLATIONS.en.clauseClarity)}</span>
+                      <span id="uiClarity">
+                        {tLabel(
+                          "clauseClarity",
+                          STATIC_TRANSLATIONS.en.clauseClarity,
+                        )}
+                      </span>
                     </h3>
 
                     <div className="muted" id="clarNote" style={mutedStyle}>
@@ -991,17 +1108,21 @@ const verdictToTrKey = (v) =>
                         id="clarDot"
                         style={{
                           background:
-                            clarityVerdictKey(analysis?.clarity?.value) === "unsafe"
+                            clarityVerdictKey(analysis?.clarity?.value) ===
+                            "unsafe"
                               ? "var(--red)"
-                              : clarityVerdictKey(analysis?.clarity?.value) === "not_safe"
-                              ? "var(--orange)"
-                              : "var(--green)",
+                              : clarityVerdictKey(analysis?.clarity?.value) ===
+                                  "not_safe"
+                                ? "var(--orange)"
+                                : "var(--green)",
                         }}
                       />
                       <span id="clarBadge">
                         {tLabel(
-                          verdictToTrKey(clarityVerdictKey(clamp(analysis?.clarity?.value))),
-                          STATIC_TRANSLATIONS.en.unsafe
+                          verdictToTrKey(
+                            clarityVerdictKey(clamp(analysis?.clarity?.value)),
+                          ),
+                          STATIC_TRANSLATIONS.en.unsafe,
                         )}
                       </span>
                     </div>
@@ -1012,10 +1133,16 @@ const verdictToTrKey = (v) =>
               <section className="card" id="clausesCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/K04axKU.png" alt="" />
-                  <span id="uiClauses">{tLabel("mainClauses", STATIC_TRANSLATIONS.en.mainClauses)}</span>
+                  <span id="uiClauses">
+                    {tLabel("mainClauses", STATIC_TRANSLATIONS.en.mainClauses)}
+                  </span>
                 </h3>
 
-                <div className="list numbered" id="clausesList" style={{ fontSize: "20px" }}>
+                <div
+                  className="list numbered"
+                  id="clausesList"
+                  style={{ fontSize: "20px" }}
+                >
                   {fallbackArr(tClauses).map((c, i) => (
                     <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
                       {`${i + 1}. ${c}`}
@@ -1028,7 +1155,14 @@ const verdictToTrKey = (v) =>
                 <div className="hcard">
                   <div className="circle">
                     <svg width="140" height="140" viewBox="0 0 140 140">
-                      <circle className="track" cx="70" cy="70" r="64" strokeWidth="12" fill="none"></circle>
+                      <circle
+                        className="track"
+                        cx="70"
+                        cy="70"
+                        r="64"
+                        strokeWidth="12"
+                        fill="none"
+                      ></circle>
                       <circle
                         ref={scoreArcRef}
                         id="scoreArc"
@@ -1048,7 +1182,9 @@ const verdictToTrKey = (v) =>
                   <div className="score-side">
                     <h3 style={{ marginBottom: 0 }}>
                       <img src="https://imgur.com/mFvyCj7.png" alt="" />
-                      <span id="uiScoreChecker">{tLabel("overallScore", "Final Score")}</span>
+                      <span id="uiScoreChecker">
+                        {tLabel("overallScore", "Final Score")}
+                      </span>
                     </h3>
 
                     <div className="score-remark" id="scoreRemark">
@@ -1059,14 +1195,22 @@ const verdictToTrKey = (v) =>
                       <span
                         className="score-ind"
                         id="scoreInd"
-                        style={{ left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)` }}
+                        style={{
+                          left: `calc(${clamp(analysis.scoreChecker?.value)}% - 1.5px)`,
+                        }}
                       ></span>
                     </div>
 
                     <div className="score-scale">
-                      <span id="scaleUnsafe">{tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)}</span>
-                      <span id="scaleSafe">{tLabel("safe", STATIC_TRANSLATIONS.en.safe)}</span>
-                      <span id="scaleVerySafe">{tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}</span>
+                      <span id="scaleUnsafe">
+                        {tLabel("unsafe", STATIC_TRANSLATIONS.en.unsafe)}
+                      </span>
+                      <span id="scaleSafe">
+                        {tLabel("safe", STATIC_TRANSLATIONS.en.safe)}
+                      </span>
+                      <span id="scaleVerySafe">
+                        {tLabel("verySafe", STATIC_TRANSLATIONS.en.verySafe)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1076,9 +1220,13 @@ const verdictToTrKey = (v) =>
                 <div className="meter-head">
                   <div className="meter-title">
                     <img src="https://imgur.com/nUGfg96.png" alt="" />
-                    <span id="uiConfidence">{tLabel("confidenceToSign", "Confidence to Sign")}</span>
+                    <span id="uiConfidence">
+                      {tLabel("confidenceToSign", "Confidence to Sign")}
+                    </span>
                   </div>
-                  <div id="conf2Val">{clamp(analysis.bars?.confidenceToSign)}%</div>
+                  <div id="conf2Val">
+                    {clamp(analysis.bars?.confidenceToSign)}%
+                  </div>
                 </div>
 
                 <div className="meter">
@@ -1091,8 +1239,8 @@ const verdictToTrKey = (v) =>
                         clamp(analysis.bars?.confidenceToSign) <= 29
                           ? bandColor.red
                           : clamp(analysis.bars?.confidenceToSign) <= 70
-                          ? bandColor.orange
-                          : bandColor.green,
+                            ? bandColor.orange
+                            : bandColor.green,
                     }}
                   ></div>
                 </div>
@@ -1159,7 +1307,10 @@ const verdictToTrKey = (v) =>
           >
             <div className="email-title">Insert email to download</div>
 
-            <div className="email-row" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div
+              className="email-row"
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
               <input
                 id="emailInputInline"
                 className="input"
@@ -1236,11 +1387,21 @@ const verdictToTrKey = (v) =>
               width: "min(480px,92vw)",
             }}
           >
-            <h4 style={{ margin: "0 0 10px", fontSize: "20px", fontWeight: 400, fontFamily: "Inter, sans-serif" }}>
+            <h4
+              style={{
+                margin: "0 0 10px",
+                fontSize: "20px",
+                fontWeight: 400,
+                fontFamily: "Inter, sans-serif",
+              }}
+            >
               Enter your email to download the PDF report
             </h4>
 
-            <div className="modal-row" style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+            <div
+              className="modal-row"
+              style={{ display: "flex", gap: "10px", marginTop: "12px" }}
+            >
               <input
                 id="emailInputModal"
                 className="input"
