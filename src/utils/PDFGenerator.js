@@ -615,32 +615,29 @@ class PDFGenerator {
     doc.text(data.title || "—", M + labelWidth, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN + 20;
 
-    let sTop = y + this.STYLE.SECTION_HEADER_SPACING,
-      sY = sTop;
+    // Improved summary formatting: join all summary lines into one paragraph for better wrapping
+    let sTop = y + this.STYLE.SECTION_HEADER_SPACING;
+    let sY = sTop;
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
     sY += this.STYLE.TITLE_CONTENT_SPACING;
-    (Array.isArray(data.summary) ? data.summary : [data.summary]).forEach(
-      (item) => {
-        sY =
-          this.tinyText(
-            doc,
-            String(item),
-            M + this.STYLE.CARD_PADDING,
-            sY,
-            W - M * 2 - 40,
-            this.STYLE.TEXT_LINE_HEIGHT,
-          ) + this.STYLE.TEXT_ITEM_SPACING;
-      },
-    );
+    const summaryText = (Array.isArray(data.summary) ? data.summary : [data.summary]).join(" ");
+    sY = this.tinyText(
+      doc,
+      summaryText,
+      M + this.STYLE.CARD_PADDING,
+      sY,
+      W - M * 2 - 40,
+      this.STYLE.TEXT_LINE_HEIGHT
+    ) + this.STYLE.TEXT_ITEM_SPACING;
     this.drawBox(
       doc,
       M - this.STYLE.BOX_MARGIN,
       sTop - this.STYLE.BOX_VERTICAL_OFFSET,
       sW,
-      sY - sTop + this.STYLE.BOX_CONTENT_PADDING,
+      sY - sTop + this.STYLE.BOX_CONTENT_PADDING
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
@@ -902,7 +899,7 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     barRow(
-      "Favorability Index",
+      "Favorability",
       Math.round(Number(meters.favorability ?? 50)),
       IM.fav,
       leftXBars,
@@ -1020,9 +1017,9 @@ class PDFGenerator {
 
     this.drawBox(doc, extendedMargin, y2, leftW, rowH);
 
-    const scorePct = Math.round(Number(data?.clarity?.value ?? 0));
-    const scoreBand =
-      scorePct >= 78 ? "green" : scorePct >= 49 ? "orange" : "red";
+    // Use the actual final score value from the report, not clarity
+    const scorePct = Math.round(Number(data?.analysis?.scoreChecker?.value ?? 0));
+    const scoreBand = scorePct <= 29 ? "red" : scorePct <= 62 ? "orange" : "green";
     const scoreColor = this.getColorFor("score", scorePct, scoreBand);
 
     const scoreChartX = extendedMargin + 10;
@@ -1104,16 +1101,7 @@ class PDFGenerator {
       align: "right",
     });
 
-    const scoreStatusY = scoreRightColBottom - scoreBottomComponentHeight;
-    const scoreDotCol = this.getDotColor(scoreBand);
-    doc.setFillColor(...scoreDotCol);
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(1);
-    doc.roundedRect(scoreRightColX, scoreStatusY + 2, 10, 10, 2, 2, "FD");
-    reg();
-    doc.setFontSize(11);
-    // Remove the label (no generally safe/unsafe/very safe for final score)
-    // (Do not render any label here)
+    // Remove the colored square for final score (do not render)
 
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
@@ -1128,8 +1116,8 @@ class PDFGenerator {
       14,
     );
 
+    // Use the actual confidence value and color from the report
     const confV = Math.round(Number(meters.confidence ?? 70));
-    // Use label as on report page
     barRow(
       "Confidence to Sign",
       confV,
