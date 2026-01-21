@@ -154,19 +154,40 @@ class PDFGenerator {
   }
 
   /* ===== Color Management ===== */
+  // Color logic matches Analysis.jsx
   getColorFor(metric, v, band) {
-    if (metric === "risk")
-      return v <= 25 ? "#00ff65" : v <= 58 ? "#df911a" : "#fe0000";
-    if (metric === "clarity" || metric === "score")
-      return v >= 78 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "professionalism")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "favorability")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "deadline")
-      return v <= 35 ? "#00ff65" : v <= 68 ? "#df911a" : "#fe0000";
-    if (metric === "confidence")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+    if (metric === "risk") {
+      // Green (<=29%), Orange (30-62%), Red (63-100%)
+      if (v <= 29) return "#28e070"; // green
+      if (v <= 62) return "#df911a"; // orange
+      return "#fe0000"; // red
+    }
+    if (metric === "clarity" || metric === "score") {
+      // Red (<=29%), Orange (30-62%), Green (63-100%)
+      if (v <= 29) return "#fe0000"; // red
+      if (v <= 62) return "#df911a"; // orange
+      return "#28e070"; // green
+    }
+    if (metric === "professionalism") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "favorability") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "deadline") {
+      if (v <= 29) return "#28e070";
+      if (v <= 64) return "#df911a";
+      return "#fe0000";
+    }
+    if (metric === "confidence") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 62) return "#df911a";
+      return "#28e070";
+    }
     return "#df911a";
   }
 
@@ -741,7 +762,8 @@ class PDFGenerator {
     // RISK card - Two column layout (translated)
     this.drawBox(doc, leftX, y, colW, cardH);
     const riskPct = Number(data?.risk?.value ?? 0);
-    const riskBand = riskPct <= 25 ? "green" : riskPct <= 58 ? "orange" : "red";
+    // Match Analysis.jsx: Green (<=29%), Orange (30-62%), Red (63-100%)
+    const riskBand = riskPct <= 29 ? "green" : riskPct <= 62 ? "orange" : "red";
     const riskColor = this.getColorFor("risk", riskPct, riskBand);
     const chartSize = 116;
     const chartX = leftX + 10;
@@ -785,9 +807,10 @@ class PDFGenerator {
     const textStartY = rightY + topComponentHeight + componentGap;
     const textEndY = statusY - componentGap;
     const availableTextHeight = textEndY - textStartY;
+    // Use static description from translation
     this.tinyText(
       doc,
-      t("riskStatic") || safeText(data.risk?.note),
+      t("riskStatic"),
       rightColX,
       textStartY,
       rightColWidth,
@@ -797,7 +820,8 @@ class PDFGenerator {
     // CLARITY card - Two column layout (translated)
     this.drawBox(doc, rightX, y, colW, cardH);
     const clarPct = Number(data?.clarity?.value ?? 0);
-    const clarBand = clarPct >= 78 ? "green" : clarPct >= 49 ? "orange" : "red";
+    // Match Analysis.jsx: Red (<=29%), Orange (30-62%), Green (63-100%)
+    const clarBand = clarPct <= 29 ? "red" : clarPct <= 62 ? "orange" : "green";
     const clarColor = this.getColorFor("clarity", clarPct, clarBand);
     const clarityChartX = rightX + 10;
     const clarityChartY = y + (cardH - chartSize) / 2;
@@ -834,9 +858,10 @@ class PDFGenerator {
     const clarityTextStartY = clarityRightY + topComponentHeight + componentGap;
     const clarityTextEndY = clarityStatusY - componentGap;
     const clarityAvailableTextHeight = clarityTextEndY - clarityTextStartY;
+    // Use static description from translation
     this.tinyText(
       doc,
-      t("clarityStatic") || safeText(data.clarity?.note),
+      t("clarityStatic"),
       clarityRightColX,
       clarityTextStartY,
       clarityRightColWidth,
@@ -1083,9 +1108,9 @@ class PDFGenerator {
     // Score card - Two column layout (same structure as RISK/CLARITY cards)
     this.drawBox(doc, extendedMargin, y2, leftW, rowH);
 
+    // Use the same value and banding as clarity (match Analysis.jsx)
     const scorePct = Math.round(Number(data?.clarity?.value ?? 0));
-    const scoreBand =
-      scorePct >= 78 ? "green" : scorePct >= 49 ? "orange" : "red";
+    const scoreBand = scorePct <= 29 ? "red" : scorePct <= 62 ? "orange" : "green";
     const scoreColor = this.getColorFor("score", scorePct, scoreBand);
 
     // Left column: Donut chart with same style and size as other charts
@@ -1133,8 +1158,9 @@ class PDFGenerator {
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
+    // Change title to Final Score
     doc.text(
-      "Score Checker",
+      t("overallScore"),
       scoreRightColX + scoreTagWidth / 2,
       scoreRightY + 16,
       {
@@ -1163,11 +1189,12 @@ class PDFGenerator {
     // Scale labels below gradient bar
     reg();
     doc.setFontSize(9);
-    doc.text("Unsafe", scoreRightColX, scoreGradientY + 42);
-    doc.text("Safe", scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
+    // Use report page labels
+    doc.text(t("unsafe"), scoreRightColX, scoreGradientY + 42);
+    doc.text(t("notThatSafe"), scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
       align: "center",
     });
-    doc.text("Very Safe", scoreRightColX + scoreBarW, scoreGradientY + 42, {
+    doc.text(t("verySafe"), scoreRightColX + scoreBarW, scoreGradientY + 42, {
       align: "right",
     });
 
@@ -1180,13 +1207,8 @@ class PDFGenerator {
     doc.roundedRect(scoreRightColX, scoreStatusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    doc.text(
-      this.capitalizeSafety(
-        data?.analysis?.scoreChecker?.safety || "Generally Safe"
-      ),
-      scoreRightColX + 16,
-      scoreStatusY + 11
-    );
+    // Remove the label (no generally safe/unsafe/very safe for final score)
+    // (Do not render any label here)
 
     // Component 2: Description text - takes remaining height (MIDDLE - DYNAMIC)
     const scoreTextStartY =
@@ -1195,10 +1217,10 @@ class PDFGenerator {
     // const scoreAvailableTextHeight = scoreTextEndY - scoreTextStartY;
 
     // Position text to fill the available middle space - full width
+    // Use static description for final score
     this.tinyText(
       doc,
-      data?.analysis?.scoreChecker?.line ||
-        "The contract is nearly perfectly done.",
+      t("scoreStatic"),
       scoreRightColX,
       scoreTextStartY,
       scoreRightColWidth,
@@ -1206,8 +1228,9 @@ class PDFGenerator {
     );
 
     const confV = Math.round(Number(meters.confidence ?? 70));
+    // Use label as on report page
     barRow(
-      "Confidence to sign freely",
+      t("confidenceToSign"),
       confV,
       IM.confidence,
       extendedMargin + leftW + gap,
