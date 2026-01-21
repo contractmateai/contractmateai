@@ -121,18 +121,38 @@ class PDFGenerator {
 
   /* ===== Color Management ===== */
   getColorFor(metric, v, band) {
-    if (metric === "risk")
-      return v <= 25 ? "#00ff65" : v <= 58 ? "#df911a" : "#fe0000";
-    if (metric === "clarity" || metric === "score")
-      return v >= 78 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "professionalism")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "favorability")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "deadline")
-      return v <= 35 ? "#00ff65" : v <= 68 ? "#df911a" : "#fe0000";
-    if (metric === "confidence")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+    if (metric === "risk") {
+      // Green (<=29%), Orange (30-62%), Red (63-100%)
+      if (v <= 29) return "#28e070"; // green
+      if (v <= 62) return "#df911a"; // orange
+      return "#fe0000"; // red
+    }
+    if (metric === "clarity" || metric === "score") {
+      // Red (<=29%), Orange (30-62%), Green (63-100%)
+      if (v <= 29) return "#fe0000"; // red
+      if (v <= 62) return "#df911a"; // orange
+      return "#28e070"; // green
+    }
+    if (metric === "professionalism") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "favorability") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "deadline") {
+      if (v <= 29) return "#28e070";
+      if (v <= 64) return "#df911a";
+      return "#fe0000";
+    }
+    if (metric === "confidence") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 62) return "#df911a";
+      return "#28e070";
+    }
     return "#df911a";
   }
 
@@ -691,8 +711,9 @@ class PDFGenerator {
     doc.roundedRect(rightColX, statusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
+    // Use verdict tag only, no 'generally safe'
     doc.text(
-      this.capitalizeSafety(data.risk?.safety || "Generally Safe"),
+      data.risk?.verdict || "",
       rightColX + 16,
       statusY + 11,
     );
@@ -700,10 +721,10 @@ class PDFGenerator {
     const textStartY = rightY + topComponentHeight + componentGap;
     const textEndY = statusY - componentGap;
 
+    // Use static sentence for risk
     this.tinyText(
       doc,
-      data.risk?.note ||
-        "Clear terms overall, but missing late fees and dispute process.",
+      "Based on clause fairness and obligations.",
       rightColX,
       textStartY,
       rightColWidth,
@@ -773,18 +794,19 @@ class PDFGenerator {
     doc.roundedRect(clarityRightColX, clarityStatusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
+    // Use verdict tag only, no 'generally safe'
     doc.text(
-      this.capitalizeSafety(data.clarity?.safety || "Generally Safe"),
+      data.clarity?.verdict || "",
       clarityRightColX + 16,
       clarityStatusY + 11,
     );
 
     const clarityTextStartY = clarityRightY + topComponentHeight + componentGap;
 
+    // Use static sentence for clause clarity
     this.tinyText(
       doc,
-      data.clarity?.note ||
-        "Plain language used, but some clauses need clearer detail.",
+      "Reflects how easy the terms are to understand.",
       clarityRightColX,
       clarityTextStartY,
       clarityRightColWidth,
@@ -1045,8 +1067,9 @@ class PDFGenerator {
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
+    // Change title to Final Score
     doc.text(
-      "Score Checker",
+      "Final Score",
       scoreRightColX + scoreTagWidth / 2,
       scoreRightY + 16,
       {
@@ -1072,8 +1095,9 @@ class PDFGenerator {
 
     reg();
     doc.setFontSize(9);
+    // Use report page labels
     doc.text("Unsafe", scoreRightColX, scoreGradientY + 42);
-    doc.text("Safe", scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
+    doc.text("Not that safe", scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
       align: "center",
     });
     doc.text("Very Safe", scoreRightColX + scoreBarW, scoreGradientY + 42, {
@@ -1088,21 +1112,16 @@ class PDFGenerator {
     doc.roundedRect(scoreRightColX, scoreStatusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    doc.text(
-      this.capitalizeSafety(
-        data?.analysis?.scoreChecker?.safety || "Generally Safe",
-      ),
-      scoreRightColX + 16,
-      scoreStatusY + 11,
-    );
+    // Remove the label (no generally safe/unsafe/very safe for final score)
+    // (Do not render any label here)
 
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
 
+    // Use static sentence for final score
     this.tinyText(
       doc,
-      data?.analysis?.scoreChecker?.line ||
-        "The contract is nearly perfectly done.",
+      "Determines the final score.",
       scoreRightColX,
       scoreTextStartY,
       scoreRightColWidth,
@@ -1110,8 +1129,9 @@ class PDFGenerator {
     );
 
     const confV = Math.round(Number(meters.confidence ?? 70));
+    // Use label as on report page
     barRow(
-      "Confidence to sign freely",
+      "Confidence to Sign",
       confV,
       IM.confidence,
       extendedMargin + leftW + gap,
