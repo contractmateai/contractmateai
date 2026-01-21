@@ -629,7 +629,7 @@ class PDFGenerator {
       summaryText,
       M + this.STYLE.CARD_PADDING,
       sY,
-      W - M * 2 - 40,
+      sW - 2 * this.STYLE.CARD_PADDING,
       this.STYLE.TEXT_LINE_HEIGHT
     ) + this.STYLE.TEXT_ITEM_SPACING;
     this.drawBox(
@@ -653,8 +653,11 @@ class PDFGenerator {
 
     this.drawBox(doc, leftX, y, colW, cardH);
 
+    // Use the same banding as the web report for risk
     const riskPct = Number(data?.risk?.value ?? 0);
-    const riskBand = riskPct <= 25 ? "green" : riskPct <= 58 ? "orange" : "red";
+    let riskBand = "red";
+    if (riskPct <= 29) riskBand = "green";
+    else if (riskPct <= 62) riskBand = "orange";
     const riskColor = this.getColorFor("risk", riskPct, riskBand);
 
     const chartSize = 116;
@@ -702,15 +705,19 @@ class PDFGenerator {
 
     const statusY = rightColBottom - bottomComponentHeight;
     const dotCol = this.getDotColor(riskBand);
-    doc.setFillColor(...dotCol);
+    doc.setFillColor(...this.getDotColor(riskBand));
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(1);
     doc.roundedRect(rightColX, statusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    // Use verdict tag only, no 'generally safe'
+    // Use verdict label as in the web report
+    let riskLabel = "";
+    if (riskBand === "green") riskLabel = "Very Safe";
+    else if (riskBand === "orange") riskLabel = "Not That Safe";
+    else riskLabel = "Unsafe";
     doc.text(
-      data.risk?.verdict || "",
+      riskLabel,
       rightColX + 16,
       statusY + 11,
     );
@@ -730,8 +737,12 @@ class PDFGenerator {
 
     this.drawBox(doc, rightX, y, colW, cardH);
 
+    // Use the same banding as the web report for clarity
     const clarPct = Number(data?.clarity?.value ?? 0);
-    const clarBand = clarPct >= 78 ? "green" : clarPct >= 49 ? "orange" : "red";
+    let clarBand = "red";
+    if (clarPct <= 29) clarBand = "red";
+    else if (clarPct <= 62) clarBand = "orange";
+    else clarBand = "green";
     const clarColor = this.getColorFor("clarity", clarPct, clarBand);
 
     const clarityChartX = rightX + 10;
@@ -785,15 +796,19 @@ class PDFGenerator {
 
     const clarityStatusY = clarityRightColBottom - bottomComponentHeight;
     const clarityDotCol = this.getDotColor(clarBand);
-    doc.setFillColor(...clarityDotCol);
+    doc.setFillColor(...this.getDotColor(clarBand));
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(1);
     doc.roundedRect(clarityRightColX, clarityStatusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    // Use verdict tag only, no 'generally safe'
+    // Use verdict label as in the web report
+    let clarityLabel = "";
+    if (clarBand === "green") clarityLabel = "Very Safe";
+    else if (clarBand === "orange") clarityLabel = "Not That Safe";
+    else clarityLabel = "Unsafe";
     doc.text(
-      data.clarity?.verdict || "",
+      clarityLabel,
       clarityRightColX + 16,
       clarityStatusY + 11,
     );
@@ -898,9 +913,11 @@ class PDFGenerator {
     );
     barY += this.STYLE.BAR_ROW_SPACING;
 
+    // Use the same value as the web report for favorability
+    const favorabilityPct = Math.round(Number(data.analysis?.bars?.favorabilityIndex ?? 50));
     barRow(
       "Favorability",
-      Math.round(Number(meters.favorability ?? 50)),
+      favorabilityPct,
       IM.fav,
       leftXBars,
       barY,
@@ -1116,11 +1133,11 @@ class PDFGenerator {
       14,
     );
 
-    // Use the actual confidence value and color from the report
-    const confV = Math.round(Number(meters.confidence ?? 70));
+    // Use the same value as the web report for confidence to sign
+    const confidencePct = Math.round(Number(data.analysis?.bars?.confidenceToSign ?? 70));
     barRow(
       "Confidence to Sign",
-      confV,
+      confidencePct,
       IM.confidence,
       extendedMargin + leftW + gap,
       y2,
