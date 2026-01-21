@@ -623,15 +623,18 @@ class PDFGenerator {
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
     sY += this.STYLE.TITLE_CONTENT_SPACING;
-    const summaryText = (Array.isArray(data.summary) ? data.summary : [data.summary]).join(" ");
-    sY = this.tinyText(
-      doc,
-      summaryText,
-      M + this.STYLE.CARD_PADDING,
-      sY,
-      sW - 2 * this.STYLE.CARD_PADDING,
-      this.STYLE.TEXT_LINE_HEIGHT
-    ) + this.STYLE.TEXT_ITEM_SPACING;
+    // Each sentence on a new line, use nearly full width
+    const summaryArr = Array.isArray(data.summary) ? data.summary : [data.summary];
+    summaryArr.forEach((sentence) => {
+      sY = this.tinyText(
+        doc,
+        String(sentence),
+        M + this.STYLE.CARD_PADDING,
+        sY,
+        sW - 8, // nearly the full width of the box
+        this.STYLE.TEXT_LINE_HEIGHT
+      ) + this.STYLE.TEXT_ITEM_SPACING;
+    });
     this.drawBox(
       doc,
       M - this.STYLE.BOX_MARGIN,
