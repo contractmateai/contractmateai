@@ -389,9 +389,9 @@ const Analysis = () => {
         suggestions: data.analysis?.smartSuggestions || [],
         meters: {
           professionalism: data.analysis?.bars?.professionalism ?? 65,
-          favorability: data.analysis?.bars?.favorability ?? 50,
+          favorability: data.analysis?.bars?.favorabilityIndex ?? 50,
           deadline: data.analysis?.bars?.deadline ?? 40,
-          confidence: data.analysis?.bars?.confidence ?? 70,
+          confidence: data.analysis?.bars?.confidenceToSign ?? 70,
         },
         analysis: {
           scoreChecker: data.analysis?.scoreChecker || {
