@@ -394,6 +394,7 @@ const Analysis = () => {
           confidence: data.analysis?.bars?.confidenceToSign ?? 70,
         },
         analysis: {
+          bars: data.analysis?.bars || {},
           scoreChecker: data.analysis?.scoreChecker || {
             value: 0,
             line: "Unable to generate score",

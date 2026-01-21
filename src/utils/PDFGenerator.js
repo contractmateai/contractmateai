@@ -625,7 +625,7 @@ class PDFGenerator {
     sY += this.STYLE.TITLE_CONTENT_SPACING;
     // Each sentence on a new line, use correct text width (subtract left/right padding)
     const summaryArr = Array.isArray(data.summary) ? data.summary : [data.summary];
-    const textWidth = sW - this.STYLE.CARD_PADDING * 2 - this.STYLE.BOX_MARGIN;
+    const textWidth = sW - this.STYLE.CARD_PADDING * 2;
     summaryArr.forEach((sentence) => {
       sY = this.tinyText(
         doc,
@@ -1139,8 +1139,8 @@ class PDFGenerator {
     );
 
     // Use only the canonical value from analysis.bars.confidenceToSign
-    let confidenceRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.confidenceToSign !== 'undefined' ? data.analysis.bars.confidenceToSign : 0;
-    const confidencePct = Math.round(Number(confidenceRaw) || 0);
+    const confidenceRaw = data.analysis && data.analysis.bars ? data.analysis.bars.confidenceToSign : undefined;
+    const confidencePct = confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
     barRow(
       "Confidence to Sign",
       confidencePct,
