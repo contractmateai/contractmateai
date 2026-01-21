@@ -918,7 +918,8 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     // Use only the canonical value from analysis.bars.favorabilityIndex
-    const favorabilityPct = Math.round(Number(data.analysis.bars.favorabilityIndex));
+    let favorabilityRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.favorabilityIndex !== 'undefined' ? data.analysis.bars.favorabilityIndex : 0;
+    const favorabilityPct = Math.round(Number(favorabilityRaw) || 0);
     barRow(
       "Favorability",
       favorabilityPct,
@@ -1138,7 +1139,8 @@ class PDFGenerator {
     );
 
     // Use only the canonical value from analysis.bars.confidenceToSign
-    const confidencePct = Math.round(Number(data.analysis.bars.confidenceToSign));
+    let confidenceRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.confidenceToSign !== 'undefined' ? data.analysis.bars.confidenceToSign : 0;
+    const confidencePct = Math.round(Number(confidenceRaw) || 0);
     barRow(
       "Confidence to Sign",
       confidencePct,
