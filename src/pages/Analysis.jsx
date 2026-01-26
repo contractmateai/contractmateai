@@ -604,13 +604,13 @@ const Analysis = () => {
       ? tAnalysis.potentialIssues
       : Array.isArray(tr.potentialIssues) && tr.potentialIssues.length
         ? tr.potentialIssues
-        : Array.isArray(analysis.potentialIssues) &&
-            analysis.potentialIssues.length
+        : Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length
           ? analysis.potentialIssues
-          : Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) &&
-              STATIC_TRANSLATIONS.en.potentialIssues.length
-            ? STATIC_TRANSLATIONS.en.potentialIssues
-            : ["—"];
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.potentialIssues) && STATIC_TRANSLATIONS[lang].potentialIssues.length
+            ? STATIC_TRANSLATIONS[lang].potentialIssues
+            : Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) && STATIC_TRANSLATIONS.en.potentialIssues.length
+              ? STATIC_TRANSLATIONS.en.potentialIssues
+              : ["—"];
 
   // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
   function getSuggestionsArr() {
@@ -633,18 +633,17 @@ const Analysis = () => {
   }
   // Use translated suggestions array if available, fallback to English
   const tSuggestions =
-    Array.isArray(tAnalysis.smartSuggestions) &&
-    tAnalysis.smartSuggestions.length
+    Array.isArray(tAnalysis.smartSuggestions) && tAnalysis.smartSuggestions.length
       ? tAnalysis.smartSuggestions
       : Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length
         ? tr.smartSuggestions
-        : Array.isArray(analysis.smartSuggestions) &&
-            analysis.smartSuggestions.length
+        : Array.isArray(analysis.smartSuggestions) && analysis.smartSuggestions.length
           ? analysis.smartSuggestions
-          : Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) &&
-              STATIC_TRANSLATIONS.en.smartSuggestions.length
-            ? STATIC_TRANSLATIONS.en.smartSuggestions
-            : [];
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.smartSuggestions) && STATIC_TRANSLATIONS[lang].smartSuggestions.length
+            ? STATIC_TRANSLATIONS[lang].smartSuggestions
+            : Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) && STATIC_TRANSLATIONS.en.smartSuggestions.length
+              ? STATIC_TRANSLATIONS.en.smartSuggestions
+              : [];
 
   const tClauses =
     Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
@@ -653,10 +652,11 @@ const Analysis = () => {
         ? tr.mainClauses
         : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
           ? analysis.mainClauses
-          : Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) &&
-              STATIC_TRANSLATIONS.en.mainClauses.length
-            ? STATIC_TRANSLATIONS.en.mainClauses
-            : ["—"];
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.mainClauses) && STATIC_TRANSLATIONS[lang].mainClauses.length
+            ? STATIC_TRANSLATIONS[lang].mainClauses
+            : Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) && STATIC_TRANSLATIONS.en.mainClauses.length
+              ? STATIC_TRANSLATIONS.en.mainClauses
+              : ["—"];
 
   // translated title (fallback to original)
   const tTitle =

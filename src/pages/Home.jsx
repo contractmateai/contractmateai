@@ -65,6 +65,23 @@ export default function Home() {
   const [rolePickerVisible, setRolePickerVisible] = useState(false);
   const [reviewBtnVisible, setReviewBtnVisible] = useState(true);
   const [activeRole, setActiveRole] = useState(null);
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const progressStages = [
+    { min: 0, max: 15, label: 'Preparing report' },
+    { min: 16, max: 30, label: 'Creating summary' },
+    { min: 31, max: 45, label: 'Listing main clauses' },
+    { min: 46, max: 60, label: 'Listing potential issues' },
+    { min: 61, max: 76, label: 'Preparing suggestions' },
+    { min: 77, max: 85, label: 'Finishing up' },
+    { min: 86, max: 100, label: 'Final touches' },
+  ];
+  const getProgressLabel = (pct) => {
+    for (const stage of progressStages) {
+      if (pct >= stage.min && pct <= stage.max) return stage.label;
+    }
+    return '';
+  };
 
   // camera bottom sheet (iOS-style overlay)
   const [sheetVisible, setSheetVisible] = useState(false);
@@ -767,44 +784,59 @@ export default function Home() {
   // ===== role click -> analyze =====
   const onRolePick = async (role) => {
     setActiveRole(role);
+    setRolePickerVisible(false);
+    setShowProgressBar(true);
+    setProgress(0);
 
-    if (!pickedFilesRef.current.length) {
-      alert("Please choose a contract file first.");
-      return;
-    }
-
-    try {
-      // enforce size on first file (same)
-      const file = pickedFilesRef.current[0];
-      if (file.size > 10_000_000) {
-        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-        return;
+    // Animate progress bar
+    let pct = 0;
+    const interval = setInterval(() => {
+      pct += Math.floor(Math.random() * 7) + 3; // random step for realism
+      if (pct >= 100) pct = 100;
+      setProgress(pct);
+      if (pct === 100) {
+        clearInterval(interval);
+        // After short delay, continue with original logic
+        setTimeout(async () => {
+          if (!pickedFilesRef.current.length) {
+            alert("Please choose a contract file first.");
+            setShowProgressBar(false);
+            setRolePickerVisible(true);
+            return;
+          }
+          try {
+            const file = pickedFilesRef.current[0];
+            if (file.size > 10_000_000) {
+              alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+              setShowProgressBar(false);
+              setRolePickerVisible(true);
+              return;
+            }
+            const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
+            const body = {
+              ...payloadArr[0],
+              role: role || "signer",
+            };
+            const resp = await fetch("/api/analyze", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            });
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({}));
+              throw new Error(err?.error || "Analysis failed");
+            }
+            const analysisResult = await resp.json();
+            localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+            window.location.href = "/analysis";
+          } catch (e) {
+            alert(`Error processing file: ${e.message}`);
+            setShowProgressBar(false);
+            setRolePickerVisible(true);
+          }
+        }, 600);
       }
-
-      const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
-
-      const body = {
-        ...payloadArr[0],
-        role: role || "signer",
-      };
-
-      const resp = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err?.error || "Analysis failed");
-      }
-
-      const analysisResult = await resp.json();
-      localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-      window.location.href = "/analysis";
-    } catch (e) {
-      alert(`Error processing file: ${e.message}`);
-    }
+    }, 350);
   };
 
   // ===== sheet buttons =====
@@ -936,27 +968,39 @@ export default function Home() {
             )}
           </div>
 
-          <div id="rolePicker" className="role-picker" hidden={!rolePickerVisible}>
-            <span className="role-title">You are:</span>
-            <div className="role-buttons">
-              <button
-                type="button"
-                className={`role-btn ${activeRole === "signer" ? "active" : ""}`}
-                data-role="signer"
-                onClick={() => onRolePick("signer")}
-              >
-                The Signer
-              </button>
-              <button
-                type="button"
-                className={`role-btn ${activeRole === "writer" ? "active" : ""}`}
-                data-role="writer"
-                onClick={() => onRolePick("writer")}
-              >
-                The Writer
-              </button>
+          {/* Role Picker or Progress Bar */}
+          {!showProgressBar && (
+            <div id="rolePicker" className="role-picker" hidden={!rolePickerVisible}>
+              <span className="role-title">You are:</span>
+              <div className="role-buttons">
+                <button
+                  type="button"
+                  className={`role-btn ${activeRole === "signer" ? "active" : ""}`}
+                  data-role="signer"
+                  onClick={() => onRolePick("signer")}
+                >
+                  The Signer
+                </button>
+                <button
+                  type="button"
+                  className={`role-btn ${activeRole === "writer" ? "active" : ""}`}
+                  data-role="writer"
+                  onClick={() => onRolePick("writer")}
+                >
+                  The Writer
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+          {showProgressBar && (
+            <div className="progress-bar-wrap" style={{ width: 340, margin: '32px auto 0', textAlign: 'center' }}>
+              <div style={{ color: '#fff', fontSize: 28, fontWeight: 600, marginBottom: 12 }}>{progress}% complete</div>
+              <div style={{ background: '#23304a', borderRadius: 8, height: 12, width: '100%', overflow: 'hidden', marginBottom: 18 }}>
+                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)', transition: 'width 0.3s' }}></div>
+              </div>
+              <div style={{ color: '#b6c6e3', fontSize: 20, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
+            </div>
+          )}
 
           {/* MOBILE-ONLY YT */}
           <div className="yt-wrap show-on-mobile">
