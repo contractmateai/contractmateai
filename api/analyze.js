@@ -477,8 +477,8 @@ RULES:
       // Helper to expand text length for mainClauses and potentialIssues
       const expandClause = (s) => {
         if (!s) return s;
-        // Repeat or elaborate to make 2.5x-3x longer if not already
-        if (s.length < 120) return s + ' ' + s.slice(0, Math.floor(s.length/2)) + ' (This clause is provided in more detail for clarity and completeness.)';
+        // Make about 1.5x longer if not already
+        if (s.length < 80) return s + ' (This clause is further explained for clarity.)';
         return s;
       };
       const expandIssue = (s) => {

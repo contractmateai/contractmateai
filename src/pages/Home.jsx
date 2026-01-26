@@ -788,55 +788,80 @@ export default function Home() {
     setShowProgressBar(true);
     setProgress(0);
 
-    // Animate progress bar
+    // Progress bar logic: fill up to 90% over 8 seconds, then wait for API
     let pct = 0;
-    const interval = setInterval(() => {
-      pct += Math.floor(Math.random() * 7) + 3; // random step for realism
-      if (pct >= 100) pct = 100;
-      setProgress(pct);
-      if (pct === 100) {
-        clearInterval(interval);
-        // After short delay, continue with original logic
-        setTimeout(async () => {
-          if (!pickedFilesRef.current.length) {
-            alert("Please choose a contract file first.");
+    let interval;
+    let done = false;
+    const fillTo = 90;
+    const fillDuration = 8000; // ms
+    const fillStep = fillTo / (fillDuration / 100);
+    function tick() {
+      if (done) return;
+      pct += fillStep;
+      if (pct > fillTo) pct = fillTo;
+      setProgress(Math.round(pct));
+      if (pct < fillTo) {
+        interval = setTimeout(tick, 100);
+      }
+    }
+    tick();
+
+    // Start API call in parallel
+    let apiError = null;
+    let analysisResult = null;
+    try {
+      if (!pickedFilesRef.current.length) {
+        throw new Error("Please choose a contract file first.");
+      }
+      const file = pickedFilesRef.current[0];
+      if (file.size > 10_000_000) {
+        throw new Error(`File ${file.name} is too large. Maximum size is 10MB.`);
+      }
+      const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
+      const body = {
+        ...payloadArr[0],
+        role: role || "signer",
+      };
+      const resp = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err?.error || "Analysis failed");
+      }
+      analysisResult = await resp.json();
+    } catch (e) {
+      apiError = e;
+    }
+    done = true;
+    clearTimeout(interval);
+    // Fill to 100% over 1s
+    let finishPct = pct;
+    const finishStep = (100 - finishPct) / 10;
+    let finishCount = 0;
+    function finishTick() {
+      finishPct += finishStep;
+      if (finishPct > 100) finishPct = 100;
+      setProgress(Math.round(finishPct));
+      finishCount++;
+      if (finishCount < 10) {
+        setTimeout(finishTick, 100);
+      } else {
+        setTimeout(() => {
+          if (apiError) {
+            alert(`Error processing file: ${apiError.message}`);
             setShowProgressBar(false);
             setRolePickerVisible(true);
             return;
           }
-          try {
-            const file = pickedFilesRef.current[0];
-            if (file.size > 10_000_000) {
-              alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-              setShowProgressBar(false);
-              setRolePickerVisible(true);
-              return;
-            }
-            const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
-            const body = {
-              ...payloadArr[0],
-              role: role || "signer",
-            };
-            const resp = await fetch("/api/analyze", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body),
-            });
-            if (!resp.ok) {
-              const err = await resp.json().catch(() => ({}));
-              throw new Error(err?.error || "Analysis failed");
-            }
-            const analysisResult = await resp.json();
-            localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-            window.location.href = "/analysis";
-          } catch (e) {
-            alert(`Error processing file: ${e.message}`);
-            setShowProgressBar(false);
-            setRolePickerVisible(true);
-          }
-        }, 600);
+          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+          window.location.href = "/analysis";
+        }, 400);
       }
-    }, 350);
+    }
+    finishTick();
   };
 
   // ===== sheet buttons =====
@@ -994,11 +1019,11 @@ export default function Home() {
           )}
           {showProgressBar && (
             <div className="progress-bar-wrap" style={{ width: 340, margin: '32px auto 0', textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: 28, fontWeight: 600, marginBottom: 12 }}>{progress}% complete</div>
-              <div style={{ background: '#23304a', borderRadius: 8, height: 12, width: '100%', overflow: 'hidden', marginBottom: 18 }}>
+              <div style={{ color: '#fff', fontSize: 22, fontWeight: 600, marginBottom: 10 }}>{progress}% complete</div>
+              <div style={{ background: '#23304a', borderRadius: 8, height: 6, width: '100%', overflow: 'hidden', marginBottom: 14 }}>
                 <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)', transition: 'width 0.3s' }}></div>
               </div>
-              <div style={{ color: '#b6c6e3', fontSize: 20, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
+              <div style={{ color: '#b6c6e3', fontSize: 16, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
             </div>
           )}
 
