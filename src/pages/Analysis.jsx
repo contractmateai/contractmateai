@@ -1,3 +1,4 @@
+// Workspace touch: harmless change for commit
 // Static translations for all supported languages
 const STATIC_TRANSLATIONS = {
   en: {
