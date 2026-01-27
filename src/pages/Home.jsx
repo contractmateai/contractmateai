@@ -788,36 +788,23 @@ export default function Home() {
     setShowProgressBar(true);
     setProgress(0);
 
-    // Progress bar logic: spread time evenly across all stages
-    const totalStages = progressStages.length;
-    const totalDuration = 8000; // ms (8 seconds for all stages)
-    const stageDuration = totalDuration / totalStages;
-    let pct = 0;
-    let currentStage = 0;
+    // Progress bar logic: fill smoothly from 0 to 99% over up to 40 seconds, then 100% when done
     let running = true;
-
-    function runStage() {
+    let pct = 0;
+    setProgress(0);
+    const maxPct = 99;
+    const fillDuration = 40000; // 40 seconds max to reach 99%
+    const fillStep = maxPct / (fillDuration / 100);
+    function tick() {
       if (!running) return;
-      const stage = progressStages[currentStage];
-      const stepCount = stage.max - stage.min + 1;
-      let step = 0;
-      function stepTick() {
-        if (!running) return;
-        pct = stage.min + step;
-        setProgress(pct);
-        step++;
-        if (step < stepCount) {
-          setTimeout(stepTick, stageDuration / stepCount);
-        } else {
-          currentStage++;
-          if (currentStage < totalStages) {
-            runStage();
-          }
-        }
+      pct += fillStep;
+      if (pct > maxPct) pct = maxPct;
+      setProgress(Math.round(pct));
+      if (pct < maxPct) {
+        setTimeout(tick, 100);
       }
-      stepTick();
     }
-    runStage();
+    tick();
 
     // Start API call in parallel
     let apiError = null;
@@ -849,31 +836,18 @@ export default function Home() {
       apiError = e;
     }
     running = false;
-    // Fill to 100% over 1s
-    let finishPct = pct;
-    const finishStep = (100 - finishPct) / 10;
-    let finishCount = 0;
-    function finishTick() {
-      finishPct += finishStep;
-      if (finishPct > 100) finishPct = 100;
-      setProgress(Math.round(finishPct));
-      finishCount++;
-      if (finishCount < 10) {
-        setTimeout(finishTick, 100);
-      } else {
-        setTimeout(() => {
-          if (apiError) {
-            alert(`Error processing file: ${apiError.message}`);
-            setShowProgressBar(false);
-            setRolePickerVisible(true);
-            return;
-          }
-          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-          window.location.href = "/analysis";
-        }, 400);
+    // Instantly fill to 100% and continue when analysis is done
+    setProgress(100);
+    setTimeout(() => {
+      if (apiError) {
+        alert(`Error processing file: ${apiError.message}`);
+        setShowProgressBar(false);
+        setRolePickerVisible(true);
+        return;
       }
-    }
-    finishTick();
+      localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+      window.location.href = "/analysis";
+    }, 400);
   };
 
   // ===== sheet buttons =====
