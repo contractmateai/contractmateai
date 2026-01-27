@@ -1,3 +1,4 @@
+// Workspace touch: repush trigger
 // Workspace touch: harmless change for commit
 // Static translations for all supported languages
 const STATIC_TRANSLATIONS = {
@@ -21,7 +22,7 @@ const STATIC_TRANSLATIONS = {
     safe: "Safe",
     verySafe: "Very Safe",
   },
-
+ 
   es: {
     summary: "Resumen",
     professionalism: "Profesionalismo",
