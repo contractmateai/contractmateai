@@ -68,13 +68,13 @@ export default function Home() {
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [progress, setProgress] = useState(0);
   const progressStages = [
-    { min: 0, max: 15, label: 'Preparing report' },
-    { min: 16, max: 30, label: 'Creating summary' },
-    { min: 31, max: 45, label: 'Listing main clauses' },
-    { min: 46, max: 60, label: 'Listing potential issues' },
-    { min: 61, max: 76, label: 'Preparing suggestions' },
-    { min: 77, max: 85, label: 'Finishing up' },
-    { min: 86, max: 100, label: 'Final touches' },
+    { min: 0, max: 14, label: 'Preparing report' },
+    { min: 15, max: 29, label: 'Creating summary' },
+    { min: 30, max: 44, label: 'Listing main clauses' },
+    { min: 45, max: 59, label: 'Listing potential issues' },
+    { min: 60, max: 74, label: 'Preparing suggestions' },
+    { min: 75, max: 89, label: 'Finishing up' },
+    { min: 90, max: 100, label: 'Final touches' },
   ];
   const getProgressLabel = (pct) => {
     for (const stage of progressStages) {
@@ -788,23 +788,36 @@ export default function Home() {
     setShowProgressBar(true);
     setProgress(0);
 
-    // Progress bar logic: fill up to 90% over 8 seconds, then wait for API
+    // Progress bar logic: spread time evenly across all stages
+    const totalStages = progressStages.length;
+    const totalDuration = 8000; // ms (8 seconds for all stages)
+    const stageDuration = totalDuration / totalStages;
     let pct = 0;
-    let interval;
-    let done = false;
-    const fillTo = 90;
-    const fillDuration = 8000; // ms
-    const fillStep = fillTo / (fillDuration / 100);
-    function tick() {
-      if (done) return;
-      pct += fillStep;
-      if (pct > fillTo) pct = fillTo;
-      setProgress(Math.round(pct));
-      if (pct < fillTo) {
-        interval = setTimeout(tick, 100);
+    let currentStage = 0;
+    let running = true;
+
+    function runStage() {
+      if (!running) return;
+      const stage = progressStages[currentStage];
+      const stepCount = stage.max - stage.min + 1;
+      let step = 0;
+      function stepTick() {
+        if (!running) return;
+        pct = stage.min + step;
+        setProgress(pct);
+        step++;
+        if (step < stepCount) {
+          setTimeout(stepTick, stageDuration / stepCount);
+        } else {
+          currentStage++;
+          if (currentStage < totalStages) {
+            runStage();
+          }
+        }
       }
+      stepTick();
     }
-    tick();
+    runStage();
 
     // Start API call in parallel
     let apiError = null;
@@ -835,8 +848,7 @@ export default function Home() {
     } catch (e) {
       apiError = e;
     }
-    done = true;
-    clearTimeout(interval);
+    running = false;
     // Fill to 100% over 1s
     let finishPct = pct;
     const finishStep = (100 - finishPct) / 10;

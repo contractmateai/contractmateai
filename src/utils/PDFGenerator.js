@@ -624,7 +624,8 @@ class PDFGenerator {
     doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
     sY += this.STYLE.TITLE_CONTENT_SPACING;
     // Each sentence on a new line, use correct text width (subtract left/right padding)
-    const summaryArr = Array.isArray(data.summary) ? data.summary : [data.summary];
+    // Use translated summary if available
+    const summaryArr = Array.isArray(data.translatedSummary) ? data.translatedSummary : (Array.isArray(data.summary) ? data.summary : [data.summary]);
     const textWidth = sW - this.STYLE.CARD_PADDING * 2;
     summaryArr.forEach((sentence) => {
       sY = this.tinyText(
@@ -956,7 +957,8 @@ class PDFGenerator {
     reg();
     doc.setFontSize(12);
     doc.setTextColor(20, 20, 20);
-    const items = (Array.isArray(data.clauses) ? data.clauses : []).slice(0, 5);
+    // Use translated clauses if available
+    const items = (Array.isArray(data.translatedClauses) ? data.translatedClauses : (Array.isArray(data.clauses) ? data.clauses : [])).slice(0, 5);
     items.forEach((t, i) => {
       doc.text(`${i + 1}.`, clX + 10, listY);
       listY =
@@ -980,7 +982,8 @@ class PDFGenerator {
 
     const iW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
 
-    (Array.isArray(data.issues) ? data.issues : []).forEach((it) => {
+    // Use translated issues if available
+    (Array.isArray(data.translatedIssues) ? data.translatedIssues : (Array.isArray(data.issues) ? data.issues : [])).forEach((it) => {
       reg();
       doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
       doc.setTextColor(20, 20, 20);
@@ -1006,7 +1009,8 @@ class PDFGenerator {
     const s2Top = y2 + this.STYLE.SECTION_HEADER_SPACING;
 
     let s2Y = s2Top + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
-    (Array.isArray(data.suggestions) ? data.suggestions : []).forEach(
+    // Use translated suggestions if available
+    (Array.isArray(data.translatedSuggestions) ? data.translatedSuggestions : (Array.isArray(data.suggestions) ? data.suggestions : [])).forEach(
       (s, i) => {
         const num = `${i + 1}. `;
         reg();

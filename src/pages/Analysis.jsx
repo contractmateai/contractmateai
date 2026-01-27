@@ -555,13 +555,13 @@ const Analysis = () => {
         ? "notThatSafe"
         : "unsafe";
 
-  // Static sentences (always translated)
-  const staticRiskNote =
-    staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
-  const staticClarityNote =
-    staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
-  const staticScoreNote =
-    staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
+  // Prefer translated AI-generated notes/lines, fallback to static translation
+  const tRiskNote =
+    tAnalysis.risk?.note || tr.riskNote || analysis.risk?.note || staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
+  const tClarityNote =
+    tAnalysis.clarity?.note || tr.clarityNote || analysis.clarity?.note || staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
+  const tScoreLine =
+    tAnalysis.scoreChecker?.line || tr.scoreLine || analysis.scoreChecker?.line || staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
 
   // translated dynamic arrays (fallback to original if missing)
   const analysis = data?.analysis || {};
@@ -1028,7 +1028,7 @@ const Analysis = () => {
                     </h3>
 
                     <div className="muted" id="riskNote" style={mutedStyle}>
-                      {staticRiskNote}
+                      {tRiskNote}
                     </div>
 
                     <div className="status">
@@ -1100,7 +1100,7 @@ const Analysis = () => {
                     </h3>
 
                     <div className="muted" id="clarNote" style={mutedStyle}>
-                      {staticClarityNote}
+                      {tClarityNote}
                     </div>
 
                     <div className="status">
@@ -1189,7 +1189,7 @@ const Analysis = () => {
                     </h3>
 
                     <div className="score-remark" id="scoreRemark">
-                      {staticScoreNote}
+                      {tScoreLine}
                     </div>
 
                     <div className="score-bar">
