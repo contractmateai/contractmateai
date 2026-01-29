@@ -605,50 +605,98 @@ const Analysis = () => {
 
   // translated dynamic arrays (fallback to original if missing)
   const analysis = data?.analysis || {};
-  // Always use translated analysis fields if available, fallback to detectedLang, then English, then raw
-  const translations = data?.translations || {};
-  const detectedLang = data?.detectedLang || "en";
-  const getTranslatedField = (field) => {
-    // Try: current lang, detectedLang, English, then raw
-    return (
-      translations[lang]?.[field] ||
-      translations[detectedLang]?.[field] ||
-      translations["en"]?.[field] ||
-      analysis[field] || []
-    );
-  };
+  const tAnalysis = tr.analysis || {};
 
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {
-    const arr = getTranslatedField("summary");
-    if (Array.isArray(arr) && arr.length) return arr;
-    if (typeof arr === "string" && arr.trim())
-      return arr
-        .split(/\r?\n|•|- /g)
-        .map((s) => s.trim())
-        .filter(Boolean);
+    const candidates = [
+      tAnalysis.summary,
+      tr.summary,
+      analysis.summary,
+      analysis.summaryText,
+      analysis.summaryLines,
+    ];
+    for (const c of candidates) {
+      if (Array.isArray(c) && c.length) return c;
+      if (typeof c === "string" && c.trim())
+        return c
+          .split(/\r?\n|•|- /g)
+          .map((s) => s.trim())
+          .filter(Boolean);
+    }
     return [];
   }
   // Use translated summary array if available, fallback to English
-  const tSummary = getSummaryArr();
+  const tSummary =
+    Array.isArray(tAnalysis.summary) && tAnalysis.summary.length
+      ? tAnalysis.summary
+      : Array.isArray(tr.summary) && tr.summary.length
+        ? tr.summary
+        : Array.isArray(analysis.summary) && analysis.summary.length
+          ? analysis.summary
+          : Array.isArray(STATIC_TRANSLATIONS.en.summary) &&
+              STATIC_TRANSLATIONS.en.summary.length
+            ? STATIC_TRANSLATIONS.en.summary
+            : [];
 
-  const tIssues = getTranslatedField("potentialIssues");
+  const tIssues =
+    Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length
+      ? tAnalysis.potentialIssues
+      : Array.isArray(tr.potentialIssues) && tr.potentialIssues.length
+        ? tr.potentialIssues
+        : Array.isArray(analysis.potentialIssues) && analysis.potentialIssues.length
+          ? analysis.potentialIssues
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.potentialIssues) && STATIC_TRANSLATIONS[lang].potentialIssues.length
+            ? STATIC_TRANSLATIONS[lang].potentialIssues
+            : Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) && STATIC_TRANSLATIONS.en.potentialIssues.length
+              ? STATIC_TRANSLATIONS.en.potentialIssues
+              : ["—"];
 
   // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
   function getSuggestionsArr() {
-    const arr = getTranslatedField("smartSuggestions");
-    if (Array.isArray(arr) && arr.length) return arr;
-    if (typeof arr === "string" && arr.trim())
-      return arr
-        .split(/\r?\n|•|- /g)
-        .map((s) => s.trim())
-        .filter(Boolean);
+    const candidates = [
+      tAnalysis.smartSuggestions,
+      tr.smartSuggestions,
+      analysis.smartSuggestions,
+      analysis.suggestions,
+      analysis.smartSuggestionsText,
+    ];
+    for (const c of candidates) {
+      if (Array.isArray(c) && c.length) return c;
+      if (typeof c === "string" && c.trim())
+        return c
+          .split(/\r?\n|•|- /g)
+          .map((s) => s.trim())
+          .filter(Boolean);
+    }
     return [];
   }
   // Use translated suggestions array if available, fallback to English
-  const tSuggestions = getSuggestionsArr();
+  const tSuggestions =
+    Array.isArray(tAnalysis.smartSuggestions) && tAnalysis.smartSuggestions.length
+      ? tAnalysis.smartSuggestions
+      : Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length
+        ? tr.smartSuggestions
+        : Array.isArray(analysis.smartSuggestions) && analysis.smartSuggestions.length
+          ? analysis.smartSuggestions
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.smartSuggestions) && STATIC_TRANSLATIONS[lang].smartSuggestions.length
+            ? STATIC_TRANSLATIONS[lang].smartSuggestions
+            : Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) && STATIC_TRANSLATIONS.en.smartSuggestions.length
+              ? STATIC_TRANSLATIONS.en.smartSuggestions
+              : [];
 
-  const tClauses = getTranslatedField("mainClauses");
+  const tClauses =
+    Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
+      ? tAnalysis.mainClauses
+      : Array.isArray(tr.mainClauses) && tr.mainClauses.length
+        ? tr.mainClauses
+        : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+          ? analysis.mainClauses
+          : Array.isArray(STATIC_TRANSLATIONS[lang]?.mainClauses) && STATIC_TRANSLATIONS[lang].mainClauses.length
+            ? STATIC_TRANSLATIONS[lang].mainClauses
+            : Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) && STATIC_TRANSLATIONS.en.mainClauses.length
+              ? STATIC_TRANSLATIONS.en.mainClauses
+              : ["—"];
 
   // translated title (fallback to original)
   const tTitle =
