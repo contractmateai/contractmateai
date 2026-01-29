@@ -323,44 +323,31 @@ export default async function handler(req, res) {
     // ------------------------------------------------------------------
     // SYSTEM PROMPT — returns main analysis + translations in all langs
     // ------------------------------------------------------------------
-    const system = `You are a contract analyst. Return STRICT JSON only using this exact structure:
+    const system = `You are a contract analyst. Analyze this contract and return a JSON object with:
 
-{
-  "contractName": "string",
-  "contractTitle": "string",
-  "role": "signer|writer",
-  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
-  "analysis": {
-    "summary": ["string","string","string"],
-    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
-    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, no parenthetical notes, no extra explanations, just the clause itself as a clear, concise summary)","string","string","string","string"],
-    "potentialIssues": ["string (each issue must be a short, finished sentence, no parenthetical notes, no extra explanations, just the issue itself as a clear, concise summary)","string","string","string","string"],
-    "smartSuggestions": [
-      "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
-      "Clarify opt-outs, e.g., 'Parties may opt-out of certain liability clauses.'",
-      "Add dispute mechanism, e.g., 'Disputes resolved through arbitration in Vienna.'"
-    ],
-    "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
-    "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
-  },
-  "translations": {
-    "en": {...}, "it": {...}, "de": {...}, "es": {...}, "fr": {...}, "pt": {...},
-    "nl": {...}, "ro": {...}, "sq": {...}, "tr": {...}, "ja": {...}, "zh": {...}
-  }
-}
+- analysis (in English):
+    - summary: array of 3 short, clear sentences
+    - mainClauses: array of 5 short, finished sentences (no ellipsis, no parenthetical notes, no explanations)
+    - potentialIssues: array of 4-5 short, finished sentences (no parenthetical notes, no explanations)
+    - smartSuggestions: array of 3 short, actionable suggestions
+    - risk, clarity, bars, scoreChecker as before
 
-RULES:
-- Detect language of contract text properly.
-- Main “analysis” must be in detectedLang.
-- If detectedLang is NOT one of: en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh → use **English**.
-- summary must be exactly 3 clean sentences.
-- mainClauses must each be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary.
-- potentialIssues must each be 4-5 words longer than typical, more detailed.
-- smartSuggestions exactly 3, each with e.g.
-- scoreChecker.line must logically match verdict.
-- translations.* must contain translated fields.
-- German translations must be concise (10–15 chars shorter).`;
+- translations: for each of these languages: it, de, es, fr, pt, nl, ro, sq, tr, zh, ja
+    - analysis: {
+        summary: translated array
+        mainClauses: translated array
+        potentialIssues: translated array
+        smartSuggestions: translated array
+      }
+
+Rules:
+- Do NOT paraphrase or add explanations in translations.
+- Keep sentence length and meaning as close as possible to the English original.
+- Return valid JSON only.
+- Do NOT include any extra text or comments.
+- All arrays must be present for every language.
+- If the contract is not in English, detectedLang must match the contract language if supported, otherwise use English.
+`;
 
     // USER CONTENT FOR MODEL
     const userContent = imageDataURI
