@@ -390,7 +390,13 @@ const Analysis = () => {
           note: "",
           safety: "Unknown",
         },
-        clauses: data.analysis?.mainClauses || [],
+        clauses: (data.analysis?.mainClauses || []).map(c => {
+          if (typeof c !== 'string') return '';
+          if (c.length <= 120) return c.trim();
+          const trimmed = c.slice(0, 120);
+          const lastSpace = trimmed.lastIndexOf(' ');
+          return trimmed.slice(0, lastSpace > 0 ? lastSpace : 120).trim();
+        }),
         issues: data.analysis?.potentialIssues || [],
         suggestions: data.analysis?.smartSuggestions || [],
         meters: {
