@@ -334,7 +334,7 @@ export default async function handler(req, res) {
     "summary": ["string","string","string"],
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string (each clause must be 2.5x to 3x longer than usual, detailed, and specific)","string","string","string","string"],
+    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary)","string","string","string","string"],
     "potentialIssues": ["string (each issue must be 4-5 words longer than usual, more detailed)","string","string","string","string"],
     "smartSuggestions": [
       "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
@@ -355,7 +355,7 @@ RULES:
 - Main “analysis” must be in detectedLang.
 - If detectedLang is NOT one of: en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh → use **English**.
 - summary must be exactly 3 clean sentences.
-- mainClauses must each be 2.5x to 3x longer than typical, detailed, and specific.
+- mainClauses must each be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary.
 - potentialIssues must each be 4-5 words longer than typical, more detailed.
 - smartSuggestions exactly 3, each with e.g.
 - scoreChecker.line must logically match verdict.
