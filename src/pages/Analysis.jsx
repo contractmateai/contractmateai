@@ -1,4 +1,3 @@
-// ...existing code...
 // Strips trailing parenthetical notes and any leftover spaces/punctuation
 function stripTrailingParentheses(text) {
   if (typeof text !== "string") return text;
@@ -319,48 +318,6 @@ const Analysis = () => {
   const [lang, setLang] = useState("en");
   const [langMenuOpen, setLangMenuOpen] = useState(false);
 
-  // Helper to translate an array of strings to a target language using an API endpoint
-  async function translateArray(arr, targetLang) {
-    if (!Array.isArray(arr) || !arr.length) return [];
-    const res = await fetch("/api/translate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: arr,
-        targetLang,
-      }),
-    });
-    const json = await res.json();
-    return Array.isArray(json.translated) ? json.translated : arr;
-  }
-
-  // Auto-translate generated content when language changes, store in data.translations[lang].analysis
-  useEffect(() => {
-    if (!data || lang === "en") return;
-    // already translated → do nothing
-    if (data.translations?.[lang]?.analysis) return;
-
-    (async () => {
-      const translatedAnalysis = {
-        summary: await translateArray(data.analysis?.summary, lang),
-        mainClauses: await translateArray(data.analysis?.mainClauses, lang),
-        potentialIssues: await translateArray(data.analysis?.potentialIssues, lang),
-        smartSuggestions: await translateArray(data.analysis?.smartSuggestions, lang),
-      };
-
-      setData(prev => ({
-        ...prev,
-        translations: {
-          ...(prev.translations || {}),
-          [lang]: {
-            ...(prev.translations?.[lang] || {}),
-            analysis: translatedAnalysis,
-          },
-        },
-      }));
-    })();
-  }, [lang, data]);
-
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showEmailInline, setShowEmailInline] = useState(false);
 
@@ -647,20 +604,8 @@ const Analysis = () => {
     staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
 
   // translated dynamic arrays (fallback to original if missing)
-  // Always use translated generated content if available, fallback to English or original
   const analysis = data?.analysis || {};
-  const translations = data?.translations || {};
-  const detectedLang = data?.detectedLang || "en";
-  const getTAnalysis = () => {
-    // Try: current lang, detectedLang, English, then raw
-    return (
-      translations[lang]?.analysis ||
-      translations[detectedLang]?.analysis ||
-      translations["en"]?.analysis ||
-      analysis || {}
-    );
-  };
-  const tAnalysis = getTAnalysis();
+  const tAnalysis = tr.analysis || {};
 
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {

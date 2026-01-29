@@ -323,31 +323,44 @@ export default async function handler(req, res) {
     // ------------------------------------------------------------------
     // SYSTEM PROMPT — returns main analysis + translations in all langs
     // ------------------------------------------------------------------
-    const system = `You are a contract analyst. Analyze this contract and return a JSON object with:
+    const system = `You are a contract analyst. Return STRICT JSON only using this exact structure:
 
-  - analysis (in English):
-    - summary: array of 3 short, clear sentences
-    - mainClauses: array of 5 short, finished sentences (no ellipsis, no parenthetical notes, no explanations)
-    - potentialIssues: array of 4-5 short, finished sentences (no parenthetical notes, no explanations)
-    - smartSuggestions: array of 3 short, actionable suggestions
-    - risk, clarity, bars, scoreChecker as before
+{
+  "contractName": "string",
+  "contractTitle": "string",
+  "role": "signer|writer",
+  "detectedLang": "en|it|de|es|fr|pt|nl|ro|sq|tr|ja|zh",
+  "analysis": {
+    "summary": ["string","string","string"],
+    "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
+    "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
+    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, no parenthetical notes, no extra explanations, just the clause itself as a clear, concise summary)","string","string","string","string"],
+    "potentialIssues": ["string (each issue must be a short, finished sentence, no parenthetical notes, no extra explanations, just the issue itself as a clear, concise summary)","string","string","string","string"],
+    "smartSuggestions": [
+      "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
+      "Clarify opt-outs, e.g., 'Parties may opt-out of certain liability clauses.'",
+      "Add dispute mechanism, e.g., 'Disputes resolved through arbitration in Vienna.'"
+    ],
+    "bars": { "professionalism": 0-100, "favorabilityIndex": 0-100, "deadlinePressure": 0-100, "confidenceToSign": 0-100 },
+    "scoreChecker": { "value": 0-100, "band": "red|orange|green", "verdict": "unsafe|safe|very safe", "line": "string" }
+  },
+  "translations": {
+    "en": {...}, "it": {...}, "de": {...}, "es": {...}, "fr": {...}, "pt": {...},
+    "nl": {...}, "ro": {...}, "sq": {...}, "tr": {...}, "ja": {...}, "zh": {...}
+  }
+}
 
-  - translations: for each of these languages: it, de, es
-    - analysis: {
-      summary: translated array
-      mainClauses: translated array
-      potentialIssues: translated array
-      smartSuggestions: translated array
-      }
-
-  Rules:
-  - Do NOT paraphrase or add explanations in translations.
-  - Keep sentence length and meaning as close as possible to the English original.
-  - Return valid JSON only.
-  - Do NOT include any extra text or comments.
-  - All arrays must be present for every language.
-  - If the contract is not in English, detectedLang must match the contract language if supported, otherwise use English.
-  `;
+RULES:
+- Detect language of contract text properly.
+- Main “analysis” must be in detectedLang.
+- If detectedLang is NOT one of: en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh → use **English**.
+- summary must be exactly 3 clean sentences.
+- mainClauses must each be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary.
+- potentialIssues must each be 4-5 words longer than typical, more detailed.
+- smartSuggestions exactly 3, each with e.g.
+- scoreChecker.line must logically match verdict.
+- translations.* must contain translated fields.
+- German translations must be concise (10–15 chars shorter).`;
 
     // USER CONTENT FOR MODEL
     const userContent = imageDataURI
@@ -464,30 +477,29 @@ export default async function handler(req, res) {
       // Helper to expand text length for mainClauses and potentialIssues
       const expandClause = (s) => {
         if (!s) return s;
+        // Make about 1.5x longer if not already
         if (s.length < 80) return s + ' (This clause is further explained for clarity.)';
         return s;
       };
       const expandIssue = (s) => {
         if (!s) return s;
+        // Add 4-5 more words if not already
         if (s.split(' ').length < 12) return s + ' (This issue may have further implications or consequences.)';
         return s;
       };
       translationsOut[code] = {
         title: cap(src.title || "", 200),
+        summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
+        mainClauses: (src.mainClauses || [])
+          .map((s) => expandClause(stripLead(cap(s, 900))))
+          .slice(0, 5),
+        potentialIssues: (src.potentialIssues || [])
+          .map((s) => expandIssue(stripLead(cap(s, 1000))))
+          .slice(0, 5),
+        smartSuggestions: (src.smartSuggestions || [])
+          .map((s) => stripLead(cap(s, 250)))
+          .slice(0, 3),
         scoreLine: cap(src.scoreLine || "", 280),
-        // Store all generated fields under an 'analysis' object for frontend compatibility
-        analysis: {
-          summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
-          mainClauses: (src.mainClauses || [])
-            .map((s) => expandClause(stripLead(cap(s, 900))))
-            .slice(0, 5),
-          potentialIssues: (src.potentialIssues || [])
-            .map((s) => expandIssue(stripLead(cap(s, 1000))))
-            .slice(0, 5),
-          smartSuggestions: (src.smartSuggestions || [])
-            .map((s) => stripLead(cap(s, 250)))
-            .slice(0, 3),
-        },
       };
     });
 
