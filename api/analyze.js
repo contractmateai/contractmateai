@@ -325,29 +325,29 @@ export default async function handler(req, res) {
     // ------------------------------------------------------------------
     const system = `You are a contract analyst. Analyze this contract and return a JSON object with:
 
-- analysis (in English):
+  - analysis (in English):
     - summary: array of 3 short, clear sentences
     - mainClauses: array of 5 short, finished sentences (no ellipsis, no parenthetical notes, no explanations)
     - potentialIssues: array of 4-5 short, finished sentences (no parenthetical notes, no explanations)
     - smartSuggestions: array of 3 short, actionable suggestions
     - risk, clarity, bars, scoreChecker as before
 
-- translations: for each of these languages: it, de, es, fr, pt, nl, ro, sq, tr, zh, ja
+  - translations: for each of these languages: it, de, es
     - analysis: {
-        summary: translated array
-        mainClauses: translated array
-        potentialIssues: translated array
-        smartSuggestions: translated array
+      summary: translated array
+      mainClauses: translated array
+      potentialIssues: translated array
+      smartSuggestions: translated array
       }
 
-Rules:
-- Do NOT paraphrase or add explanations in translations.
-- Keep sentence length and meaning as close as possible to the English original.
-- Return valid JSON only.
-- Do NOT include any extra text or comments.
-- All arrays must be present for every language.
-- If the contract is not in English, detectedLang must match the contract language if supported, otherwise use English.
-`;
+  Rules:
+  - Do NOT paraphrase or add explanations in translations.
+  - Keep sentence length and meaning as close as possible to the English original.
+  - Return valid JSON only.
+  - Do NOT include any extra text or comments.
+  - All arrays must be present for every language.
+  - If the contract is not in English, detectedLang must match the contract language if supported, otherwise use English.
+  `;
 
     // USER CONTENT FOR MODEL
     const userContent = imageDataURI
