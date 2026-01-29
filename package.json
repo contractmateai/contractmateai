@@ -1,6 +1,3 @@
-  "rollup": {
-    "forceJs": true
-  },
 {
   "name": "signsense-site",
   "version": "1.0.0",
