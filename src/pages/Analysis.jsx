@@ -392,8 +392,10 @@ const Analysis = () => {
         },
         clauses: (data.analysis?.mainClauses || []).map(c => {
           if (typeof c !== 'string') return '';
+          // Remove any parenthetical note at the end
+          let cleaned = c.replace(/\s*\([^)]*\)\s*$/, '').trim();
           // Try to get the first full sentence under 180 chars
-          const sentences = c.match(/[^.!?]+[.!?]+/g) || [c];
+          const sentences = cleaned.match(/[^.!?]+[.!?]+/g) || [cleaned];
           for (let s of sentences) {
             const trimmed = s.trim();
             if (trimmed.length > 0 && trimmed.length <= 180) return trimmed;
@@ -401,7 +403,19 @@ const Analysis = () => {
           // If no sentence is short enough, use the first sentence as-is (even if long)
           return sentences[0].trim();
         }),
-        issues: data.analysis?.potentialIssues || [],
+        issues: (data.analysis?.potentialIssues || []).map(i => {
+          if (typeof i !== 'string') return '';
+          // Remove any parenthetical note at the end
+          let cleaned = i.replace(/\s*\([^)]*\)\s*$/, '').trim();
+          // Try to get the first full sentence under 180 chars
+          const sentences = cleaned.match(/[^.!?]+[.!?]+/g) || [cleaned];
+          for (let s of sentences) {
+            const trimmed = s.trim();
+            if (trimmed.length > 0 && trimmed.length <= 180) return trimmed;
+          }
+          // If no sentence is short enough, use the first sentence as-is (even if long)
+          return sentences[0].trim();
+        }),
         suggestions: data.analysis?.smartSuggestions || [],
         meters: {
           professionalism: data.analysis?.bars?.professionalism ?? 65,
