@@ -1,3 +1,13 @@
+// Strips trailing parenthetical notes and any leftover spaces/punctuation
+function stripTrailingParentheses(text) {
+  if (typeof text !== "string") return text;
+  return text
+    // remove trailing parenthesis content
+    .replace(/\s*\([^()]*\)\s*$/g, "")
+    // remove leftover spaces / punctuation
+    .replace(/\s+[.,;:]?$/, "")
+    .trim();
+}
 // Static translations for all supported languages
 const STATIC_TRANSLATIONS = {
   en: {
@@ -983,7 +993,7 @@ const Analysis = () => {
                 >
                   {fallbackArr(tIssues).map((issue, i) => (
                     <li key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
-                      {issue}
+                      {stripTrailingParentheses(issue)}
                     </li>
                   ))}
                 </ul>
@@ -1172,11 +1182,18 @@ const Analysis = () => {
                   id="clausesList"
                   style={{ fontSize: "20px" }}
                 >
-                  {fallbackArr(tClauses).map((c, i) => (
-                    <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
-                      {`${i + 1}. ${typeof c === 'string' ? (c.length > 120 ? c.slice(0, 117) + '...' : c) : ''}`}
-                    </div>
-                  ))}
+                  {fallbackArr(tClauses).map((c, i) => {
+                    const cleaned = stripTrailingParentheses(c);
+                    return (
+                      <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
+                        {`${i + 1}. ${
+                          cleaned.length > 120
+                            ? cleaned.slice(0, 117) + "..."
+                            : cleaned
+                        }`}
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 
