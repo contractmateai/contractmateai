@@ -392,19 +392,14 @@ const Analysis = () => {
         },
         clauses: (data.analysis?.mainClauses || []).map(c => {
           if (typeof c !== 'string') return '';
-          // Try to get the first sentence under 120 chars
+          // Try to get the first full sentence under 180 chars
           const sentences = c.match(/[^.!?]+[.!?]+/g) || [c];
           for (let s of sentences) {
-            if (s.trim().length <= 120) return s.trim();
+            const trimmed = s.trim();
+            if (trimmed.length > 0 && trimmed.length <= 180) return trimmed;
           }
-          // If no sentence is short enough, take the first sentence and cut at last word under 120
-          const first = sentences[0].trim();
-          if (first.length > 120) {
-            const trimmed = first.slice(0, 120);
-            const lastSpace = trimmed.lastIndexOf(' ');
-            return trimmed.slice(0, lastSpace > 0 ? lastSpace : 120).trim();
-          }
-          return first;
+          // If no sentence is short enough, use the first sentence as-is (even if long)
+          return sentences[0].trim();
         }),
         issues: data.analysis?.potentialIssues || [],
         suggestions: data.analysis?.smartSuggestions || [],
