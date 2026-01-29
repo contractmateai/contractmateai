@@ -10,13 +10,13 @@ const STATIC_TRANSLATIONS = {
     clauseClarity: "Clause Clarity",
     smartSuggestions: "Suggestions",
     mainClauses: [
-      "Parties",
-      "Duties",
-      "Pay",
-      "End",
-      "Privacy",
-      "Risk",
-      "Law"
+      "Who is involved in the contract",
+      "What each side must do",
+      "How and when payment happens",
+      "How the contract can end",
+      "How information is kept private",
+      "Who is responsible for problems",
+      "Which law applies"
     ],
     overallScore: "Final Score",
     confidenceToSign: "Confidence to Sign",
