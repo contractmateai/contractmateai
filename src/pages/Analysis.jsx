@@ -9,7 +9,15 @@ const STATIC_TRANSLATIONS = {
     riskLevel: "Risk Level",
     clauseClarity: "Clause Clarity",
     smartSuggestions: "Suggestions",
-    mainClauses: "Main Clauses",
+    mainClauses: [
+      "Parties",
+      "Obligations",
+      "Payment",
+      "Termination",
+      "Confidentiality",
+      "Liability",
+      "Law"
+    ],
     overallScore: "Final Score",
     confidenceToSign: "Confidence to Sign",
     riskStatic: "Based on clause fairness and obligations.",

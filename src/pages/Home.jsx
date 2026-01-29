@@ -67,20 +67,22 @@ export default function Home() {
   const [activeRole, setActiveRole] = useState(null);
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [progress, setProgress] = useState(0);
-  const progressStages = [
-    { min: 0, max: 15, label: 'Preparing report' },
-    { min: 16, max: 30, label: 'Creating summary' },
-    { min: 31, max: 45, label: 'Listing main clauses' },
-    { min: 46, max: 60, label: 'Listing potential issues' },
-    { min: 61, max: 76, label: 'Preparing suggestions' },
-    { min: 77, max: 85, label: 'Finishing up' },
-    { min: 86, max: 100, label: 'Final touches' },
+  // Evenly spread progress bar stages
+  const progressStageLabels = [
+    'Preparing report',
+    'Creating summary',
+    'Listing main clauses',
+    'Listing potential issues',
+    'Preparing suggestions',
+    'Finishing up',
+    'Final touches',
   ];
   const getProgressLabel = (pct) => {
-    for (const stage of progressStages) {
-      if (pct >= stage.min && pct <= stage.max) return stage.label;
-    }
-    return '';
+    const idx = Math.min(
+      progressStageLabels.length - 1,
+      Math.floor((pct / 100) * progressStageLabels.length)
+    );
+    return progressStageLabels[idx];
   };
 
   // camera bottom sheet (iOS-style overlay)
@@ -788,27 +790,10 @@ export default function Home() {
     setShowProgressBar(true);
     setProgress(0);
 
-    // Progress bar logic: fill up to 90% over 8 seconds, then wait for API
-    let pct = 0;
-    let interval;
-    let done = false;
-    const fillTo = 90;
-    const fillDuration = 8000; // ms
-    const fillStep = fillTo / (fillDuration / 100);
-    function tick() {
-      if (done) return;
-      pct += fillStep;
-      if (pct > fillTo) pct = fillTo;
-      setProgress(Math.round(pct));
-      if (pct < fillTo) {
-        interval = setTimeout(tick, 100);
-      }
-    }
-    tick();
-
-    // Start API call in parallel
+    // Start API call and measure duration
     let apiError = null;
     let analysisResult = null;
+    const startTime = Date.now();
     try {
       if (!pickedFilesRef.current.length) {
         throw new Error("Please choose a contract file first.");
@@ -835,19 +820,19 @@ export default function Home() {
     } catch (e) {
       apiError = e;
     }
-    done = true;
-    clearTimeout(interval);
-    // Fill to 100% over 1s
-    let finishPct = pct;
-    const finishStep = (100 - finishPct) / 10;
-    let finishCount = 0;
-    function finishTick() {
-      finishPct += finishStep;
-      if (finishPct > 100) finishPct = 100;
-      setProgress(Math.round(finishPct));
-      finishCount++;
-      if (finishCount < 10) {
-        setTimeout(finishTick, 100);
+    const elapsed = Date.now() - startTime;
+    // Animate progress bar evenly over the measured duration
+    const animationDuration = Math.max(elapsed, 2000); // at least 2s for UX
+    let pct = 0;
+    const intervalMs = 100;
+    const steps = Math.ceil(animationDuration / intervalMs);
+    let currentStep = 0;
+    function animateTick() {
+      currentStep++;
+      pct = Math.min(100, (currentStep / steps) * 100);
+      setProgress(Math.round(pct));
+      if (currentStep < steps) {
+        setTimeout(animateTick, intervalMs);
       } else {
         setTimeout(() => {
           if (apiError) {
@@ -861,7 +846,7 @@ export default function Home() {
         }, 400);
       }
     }
-    finishTick();
+    animateTick();
   };
 
   // ===== sheet buttons =====
