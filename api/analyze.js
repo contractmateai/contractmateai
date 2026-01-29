@@ -477,29 +477,30 @@ RULES:
       // Helper to expand text length for mainClauses and potentialIssues
       const expandClause = (s) => {
         if (!s) return s;
-        // Make about 1.5x longer if not already
         if (s.length < 80) return s + ' (This clause is further explained for clarity.)';
         return s;
       };
       const expandIssue = (s) => {
         if (!s) return s;
-        // Add 4-5 more words if not already
         if (s.split(' ').length < 12) return s + ' (This issue may have further implications or consequences.)';
         return s;
       };
       translationsOut[code] = {
         title: cap(src.title || "", 200),
-        summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
-        mainClauses: (src.mainClauses || [])
-          .map((s) => expandClause(stripLead(cap(s, 900))))
-          .slice(0, 5),
-        potentialIssues: (src.potentialIssues || [])
-          .map((s) => expandIssue(stripLead(cap(s, 1000))))
-          .slice(0, 5),
-        smartSuggestions: (src.smartSuggestions || [])
-          .map((s) => stripLead(cap(s, 250)))
-          .slice(0, 3),
         scoreLine: cap(src.scoreLine || "", 280),
+        // Store all generated fields under an 'analysis' object for frontend compatibility
+        analysis: {
+          summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
+          mainClauses: (src.mainClauses || [])
+            .map((s) => expandClause(stripLead(cap(s, 900))))
+            .slice(0, 5),
+          potentialIssues: (src.potentialIssues || [])
+            .map((s) => expandIssue(stripLead(cap(s, 1000))))
+            .slice(0, 5),
+          smartSuggestions: (src.smartSuggestions || [])
+            .map((s) => stripLead(cap(s, 250)))
+            .slice(0, 3),
+        },
       };
     });
 

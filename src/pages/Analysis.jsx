@@ -1,3 +1,43 @@
+// Helper to translate an array of strings to a target language using an API endpoint
+async function translateArray(arr, targetLang) {
+  if (!Array.isArray(arr) || !arr.length) return [];
+  const res = await fetch("/api/translate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text: arr,
+      targetLang,
+    }),
+  });
+  const json = await res.json();
+  return Array.isArray(json.translated) ? json.translated : arr;
+}
+  // Auto-translate generated content when language changes, store in data.translations[lang].analysis
+  useEffect(() => {
+    if (!data || lang === "en") return;
+    // already translated → do nothing
+    if (data.translations?.[lang]?.analysis) return;
+
+    (async () => {
+      const translatedAnalysis = {
+        summary: await translateArray(data.analysis?.summary, lang),
+        mainClauses: await translateArray(data.analysis?.mainClauses, lang),
+        potentialIssues: await translateArray(data.analysis?.potentialIssues, lang),
+        smartSuggestions: await translateArray(data.analysis?.smartSuggestions, lang),
+      };
+
+      setData(prev => ({
+        ...prev,
+        translations: {
+          ...(prev.translations || {}),
+          [lang]: {
+            ...(prev.translations?.[lang] || {}),
+            analysis: translatedAnalysis,
+          },
+        },
+      }));
+    })();
+  }, [lang, data]);
 // Strips trailing parenthetical notes and any leftover spaces/punctuation
 function stripTrailingParentheses(text) {
   if (typeof text !== "string") return text;
