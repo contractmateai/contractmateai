@@ -334,7 +334,7 @@ export default async function handler(req, res) {
     "summary": ["string","string","string"],
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary)","string","string","string","string"],
+    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, no parenthetical notes, no extra explanations, just the clause itself as a clear, concise summary)","string","string","string","string"],
     "potentialIssues": ["string (each issue must be 4-5 words longer than usual, more detailed)","string","string","string","string"],
     "smartSuggestions": [
       "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
