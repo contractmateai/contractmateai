@@ -392,10 +392,19 @@ const Analysis = () => {
         },
         clauses: (data.analysis?.mainClauses || []).map(c => {
           if (typeof c !== 'string') return '';
-          if (c.length <= 120) return c.trim();
-          const trimmed = c.slice(0, 120);
-          const lastSpace = trimmed.lastIndexOf(' ');
-          return trimmed.slice(0, lastSpace > 0 ? lastSpace : 120).trim();
+          // Try to get the first sentence under 120 chars
+          const sentences = c.match(/[^.!?]+[.!?]+/g) || [c];
+          for (let s of sentences) {
+            if (s.trim().length <= 120) return s.trim();
+          }
+          // If no sentence is short enough, take the first sentence and cut at last word under 120
+          const first = sentences[0].trim();
+          if (first.length > 120) {
+            const trimmed = first.slice(0, 120);
+            const lastSpace = trimmed.lastIndexOf(' ');
+            return trimmed.slice(0, lastSpace > 0 ? lastSpace : 120).trim();
+          }
+          return first;
         }),
         issues: data.analysis?.potentialIssues || [],
         suggestions: data.analysis?.smartSuggestions || [],
