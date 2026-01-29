@@ -11,11 +11,11 @@ const STATIC_TRANSLATIONS = {
     smartSuggestions: "Suggestions",
     mainClauses: [
       "Parties",
-      "Obligations",
-      "Payment",
-      "Termination",
-      "Confidentiality",
-      "Liability",
+      "Duties",
+      "Pay",
+      "End",
+      "Privacy",
+      "Risk",
       "Law"
     ],
     overallScore: "Final Score",

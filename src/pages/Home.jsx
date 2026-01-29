@@ -790,10 +790,27 @@ export default function Home() {
     setShowProgressBar(true);
     setProgress(0);
 
-    // Start API call and measure duration
+    // Progress bar logic: fill smoothly from 0 to 99% over up to 40 seconds, then 100% when done
+    let running = true;
+    let pct = 0;
+    setProgress(0);
+    const maxPct = 99;
+    const fillDuration = 40000; // 40 seconds max to reach 99%
+    const fillStep = maxPct / (fillDuration / 100);
+    function tick() {
+      if (!running) return;
+      pct += fillStep;
+      if (pct > maxPct) pct = maxPct;
+      setProgress(Math.round(pct));
+      if (pct < maxPct) {
+        setTimeout(tick, 100);
+      }
+    }
+    tick();
+
+    // Start API call in parallel
     let apiError = null;
     let analysisResult = null;
-    const startTime = Date.now();
     try {
       if (!pickedFilesRef.current.length) {
         throw new Error("Please choose a contract file first.");
@@ -820,33 +837,19 @@ export default function Home() {
     } catch (e) {
       apiError = e;
     }
-    const elapsed = Date.now() - startTime;
-    // Animate progress bar evenly over the measured duration
-    const animationDuration = Math.max(elapsed, 2000); // at least 2s for UX
-    let pct = 0;
-    const intervalMs = 100;
-    const steps = Math.ceil(animationDuration / intervalMs);
-    let currentStep = 0;
-    function animateTick() {
-      currentStep++;
-      pct = Math.min(100, (currentStep / steps) * 100);
-      setProgress(Math.round(pct));
-      if (currentStep < steps) {
-        setTimeout(animateTick, intervalMs);
-      } else {
-        setTimeout(() => {
-          if (apiError) {
-            alert(`Error processing file: ${apiError.message}`);
-            setShowProgressBar(false);
-            setRolePickerVisible(true);
-            return;
-          }
-          localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
-          window.location.href = "/analysis";
-        }, 400);
+    running = false;
+    // Instantly fill to 100% and continue when analysis is done
+    setProgress(100);
+    setTimeout(() => {
+      if (apiError) {
+        alert(`Error processing file: ${apiError.message}`);
+        setShowProgressBar(false);
+        setRolePickerVisible(true);
+        return;
       }
-    }
-    animateTick();
+      localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
+      window.location.href = "/analysis";
+    }, 400);
   };
 
   // ===== sheet buttons =====
