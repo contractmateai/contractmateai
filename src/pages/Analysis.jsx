@@ -392,8 +392,8 @@ const Analysis = () => {
         },
         clauses: (data.analysis?.mainClauses || []).map(c => {
           if (typeof c !== 'string') return '';
-          // Remove any parenthetical note at the end
-          let cleaned = c.replace(/\s*\([^)]*\)\s*$/, '').trim();
+          // Remove any parenthetical note at the end, even if multiline
+          let cleaned = c.replace(/\s*\([^)]*\)[\s\n\r]*$/gs, '').trim();
           // Try to get the first full sentence under 180 chars
           const sentences = cleaned.match(/[^.!?]+[.!?]+/g) || [cleaned];
           for (let s of sentences) {
