@@ -1140,9 +1140,7 @@ const Analysis = () => {
               <section className="card" id="clausesCard">
                 <h3 style={{ fontWeight: 400 }}>
                   <img src="https://imgur.com/K04axKU.png" alt="" />
-                  <span id="uiClauses">
-                    {tLabel("mainClauses", STATIC_TRANSLATIONS.en.mainClauses)}
-                  </span>
+                  <span id="uiClauses">Main Clauses</span>
                 </h3>
 
                 <div
@@ -1152,7 +1150,7 @@ const Analysis = () => {
                 >
                   {fallbackArr(tClauses).map((c, i) => (
                     <div key={i} style={{ ...mutedStyle, fontSize: "20px" }}>
-                      {`${i + 1}. ${c}`}
+                      {`${i + 1}. ${typeof c === 'string' ? (c.length > 120 ? c.slice(0, 117) + '...' : c) : ''}`}
                     </div>
                   ))}
                 </div>
