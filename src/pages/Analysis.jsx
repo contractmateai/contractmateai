@@ -647,8 +647,20 @@ const Analysis = () => {
     staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
 
   // translated dynamic arrays (fallback to original if missing)
+  // Always use translated generated content if available, fallback to English or original
   const analysis = data?.analysis || {};
-  const tAnalysis = tr.analysis || {};
+  const translations = data?.translations || {};
+  const detectedLang = data?.detectedLang || "en";
+  const getTAnalysis = () => {
+    // Try: current lang, detectedLang, English, then raw
+    return (
+      translations[lang]?.analysis ||
+      translations[detectedLang]?.analysis ||
+      translations["en"]?.analysis ||
+      analysis || {}
+    );
+  };
+  const tAnalysis = getTAnalysis();
 
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {
