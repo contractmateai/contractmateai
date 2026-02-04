@@ -18,6 +18,319 @@ class PDFGenerator {
       confidence: "https://i.imgur.com/GzPeaz5.png",
     };
 
+    // Static translations for PDF labels and sections
+    this.TRANSLATIONS = {
+      en: {
+        title: "Title",
+        summaryOfContract: "Summary of Contract:",
+        percentageBreakdown: "Percentage Breakdown",
+        riskLevel: "Risk Level",
+        clauseClarity: "Clause Clarity",
+        statisticalBars: "Statistical Bars",
+        mainClauses: "Main Clauses",
+        potentialIssues: "Potential Issues that might occur",
+        smartSuggestions: "Smart Suggestions",
+        scoreChecker: "Score Checker",
+        confidenceToSign: "Confidence to sign freely",
+        professionalism: "Professionalism",
+        favorabilityIndex: "Favorability Index",
+        deadlinePressure: "Deadline Pressure",
+        contractReport: "Contract Report",
+        generatedOn: "Generated on",
+        unsafe: "Unsafe",
+        safe: "Safe",
+        verySafe: "Very Safe",
+        notLegalAdvice:
+          "Kindly keep in mind that although you might find this report helpful, this is ",
+        not: "not",
+        legalAdviceEnd: " legal advice.",
+        page: "PAGE",
+      },
+      it: {
+        title: "Titolo",
+        summaryOfContract: "Riepilogo del contratto:",
+        percentageBreakdown: "Ripartizione percentuale",
+        riskLevel: "Livello di rischio",
+        clauseClarity: "Chiarezza clausole",
+        statisticalBars: "Barre statistiche",
+        mainClauses: "Clausole principali",
+        potentialIssues: "Problemi potenziali che potrebbero verificarsi",
+        smartSuggestions: "Suggerimenti intelligenti",
+        scoreChecker: "Verificatore punteggio",
+        confidenceToSign: "Fiducia alla firma libera",
+        professionalism: "Professionalità",
+        favorabilityIndex: "Indice di convenienza",
+        deadlinePressure: "Pressione scadenze",
+        contractReport: "Rapporto contratto",
+        generatedOn: "Generato il",
+        unsafe: "Rischioso",
+        safe: "Sicuro",
+        verySafe: "Molto sicuro",
+        notLegalAdvice:
+          "Si prega di tenere presente che, sebbene questo rapporto possa essere utile, questo ",
+        not: "non",
+        legalAdviceEnd: " è consulenza legale.",
+        page: "PAGINA",
+      },
+      de: {
+        title: "Titel",
+        summaryOfContract: "Zusammenfassung des Vertrags:",
+        percentageBreakdown: "Prozentuale Aufschlüsselung",
+        riskLevel: "Risikostufe",
+        clauseClarity: "Klauselklarheit",
+        statisticalBars: "Statistische Balken",
+        mainClauses: "Hauptklauseln",
+        potentialIssues: "Mögliche auftretende Probleme",
+        smartSuggestions: "Intelligente Vorschläge",
+        scoreChecker: "Score-Prüfer",
+        confidenceToSign: "Vertrauen zum freien Unterschreiben",
+        professionalism: "Professionalität",
+        favorabilityIndex: "Vorteilhaftigkeitsindex",
+        deadlinePressure: "Zeitdruck",
+        contractReport: "Vertragsbericht",
+        generatedOn: "Erstellt am",
+        unsafe: "Unsicher",
+        safe: "Sicher",
+        verySafe: "Sehr sicher",
+        notLegalAdvice:
+          "Bitte beachten Sie, dass dieser Bericht zwar hilfreich sein kann, aber ",
+        not: "keine",
+        legalAdviceEnd: " Rechtsberatung ist.",
+        page: "SEITE",
+      },
+      es: {
+        title: "Título",
+        summaryOfContract: "Resumen del contrato:",
+        percentageBreakdown: "Desglose porcentual",
+        riskLevel: "Nivel de riesgo",
+        clauseClarity: "Claridad de cláusulas",
+        statisticalBars: "Barras estadísticas",
+        mainClauses: "Cláusulas principales",
+        potentialIssues: "Problemas potenciales que podrían ocurrir",
+        smartSuggestions: "Sugerencias inteligentes",
+        scoreChecker: "Verificador de puntuación",
+        confidenceToSign: "Confianza para firmar libremente",
+        professionalism: "Profesionalismo",
+        favorabilityIndex: "Índice de favorabilidad",
+        deadlinePressure: "Presión de plazo",
+        contractReport: "Informe de contrato",
+        generatedOn: "Generado el",
+        unsafe: "No seguro",
+        safe: "Seguro",
+        verySafe: "Muy seguro",
+        notLegalAdvice:
+          "Tenga en cuenta que, aunque este informe puede ser útil, esto ",
+        not: "no",
+        legalAdviceEnd: " es asesoramiento legal.",
+        page: "PÁGINA",
+      },
+      fr: {
+        title: "Titre",
+        summaryOfContract: "Résumé du contrat:",
+        percentageBreakdown: "Répartition en pourcentage",
+        riskLevel: "Niveau de risque",
+        clauseClarity: "Clarté des clauses",
+        statisticalBars: "Barres statistiques",
+        mainClauses: "Clauses principales",
+        potentialIssues: "Problèmes potentiels qui pourraient survenir",
+        smartSuggestions: "Suggestions intelligentes",
+        scoreChecker: "Vérificateur de score",
+        confidenceToSign: "Confiance pour signer librement",
+        professionalism: "Professionnalisme",
+        favorabilityIndex: "Indice de favorabilité",
+        deadlinePressure: "Pression de délai",
+        contractReport: "Rapport de contrat",
+        generatedOn: "Généré le",
+        unsafe: "Risqué",
+        safe: "Sûr",
+        verySafe: "Très sûr",
+        notLegalAdvice:
+          "Veuillez noter que bien que ce rapport puisse être utile, ce ",
+        not: "n'est pas",
+        legalAdviceEnd: " un avis juridique.",
+        page: "PAGE",
+      },
+      pt: {
+        title: "Título",
+        summaryOfContract: "Resumo do contrato:",
+        percentageBreakdown: "Repartição percentual",
+        riskLevel: "Nível de risco",
+        clauseClarity: "Clareza das cláusulas",
+        statisticalBars: "Barras estatísticas",
+        mainClauses: "Cláusulas principais",
+        potentialIssues: "Possíveis problemas que podem ocorrer",
+        smartSuggestions: "Sugestões inteligentes",
+        scoreChecker: "Verificador de pontuação",
+        confidenceToSign: "Confiança para assinar livremente",
+        professionalism: "Profissionalismo",
+        favorabilityIndex: "Índice de vantagem",
+        deadlinePressure: "Pressão de prazo",
+        contractReport: "Relatório de contrato",
+        generatedOn: "Gerado em",
+        unsafe: "Arriscado",
+        safe: "Seguro",
+        verySafe: "Muito seguro",
+        notLegalAdvice:
+          "Tenha em mente que, embora este relatório possa ser útil, isto ",
+        not: "não",
+        legalAdviceEnd: " é aconselhamento jurídico.",
+        page: "PÁGINA",
+      },
+      nl: {
+        title: "Titel",
+        summaryOfContract: "Samenvatting van contract:",
+        percentageBreakdown: "Percentageverdeling",
+        riskLevel: "Risiconiveau",
+        clauseClarity: "Clausuleduidelijkheid",
+        statisticalBars: "Statistische balken",
+        mainClauses: "Hoofdclausules",
+        potentialIssues: "Mogelijke problemen die kunnen optreden",
+        smartSuggestions: "Slimme suggesties",
+        scoreChecker: "Scorecontrole",
+        confidenceToSign: "Vertrouwen om vrijelijk te tekenen",
+        professionalism: "Professionaliteit",
+        favorabilityIndex: "Voordeelindex",
+        deadlinePressure: "Tijdsdruk",
+        contractReport: "Contractrapport",
+        generatedOn: "Gegenereerd op",
+        unsafe: "Onveilig",
+        safe: "Veilig",
+        verySafe: "Zeer veilig",
+        notLegalAdvice:
+          "Houd er rekening mee dat hoewel dit rapport nuttig kan zijn, dit ",
+        not: "geen",
+        legalAdviceEnd: " juridisch advies is.",
+        page: "PAGINA",
+      },
+      ro: {
+        title: "Titlu",
+        summaryOfContract: "Rezumat contract:",
+        percentageBreakdown: "Defalcare procentuală",
+        riskLevel: "Nivel de risc",
+        clauseClarity: "Claritate clauze",
+        statisticalBars: "Bare statistice",
+        mainClauses: "Clauze principale",
+        potentialIssues: "Probleme posibile care ar putea apărea",
+        smartSuggestions: "Sugestii inteligente",
+        scoreChecker: "Verificator scor",
+        confidenceToSign: "Încredere pentru semnare liberă",
+        professionalism: "Profesionalism",
+        favorabilityIndex: "Index de avantaj",
+        deadlinePressure: "Presiune termen",
+        contractReport: "Raport contract",
+        generatedOn: "Generat pe",
+        unsafe: "Nesigur",
+        safe: "Sigur",
+        verySafe: "Foarte sigur",
+        notLegalAdvice:
+          "Vă rugăm să rețineți că, deși acest raport poate fi util, acesta ",
+        not: "nu",
+        legalAdviceEnd: " este consultanță juridică.",
+        page: "PAGINA",
+      },
+      sq: {
+        title: "Titulli",
+        summaryOfContract: "Përmbledhje e kontratës:",
+        percentageBreakdown: "Ndarje në përqindje",
+        riskLevel: "Niveli i rrezikut",
+        clauseClarity: "Qartësi klauzolash",
+        statisticalBars: "Shiritat statistikorë",
+        mainClauses: "Klauzola kryesore",
+        potentialIssues: "Probleme të mundshme që mund të ndodhin",
+        smartSuggestions: "Sugjerime inteligjente",
+        scoreChecker: "Kontrollues rezultati",
+        confidenceToSign: "Besim për nënshkrim të lirë",
+        professionalism: "Profesionalizëm",
+        favorabilityIndex: "Indeksi i përfitimit",
+        deadlinePressure: "Presion afati",
+        contractReport: "Raport kontrate",
+        generatedOn: "Gjeneruar më",
+        unsafe: "I pasigurt",
+        safe: "I sigurt",
+        verySafe: "Shumë i sigurt",
+        notLegalAdvice:
+          "Ju lutem mbani parasysh që edhe pse ky raport mund të jetë i dobishëm, ky ",
+        not: "nuk",
+        legalAdviceEnd: " është këshillë ligjore.",
+        page: "FAQE",
+      },
+      tr: {
+        title: "Başlık",
+        summaryOfContract: "Sözleşme özeti:",
+        percentageBreakdown: "Yüzde dökümü",
+        riskLevel: "Risk seviyesi",
+        clauseClarity: "Madde açıklığı",
+        statisticalBars: "İstatistiksel çubuklar",
+        mainClauses: "Ana maddeler",
+        potentialIssues: "Oluşabilecek olası sorunlar",
+        smartSuggestions: "Akıllı öneriler",
+        scoreChecker: "Puan kontrolcüsü",
+        confidenceToSign: "Özgürce imzalama güveni",
+        professionalism: "Profesyonellik",
+        favorabilityIndex: "Avantaj endeksi",
+        deadlinePressure: "Süre baskısı",
+        contractReport: "Sözleşme raporu",
+        generatedOn: "Oluşturulma tarihi",
+        unsafe: "Riskli",
+        safe: "Güvenli",
+        verySafe: "Çok güvenli",
+        notLegalAdvice: "Lütfen bu raporun faydalı olabileceğini ancak bunun ",
+        not: "hukuki tavsiye",
+        legalAdviceEnd: " olmadığını unutmayın.",
+        page: "SAYFA",
+      },
+      zh: {
+        title: "标题",
+        summaryOfContract: "合同摘要：",
+        percentageBreakdown: "百分比细分",
+        riskLevel: "风险等级",
+        clauseClarity: "条款清晰度",
+        statisticalBars: "统计条",
+        mainClauses: "主要条款",
+        potentialIssues: "可能发生的潜在问题",
+        smartSuggestions: "智能建议",
+        scoreChecker: "评分检查器",
+        confidenceToSign: "自由签署的信心",
+        professionalism: "专业性",
+        favorabilityIndex: "有利性指数",
+        deadlinePressure: "期限压力",
+        contractReport: "合同报告",
+        generatedOn: "生成于",
+        unsafe: "不安全",
+        safe: "安全",
+        verySafe: "非常安全",
+        notLegalAdvice: "请注意，虽然此报告可能有帮助，但这",
+        not: "不是",
+        legalAdviceEnd: "法律建议。",
+        page: "页",
+      },
+      ja: {
+        title: "タイトル",
+        summaryOfContract: "契約の要約：",
+        percentageBreakdown: "パーセンテージの内訳",
+        riskLevel: "リスクレベル",
+        clauseClarity: "条項の明確さ",
+        statisticalBars: "統計バー",
+        mainClauses: "主要条項",
+        potentialIssues: "発生する可能性のある潜在的な問題",
+        smartSuggestions: "スマート提案",
+        scoreChecker: "スコアチェッカー",
+        confidenceToSign: "自由に署名する信頼",
+        professionalism: "専門性",
+        favorabilityIndex: "有利性指数",
+        deadlinePressure: "期限圧力",
+        contractReport: "契約レポート",
+        generatedOn: "生成日",
+        unsafe: "危険",
+        safe: "安全",
+        verySafe: "非常に安全",
+        notLegalAdvice: "このレポートが役立つ可能性がありますが、これは",
+        not: "法的助言ではない",
+        legalAdviceEnd: "ことにご注意ください。",
+        page: "ページ",
+      },
+    };
+
     // Centralized Style Configuration
     this.STYLE = {
       //Title:
@@ -408,7 +721,7 @@ class PDFGenerator {
     return y + lines.length * lh;
   }
 
-  drawHeader(doc) {
+  drawHeader(doc, tr) {
     const W = doc.internal.pageSize.getWidth();
     const M = this.STYLE.PAGE_MARGIN;
 
@@ -417,27 +730,23 @@ class PDFGenerator {
     doc.setTextColor(255, 255, 255);
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(this.STYLE.FONT_SIZE.HEADER_LARGE);
-    doc.text("Contract Report", M, 72);
+    doc.text(tr.contractReport, M, 72);
     doc.setFont(doc.getFont().fontName, "normal");
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
     const dt = new Date();
     const day = String(dt.getDate()).padStart(2, "0");
     const month = dt.toLocaleString("en", { month: "long" });
     const year = dt.getFullYear();
-    doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
+    doc.text(`${tr.generatedOn} ${day} ${month} ${year}`, M, 100);
     doc.setTextColor(0, 0, 0);
   }
 
-  drawFooter(doc, page, logoImg) {
+  drawFooter(doc, page, logoImg, tr) {
     const W = doc.internal.pageSize.getWidth();
     const H = doc.internal.pageSize.getHeight();
     const M = this.STYLE.PAGE_MARGIN;
 
-    const parts = [
-      "Kindly keep in mind that although you might find this report helpful, this is ",
-      "not",
-      " legal advice.",
-    ];
+    const parts = [tr.notLegalAdvice, tr.not, tr.legalAdviceEnd];
     doc.setFont(doc.getFont().fontName, "normal");
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
@@ -475,7 +784,7 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(14);
     const pageTextY = H - 44 + containerHeight / 2 + 4;
-    doc.text(`PAGE ${page}`, pageContainerWidth / 2, pageTextY, {
+    doc.text(`${tr.page} ${page}`, pageContainerWidth / 2, pageTextY, {
       align: "center",
     });
 
@@ -558,6 +867,9 @@ class PDFGenerator {
     const FONT =
       doc.getFontList && doc.getFontList().Poppins ? "Poppins" : "helvetica";
 
+    // Get translations for the selected language (fallback to English)
+    const tr = this.TRANSLATIONS[lang] || this.TRANSLATIONS.en;
+
     const fonftSize = {
       xsm: 10,
       sm: 12,
@@ -591,13 +903,13 @@ class PDFGenerator {
     }
 
     /* ================= PAGE 1 ================= */
-    this.drawHeader(doc);
+    this.drawHeader(doc, tr);
     let y = this.STYLE.CONTENT_START_Y;
 
     bold();
     doc.setFontSize(fonftSize.lg);
-    doc.text("Title: ", M, y);
-    const labelWidth = doc.getTextWidth("Title: ");
+    doc.text(tr.title + ": ", M, y);
+    const labelWidth = doc.getTextWidth(tr.title + ": ");
     reg();
     doc.setFontSize(fonftSize.lg);
     doc.text(data.title || "—", M + labelWidth, y);
@@ -608,7 +920,7 @@ class PDFGenerator {
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY, {
+    doc.text(tr.summaryOfContract, M + this.STYLE.CARD_PADDING, sY, {
       maxWidth: W - M * 2 - this.STYLE.CARD_PADDING * 2,
     });
     sY += this.STYLE.TITLE_CONTENT_SPACING;
@@ -634,7 +946,7 @@ class PDFGenerator {
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
-    titleText("Percentage Breakdown", M - this.STYLE.BOX_MARGIN, y);
+    titleText(tr.percentageBreakdown, M - this.STYLE.BOX_MARGIN, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN;
 
     const colGap = this.STYLE.SMALL_GAP;
@@ -666,7 +978,7 @@ class PDFGenerator {
     const rightColBottom = y + cardH - 8;
 
     const tagWidth = Math.min(
-      doc.getTextWidth("Risk Level") + 64,
+      doc.getTextWidth(tr.riskLevel) + 64,
       rightColWidth,
     );
 
@@ -687,7 +999,7 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
     const riskTextStartX = rightColX + 29;
-    doc.text("Risk Level", riskTextStartX, rightY + 16);
+    doc.text(tr.riskLevel, riskTextStartX, rightY + 16);
     doc.setTextColor(0, 0, 0);
 
     const topComponentHeight = 30;
@@ -745,7 +1057,7 @@ class PDFGenerator {
     const clarityRightColBottom = y + cardH - 8;
 
     const clarityTagWidth = Math.min(
-      doc.getTextWidth("Clause Clarity") + 64,
+      doc.getTextWidth(tr.clauseClarity) + 64,
       clarityRightColWidth,
     );
     const clarityTextContainerHeight = 24;
@@ -772,7 +1084,7 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
     const clarityTextStartX = clarityRightColX + 29;
-    doc.text("Clause Clarity", clarityTextStartX, clarityRightY + 16);
+    doc.text(tr.clauseClarity, clarityTextStartX, clarityRightY + 16);
     doc.setTextColor(0, 0, 0);
 
     const clarityStatusY = clarityRightColBottom - bottomComponentHeight;
@@ -811,7 +1123,7 @@ class PDFGenerator {
       leftXBars + (availableWidthPage1Bars - colGapBars) / 2 + colGapBars;
     const colWBars = (availableWidthPage1Bars - colGapBars) / 2;
 
-    titleText("Statistical Bars", leftXBars, y);
+    titleText(tr.statisticalBars, leftXBars, y);
 
     const barRow = (label, pct, icon, xPos, yTop, width, metric) => {
       const padding = 4;
@@ -879,7 +1191,7 @@ class PDFGenerator {
     let barY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
 
     barRow(
-      "Professionalism",
+      tr.professionalism,
       Math.round(Number(meters.professionalism ?? 65)),
       IM.pro,
       leftXBars,
@@ -890,7 +1202,7 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     barRow(
-      "Favorability Index",
+      tr.favorabilityIndex,
       Math.round(Number(meters.favorability ?? 50)),
       IM.fav,
       leftXBars,
@@ -901,7 +1213,7 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     barRow(
-      "Deadline Pressure",
+      tr.deadlinePressure,
       Math.round(Number(meters.deadline ?? 40)),
       IM.dead,
       leftXBars,
@@ -914,7 +1226,7 @@ class PDFGenerator {
     const clX = rightXBars,
       clY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
 
-    titleText("Main Clauses", clX, y);
+    titleText(tr.mainClauses, clX, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN;
 
     let listY = clY + 26;
@@ -933,16 +1245,16 @@ class PDFGenerator {
     });
     doc.setTextColor(0, 0, 0);
 
-    this.drawFooter(doc, 1, IM.logo);
+    this.drawFooter(doc, 1, IM.logo, tr);
 
     /* ================= PAGE 2 ================= */
     doc.addPage();
-    this.drawHeader(doc);
+    this.drawHeader(doc, tr);
     let y2 = this.STYLE.CONTENT_START_Y;
 
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Potential Issues that might occur", M, y2);
+    doc.text(tr.potentialIssues, M, y2);
 
     let iTop = y2 + this.STYLE.SECTION_HEADER_SPACING,
       iY = iTop + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
@@ -971,7 +1283,7 @@ class PDFGenerator {
 
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Smart Suggestions", M, y2);
+    doc.text(tr.smartSuggestions, M, y2);
     const s2Top = y2 + this.STYLE.SECTION_HEADER_SPACING;
 
     let s2Y = s2Top + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
@@ -1056,7 +1368,7 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(12);
     doc.text(
-      "Score Checker",
+      tr.scoreChecker,
       scoreRightColX + scoreTagWidth / 2,
       scoreRightY + 16,
       {
@@ -1082,11 +1394,11 @@ class PDFGenerator {
 
     reg();
     doc.setFontSize(9);
-    doc.text("Unsafe", scoreRightColX, scoreGradientY + 42);
-    doc.text("Safe", scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
+    doc.text(tr.unsafe, scoreRightColX, scoreGradientY + 42);
+    doc.text(tr.safe, scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
       align: "center",
     });
-    doc.text("Very Safe", scoreRightColX + scoreBarW, scoreGradientY + 42, {
+    doc.text(tr.verySafe, scoreRightColX + scoreBarW, scoreGradientY + 42, {
       align: "right",
     });
 
@@ -1121,7 +1433,7 @@ class PDFGenerator {
 
     const confV = Math.round(Number(meters.confidence ?? 70));
     barRow(
-      "Confidence to sign freely",
+      tr.confidenceToSign,
       confV,
       IM.confidence,
       extendedMargin + leftW + gap,
@@ -1130,7 +1442,7 @@ class PDFGenerator {
       "confidence",
     );
 
-    this.drawFooter(doc, 2, IM.logo);
+    this.drawFooter(doc, 2, IM.logo, tr);
 
     doc.save((filename || "SignSense_Report") + ".pdf");
   }

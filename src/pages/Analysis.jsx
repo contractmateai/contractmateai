@@ -374,31 +374,77 @@ const Analysis = () => {
     setDownloading(true);
 
     try {
-      // Map API response structure to PDF generator expectations
+      // Get translated analysis data based on selected language
+      const analysis = data?.analysis || {};
+      const tAnalysis =
+        (
+          data?.translations?.[lang] ||
+          data?.translations?.[String(lang || "").toUpperCase()] ||
+          {}
+        ).analysis || {};
+
+      // Get translated arrays
+      const translatedSummary =
+        Array.isArray(tAnalysis.summary) && tAnalysis.summary.length
+          ? tAnalysis.summary
+          : Array.isArray(analysis.summary) && analysis.summary.length
+            ? analysis.summary
+            : [];
+
+      const translatedIssues =
+        Array.isArray(tAnalysis.potentialIssues) &&
+        tAnalysis.potentialIssues.length
+          ? tAnalysis.potentialIssues
+          : Array.isArray(analysis.potentialIssues) &&
+              analysis.potentialIssues.length
+            ? analysis.potentialIssues
+            : [];
+
+      const translatedSuggestions =
+        Array.isArray(tAnalysis.smartSuggestions) &&
+        tAnalysis.smartSuggestions.length
+          ? tAnalysis.smartSuggestions
+          : Array.isArray(analysis.smartSuggestions) &&
+              analysis.smartSuggestions.length
+            ? analysis.smartSuggestions
+            : [];
+
+      const translatedClauses =
+        Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
+          ? tAnalysis.mainClauses
+          : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+            ? analysis.mainClauses
+            : [];
+
+      // Get translated risk and clarity data
+      const translatedRisk = tAnalysis.risk ||
+        analysis.risk || { value: 0, note: "", safety: "Unknown" };
+      const translatedClarity = tAnalysis.clarity ||
+        analysis.clarity || { value: 0, note: "", safety: "Unknown" };
+      const translatedScoreChecker = tAnalysis.scoreChecker ||
+        analysis.scoreChecker || {
+          value: 0,
+          line: "Unable to generate score",
+          safety: "Unknown",
+        };
+
+      // Map API response structure to PDF generator expectations with translated content
       const pdfData = {
         title: data.contractTitle || data.contractName || "Contract",
-        summary: data.analysis?.summary || [],
-        risk: data.analysis?.risk || { value: 0, note: "", safety: "Unknown" },
-        clarity: data.analysis?.clarity || {
-          value: 0,
-          note: "",
-          safety: "Unknown",
-        },
-        clauses: data.analysis?.mainClauses || [],
-        issues: data.analysis?.potentialIssues || [],
-        suggestions: data.analysis?.smartSuggestions || [],
+        summary: translatedSummary,
+        risk: translatedRisk,
+        clarity: translatedClarity,
+        clauses: translatedClauses,
+        issues: translatedIssues,
+        suggestions: translatedSuggestions,
         meters: {
-          professionalism: data.analysis?.bars?.professionalism ?? 65,
-          favorability: data.analysis?.bars?.favorability ?? 50,
-          deadline: data.analysis?.bars?.deadline ?? 40,
-          confidence: data.analysis?.bars?.confidence ?? 70,
+          professionalism: analysis?.bars?.professionalism ?? 65,
+          favorability: analysis?.bars?.favorability ?? 50,
+          deadline: analysis?.bars?.deadline ?? 40,
+          confidence: analysis?.bars?.confidence ?? 70,
         },
         analysis: {
-          scoreChecker: data.analysis?.scoreChecker || {
-            value: 0,
-            line: "Unable to generate score",
-            safety: "Unknown",
-          },
+          scoreChecker: translatedScoreChecker,
         },
       };
 
