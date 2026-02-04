@@ -391,11 +391,19 @@ class PDFGenerator {
   }
 
   tinyText(doc, txt, x, y, w, lh = 14) {
-    const lines = doc.splitTextToSize(String(txt || ""), w);
+    // Set font and size BEFORE splitTextToSize so it calculates correctly
     doc.setFont(doc.getFont().fontName, "normal");
     doc.setFontSize(11);
     doc.setTextColor(20, 20, 20);
-    lines.forEach((ln, i) => doc.text(ln, x, y + i * lh));
+
+    // splitTextToSize uses the current font settings to calculate line breaks
+    const lines = doc.splitTextToSize(String(txt || ""), w);
+
+    // Render each line without maxWidth (already split)
+    lines.forEach((ln, i) => {
+      doc.text(ln, x, y + i * lh);
+    });
+
     doc.setTextColor(0, 0, 0);
     return y + lines.length * lh;
   }
@@ -600,7 +608,9 @@ class PDFGenerator {
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
     bold();
     doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
+    doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY, {
+      maxWidth: W - M * 2 - this.STYLE.CARD_PADDING * 2,
+    });
     sY += this.STYLE.TITLE_CONTENT_SPACING;
     (Array.isArray(data.summary) ? data.summary : [data.summary]).forEach(
       (item) => {
@@ -610,7 +620,7 @@ class PDFGenerator {
             String(item),
             M + this.STYLE.CARD_PADDING,
             sY,
-            W - M * 2 - 40,
+            W - M * 2 - this.STYLE.CARD_PADDING * 2,
             this.STYLE.TEXT_LINE_HEIGHT,
           ) + this.STYLE.TEXT_ITEM_SPACING;
       },
