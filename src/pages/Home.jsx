@@ -28,22 +28,22 @@ const featuresBottom = [
 // - AOS (optional; if you don't use it in React, nothing breaks)
 // - pdfjsLib (PDF.js) and mammoth (DOCX)
 // PDF.js import (local, not global)
-import * as pdfjsLib from 'pdfjs-dist';
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
+import * as pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.js";
 
 export default function Home() {
-    // ===== app preview tilt on scroll =====
-    useEffect(() => {
-      const wrapper = appWrapperRef.current;
-      if (!wrapper) return;
-      const handleScroll = () => {
-        const st = window.scrollY;
-        wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+  // ===== app preview tilt on scroll =====
+  useEffect(() => {
+    const wrapper = appWrapperRef.current;
+    if (!wrapper) return;
+    const handleScroll = () => {
+      const st = window.scrollY;
+      wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const topbarWrapRef = useRef(null);
   const topbarRef = useRef(null);
   const menuToggleRef = useRef(null);
@@ -65,6 +65,7 @@ export default function Home() {
   const [rolePickerVisible, setRolePickerVisible] = useState(false);
   const [reviewBtnVisible, setReviewBtnVisible] = useState(true);
   const [activeRole, setActiveRole] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // camera bottom sheet (iOS-style overlay)
   const [sheetVisible, setSheetVisible] = useState(false);
@@ -79,7 +80,9 @@ export default function Home() {
 
   // ===== stage reveal =====
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     document.body.classList.add("stage1");
     if (reduce) {
       document.body.classList.add("stage2", "stage3");
@@ -104,13 +107,11 @@ export default function Home() {
     }
   }, []);
 
-
-
   // ===== particles =====
   const [particles, setParticles] = useState([]);
   useEffect(() => {
     // Only show on desktop (not mobile)
-    if (window.matchMedia('(max-width: 980px)').matches) {
+    if (window.matchMedia("(max-width: 980px)").matches) {
       setParticles([]);
       return;
     }
@@ -125,7 +126,7 @@ export default function Home() {
         width: size,
         height: size,
         animationDuration: duration,
-        key: i + '-' + Math.random().toString(36).slice(2)
+        key: i + "-" + Math.random().toString(36).slice(2),
       });
     }
     setParticles(arr);
@@ -187,16 +188,33 @@ export default function Home() {
         last = performance.now();
         raf = requestAnimationFrame(tick);
       };
-      const stop = () => { if (raf) cancelAnimationFrame(raf); };
+      const stop = () => {
+        if (raf) cancelAnimationFrame(raf);
+      };
       const onResize = () => measure();
       window.addEventListener("resize", onResize, { passive: true });
-      media.addEventListener?.("change", () => { stop(); start(); });
+      media.addEventListener?.("change", () => {
+        stop();
+        start();
+      });
       start();
-      return () => { stop(); window.removeEventListener("resize", onResize); };
+      return () => {
+        stop();
+        window.removeEventListener("resize", onResize);
+      };
     };
-    const cleanTop = makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
-    const cleanBot = makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
-    return () => { cleanTop?.(); cleanBot?.(); };
+    const cleanTop = makeTicker(topRow, {
+      pxPerSecond: 36,
+      direction: "right",
+    });
+    const cleanBot = makeTicker(bottomRow, {
+      pxPerSecond: 36,
+      direction: "left",
+    });
+    return () => {
+      cleanTop?.();
+      cleanBot?.();
+    };
   }, []);
 
   // ===== logo strip ticker =====
@@ -353,7 +371,8 @@ export default function Home() {
 
     // triple clone
     track.innerHTML = "";
-    for (let k = 0; k < 3; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+    for (let k = 0; k < 3; k++)
+      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
 
     let perPage = 3;
     const computePerPage = () => {
@@ -444,7 +463,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -469,7 +488,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -483,7 +502,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -611,7 +630,9 @@ export default function Home() {
     const btn = e.currentTarget;
     const item = btn.parentElement;
     if (!item.classList.contains("open")) {
-      document.querySelectorAll(".faq-item.open").forEach((i) => i.classList.remove("open"));
+      document
+        .querySelectorAll(".faq-item.open")
+        .forEach((i) => i.classList.remove("open"));
     }
     item.classList.toggle("open");
   };
@@ -643,11 +664,13 @@ export default function Home() {
       }
 
       if (
-        mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        mime ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         ext.endsWith(".docx")
       ) {
         const mammoth = window.mammoth;
-        if (!mammoth) throw new Error("mammoth not found. Include Mammoth.js in your app.");
+        if (!mammoth)
+          throw new Error("mammoth not found. Include Mammoth.js in your app.");
         const buf = await file.arrayBuffer();
         const res = await mammoth.extractRawText({ arrayBuffer: buf });
         return { text: res.value || "", originalName: name, mime };
@@ -751,7 +774,8 @@ export default function Home() {
     pickedFilesRef.current = Array.from(inputCamera.files);
 
     const first = inputCamera.files[0];
-    const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
+    const usedCamera =
+      inputCamera.files.length === 1 && first.type.startsWith("image/");
 
     if (usedCamera) {
       setTimeout(() => {
@@ -773,15 +797,20 @@ export default function Home() {
       return;
     }
 
+    setIsAnalyzing(true);
+
     try {
       // enforce size on first file (same)
       const file = pickedFilesRef.current[0];
       if (file.size > 10_000_000) {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+        setIsAnalyzing(false);
         return;
       }
 
-      const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
+      const payloadArr = await Promise.all(
+        pickedFilesRef.current.map(fileToPayload),
+      );
 
       const body = {
         ...payloadArr[0],
@@ -803,6 +832,7 @@ export default function Home() {
       localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
       window.location.href = "/analysis";
     } catch (e) {
+      setIsAnalyzing(false);
       alert(`Error processing file: ${e.message}`);
     }
   };
@@ -824,7 +854,11 @@ export default function Home() {
         <div className="topbar" id="topbar" ref={topbarRef}>
           <div className="topbar-left">
             <a href="index.html">
-              <img className="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+              <img
+                className="topbar-logo"
+                src="https://imgur.com/t8UWYN3.png"
+                alt="SignSense logo"
+              />
             </a>
             <a href="index.html" className="topbar-brand">
               SignSense
@@ -832,14 +866,23 @@ export default function Home() {
           </div>
 
           <nav className="topbar-nav">
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               See How It Works
             </a>
             <a href="index.html">Home</a>
             <a href="/contact">Contact</a>
           </nav>
 
-          <button className="menu-toggle" id="menuToggle" aria-label="Menu" ref={menuToggleRef}>
+          <button
+            className="menu-toggle"
+            id="menuToggle"
+            aria-label="Menu"
+            ref={menuToggleRef}
+          >
             <span className="bar b1"></span>
             <span className="bar b2"></span>
             <span className="bar b3"></span>
@@ -849,9 +892,19 @@ export default function Home() {
 
       <div className="menu-overlay" id="menuOverlay" ref={menuOverlayRef}></div>
 
-      <div className="menu-panel" id="menuPanel" aria-hidden="true" ref={menuPanelRef}>
+      <div
+        className="menu-panel"
+        id="menuPanel"
+        aria-hidden="true"
+        ref={menuPanelRef}
+      >
         <nav className="menu-list">
-          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">
+          <a
+            className="menu-item"
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener"
+          >
             See How It Works <span className="chev">›</span>
           </a>
           <a className="menu-item" href="index.html">
@@ -914,7 +967,8 @@ export default function Home() {
 
             {/* DESKTOP */}
             <p className="subtext hide-on-mobile">
-              Free contract reviewing and no need at all for any account creation or sign up.
+              Free contract reviewing and no need at all for any account
+              creation or sign up.
             </p>
 
             {/* MOBILE */}
@@ -927,7 +981,11 @@ export default function Home() {
 
           <div id="ctaWrap" className="cta-wrapper">
             {reviewBtnVisible && (
-              <button id="reviewBtn" className="cta-btn animated-arrow-bttn" onClick={onReviewClick}>
+              <button
+                id="reviewBtn"
+                className="cta-btn animated-arrow-bttn"
+                onClick={onReviewClick}
+              >
                 Review A Contract{" "}
                 <span className="animated-arrow diag" aria-hidden="true">
                   ↗
@@ -936,7 +994,315 @@ export default function Home() {
             )}
           </div>
 
-          <div id="rolePicker" className="role-picker" hidden={!rolePickerVisible}>
+          <div
+            id="rolePicker"
+            className="role-picker"
+            hidden={!rolePickerVisible}
+          >
+            {isAnalyzing && (
+              <>
+                <style>{`
+                  @keyframes fadeInScale {
+                    from {
+                      opacity: 0;
+                      transform: scale(0.95);
+                    }
+                    to {
+                      opacity: 1;
+                      transform: scale(1);
+                    }
+                  }
+                  @keyframes spin {
+                    to { transform: rotate(360deg); }
+                  }
+                  @keyframes spinReverse {
+                    to { transform: rotate(-360deg); }
+                  }
+                  @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                  }
+                  @keyframes glow {
+                    0%, 100% { 
+                      box-shadow: 0 0 30px rgba(190, 242, 100, 0.3),
+                                  0 0 60px rgba(190, 242, 100, 0.15),
+                                  inset 0 0 20px rgba(190, 242, 100, 0.1);
+                    }
+                    50% { 
+                      box-shadow: 0 0 40px rgba(190, 242, 100, 0.4),
+                                  0 0 80px rgba(190, 242, 100, 0.2),
+                                  inset 0 0 30px rgba(190, 242, 100, 0.15);
+                    }
+                  }
+                  @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(250%); }
+                  }
+                  @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                  }
+                  @keyframes dots {
+                    0%, 20% { content: '.'; }
+                    40% { content: '..'; }
+                    60%, 100% { content: '...'; }
+                  }
+                  @keyframes gradientShift {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                  }
+                `}</style>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background:
+                      "linear-gradient(135deg, rgba(14, 12, 19, 0.98) 0%, rgba(20, 18, 28, 0.98) 100%)",
+                    backdropFilter: "blur(12px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "32px",
+                    borderRadius: "16px",
+                    zIndex: 10,
+                    animation:
+                      "fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    border: "1px solid rgba(190, 242, 100, 0.1)",
+                  }}
+                >
+                  {/* Animated background glow */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "300px",
+                      height: "300px",
+                      background:
+                        "radial-gradient(circle, rgba(190, 242, 100, 0.08) 0%, transparent 70%)",
+                      animation: "pulse 3s ease-in-out infinite",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  {/* Multi-layered spinner with gradient */}
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "80px",
+                      height: "80px",
+                      animation: "float 3s ease-in-out infinite",
+                    }}
+                  >
+                    {/* Outer ring */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                        border: "3px solid transparent",
+                        borderTopColor: "#BEF264",
+                        borderRightColor: "#BEF264",
+                        borderRadius: "50%",
+                        animation:
+                          "spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite",
+                        filter: "drop-shadow(0 0 8px rgba(190, 242, 100, 0.5))",
+                      }}
+                    />
+                    {/* Middle ring */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "12px",
+                        left: "12px",
+                        width: "calc(100% - 24px)",
+                        height: "calc(100% - 24px)",
+                        border: "2px solid transparent",
+                        borderBottomColor: "rgba(255, 255, 255, 0.6)",
+                        borderLeftColor: "rgba(255, 255, 255, 0.6)",
+                        borderRadius: "50%",
+                        animation: "spinReverse 1.5s linear infinite",
+                      }}
+                    />
+                    {/* Inner core with glow */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "32px",
+                        height: "32px",
+                        background:
+                          "linear-gradient(135deg, #BEF264 0%, #A3E635 100%)",
+                        borderRadius: "50%",
+                        animation: "glow 2s ease-in-out infinite",
+                      }}
+                    />
+                    {/* Center dot */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "12px",
+                        height: "12px",
+                        background: "#fff",
+                        borderRadius: "50%",
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                  </div>
+
+                  {/* Main text with gradient */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "12px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #fff 0%, #BEF264 50%, #fff 100%)",
+                        backgroundSize: "200% auto",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        textAlign: "center",
+                        letterSpacing: "0.5px",
+                        animation: "gradientShift 3s ease infinite",
+                      }}
+                    >
+                      Analyzing Your Contract
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: "24px",
+                          textAlign: "left",
+                        }}
+                      >
+                        <span
+                          style={{
+                            animation: "pulse 1.5s ease-in-out infinite",
+                          }}
+                        >
+                          ...
+                        </span>
+                      </span>
+                    </div>
+
+                    {/* Subtitle with icon */}
+                    <div
+                      style={{
+                        color: "#d1d5db",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        maxWidth: "320px",
+                        lineHeight: "1.6",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          style={{ flexShrink: 0 }}
+                        >
+                          <path
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            stroke="#BEF264"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span style={{ fontWeight: 500 }}>
+                          AI is processing your document
+                        </span>
+                      </div>
+                      <span style={{ fontSize: "13px", color: "#9ca3af" }}>
+                        Typically takes 10-60 seconds
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Enhanced progress bar */}
+                  <div
+                    style={{
+                      width: "260px",
+                      height: "4px",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                      position: "relative",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                    }}
+                  >
+                    {/* Animated gradient bar */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        height: "100%",
+                        width: "50%",
+                        background:
+                          "linear-gradient(90deg, transparent, #BEF264 20%, #A3E635 50%, #BEF264 80%, transparent)",
+                        animation: "shimmer 2s ease-in-out infinite",
+                        filter: "drop-shadow(0 0 4px rgba(190, 242, 100, 0.6))",
+                      }}
+                    />
+                  </div>
+
+                  {/* Status indicators */}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "16px",
+                      alignItems: "center",
+                    }}
+                  >
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          background: "#BEF264",
+                          animation: `pulse 1.5s ease-in-out infinite`,
+                          animationDelay: `${i * 0.2}s`,
+                          boxShadow: "0 0 8px rgba(190, 242, 100, 0.6)",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
             <span className="role-title">You are:</span>
             <div className="role-buttons">
               <button
@@ -944,6 +1310,11 @@ export default function Home() {
                 className={`role-btn ${activeRole === "signer" ? "active" : ""}`}
                 data-role="signer"
                 onClick={() => onRolePick("signer")}
+                disabled={isAnalyzing}
+                style={{
+                  opacity: isAnalyzing ? 0.5 : 1,
+                  cursor: isAnalyzing ? "not-allowed" : "pointer",
+                }}
               >
                 The Signer
               </button>
@@ -952,6 +1323,11 @@ export default function Home() {
                 className={`role-btn ${activeRole === "writer" ? "active" : ""}`}
                 data-role="writer"
                 onClick={() => onRolePick("writer")}
+                disabled={isAnalyzing}
+                style={{
+                  opacity: isAnalyzing ? 0.5 : 1,
+                  cursor: isAnalyzing ? "not-allowed" : "pointer",
+                }}
               >
                 The Writer
               </button>
@@ -976,7 +1352,11 @@ export default function Home() {
           <div className="app-wrapper" id="appWrapper" ref={appWrapperRef}>
             <div className="app-frame">
               <div className="glint-line" aria-hidden="true"></div>
-              <img className="app-preview" src="https://i.imgur.com/slsiM6i.png" alt="App Preview" />
+              <img
+                className="app-preview"
+                src="https://i.imgur.com/slsiM6i.png"
+                alt="App Preview"
+              />
             </div>
           </div>
         </div>
@@ -1039,15 +1419,33 @@ export default function Home() {
 
           <div className="insight-right hide-on-mobile">
             <div className="insight-icon-row">
-              <img className="circle-icon" src="https://i.imgur.com/VVGvghi.png" alt="AI icon" loading="lazy" />
-              <img className="circle-icon" src="https://i.imgur.com/woCjWUt.png" alt="Speed icon" loading="lazy" />
-              <img className="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield/Secure icon" loading="lazy" />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/VVGvghi.png"
+                alt="AI icon"
+                loading="lazy"
+              />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/woCjWUt.png"
+                alt="Speed icon"
+                loading="lazy"
+              />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/0IzXvgs.png"
+                alt="Shield/Secure icon"
+                loading="lazy"
+              />
             </div>
             <h2>
               Understand Your Contract <br />
               <span>Instantly with AI</span>
             </h2>
-            <p>Reveal hidden risks and key terms so you can review contracts clearly, quickly, and without confusion.</p>
+            <p>
+              Reveal hidden risks and key terms so you can review contracts
+              clearly, quickly, and without confusion.
+            </p>
             <a
               id="insightReviewBtn"
               href="https://youtube.com"
@@ -1068,9 +1466,15 @@ export default function Home() {
       <div className="scroll-full">
         <div className="scroll-wrapper">
           <section className="scroll-section" data-aos="fade-up">
-            <h3>Everything you need for clarity &amp; security in one seamless experience.</h3>
+            <h3>
+              Everything you need for clarity &amp; security in one seamless
+              experience.
+            </h3>
             <div className="scroll-strip top-row" id="featuresTopRow"></div>
-            <div className="scroll-strip bottom-row" id="featuresBottomRow"></div>
+            <div
+              className="scroll-strip bottom-row"
+              id="featuresBottomRow"
+            ></div>
             <div className="scroll-shadow-left"></div>
             <div className="scroll-shadow-right"></div>
           </section>
@@ -1089,8 +1493,8 @@ export default function Home() {
               really works.
             </h2>
             <p>
-              Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your
-              contracts
+              Curious how SignSense works? Watch our video for a clear,
+              step-by-step look at how we simplify your contracts
             </p>
             <a
               id="watchBtn"
@@ -1125,12 +1529,22 @@ export default function Home() {
             <h2>
               What <span className="green">Our Clients</span> Say
             </h2>
-            <div className="reviews-sub">Hear Directly From Our Satisfied Users</div>
+            <div className="reviews-sub">
+              Hear Directly From Our Satisfied Users
+            </div>
           </div>
         </div>
 
-        <div className="reviews-viewport" id="reviewsViewport" ref={reviewsViewportRef}>
-          <div className="reviews-track" id="reviewsTrack" ref={reviewsTrackRef}>
+        <div
+          className="reviews-viewport"
+          id="reviewsViewport"
+          ref={reviewsViewportRef}
+        >
+          <div
+            className="reviews-track"
+            id="reviewsTrack"
+            ref={reviewsTrackRef}
+          >
             <div className="review-card">
               <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" />
             </div>
@@ -1152,7 +1566,12 @@ export default function Home() {
         <div className="review-dots" id="reviewDots" ref={reviewDotsRef}></div>
 
         <div className="leave-review-wrap">
-          <a className="leave-review animated-arrow-bttn" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">
+          <a
+            className="leave-review animated-arrow-bttn"
+            href="https://tally.so/r/3EGJpA"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Leave A Review{" "}
             <span className="animated-arrow diag" aria-hidden="true">
               ↗
@@ -1170,25 +1589,40 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>What languages do you support?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese,
-              Japanese, and Turkish. More coming soon!
+              We support English, Spanish, German, French, Italian, Portuguese,
+              Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More
+              coming soon!
             </div>
           </div>
 
           <div className="faq-item">
             <button className="faq-q" type="button" onClick={onFaqClick}>
-              <span>Is SignSense legally binding or a replacement for a lawyer?</span>
+              <span>
+                Is SignSense legally binding or a replacement for a lawyer?
+              </span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace
-              professional legal advice.
+              No. SignSense explains your contract using AI, but it isn’t
+              legally binding and doesn’t replace professional legal advice.
             </div>
           </div>
 
@@ -1196,11 +1630,18 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>What types of contracts can I upload?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
+              Most standard agreements—leases, NDAs, freelance/service
+              contracts, employment offers, and more.
             </div>
           </div>
 
@@ -1208,11 +1649,18 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>Is my data secure when I upload a contract?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
+              Yes. Uploads are processed securely; we don’t sell your data or
+              share your files with third parties.
             </div>
           </div>
         </div>
@@ -1223,7 +1671,11 @@ export default function Home() {
         <footer className="site-footer desktop-only">
           <div className="footer-left">
             <a href="index.html">
-              <img className="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
+              <img
+                className="footer-logo"
+                src="https://imgur.com/BcUqgKZ.png"
+                alt="SignSense logo"
+              />
             </a>
             <div className="footer-left-inner">
               <a href="index.html" className="footer-brand">
@@ -1239,10 +1691,18 @@ export default function Home() {
           <div className="footer-col">
             <div className="footer-title">Quick Menu</div>
             <nav className="footer-links">
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 How it Works
               </a>
-              <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://tally.so/r/3EGJpA"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Leave Review
               </a>
             </nav>
@@ -1259,10 +1719,18 @@ export default function Home() {
           <div className="footer-col">
             <div className="footer-title">Socials</div>
             <nav className="footer-links">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Instagram
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 YouTube
               </a>
               <a href="https://x.com" target="_blank" rel="noopener noreferrer">
@@ -1280,7 +1748,9 @@ export default function Home() {
               <a href="/terms">Terms of Service</a>
               <a href="/cookies">Cookie Policy</a>
             </div>
-            <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
+            <span className="footer-copy">
+              © 2025 SignSense. All rights reserved.
+            </span>
           </div>
         </div>
       </div>
@@ -1293,18 +1763,34 @@ export default function Home() {
               <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
               <span>SignSense</span>
             </div>
-            <div className="footer-copy">© 2025 SignSense. All rights reserved.</div>
-            <div className="footer-disclaimer">For informational use only. Not legal advice.</div>
+            <div className="footer-copy">
+              © 2025 SignSense. All rights reserved.
+            </div>
+            <div className="footer-disclaimer">
+              For informational use only. Not legal advice.
+            </div>
           </div>
 
           <div className="footer-socials">
-            <a className="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+            <a
+              className="social-btn"
+              href="https://x.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="X"
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z" />
               </svg>
             </a>
 
-            <a className="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+            <a
+              className="social-btn"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook"
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z" />
               </svg>
@@ -1329,14 +1815,24 @@ export default function Home() {
               <a className="footer-link" href="/contact">
                 Contact us
               </a>
-              <a className="footer-link" href="https://youtube.com" target="_blank" rel="noopener">
+              <a
+                className="footer-link"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener"
+              >
                 How it Works
               </a>
             </div>
 
             <div className="footer-col">
               <h4>Product</h4>
-              <a className="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">
+              <a
+                className="footer-link"
+                href="https://tally.so/r/3EGJpA"
+                target="_blank"
+                rel="noopener"
+              >
                 Leave Review
               </a>
             </div>
@@ -1382,15 +1878,27 @@ export default function Home() {
 
       {/* iOS Bottom Sheet: Add More Photos */}
       {sheetVisible && (
-        <div id="addMoreSheet" className="sheet-backdrop" style={{ display: "flex" }}>
+        <div
+          id="addMoreSheet"
+          className="sheet-backdrop"
+          style={{ display: "flex" }}
+        >
           <div className="sheet-panel">
             <div className="sheet-title" id="sheetCount">
               {sheetCount}/10 photos added
             </div>
-            <button className="sheet-btn sheet-yes" id="sheetAddMore" onClick={onSheetAddMore}>
+            <button
+              className="sheet-btn sheet-yes"
+              id="sheetAddMore"
+              onClick={onSheetAddMore}
+            >
               Add More
             </button>
-            <button className="sheet-btn sheet-no" id="sheetContinue" onClick={onSheetContinue}>
+            <button
+              className="sheet-btn sheet-no"
+              id="sheetContinue"
+              onClick={onSheetContinue}
+            >
               Continue
             </button>
           </div>

@@ -9,6 +9,7 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 // Import AFTER dotenv.config()
 import express from "express";
 import handler from "./api/analyze.js";
+import translateHandler from "./api/translate.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,18 @@ app.post("/api/analyze", (req, res) => {
     `[${new Date().toISOString()}] POST /api/analyze - Payload size: ${JSON.stringify(req.body).length} bytes`,
   );
   handler(req, res);
+});
+
+// Translate endpoint with timeout
+app.post("/api/translate", (req, res) => {
+  // Set response timeout to 30 seconds
+  req.setTimeout(30000);
+  res.setTimeout(30000);
+
+  console.log(
+    `[${new Date().toISOString()}] POST /api/translate - Target language: ${req.body?.targetLang}`,
+  );
+  translateHandler(req, res);
 });
 
 app.listen(PORT, () => {

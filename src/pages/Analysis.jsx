@@ -309,6 +309,10 @@ const Analysis = () => {
   const [emailError, setEmailError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
+  // Translation state
+  const [translationCache, setTranslationCache] = useState({});
+  const [isTranslating, setIsTranslating] = useState(false);
+
   // Show/hide download bar based on scroll (like original)
   useEffect(() => {
     const handleScroll = () => {
@@ -374,59 +378,106 @@ const Analysis = () => {
     setDownloading(true);
 
     try {
-      // Get translated analysis data based on selected language
+      // Get original analysis data
       const analysis = data?.analysis || {};
-      const tAnalysis =
-        (
-          data?.translations?.[lang] ||
-          data?.translations?.[String(lang || "").toUpperCase()] ||
-          {}
-        ).analysis || {};
 
-      // Get translated arrays
+      // Use cached translation if available for the selected language
+      const cachedTranslation = translationCache[lang] || {};
+
+      // Fallback to API translations (though they're usually empty)
+      const apiTranslation =
+        data?.translations?.[lang]?.analysis ||
+        data?.translations?.[String(lang || "").toUpperCase()]?.analysis ||
+        {};
+
+      // Get translated arrays - prioritize cache, then API, then original
       const translatedSummary =
-        Array.isArray(tAnalysis.summary) && tAnalysis.summary.length
-          ? tAnalysis.summary
-          : Array.isArray(analysis.summary) && analysis.summary.length
-            ? analysis.summary
-            : [];
+        Array.isArray(cachedTranslation.summary) &&
+        cachedTranslation.summary.length
+          ? cachedTranslation.summary
+          : Array.isArray(apiTranslation.summary) &&
+              apiTranslation.summary.length
+            ? apiTranslation.summary
+            : Array.isArray(analysis.summary) && analysis.summary.length
+              ? analysis.summary
+              : [];
 
       const translatedIssues =
-        Array.isArray(tAnalysis.potentialIssues) &&
-        tAnalysis.potentialIssues.length
-          ? tAnalysis.potentialIssues
-          : Array.isArray(analysis.potentialIssues) &&
-              analysis.potentialIssues.length
-            ? analysis.potentialIssues
-            : [];
+        Array.isArray(cachedTranslation.potentialIssues) &&
+        cachedTranslation.potentialIssues.length
+          ? cachedTranslation.potentialIssues
+          : Array.isArray(apiTranslation.potentialIssues) &&
+              apiTranslation.potentialIssues.length
+            ? apiTranslation.potentialIssues
+            : Array.isArray(analysis.potentialIssues) &&
+                analysis.potentialIssues.length
+              ? analysis.potentialIssues
+              : [];
 
       const translatedSuggestions =
-        Array.isArray(tAnalysis.smartSuggestions) &&
-        tAnalysis.smartSuggestions.length
-          ? tAnalysis.smartSuggestions
-          : Array.isArray(analysis.smartSuggestions) &&
-              analysis.smartSuggestions.length
-            ? analysis.smartSuggestions
-            : [];
+        Array.isArray(cachedTranslation.smartSuggestions) &&
+        cachedTranslation.smartSuggestions.length
+          ? cachedTranslation.smartSuggestions
+          : Array.isArray(apiTranslation.smartSuggestions) &&
+              apiTranslation.smartSuggestions.length
+            ? apiTranslation.smartSuggestions
+            : Array.isArray(analysis.smartSuggestions) &&
+                analysis.smartSuggestions.length
+              ? analysis.smartSuggestions
+              : [];
 
       const translatedClauses =
-        Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
-          ? tAnalysis.mainClauses
-          : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
-            ? analysis.mainClauses
-            : [];
+        Array.isArray(cachedTranslation.mainClauses) &&
+        cachedTranslation.mainClauses.length
+          ? cachedTranslation.mainClauses
+          : Array.isArray(apiTranslation.mainClauses) &&
+              apiTranslation.mainClauses.length
+            ? apiTranslation.mainClauses
+            : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+              ? analysis.mainClauses
+              : [];
 
-      // Get translated risk and clarity data
-      const translatedRisk = tAnalysis.risk ||
-        analysis.risk || { value: 0, note: "", safety: "Unknown" };
-      const translatedClarity = tAnalysis.clarity ||
-        analysis.clarity || { value: 0, note: "", safety: "Unknown" };
-      const translatedScoreChecker = tAnalysis.scoreChecker ||
-        analysis.scoreChecker || {
-          value: 0,
-          line: "Unable to generate score",
-          safety: "Unknown",
-        };
+      // Get translated notes
+      const translatedRiskNote =
+        cachedTranslation.riskNote ||
+        apiTranslation.risk?.note ||
+        analysis.risk?.note ||
+        "";
+
+      const translatedClarityNote =
+        cachedTranslation.clarityNote ||
+        apiTranslation.clarity?.note ||
+        analysis.clarity?.note ||
+        "";
+
+      const translatedScoreLine =
+        cachedTranslation.scoreLine ||
+        apiTranslation.scoreChecker?.line ||
+        analysis.scoreChecker?.line ||
+        "";
+
+      // Build translated risk/clarity/score objects
+      const translatedRisk = {
+        value: analysis.risk?.value || 0,
+        note: translatedRiskNote,
+        safety: analysis.risk?.safety || "Unknown",
+        band: analysis.risk?.band || "green",
+      };
+
+      const translatedClarity = {
+        value: analysis.clarity?.value || 0,
+        note: translatedClarityNote,
+        safety: analysis.clarity?.safety || "Unknown",
+        band: analysis.clarity?.band || "green",
+      };
+
+      const translatedScoreChecker = {
+        value: analysis.scoreChecker?.value || 0,
+        line: translatedScoreLine,
+        safety: analysis.scoreChecker?.safety || "Unknown",
+        band: analysis.scoreChecker?.band || "green",
+        verdict: analysis.scoreChecker?.verdict || "safe",
+      };
 
       // Map API response structure to PDF generator expectations with translated content
       const pdfData = {
@@ -549,10 +600,72 @@ const Analysis = () => {
     getDeadlineColor(clamp(analysis?.bars?.deadlinePressure));
   }, [data]);
 
-  // Language switching (UI only)
-  const handleLangClick = (code) => {
+  // Translate content on-demand when switching language
+  const translateContent = async (targetLang, originalAnalysis) => {
+    // Skip if already in cache
+    if (translationCache[targetLang]) {
+      return translationCache[targetLang];
+    }
+
+    // Skip translation for English - use original
+    if (targetLang === "en") {
+      return originalAnalysis;
+    }
+
+    setIsTranslating(true);
+
+    try {
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          targetLang,
+          content: {
+            summary: originalAnalysis.summary,
+            mainClauses: originalAnalysis.mainClauses,
+            potentialIssues: originalAnalysis.potentialIssues,
+            smartSuggestions: originalAnalysis.smartSuggestions,
+            riskNote: originalAnalysis.risk?.note,
+            clarityNote: originalAnalysis.clarity?.note,
+            scoreLine: originalAnalysis.scoreChecker?.line,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Translation failed");
+      }
+
+      const result = await response.json();
+      const translated = result.translation;
+
+      // Cache the translation
+      setTranslationCache((prev) => ({
+        ...prev,
+        [targetLang]: translated,
+      }));
+
+      return translated;
+    } catch (error) {
+      console.error("Translation error:", error);
+      // Return original on error
+      return originalAnalysis;
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  // Language switching with translation
+  const handleLangClick = async (code) => {
     setLang(code);
     setLangMenuOpen(false);
+
+    // Trigger translation if not English and not cached
+    if (code !== "en" && data?.analysis && !translationCache[code]) {
+      await translateContent(code, data.analysis);
+    }
   };
 
   // Dropdown open/close logic
@@ -610,7 +723,10 @@ const Analysis = () => {
 
   // translated dynamic arrays (fallback to original if missing)
   const analysis = data?.analysis || {};
-  const tAnalysis = tr.analysis || {};
+
+  // Use cached translation if available, otherwise use API response or original
+  const cachedTranslation = translationCache[lang] || {};
+  const tAnalysis = cachedTranslation || tr.analysis || {};
 
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {
@@ -631,77 +747,42 @@ const Analysis = () => {
     }
     return [];
   }
-  // Use translated summary array if available, fallback to English
+  // Use translated arrays with proper fallback to original English
   const tSummary =
     Array.isArray(tAnalysis.summary) && tAnalysis.summary.length
       ? tAnalysis.summary
-      : Array.isArray(tr.summary) && tr.summary.length
-        ? tr.summary
-        : Array.isArray(analysis.summary) && analysis.summary.length
-          ? analysis.summary
-          : Array.isArray(STATIC_TRANSLATIONS.en.summary) &&
-              STATIC_TRANSLATIONS.en.summary.length
-            ? STATIC_TRANSLATIONS.en.summary
-            : [];
+      : Array.isArray(analysis.summary) && analysis.summary.length
+        ? analysis.summary
+        : [];
 
   const tIssues =
     Array.isArray(tAnalysis.potentialIssues) && tAnalysis.potentialIssues.length
       ? tAnalysis.potentialIssues
-      : Array.isArray(tr.potentialIssues) && tr.potentialIssues.length
-        ? tr.potentialIssues
-        : Array.isArray(analysis.potentialIssues) &&
-            analysis.potentialIssues.length
-          ? analysis.potentialIssues
-          : Array.isArray(STATIC_TRANSLATIONS.en.potentialIssues) &&
-              STATIC_TRANSLATIONS.en.potentialIssues.length
-            ? STATIC_TRANSLATIONS.en.potentialIssues
-            : ["—"];
+      : Array.isArray(analysis.potentialIssues) &&
+          analysis.potentialIssues.length
+        ? analysis.potentialIssues
+        : ["—"];
 
-  // Robust fallback for smart suggestions: try all possible fields, prefer arrays, fallback to string split
-  function getSuggestionsArr() {
-    const candidates = [
-      tAnalysis.smartSuggestions,
-      tr.smartSuggestions,
-      analysis.smartSuggestions,
-      analysis.suggestions,
-      analysis.smartSuggestionsText,
-    ];
-    for (const c of candidates) {
-      if (Array.isArray(c) && c.length) return c;
-      if (typeof c === "string" && c.trim())
-        return c
-          .split(/\r?\n|•|- /g)
-          .map((s) => s.trim())
-          .filter(Boolean);
-    }
-    return [];
-  }
-  // Use translated suggestions array if available, fallback to English
   const tSuggestions =
     Array.isArray(tAnalysis.smartSuggestions) &&
     tAnalysis.smartSuggestions.length
       ? tAnalysis.smartSuggestions
-      : Array.isArray(tr.smartSuggestions) && tr.smartSuggestions.length
-        ? tr.smartSuggestions
-        : Array.isArray(analysis.smartSuggestions) &&
-            analysis.smartSuggestions.length
-          ? analysis.smartSuggestions
-          : Array.isArray(STATIC_TRANSLATIONS.en.smartSuggestions) &&
-              STATIC_TRANSLATIONS.en.smartSuggestions.length
-            ? STATIC_TRANSLATIONS.en.smartSuggestions
-            : [];
+      : Array.isArray(analysis.smartSuggestions) &&
+          analysis.smartSuggestions.length
+        ? analysis.smartSuggestions
+        : [];
 
   const tClauses =
     Array.isArray(tAnalysis.mainClauses) && tAnalysis.mainClauses.length
       ? tAnalysis.mainClauses
-      : Array.isArray(tr.mainClauses) && tr.mainClauses.length
-        ? tr.mainClauses
-        : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
-          ? analysis.mainClauses
-          : Array.isArray(STATIC_TRANSLATIONS.en.mainClauses) &&
-              STATIC_TRANSLATIONS.en.mainClauses.length
-            ? STATIC_TRANSLATIONS.en.mainClauses
-            : ["—"];
+      : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
+        ? analysis.mainClauses
+        : ["—"];
+
+  // Translated notes (risk, clarity, score)
+  const tRiskNote = tAnalysis.riskNote || analysis.risk?.note || "";
+  const tClarityNote = tAnalysis.clarityNote || analysis.clarity?.note || "";
+  const tScoreLine = tAnalysis.scoreLine || analysis.scoreChecker?.line || "";
 
   // translated title (fallback to original)
   const tTitle =
@@ -782,17 +863,35 @@ const Analysis = () => {
                   onClick={() => setLangMenuOpen((v) => !v)}
                   aria-expanded={langMenuOpen}
                   aria-haspopup="listbox"
+                  disabled={isTranslating}
+                  style={{
+                    opacity: isTranslating ? 0.6 : 1,
+                    cursor: isTranslating ? "wait" : "pointer",
+                  }}
                 >
-                  <span
-                    id="langNow"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: 400,
-                      fontSize: "20px",
-                    }}
-                  >
-                    {lang.toUpperCase()}
-                  </span>
+                  {isTranslating ? (
+                    <div
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        border: "2px solid #3b3b3b",
+                        borderTop: "2px solid #fff",
+                        borderRadius: "50%",
+                        animation: "spin 0.6s linear infinite",
+                      }}
+                    />
+                  ) : (
+                    <span
+                      id="langNow"
+                      style={{
+                        fontFamily: "Inter, sans-serif",
+                        fontWeight: 400,
+                        fontSize: "20px",
+                      }}
+                    >
+                      {lang.toUpperCase()}
+                    </span>
+                  )}
                   <span className="caret" aria-hidden="true"></span>
                 </button>
 
@@ -850,6 +949,41 @@ const Analysis = () => {
               height: 0,
             }}
           ></div>
+
+          {isTranslating && (
+            <div
+              style={{
+                padding: "10px 16px",
+                background: "#1c1b22",
+                border: "1px solid #3b3b3b",
+                borderRadius: "12px",
+                marginBottom: "18px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                fontFamily: "Inter, sans-serif",
+                fontSize: "15px",
+                color: "#bdbdbd",
+              }}
+            >
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid #3b3b3b",
+                  borderTop: "2px solid #bdbdbd",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                }}
+              />
+              <span>Translating content...</span>
+              <style>{`
+                @keyframes spin {
+                  to { transform: rotate(360deg); }
+                }
+              `}</style>
+            </div>
+          )}
 
           <div className="doc-title">
             <span className="label" id="uiTitleLabel">
