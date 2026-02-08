@@ -565,6 +565,7 @@ const Analysis = () => {
     closeEmailForm();
   };
 
+  // dummy change to force clean build after install (remove after first build)
   // For animating SVG arcs
   const riskArcRef = useRef();
   const clarArcRef = useRef();
