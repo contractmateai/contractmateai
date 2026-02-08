@@ -4,6 +4,7 @@
  * This is the proper layout version of the PDF generator
  */
 import { jsPDF } from "jspdf";
+import { TRANSLATIONS } from "./translations";
 
 class PDFGenerator {
   constructor() {
@@ -17,6 +18,9 @@ class PDFGenerator {
       score: "https://i.imgur.com/H47wt5e.png",
       confidence: "https://i.imgur.com/GzPeaz5.png",
     };
+
+    // Use centralized translations from shared module
+    this.TRANSLATIONS = TRANSLATIONS;
 
     // Centralized Style Configuration
     this.STYLE = {
@@ -66,10 +70,24 @@ class PDFGenerator {
   }
 
   /* ===== Font Management ===== */
-  async ensurePoppins(doc) {
+  async ensureMultiLanguageFonts(doc, lang) {
+    const cjkLanguages = ["zh", "ja", "ko"];
+    this._isCJK = cjkLanguages.includes(lang);
+    this._lang = lang;
+    // Use canvas rendering for ALL non-English languages:
+    // - CJK: browser fonts needed (jsPDF can't embed CJK fonts)
+    // - Latin (Romanian, etc.): Poppins CDN file causes broken jsPDF metrics
+    this._useCanvasText = lang !== "en";
+
+    if (this._useCanvasText) {
+      console.log(`Language '${lang}' → using canvas text rendering`);
+      return "helvetica"; // Base font for non-text elements (lines, numbers)
+    }
+
+    // English: Load Poppins (works perfectly for ASCII)
     try {
       const list = doc.getFontList ? doc.getFontList() : {};
-      if (list && list.Poppins) return true;
+      if (list && list.Poppins) return "Poppins";
 
       const REG_URL =
         "https://cdn.jsdelivr.net/gh/google/fonts/ofl/poppins/Poppins-Regular.ttf";
@@ -95,11 +113,146 @@ class PDFGenerator {
       doc.addFont("Poppins-Regular.ttf", "Poppins", "normal");
       doc.addFileToVFS("Poppins-Bold.ttf", boldB64);
       doc.addFont("Poppins-Bold.ttf", "Poppins", "bold");
-      return true;
+      return "Poppins";
     } catch (e) {
       console.warn("Poppins failed to load — using helvetica fallback.", e);
-      return false;
+      return "helvetica";
     }
+  }
+
+  /* ===== CJK Canvas Text Rendering ===== */
+
+  /** Get browser-native font family for canvas text rendering */
+  _getCanvasFontFamily() {
+    const cjkFamilies = {
+      zh: '"Noto Sans SC", "Microsoft YaHei", "PingFang SC", "SimHei", "WenQuanYi Micro Hei", sans-serif',
+      ja: '"Noto Sans JP", "Yu Gothic", "Hiragino Sans", "Hiragino Kaku Gothic Pro", "MS Gothic", sans-serif',
+      ko: '"Noto Sans KR", "Malgun Gothic", "Apple Gothic", "NanumGothic", sans-serif',
+    };
+    if (cjkFamilies[this._lang]) return cjkFamilies[this._lang];
+    // Latin scripts (Romanian, etc.): system fonts with full diacritics support
+    return '"Segoe UI", "Helvetica Neue", "Arial", "Liberation Sans", sans-serif';
+  }
+
+  /** Wrap text for canvas rendering (CJK-aware: can break at any character) */
+  _canvasWrapText(ctx, text, maxWidthPx) {
+    const str = String(text || "");
+    if (!str) return [""];
+
+    const lines = [];
+    let currentLine = "";
+
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i];
+      if (char === "\n") {
+        lines.push(currentLine);
+        currentLine = "";
+        continue;
+      }
+      const testLine = currentLine + char;
+      if (
+        ctx.measureText(testLine).width > maxWidthPx &&
+        currentLine.length > 0
+      ) {
+        lines.push(currentLine);
+        currentLine = char;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines.length > 0 ? lines : [""];
+  }
+
+  /** Render text as a canvas image and add to PDF. Returns new Y position. */
+  _canvasText(doc, text, x, y, options = {}) {
+    const {
+      fontSize = 11,
+      bold = false,
+      maxWidth = 400,
+      lineHeight = 14,
+      color = "#141414",
+      align = "left",
+    } = options;
+
+    const str = String(text || "");
+    if (!str.trim()) return y;
+
+    const scale = 3; // High-DPI for crisp rendering
+    const fontFamily = this._getCanvasFontFamily();
+    const fontWeight = bold ? "bold" : "normal";
+    const font = `${fontWeight} ${fontSize * scale}px ${fontFamily}`;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.font = font;
+
+    // Wrap text
+    const maxWidthPx = maxWidth * scale;
+    const lines = this._canvasWrapText(ctx, str, maxWidthPx);
+
+    // Size canvas
+    const lineHeightPx = lineHeight * scale;
+    canvas.width = Math.ceil(maxWidthPx);
+    canvas.height = Math.ceil(lines.length * lineHeightPx + scale * 2);
+
+    // Render text on canvas
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textBaseline = "top";
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    lines.forEach((line, i) => {
+      if (align === "center") {
+        const w = ctx.measureText(line).width;
+        ctx.fillText(line, (maxWidthPx - w) / 2, i * lineHeightPx);
+      } else if (align === "right") {
+        const w = ctx.measureText(line).width;
+        ctx.fillText(line, maxWidthPx - w, i * lineHeightPx);
+      } else {
+        ctx.fillText(line, 0, i * lineHeightPx);
+      }
+    });
+
+    // Add rendered text as image to PDF
+    const imgWidth = canvas.width / scale;
+    const imgHeight = canvas.height / scale;
+    doc.addImage(
+      canvas.toDataURL("image/png"),
+      "PNG",
+      x,
+      y,
+      imgWidth,
+      imgHeight,
+    );
+
+    return y + lines.length * lineHeight;
+  }
+
+  /** Universal text method: uses jsPDF for English, canvas for other languages */
+  _text(doc, text, x, y, options = {}) {
+    if (this._useCanvasText) {
+      return this._canvasText(doc, text, x, y, options);
+    }
+    // Latin: use native jsPDF text
+    if (options.bold) doc.setFont(doc.getFont().fontName, "bold");
+    else doc.setFont(doc.getFont().fontName, "normal");
+    if (options.fontSize) doc.setFontSize(options.fontSize);
+    if (options.color) {
+      const c = options.color;
+      if (typeof c === "string" && c.startsWith("#")) {
+        const r = parseInt(c.slice(1, 3), 16);
+        const g = parseInt(c.slice(3, 5), 16);
+        const b = parseInt(c.slice(5, 7), 16);
+        doc.setTextColor(r, g, b);
+      }
+    }
+    const jOpts = {};
+    if (options.maxWidth) jOpts.maxWidth = options.maxWidth;
+    if (options.align) jOpts.align = options.align;
+    doc.text(String(text || ""), x, y, jOpts);
+    return y + (options.lineHeight || options.fontSize || 14);
   }
 
   /* ===== Image Utilities ===== */
@@ -174,6 +327,7 @@ class PDFGenerator {
 
   capitalizeSafety(safety) {
     return safety
+
       .split(" ")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
@@ -262,7 +416,8 @@ class PDFGenerator {
     ctx.fill();
 
     ctx.fillStyle = "#000";
-    ctx.font = `bold ${Math.round(size * 0.26)}px Poppins, Arial`;
+    // Use system fonts for canvas (percentage numbers work in any font)
+    ctx.font = `bold ${Math.round(size * 0.26)}px Arial, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`${Math.round(pct)}%`, cx, cy);
@@ -411,62 +566,154 @@ class PDFGenerator {
   }
 
   tinyText(doc, txt, x, y, w, lh = 14) {
-    const lines = doc.splitTextToSize(String(txt || ""), w);
+    if (this._useCanvasText) {
+      return this._canvasText(doc, txt, x, y, {
+        fontSize: 11,
+        maxWidth: w,
+        lineHeight: lh,
+        color: "#141414",
+      });
+    }
+    // Set font and size BEFORE splitTextToSize so it calculates correctly
     doc.setFont(doc.getFont().fontName, "normal");
     doc.setFontSize(11);
     doc.setTextColor(20, 20, 20);
-    lines.forEach((ln, i) => doc.text(ln, x, y + i * lh));
+
+    // splitTextToSize uses the current font settings to calculate line breaks
+    const lines = doc.splitTextToSize(String(txt || ""), w);
+
+    // Render each line without maxWidth (already split)
+    lines.forEach((ln, i) => {
+      doc.text(ln, x, y + i * lh);
+    });
+
     doc.setTextColor(0, 0, 0);
     return y + lines.length * lh;
   }
 
-  drawHeader(doc) {
+  /** Measure text width — uses canvas for CJK, jsPDF for Latin */
+  _measureText(doc, text, fontSize, bold = false) {
+    if (this._useCanvasText) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const weight = bold ? "bold" : "normal";
+      ctx.font = `${weight} ${fontSize}px ${this._getCanvasFontFamily()}`;
+      return ctx.measureText(String(text || "")).width;
+    }
+    doc.setFont(doc.getFont().fontName, bold ? "bold" : "normal");
+    doc.setFontSize(fontSize);
+    return doc.getTextWidth(String(text || ""));
+  }
+
+  drawHeader(doc, tr) {
     const W = doc.internal.pageSize.getWidth();
     const M = this.STYLE.PAGE_MARGIN;
 
     doc.setFillColor(0, 0, 0);
     doc.rect(0, 0, W, this.STYLE.HEADER_HEIGHT, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.setFontSize(this.STYLE.FONT_SIZE.HEADER_LARGE);
-    doc.text("Contract Report", M, 72);
-    doc.setFont(doc.getFont().fontName, "normal");
-    doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    const dt = new Date();
-    const day = String(dt.getDate()).padStart(2, "0");
-    const month = dt.toLocaleString("en", { month: "long" });
-    const year = dt.getFullYear();
-    doc.text(`Generated on ${day} ${month} ${year}`, M, 100);
+
+    if (this._useCanvasText) {
+      // Non-English: render header text via canvas
+      // Auto-scale title font size to fit within header
+      const maxTitleWidth = W - M * 2;
+      let titleFontSize = this.STYLE.FONT_SIZE.HEADER_LARGE; // 54
+      let measured = this._measureText(
+        doc,
+        tr.contractReport,
+        titleFontSize,
+        true,
+      );
+      while (measured > maxTitleWidth && titleFontSize > 24) {
+        titleFontSize -= 2;
+        measured = this._measureText(
+          doc,
+          tr.contractReport,
+          titleFontSize,
+          true,
+        );
+      }
+      // Position title near top of header
+      const titleY = 18;
+      const titleEndY = this._canvasText(doc, tr.contractReport, M, titleY, {
+        fontSize: titleFontSize,
+        bold: true,
+        maxWidth: maxTitleWidth,
+        lineHeight: titleFontSize * 1.15,
+        color: "#ffffff",
+      });
+      // Position date below title with gap
+      const dt = new Date();
+      const day = String(dt.getDate()).padStart(2, "0");
+      const month = dt.toLocaleString("en", { month: "long" });
+      const year = dt.getFullYear();
+      const dateY = Math.max(titleEndY + 4, 85);
+      this._canvasText(
+        doc,
+        `${tr.generatedOn} ${day} ${month} ${year}`,
+        M,
+        dateY,
+        {
+          fontSize: this.STYLE.FONT_SIZE.SECTION_TITLE,
+          maxWidth: maxTitleWidth,
+          lineHeight: this.STYLE.FONT_SIZE.SECTION_TITLE * 1.3,
+          color: "#ffffff",
+        },
+      );
+    } else {
+      doc.setTextColor(255, 255, 255);
+      doc.setFont(doc.getFont().fontName, "bold");
+      doc.setFontSize(this.STYLE.FONT_SIZE.HEADER_LARGE);
+      doc.text(tr.contractReport, M, 72);
+      doc.setFont(doc.getFont().fontName, "normal");
+      doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
+      const dt = new Date();
+      const day = String(dt.getDate()).padStart(2, "0");
+      const month = dt.toLocaleString("en", { month: "long" });
+      const year = dt.getFullYear();
+      doc.text(`${tr.generatedOn} ${day} ${month} ${year}`, M, 100);
+    }
     doc.setTextColor(0, 0, 0);
   }
 
-  drawFooter(doc, page, logoImg) {
+  drawFooter(doc, page, logoImg, tr) {
     const W = doc.internal.pageSize.getWidth();
     const H = doc.internal.pageSize.getHeight();
     const M = this.STYLE.PAGE_MARGIN;
 
-    const parts = [
-      "Kindly keep in mind that although you might find this report helpful, this is ",
-      "not",
-      " legal advice.",
-    ];
-    doc.setFont(doc.getFont().fontName, "normal");
-    doc.setFontSize(11);
-    doc.setTextColor(0, 0, 0);
+    const parts = [tr.notLegalAdvice, tr.not, tr.legalAdviceEnd];
     const y = H - 4;
-    let w = 0;
-    parts.forEach((p) => (w += doc.getTextWidth(p)));
-    let xx = (W - w) / 2;
-    doc.setFont(doc.getFont().fontName, "normal");
-    doc.text(parts[0], xx, y);
-    xx += doc.getTextWidth(parts[0]);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.text(parts[1], xx, y);
-    xx += doc.getTextWidth(parts[1]);
-    doc.setFont(doc.getFont().fontName, "normal");
-    doc.text(parts[2], xx, y);
-    doc.setLineWidth(0.8);
-    doc.line((W - w) / 2, y + 1, (W + w) / 2, y + 1);
+
+    if (this._useCanvasText) {
+      // Non-English: render disclaimer as single canvas text line, centered
+      const fullDisclaimer = parts.join("");
+      const disclaimerWidth = this._measureText(doc, fullDisclaimer, 11, false);
+      const disclaimerX = (W - disclaimerWidth) / 2;
+      this._canvasText(doc, fullDisclaimer, disclaimerX, y - 10, {
+        fontSize: 11,
+        maxWidth: disclaimerWidth + 10,
+        lineHeight: 14,
+        color: "#000000",
+      });
+      doc.setLineWidth(0.8);
+      doc.line(disclaimerX, y + 1, disclaimerX + disclaimerWidth, y + 1);
+    } else {
+      doc.setFont(doc.getFont().fontName, "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      let w = 0;
+      parts.forEach((p) => (w += doc.getTextWidth(p)));
+      let xx = (W - w) / 2;
+      doc.setFont(doc.getFont().fontName, "normal");
+      doc.text(parts[0], xx, y);
+      xx += doc.getTextWidth(parts[0]);
+      doc.setFont(doc.getFont().fontName, "bold");
+      doc.text(parts[1], xx, y);
+      xx += doc.getTextWidth(parts[1]);
+      doc.setFont(doc.getFont().fontName, "normal");
+      doc.text(parts[2], xx, y);
+      doc.setLineWidth(0.8);
+      doc.line((W - w) / 2, y + 1, (W + w) / 2, y + 1);
+    }
 
     const pageContainerWidth = 100;
     const containerHeight = 24;
@@ -487,9 +734,20 @@ class PDFGenerator {
     doc.setFont(doc.getFont().fontName, "bold");
     doc.setFontSize(14);
     const pageTextY = H - 44 + containerHeight / 2 + 4;
-    doc.text(`PAGE ${page}`, pageContainerWidth / 2, pageTextY, {
-      align: "center",
-    });
+    if (this._useCanvasText) {
+      this._canvasText(doc, `${tr.page} ${page}`, 0, H - 44 + 4, {
+        fontSize: 14,
+        bold: true,
+        maxWidth: pageContainerWidth,
+        lineHeight: 16,
+        color: "#ffffff",
+        align: "center",
+      });
+    } else {
+      doc.text(`${tr.page} ${page}`, pageContainerWidth / 2, pageTextY, {
+        align: "center",
+      });
+    }
 
     const pillW = pageContainerWidth - 20;
     const pillX = page === 1 ? 10 : W - pillW - 10;
@@ -566,9 +824,11 @@ class PDFGenerator {
   async generatePDF(filename, data, lang) {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
-    await this.ensurePoppins(doc);
-    const FONT =
-      doc.getFontList && doc.getFontList().Poppins ? "Poppins" : "helvetica";
+    // Load appropriate font based on language
+    const FONT = await this.ensureMultiLanguageFonts(doc, lang);
+
+    // Get translations for the selected language (fallback to English)
+    const tr = this.TRANSLATIONS[lang] || this.TRANSLATIONS.en;
 
     const fonftSize = {
       xsm: 10,
@@ -579,12 +839,62 @@ class PDFGenerator {
 
     const bold = () => doc.setFont(FONT, "bold");
     const reg = () => doc.setFont(FONT, "normal");
-    const titleText = (text, M, y, size = fonftSize.lg, isBold = true) => {
-      if (isBold) bold();
-      else reg();
+    const useCanvas = this._useCanvasText;
 
-      doc.setFontSize(size);
-      doc.text(text, M, y);
+    // CJK-aware title text renderer
+    const titleText = (
+      text,
+      xPos,
+      yPos,
+      size = fonftSize.lg,
+      isBold = true,
+    ) => {
+      if (useCanvas) {
+        this._canvasText(doc, text, xPos, yPos - size + 2, {
+          fontSize: size,
+          bold: isBold,
+          maxWidth: W - xPos - this.STYLE.PAGE_MARGIN,
+          lineHeight: size * 1.3,
+          color: "#000000",
+        });
+      } else {
+        if (isBold) bold();
+        else reg();
+        doc.setFontSize(size);
+        doc.text(text, xPos, yPos);
+      }
+    };
+
+    // CJK-aware single-line label renderer (for black-on-white labels)
+    const labelText = (
+      text,
+      xPos,
+      yPos,
+      size = 11,
+      isBold = false,
+      color = "#000000",
+    ) => {
+      if (useCanvas) {
+        this._canvasText(doc, text, xPos, yPos - size + 2, {
+          fontSize: size,
+          bold: isBold,
+          maxWidth: W - xPos - 10,
+          lineHeight: size * 1.3,
+          color,
+        });
+      } else {
+        if (isBold) bold();
+        else reg();
+        doc.setFontSize(size);
+        if (color && color !== "#000000") {
+          const r = parseInt(color.slice(1, 3), 16);
+          const g = parseInt(color.slice(3, 5), 16);
+          const b = parseInt(color.slice(5, 7), 16);
+          doc.setTextColor(r, g, b);
+        }
+        doc.text(String(text), xPos, yPos);
+        doc.setTextColor(0, 0, 0);
+      }
     };
 
     reg();
@@ -603,50 +913,84 @@ class PDFGenerator {
     }
 
     /* ================= PAGE 1 ================= */
-    this.drawHeader(doc);
+    this.drawHeader(doc, tr);
     let y = this.STYLE.CONTENT_START_Y;
 
-    bold();
-    doc.setFontSize(fonftSize.lg);
-    doc.text("Title: ", M, y);
-    const labelWidth = doc.getTextWidth("Title: ");
-    reg();
-    doc.setFontSize(fonftSize.lg);
-    doc.text(data.title || "—", M + labelWidth, y);
+    if (useCanvas) {
+      // Non-English: render title label + value together via canvas
+      this._canvasText(
+        doc,
+        (tr.title || "Title") + ": " + (data.title || "—"),
+        M,
+        y - fonftSize.lg + 2,
+        {
+          fontSize: fonftSize.lg,
+          bold: true,
+          maxWidth: W - M * 2,
+          lineHeight: fonftSize.lg * 1.4,
+          color: "#000000",
+        },
+      );
+    } else {
+      bold();
+      doc.setFontSize(fonftSize.lg);
+      doc.text(tr.title + ": ", M, y);
+      const labelWidth = doc.getTextWidth(tr.title + ": ");
+      reg();
+      doc.setFontSize(fonftSize.lg);
+      doc.text(data.title || "—", M + labelWidth, y);
+    }
     y += this.STYLE.TITLE_BOTTOM_MARGIN + 20;
 
     // Improved summary formatting: join all summary lines into one paragraph for better wrapping
     let sTop = y + this.STYLE.SECTION_HEADER_SPACING;
     let sY = sTop;
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
-    bold();
-    doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Summary of Contract:", M + this.STYLE.CARD_PADDING, sY);
-    sY += this.STYLE.TITLE_CONTENT_SPACING;
-    // Each sentence on a new line, use correct text width (subtract left/right padding)
-    // Use translated summary if available
-    const summaryArr = Array.isArray(data.translatedSummary) ? data.translatedSummary : (Array.isArray(data.summary) ? data.summary : [data.summary]);
-    const textWidth = sW - this.STYLE.CARD_PADDING * 2;
-    summaryArr.forEach((sentence) => {
-      sY = this.tinyText(
+    if (useCanvas) {
+      this._canvasText(
         doc,
-        String(sentence),
+        tr.summaryOfContract,
         M + this.STYLE.CARD_PADDING,
-        sY,
-        textWidth,
-        this.STYLE.TEXT_LINE_HEIGHT
-      ) + this.STYLE.TEXT_ITEM_SPACING;
-    });
+        sY - this.STYLE.FONT_SIZE.SECTION_TITLE + 2,
+        {
+          fontSize: this.STYLE.FONT_SIZE.SECTION_TITLE,
+          bold: true,
+          maxWidth: W - M * 2 - this.STYLE.CARD_PADDING * 2,
+          lineHeight: this.STYLE.FONT_SIZE.SECTION_TITLE * 1.3,
+          color: "#000000",
+        },
+      );
+    } else {
+      bold();
+      doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
+      doc.text(tr.summaryOfContract, M + this.STYLE.CARD_PADDING, sY, {
+        maxWidth: W - M * 2 - this.STYLE.CARD_PADDING * 2,
+      });
+    }
+    sY += this.STYLE.TITLE_CONTENT_SPACING;
+    (Array.isArray(data.summary) ? data.summary : [data.summary]).forEach(
+      (item) => {
+        sY =
+          this.tinyText(
+            doc,
+            String(item),
+            M + this.STYLE.CARD_PADDING,
+            sY,
+            W - M * 2 - this.STYLE.CARD_PADDING * 2,
+            this.STYLE.TEXT_LINE_HEIGHT,
+          ) + this.STYLE.TEXT_ITEM_SPACING;
+      },
+    );
     this.drawBox(
       doc,
       M - this.STYLE.BOX_MARGIN,
       sTop - this.STYLE.BOX_VERTICAL_OFFSET,
       sW,
-      sY - sTop + this.STYLE.BOX_CONTENT_PADDING
+      sY - sTop + this.STYLE.BOX_CONTENT_PADDING,
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
-    titleText("Percentage Breakdown", M - this.STYLE.BOX_MARGIN, y);
+    titleText(tr.percentageBreakdown, M - this.STYLE.BOX_MARGIN, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN;
 
     const colGap = this.STYLE.SMALL_GAP;
@@ -680,10 +1024,12 @@ class PDFGenerator {
     let rightY = y + 8;
     const rightColBottom = y + cardH - 8;
 
-    const tagWidth = Math.min(
-      doc.getTextWidth("Risk Level") + 64,
-      rightColWidth,
-    );
+    const tagWidth = useCanvas
+      ? Math.min(
+          this._measureText(doc, tr.riskLevel, 12, true) + 64,
+          rightColWidth,
+        )
+      : Math.min(doc.getTextWidth(tr.riskLevel) + 64, rightColWidth);
 
     const riskLevelTextContainerHeight = 24;
     doc.setFillColor(0, 0, 0);
@@ -698,11 +1044,21 @@ class PDFGenerator {
     );
     if (IM.risk)
       doc.addImage(IM.risk, "PNG", rightColX + 8, rightY + 3, 18, 18);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.setFontSize(12);
     const riskTextStartX = rightColX + 29;
-    doc.text("Risk Level", riskTextStartX, rightY + 16);
+    if (useCanvas) {
+      this._canvasText(doc, tr.riskLevel, riskTextStartX, rightY + 5, {
+        fontSize: 12,
+        bold: true,
+        maxWidth: tagWidth - 35,
+        lineHeight: 14,
+        color: "#ffffff",
+      });
+    } else {
+      doc.setTextColor(255, 255, 255);
+      doc.setFont(doc.getFont().fontName, "bold");
+      doc.setFontSize(12);
+      doc.text(tr.riskLevel, riskTextStartX, rightY + 16);
+    }
     doc.setTextColor(0, 0, 0);
 
     const topComponentHeight = 30;
@@ -716,15 +1072,11 @@ class PDFGenerator {
     doc.roundedRect(rightColX, statusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    // Use verdict label as in the web report
-    let riskLabel = "";
-    if (riskBand === "green") riskLabel = "Very Safe";
-    else if (riskBand === "orange") riskLabel = "Not That Safe";
-    else riskLabel = "Unsafe";
-    doc.text(
-      riskLabel,
+    labelText(
+      this.capitalizeSafety(data.risk?.safety || ""),
       rightColX + 16,
       statusY + 11,
+      11,
     );
 
     const textStartY = rightY + topComponentHeight + componentGap;
@@ -733,7 +1085,7 @@ class PDFGenerator {
     // Use static sentence for risk
     this.tinyText(
       doc,
-      "Based on clause fairness and obligations.",
+      data.risk?.note || "",
       rightColX,
       textStartY,
       rightColWidth,
@@ -768,10 +1120,12 @@ class PDFGenerator {
     let clarityRightY = y + 8;
     const clarityRightColBottom = y + cardH - 8;
 
-    const clarityTagWidth = Math.min(
-      doc.getTextWidth("Clause Clarity") + 64,
-      clarityRightColWidth,
-    );
+    const clarityTagWidth = useCanvas
+      ? Math.min(
+          this._measureText(doc, tr.clauseClarity, 12, true) + 64,
+          clarityRightColWidth,
+        )
+      : Math.min(doc.getTextWidth(tr.clauseClarity) + 64, clarityRightColWidth);
     const clarityTextContainerHeight = 24;
     doc.setFillColor(0, 0, 0);
     doc.roundedRect(
@@ -792,11 +1146,27 @@ class PDFGenerator {
         18,
         18,
       );
-    doc.setTextColor(255, 255, 255);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.setFontSize(12);
     const clarityTextStartX = clarityRightColX + 29;
-    doc.text("Clause Clarity", clarityTextStartX, clarityRightY + 16);
+    if (useCanvas) {
+      this._canvasText(
+        doc,
+        tr.clauseClarity,
+        clarityTextStartX,
+        clarityRightY + 5,
+        {
+          fontSize: 12,
+          bold: true,
+          maxWidth: clarityTagWidth - 35,
+          lineHeight: 14,
+          color: "#ffffff",
+        },
+      );
+    } else {
+      doc.setTextColor(255, 255, 255);
+      doc.setFont(doc.getFont().fontName, "bold");
+      doc.setFontSize(12);
+      doc.text(tr.clauseClarity, clarityTextStartX, clarityRightY + 16);
+    }
     doc.setTextColor(0, 0, 0);
 
     const clarityStatusY = clarityRightColBottom - bottomComponentHeight;
@@ -807,15 +1177,11 @@ class PDFGenerator {
     doc.roundedRect(clarityRightColX, clarityStatusY + 2, 10, 10, 2, 2, "FD");
     reg();
     doc.setFontSize(11);
-    // Use verdict label as in the web report
-    let clarityLabel = "";
-    if (clarBand === "green") clarityLabel = "Very Safe";
-    else if (clarBand === "orange") clarityLabel = "Not That Safe";
-    else clarityLabel = "Unsafe";
-    doc.text(
-      clarityLabel,
+    labelText(
+      this.capitalizeSafety(data.clarity?.safety || ""),
       clarityRightColX + 16,
       clarityStatusY + 11,
+      11,
     );
 
     const clarityTextStartY = clarityRightY + topComponentHeight + componentGap;
@@ -823,7 +1189,7 @@ class PDFGenerator {
     // Use static sentence for clause clarity
     this.tinyText(
       doc,
-      "Reflects how easy the terms are to understand.",
+      data.clarity?.note || "",
       clarityRightColX,
       clarityTextStartY,
       clarityRightColWidth,
@@ -840,7 +1206,7 @@ class PDFGenerator {
       leftXBars + (availableWidthPage1Bars - colGapBars) / 2 + colGapBars;
     const colWBars = (availableWidthPage1Bars - colGapBars) / 2;
 
-    titleText("Statistical Bars", leftXBars, y);
+    titleText(tr.statisticalBars, leftXBars, y);
 
     const barRow = (label, pct, icon, xPos, yTop, width, metric) => {
       const padding = 4;
@@ -883,10 +1249,20 @@ class PDFGenerator {
 
       let innerY = yTop + padding;
 
-      bold();
       const fontSize = label === "Confidence to sign freely" ? 12 : 14;
-      doc.setFontSize(fontSize);
-      doc.text(label, contentStartX, innerY + labelHeight);
+      if (useCanvas) {
+        this._canvasText(doc, label, contentStartX, innerY, {
+          fontSize,
+          bold: true,
+          maxWidth: bW - (contentStartX - xPos) - 8,
+          lineHeight: fontSize * 1.2,
+          color: "#000000",
+        });
+      } else {
+        bold();
+        doc.setFontSize(fontSize);
+        doc.text(label, contentStartX, innerY + labelHeight);
+      }
       innerY += labelHeight + rowGap;
 
       const barColor = this.getColorFor(metric, pct);
@@ -908,7 +1284,7 @@ class PDFGenerator {
     let barY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
 
     barRow(
-      "Professionalism",
+      tr.professionalism,
       Math.round(Number(meters.professionalism ?? 65)),
       IM.pro,
       leftXBars,
@@ -919,11 +1295,16 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     // Use only the canonical value from analysis.bars.favorabilityIndex
-    let favorabilityRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.favorabilityIndex !== 'undefined' ? data.analysis.bars.favorabilityIndex : 0;
+    let favorabilityRaw =
+      data.analysis &&
+      data.analysis.bars &&
+      typeof data.analysis.bars.favorabilityIndex !== "undefined"
+        ? data.analysis.bars.favorabilityIndex
+        : 0;
     const favorabilityPct = Math.round(Number(favorabilityRaw) || 0);
     barRow(
-      "Favorability",
-      favorabilityPct,
+      tr.favorabilityIndex,
+      Math.round(Number(meters.favorability ?? 50)),
       IM.fav,
       leftXBars,
       barY,
@@ -933,7 +1314,7 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     barRow(
-      "Deadline Pressure",
+      tr.deadlinePressure,
       Math.round(Number(meters.deadline ?? 40)),
       IM.dead,
       leftXBars,
@@ -946,7 +1327,7 @@ class PDFGenerator {
     const clX = rightXBars,
       clY = y + this.STYLE.TITLE_BOTTOM_MARGIN;
 
-    titleText("Main Clauses", clX, y);
+    titleText(tr.mainClauses, clX, y);
     y += this.STYLE.TITLE_BOTTOM_MARGIN;
 
     let listY = clY + 26;
@@ -958,24 +1339,28 @@ class PDFGenerator {
     doc.setFontSize(12);
     doc.setTextColor(20, 20, 20);
     // Use translated clauses if available
-    const items = (Array.isArray(data.translatedClauses) ? data.translatedClauses : (Array.isArray(data.clauses) ? data.clauses : [])).slice(0, 5);
+    const items = (
+      Array.isArray(data.translatedClauses)
+        ? data.translatedClauses
+        : Array.isArray(data.clauses)
+          ? data.clauses
+          : []
+    ).slice(0, 5);
     items.forEach((t, i) => {
-      doc.text(`${i + 1}.`, clX + 10, listY);
+      labelText(`${i + 1}.`, clX + 10, listY, 12);
       listY =
         this.tinyText(doc, String(t), clX + 26, listY, listW - 32, 16) + 8;
     });
     doc.setTextColor(0, 0, 0);
 
-    this.drawFooter(doc, 1, IM.logo);
+    this.drawFooter(doc, 1, IM.logo, tr);
 
     /* ================= PAGE 2 ================= */
     doc.addPage();
-    this.drawHeader(doc);
+    this.drawHeader(doc, tr);
     let y2 = this.STYLE.CONTENT_START_Y;
 
-    bold();
-    doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Potential Issues that might occur", M, y2);
+    titleText(tr.potentialIssues, M, y2, this.STYLE.FONT_SIZE.SECTION_TITLE);
 
     let iTop = y2 + this.STYLE.SECTION_HEADER_SPACING,
       iY = iTop + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
@@ -983,7 +1368,12 @@ class PDFGenerator {
     const iW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
 
     // Use translated issues if available
-    (Array.isArray(data.translatedIssues) ? data.translatedIssues : (Array.isArray(data.issues) ? data.issues : [])).forEach((it) => {
+    (Array.isArray(data.translatedIssues)
+      ? data.translatedIssues
+      : Array.isArray(data.issues)
+        ? data.issues
+        : []
+    ).forEach((it) => {
       reg();
       doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
       doc.setTextColor(20, 20, 20);
@@ -1003,32 +1393,33 @@ class PDFGenerator {
 
     y2 = iTop + (iY - iTop) + this.STYLE.SECTION_MARGIN_BOTTOM + 8;
 
-    bold();
-    doc.setFontSize(this.STYLE.FONT_SIZE.SECTION_TITLE);
-    doc.text("Smart Suggestions", M, y2);
+    titleText(tr.smartSuggestions, M, y2, this.STYLE.FONT_SIZE.SECTION_TITLE);
     const s2Top = y2 + this.STYLE.SECTION_HEADER_SPACING;
 
     let s2Y = s2Top + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
     // Use translated suggestions if available
-    (Array.isArray(data.translatedSuggestions) ? data.translatedSuggestions : (Array.isArray(data.suggestions) ? data.suggestions : [])).forEach(
-      (s, i) => {
-        const num = `${i + 1}. `;
-        reg();
-        doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
-        doc.setTextColor(20, 20, 20);
-        doc.text(num, M + 10, s2Y);
-        doc.setTextColor(0, 0, 0);
-        s2Y =
-          this.tinyText(
-            doc,
-            String(s),
-            M + 24,
-            s2Y,
-            W - M * 2 - 32,
-            this.STYLE.TEXT_LINE_HEIGHT,
-          ) + this.STYLE.TEXT_ITEM_SPACING;
-      },
-    );
+    (Array.isArray(data.translatedSuggestions)
+      ? data.translatedSuggestions
+      : Array.isArray(data.suggestions)
+        ? data.suggestions
+        : []
+    ).forEach((s, i) => {
+      const num = `${i + 1}. `;
+      reg();
+      doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
+      doc.setTextColor(20, 20, 20);
+      doc.text(num, M + 10, s2Y);
+      doc.setTextColor(0, 0, 0);
+      s2Y =
+        this.tinyText(
+          doc,
+          String(s),
+          M + 24,
+          s2Y,
+          W - M * 2 - 32,
+          this.STYLE.TEXT_LINE_HEIGHT,
+        ) + this.STYLE.TEXT_ITEM_SPACING;
+    });
     const ssCardHeight = s2Y - y2 + this.STYLE.BOX_CONTENT_PADDING;
 
     this.drawBox(doc, M - this.STYLE.BOX_MARGIN, s2Top, iW, ssCardHeight);
@@ -1043,9 +1434,11 @@ class PDFGenerator {
 
     this.drawBox(doc, extendedMargin, y2, leftW, rowH);
 
-    // Use the actual final score value from the report, not clarity
-    const scorePct = Math.round(Number(data?.analysis?.scoreChecker?.value ?? 0));
-    const scoreBand = scorePct <= 29 ? "red" : scorePct <= 62 ? "orange" : "green";
+    const scorePct = Math.round(
+      Number(data?.analysis?.scoreChecker?.value ?? 0),
+    );
+    const scoreBand =
+      scorePct >= 78 ? "green" : scorePct >= 49 ? "orange" : "red";
     const scoreColor = this.getColorFor("score", scorePct, scoreBand);
 
     const scoreChartX = extendedMargin + 10;
@@ -1087,18 +1480,26 @@ class PDFGenerator {
         18,
         18,
       );
-    doc.setTextColor(255, 255, 255);
-    doc.setFont(doc.getFont().fontName, "bold");
-    doc.setFontSize(12);
-    // Change title to Final Score
-    doc.text(
-      "Final Score",
-      scoreRightColX + scoreTagWidth / 2,
-      scoreRightY + 16,
-      {
+    if (useCanvas) {
+      this._canvasText(doc, tr.scoreChecker, scoreRightColX, scoreRightY + 5, {
+        fontSize: 12,
+        bold: true,
+        maxWidth: scoreTagWidth,
+        lineHeight: 14,
+        color: "#ffffff",
         align: "center",
-      },
-    );
+      });
+    } else {
+      doc.setTextColor(255, 255, 255);
+      doc.setFont(doc.getFont().fontName, "bold");
+      doc.setFontSize(12);
+      doc.text(
+        tr.scoreChecker,
+        scoreRightColX + scoreTagWidth / 2,
+        scoreRightY + 16,
+        { align: "center" },
+      );
+    }
     doc.setTextColor(0, 0, 0);
 
     const scoreTopComponentHeight = 30;
@@ -1118,16 +1519,63 @@ class PDFGenerator {
 
     reg();
     doc.setFontSize(9);
-    // Use report page labels
-    doc.text("Unsafe", scoreRightColX, scoreGradientY + 42);
-    doc.text("Not that safe", scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
-      align: "center",
-    });
-    doc.text("Very Safe", scoreRightColX + scoreBarW, scoreGradientY + 42, {
-      align: "right",
-    });
+    if (useCanvas) {
+      this._canvasText(doc, tr.unsafe, scoreRightColX, scoreGradientY + 34, {
+        fontSize: 9,
+        maxWidth: scoreBarW / 3,
+        lineHeight: 10,
+        color: "#000000",
+      });
+      this._canvasText(
+        doc,
+        tr.safe,
+        scoreRightColX + scoreBarW / 3,
+        scoreGradientY + 34,
+        {
+          fontSize: 9,
+          maxWidth: scoreBarW / 3,
+          lineHeight: 10,
+          color: "#000000",
+          align: "center",
+        },
+      );
+      this._canvasText(
+        doc,
+        tr.verySafe,
+        scoreRightColX + (scoreBarW * 2) / 3,
+        scoreGradientY + 34,
+        {
+          fontSize: 9,
+          maxWidth: scoreBarW / 3,
+          lineHeight: 10,
+          color: "#000000",
+          align: "right",
+        },
+      );
+    } else {
+      doc.text(tr.unsafe, scoreRightColX, scoreGradientY + 42);
+      doc.text(tr.safe, scoreRightColX + scoreBarW / 2, scoreGradientY + 42, {
+        align: "center",
+      });
+      doc.text(tr.verySafe, scoreRightColX + scoreBarW, scoreGradientY + 42, {
+        align: "right",
+      });
+    }
 
-    // Remove the colored square for final score (do not render)
+    const scoreStatusY = scoreRightColBottom - scoreBottomComponentHeight;
+    const scoreDotCol = this.getDotColor(scoreBand);
+    doc.setFillColor(...scoreDotCol);
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(1);
+    doc.roundedRect(scoreRightColX, scoreStatusY + 2, 10, 10, 2, 2, "FD");
+    reg();
+    doc.setFontSize(11);
+    labelText(
+      this.capitalizeSafety(data?.analysis?.scoreChecker?.safety || ""),
+      scoreRightColX + 16,
+      scoreStatusY + 11,
+      11,
+    );
 
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
@@ -1143,11 +1591,15 @@ class PDFGenerator {
     );
 
     // Use only the canonical value from analysis.bars.confidenceToSign
-    const confidenceRaw = data.analysis && data.analysis.bars ? data.analysis.bars.confidenceToSign : undefined;
-    const confidencePct = confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
+    const confidenceRaw =
+      data.analysis && data.analysis.bars
+        ? data.analysis.bars.confidenceToSign
+        : undefined;
+    const confidencePct =
+      confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
     barRow(
-      "Confidence to Sign",
-      confidencePct,
+      tr.confidenceToSign,
+      Math.round(Number(meters.confidence ?? 70)),
       IM.confidence,
       extendedMargin + leftW + gap,
       y2,
@@ -1155,7 +1607,7 @@ class PDFGenerator {
       "confidence",
     );
 
-    this.drawFooter(doc, 2, IM.logo);
+    this.drawFooter(doc, 2, IM.logo, tr);
 
     doc.save((filename || "SignSense_Report") + ".pdf");
   }
