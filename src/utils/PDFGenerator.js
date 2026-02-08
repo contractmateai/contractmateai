@@ -1128,10 +1128,15 @@ class PDFGenerator {
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
 
-    // Use static sentence for final score
+    // Use translated sentence for final score
+    const scoreLine = (typeof data.analysis?.scoreLine === 'string' && data.analysis.scoreLine.trim())
+      ? data.analysis.scoreLine.trim()
+      : (typeof data.translations?.scoreLine === 'string' && data.translations.scoreLine.trim())
+        ? data.translations.scoreLine.trim()
+        : 'Determines the final score.';
     this.tinyText(
       doc,
-      "Determines the final score.",
+      scoreLine,
       scoreRightColX,
       scoreTextStartY,
       scoreRightColWidth,
