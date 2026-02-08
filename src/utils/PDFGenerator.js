@@ -274,18 +274,38 @@ class PDFGenerator {
 
   /* ===== Color Management ===== */
   getColorFor(metric, v, band) {
-    if (metric === "risk")
-      return v <= 25 ? "#00ff65" : v <= 58 ? "#df911a" : "#fe0000";
-    if (metric === "clarity" || metric === "score")
-      return v >= 78 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "professionalism")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "favorability")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
-    if (metric === "deadline")
-      return v <= 35 ? "#00ff65" : v <= 68 ? "#df911a" : "#fe0000";
-    if (metric === "confidence")
-      return v >= 75 ? "#00ff65" : v >= 49 ? "#df911a" : "#fe0000";
+    if (metric === "risk") {
+      // Green (<=29%), Orange (30-62%), Red (63-100%)
+      if (v <= 29) return "#28e070"; // green
+      if (v <= 62) return "#df911a"; // orange
+      return "#fe0000"; // red
+    }
+    if (metric === "clarity" || metric === "score") {
+      // Red (<=29%), Orange (30-62%), Green (63-100%)
+      if (v <= 29) return "#fe0000"; // red
+      if (v <= 62) return "#df911a"; // orange
+      return "#28e070"; // green
+    }
+    if (metric === "professionalism") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "favorability") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 70) return "#df911a";
+      return "#28e070";
+    }
+    if (metric === "deadline") {
+      if (v <= 29) return "#28e070";
+      if (v <= 64) return "#df911a";
+      return "#fe0000";
+    }
+    if (metric === "confidence") {
+      if (v <= 29) return "#fe0000";
+      if (v <= 62) return "#df911a";
+      return "#28e070";
+    }
     return "#df911a";
   }
 
@@ -922,8 +942,9 @@ class PDFGenerator {
     }
     y += this.STYLE.TITLE_BOTTOM_MARGIN + 20;
 
-    let sTop = y + this.STYLE.SECTION_HEADER_SPACING,
-      sY = sTop;
+    // Improved summary formatting: join all summary lines into one paragraph for better wrapping
+    let sTop = y + this.STYLE.SECTION_HEADER_SPACING;
+    let sY = sTop;
     const sW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
     if (useCanvas) {
       this._canvasText(
@@ -965,7 +986,7 @@ class PDFGenerator {
       M - this.STYLE.BOX_MARGIN,
       sTop - this.STYLE.BOX_VERTICAL_OFFSET,
       sW,
-      sY - sTop + this.STYLE.BOX_CONTENT_PADDING,
+      sY - sTop + this.STYLE.BOX_CONTENT_PADDING
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
@@ -981,8 +1002,11 @@ class PDFGenerator {
 
     this.drawBox(doc, leftX, y, colW, cardH);
 
+    // Use the same banding as the web report for risk
     const riskPct = Number(data?.risk?.value ?? 0);
-    const riskBand = riskPct <= 25 ? "green" : riskPct <= 58 ? "orange" : "red";
+    let riskBand = "red";
+    if (riskPct <= 29) riskBand = "green";
+    else if (riskPct <= 62) riskBand = "orange";
     const riskColor = this.getColorFor("risk", riskPct, riskBand);
 
     const chartSize = 116;
@@ -1042,7 +1066,7 @@ class PDFGenerator {
 
     const statusY = rightColBottom - bottomComponentHeight;
     const dotCol = this.getDotColor(riskBand);
-    doc.setFillColor(...dotCol);
+    doc.setFillColor(...this.getDotColor(riskBand));
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(1);
     doc.roundedRect(rightColX, statusY + 2, 10, 10, 2, 2, "FD");
@@ -1058,6 +1082,7 @@ class PDFGenerator {
     const textStartY = rightY + topComponentHeight + componentGap;
     const textEndY = statusY - componentGap;
 
+    // Use static sentence for risk
     this.tinyText(
       doc,
       data.risk?.note || "",
@@ -1069,8 +1094,12 @@ class PDFGenerator {
 
     this.drawBox(doc, rightX, y, colW, cardH);
 
+    // Use the same banding as the web report for clarity
     const clarPct = Number(data?.clarity?.value ?? 0);
-    const clarBand = clarPct >= 78 ? "green" : clarPct >= 49 ? "orange" : "red";
+    let clarBand = "red";
+    if (clarPct <= 29) clarBand = "red";
+    else if (clarPct <= 62) clarBand = "orange";
+    else clarBand = "green";
     const clarColor = this.getColorFor("clarity", clarPct, clarBand);
 
     const clarityChartX = rightX + 10;
@@ -1142,7 +1171,7 @@ class PDFGenerator {
 
     const clarityStatusY = clarityRightColBottom - bottomComponentHeight;
     const clarityDotCol = this.getDotColor(clarBand);
-    doc.setFillColor(...clarityDotCol);
+    doc.setFillColor(...this.getDotColor(clarBand));
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(1);
     doc.roundedRect(clarityRightColX, clarityStatusY + 2, 10, 10, 2, 2, "FD");
@@ -1157,6 +1186,7 @@ class PDFGenerator {
 
     const clarityTextStartY = clarityRightY + topComponentHeight + componentGap;
 
+    // Use static sentence for clause clarity
     this.tinyText(
       doc,
       data.clarity?.note || "",
@@ -1264,6 +1294,9 @@ class PDFGenerator {
     );
     barY += this.STYLE.BAR_ROW_SPACING;
 
+    // Use only the canonical value from analysis.bars.favorabilityIndex
+    let favorabilityRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.favorabilityIndex !== 'undefined' ? data.analysis.bars.favorabilityIndex : 0;
+    const favorabilityPct = Math.round(Number(favorabilityRaw) || 0);
     barRow(
       tr.favorabilityIndex,
       Math.round(Number(meters.favorability ?? 50)),
@@ -1300,7 +1333,8 @@ class PDFGenerator {
     reg();
     doc.setFontSize(12);
     doc.setTextColor(20, 20, 20);
-    const items = (Array.isArray(data.clauses) ? data.clauses : []).slice(0, 5);
+    // Use translated clauses if available
+    const items = (Array.isArray(data.translatedClauses) ? data.translatedClauses : (Array.isArray(data.clauses) ? data.clauses : [])).slice(0, 5);
     items.forEach((t, i) => {
       labelText(`${i + 1}.`, clX + 10, listY, 12);
       listY =
@@ -1322,7 +1356,8 @@ class PDFGenerator {
 
     const iW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
 
-    (Array.isArray(data.issues) ? data.issues : []).forEach((it) => {
+    // Use translated issues if available
+    (Array.isArray(data.translatedIssues) ? data.translatedIssues : (Array.isArray(data.issues) ? data.issues : [])).forEach((it) => {
       reg();
       doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
       doc.setTextColor(20, 20, 20);
@@ -1346,7 +1381,8 @@ class PDFGenerator {
     const s2Top = y2 + this.STYLE.SECTION_HEADER_SPACING;
 
     let s2Y = s2Top + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
-    (Array.isArray(data.suggestions) ? data.suggestions : []).forEach(
+    // Use translated suggestions if available
+    (Array.isArray(data.translatedSuggestions) ? data.translatedSuggestions : (Array.isArray(data.suggestions) ? data.suggestions : [])).forEach(
       (s, i) => {
         const num = `${i + 1}. `;
         reg();
@@ -1525,17 +1561,19 @@ class PDFGenerator {
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
 
+    // Use static sentence for final score
     this.tinyText(
       doc,
-      data?.analysis?.scoreChecker?.line ||
-        "The contract is nearly perfectly done.",
+      "Determines the final score.",
       scoreRightColX,
       scoreTextStartY,
       scoreRightColWidth,
       14,
     );
 
-    const confV = Math.round(Number(meters.confidence ?? 70));
+    // Use only the canonical value from analysis.bars.confidenceToSign
+    const confidenceRaw = data.analysis && data.analysis.bars ? data.analysis.bars.confidenceToSign : undefined;
+    const confidencePct = confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
     barRow(
       tr.confidenceToSign,
       confV,

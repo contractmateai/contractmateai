@@ -791,16 +791,34 @@ export default function Home() {
   // ===== role click -> analyze =====
   const onRolePick = async (role) => {
     setActiveRole(role);
+    setRolePickerVisible(false);
+    setShowProgressBar(true);
+    setProgress(0);
 
-    if (!pickedFilesRef.current.length) {
-      alert("Please choose a contract file first.");
-      return;
+    // Progress bar logic: fill smoothly from 0 to 99% over up to 40 seconds, then 100% when done
+    let running = true;
+    let pct = 0;
+    setProgress(0);
+    const maxPct = 99;
+    const fillDuration = 40000; // 40 seconds max to reach 99%
+    const fillStep = maxPct / (fillDuration / 100);
+    function tick() {
+      if (!running) return;
+      pct += fillStep;
+      if (pct > maxPct) pct = maxPct;
+      setProgress(Math.round(pct));
+      if (pct < maxPct) {
+        setTimeout(tick, 100);
+      }
     }
+    tick();
 
     setIsAnalyzing(true);
 
     try {
-      // enforce size on first file (same)
+      if (!pickedFilesRef.current.length) {
+        throw new Error("Please choose a contract file first.");
+      }
       const file = pickedFilesRef.current[0];
       if (file.size > 10_000_000) {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
@@ -816,19 +834,29 @@ export default function Home() {
         ...payloadArr[0],
         role: role || "signer",
       };
-
       const resp = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
         throw new Error(err?.error || "Analysis failed");
       }
-
-      const analysisResult = await resp.json();
+      analysisResult = await resp.json();
+    } catch (e) {
+      apiError = e;
+    }
+    running = false;
+    // Instantly fill to 100% and continue when analysis is done
+    setProgress(100);
+    setTimeout(() => {
+      if (apiError) {
+        alert(`Error processing file: ${apiError.message}`);
+        setShowProgressBar(false);
+        setRolePickerVisible(true);
+        return;
+      }
       localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
       window.location.href = "/analysis";
     } catch (e) {
@@ -1332,7 +1360,16 @@ export default function Home() {
                 The Writer
               </button>
             </div>
-          </div>
+          )}
+          {showProgressBar && (
+            <div className="progress-bar-wrap" style={{ width: 340, margin: '32px auto 0', textAlign: 'center' }}>
+              <div style={{ color: '#fff', fontSize: 22, fontWeight: 600, marginBottom: 10 }}>{progress}% complete</div>
+              <div style={{ background: '#23304a', borderRadius: 8, height: 6, width: '100%', overflow: 'hidden', marginBottom: 14 }}>
+                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)', transition: 'width 0.3s' }}></div>
+              </div>
+              <div style={{ color: '#b6c6e3', fontSize: 16, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
+            </div>
+          )}
 
           {/* MOBILE-ONLY YT */}
           <div className="yt-wrap show-on-mobile">
