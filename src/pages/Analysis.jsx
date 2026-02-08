@@ -456,32 +456,76 @@ const Analysis = () => {
         analysis.scoreChecker?.line ||
         "";
 
-      // Build translated risk/clarity/score objects
+      // Get static translated notes for consistent UI/PDF display
+      const staticTranslations =
+        STATIC_TRANSLATIONS[lang] || STATIC_TRANSLATIONS.en;
+      const pdfStaticRiskNote = staticTranslations.riskStatic;
+      const pdfStaticClarityNote = staticTranslations.clarityStatic;
+      const pdfStaticScoreNote = staticTranslations.scoreStatic;
+
+      // Calculate verdicts using same logic as UI display
+      const riskValue = analysis.risk?.value || 0;
+      const clarityValue = analysis.clarity?.value || 0;
+      const scoreValue = analysis.scoreChecker?.value || 0;
+
+      // Risk verdict: lower is better (0-29 = very safe, 30-62 = not safe, 63+ = unsafe)
+      const riskVerdict =
+        riskValue <= 29
+          ? "verySafe"
+          : riskValue <= 62
+            ? "notThatSafe"
+            : "unsafe";
+      // Clarity verdict: higher is better (63+ = very safe, 30-62 = not safe, 0-29 = unsafe)
+      const clarityVerdict =
+        clarityValue >= 63
+          ? "verySafe"
+          : clarityValue >= 30
+            ? "notThatSafe"
+            : "unsafe";
+      // Score verdict: higher is better (same as clarity)
+      const scoreVerdict =
+        scoreValue >= 63
+          ? "verySafe"
+          : scoreValue >= 30
+            ? "notThatSafe"
+            : "unsafe";
+
+      // Build translated risk/clarity/score objects with calculated verdicts
       const translatedRisk = {
-        value: analysis.risk?.value || 0,
-        note: translatedRiskNote,
-        safety: analysis.risk?.safety || "Unknown",
+        value: riskValue,
+        note: pdfStaticRiskNote,
+        safety: staticTranslations[riskVerdict] || staticTranslations.unsafe,
         band: analysis.risk?.band || "green",
       };
 
       const translatedClarity = {
-        value: analysis.clarity?.value || 0,
-        note: translatedClarityNote,
-        safety: analysis.clarity?.safety || "Unknown",
+        value: clarityValue,
+        note: pdfStaticClarityNote,
+        safety: staticTranslations[clarityVerdict] || staticTranslations.unsafe,
         band: analysis.clarity?.band || "green",
       };
 
       const translatedScoreChecker = {
-        value: analysis.scoreChecker?.value || 0,
-        line: translatedScoreLine,
-        safety: analysis.scoreChecker?.safety || "Unknown",
+        value: scoreValue,
+        line: pdfStaticScoreNote,
+        safety: staticTranslations[scoreVerdict] || staticTranslations.safe,
         band: analysis.scoreChecker?.band || "green",
         verdict: analysis.scoreChecker?.verdict || "safe",
       };
 
+      // Get translated title
+      const translatedTitle =
+        cachedTranslation.contractTitle ||
+        apiTranslation.contractTitle ||
+        data.contractTitle ||
+        data.contractName ||
+        "Contract";
+
       // Map API response structure to PDF generator expectations with translated content
+      // IMPORTANT: These values MUST match exactly what is displayed in the UI
+      // Use clamp() to ensure 0-100 range, same as UI display
       const pdfData = {
-        title: data.contractTitle || data.contractName || "Contract",
+        title: translatedTitle,
         summary: translatedSummary,
         risk: translatedRisk,
         clarity: translatedClarity,
@@ -489,14 +533,19 @@ const Analysis = () => {
         issues: translatedIssues,
         suggestions: translatedSuggestions,
         meters: {
-          professionalism: analysis?.bars?.professionalism ?? 65,
-          favorability: analysis?.bars?.favorability ?? 50,
-          deadline: analysis?.bars?.deadline ?? 40,
-          confidence: analysis?.bars?.confidence ?? 70,
+          professionalism: clamp(analysis?.bars?.professionalism),
+          favorability: clamp(analysis?.bars?.favorabilityIndex),
+          deadline: clamp(analysis?.bars?.deadlinePressure),
+          confidence: clamp(analysis?.bars?.confidenceToSign),
         },
         analysis: {
-          scoreChecker: translatedScoreChecker,
+          scoreChecker: {
+            ...translatedScoreChecker,
+            value: clamp(analysis?.scoreChecker?.value ?? 0),
+          },
         },
+        // Pass static translations for PDF labels
+        staticLabels: staticTranslations,
       };
 
       // pdf-generator exports a class -> must instantiate
