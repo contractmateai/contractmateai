@@ -25,7 +25,7 @@ const STATIC_TRANSLATIONS = {
     safe: "Safe",
     verySafe: "Very Safe",
   },
- 
+
   es: {
     summary: "Resumen",
     professionalism: "Profesionalismo",
@@ -557,8 +557,8 @@ const Analysis = () => {
       const pdfGen = new PDFGenerator();
       await pdfGen.generatePDF("SignSense_Report", pdfData, lang);
     } catch (err) {
-      console.error(err);
-      alert("Could not generate PDF report.");
+      console.error("PDF generation error:", err);
+      alert(`Could not generate PDF report: ${err?.message || err}`);
     }
 
     setDownloading(false);
@@ -767,20 +767,32 @@ const Analysis = () => {
         ? "notThatSafe"
         : "unsafe";
 
-  // Prefer translated AI-generated notes/lines, fallback to static translation
-  const tRiskNote =
-    tAnalysis.risk?.note || tr.riskNote || analysis.risk?.note || staticTr?.riskStatic || STATIC_TRANSLATIONS.en.riskStatic;
-  const tClarityNote =
-    tAnalysis.clarity?.note || tr.clarityNote || analysis.clarity?.note || staticTr?.clarityStatic || STATIC_TRANSLATIONS.en.clarityStatic;
-  const tScoreLine =
-    tAnalysis.scoreChecker?.line || tr.scoreLine || analysis.scoreChecker?.line || staticTr?.scoreStatic || STATIC_TRANSLATIONS.en.scoreStatic;
-
   // translated dynamic arrays (fallback to original if missing)
   const analysis = data?.analysis || {};
 
   // Use cached translation if available, otherwise use API response or original
   const cachedTranslation = translationCache[lang] || {};
   const tAnalysis = cachedTranslation || tr.analysis || {};
+
+  // Prefer translated AI-generated notes/lines, fallback to static translation
+  const tRiskNote =
+    tAnalysis.risk?.note ||
+    tr.riskNote ||
+    analysis.risk?.note ||
+    staticTr?.riskStatic ||
+    STATIC_TRANSLATIONS.en.riskStatic;
+  const tClarityNote =
+    tAnalysis.clarity?.note ||
+    tr.clarityNote ||
+    analysis.clarity?.note ||
+    staticTr?.clarityStatic ||
+    STATIC_TRANSLATIONS.en.clarityStatic;
+  const tScoreLine =
+    tAnalysis.scoreChecker?.line ||
+    tr.scoreLine ||
+    analysis.scoreChecker?.line ||
+    staticTr?.scoreStatic ||
+    STATIC_TRANSLATIONS.en.scoreStatic;
 
   // Robust fallback for summary: try all possible fields, prefer arrays, fallback to string split
   function getSummaryArr() {
@@ -818,7 +830,8 @@ const Analysis = () => {
         : ["—"];
 
   const tSuggestions =
-    Array.isArray(tAnalysis.smartSuggestions) && tAnalysis.smartSuggestions.length
+    Array.isArray(tAnalysis.smartSuggestions) &&
+    tAnalysis.smartSuggestions.length
       ? tAnalysis.smartSuggestions
       : Array.isArray(analysis.smartSuggestions) &&
           analysis.smartSuggestions.length
@@ -831,11 +844,6 @@ const Analysis = () => {
       : Array.isArray(analysis.mainClauses) && analysis.mainClauses.length
         ? analysis.mainClauses
         : ["—"];
-
-  // Translated notes (risk, clarity, score)
-  const tRiskNote = tAnalysis.riskNote || analysis.risk?.note || "";
-  const tClarityNote = tAnalysis.clarityNote || analysis.clarity?.note || "";
-  const tScoreLine = tAnalysis.scoreLine || analysis.scoreChecker?.line || "";
 
   // translated title (fallback to original)
   const tTitle =

@@ -986,7 +986,7 @@ class PDFGenerator {
       M - this.STYLE.BOX_MARGIN,
       sTop - this.STYLE.BOX_VERTICAL_OFFSET,
       sW,
-      sY - sTop + this.STYLE.BOX_CONTENT_PADDING
+      sY - sTop + this.STYLE.BOX_CONTENT_PADDING,
     );
     y = sTop + (sY - sTop) + this.STYLE.SECTION_MARGIN_BOTTOM;
 
@@ -1295,7 +1295,12 @@ class PDFGenerator {
     barY += this.STYLE.BAR_ROW_SPACING;
 
     // Use only the canonical value from analysis.bars.favorabilityIndex
-    let favorabilityRaw = data.analysis && data.analysis.bars && typeof data.analysis.bars.favorabilityIndex !== 'undefined' ? data.analysis.bars.favorabilityIndex : 0;
+    let favorabilityRaw =
+      data.analysis &&
+      data.analysis.bars &&
+      typeof data.analysis.bars.favorabilityIndex !== "undefined"
+        ? data.analysis.bars.favorabilityIndex
+        : 0;
     const favorabilityPct = Math.round(Number(favorabilityRaw) || 0);
     barRow(
       tr.favorabilityIndex,
@@ -1334,7 +1339,13 @@ class PDFGenerator {
     doc.setFontSize(12);
     doc.setTextColor(20, 20, 20);
     // Use translated clauses if available
-    const items = (Array.isArray(data.translatedClauses) ? data.translatedClauses : (Array.isArray(data.clauses) ? data.clauses : [])).slice(0, 5);
+    const items = (
+      Array.isArray(data.translatedClauses)
+        ? data.translatedClauses
+        : Array.isArray(data.clauses)
+          ? data.clauses
+          : []
+    ).slice(0, 5);
     items.forEach((t, i) => {
       labelText(`${i + 1}.`, clX + 10, listY, 12);
       listY =
@@ -1357,7 +1368,12 @@ class PDFGenerator {
     const iW = W - M * 2 + this.STYLE.BOX_MARGIN * 2;
 
     // Use translated issues if available
-    (Array.isArray(data.translatedIssues) ? data.translatedIssues : (Array.isArray(data.issues) ? data.issues : [])).forEach((it) => {
+    (Array.isArray(data.translatedIssues)
+      ? data.translatedIssues
+      : Array.isArray(data.issues)
+        ? data.issues
+        : []
+    ).forEach((it) => {
       reg();
       doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
       doc.setTextColor(20, 20, 20);
@@ -1382,25 +1398,28 @@ class PDFGenerator {
 
     let s2Y = s2Top + this.STYLE.FONT_SIZE.TINY + this.STYLE.CARD_PADDING;
     // Use translated suggestions if available
-    (Array.isArray(data.translatedSuggestions) ? data.translatedSuggestions : (Array.isArray(data.suggestions) ? data.suggestions : [])).forEach(
-      (s, i) => {
-        const num = `${i + 1}. `;
-        reg();
-        doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
-        doc.setTextColor(20, 20, 20);
-        doc.text(num, M + 10, s2Y);
-        doc.setTextColor(0, 0, 0);
-        s2Y =
-          this.tinyText(
-            doc,
-            String(s),
-            M + 24,
-            s2Y,
-            W - M * 2 - 32,
-            this.STYLE.TEXT_LINE_HEIGHT,
-          ) + this.STYLE.TEXT_ITEM_SPACING;
-      },
-    );
+    (Array.isArray(data.translatedSuggestions)
+      ? data.translatedSuggestions
+      : Array.isArray(data.suggestions)
+        ? data.suggestions
+        : []
+    ).forEach((s, i) => {
+      const num = `${i + 1}. `;
+      reg();
+      doc.setFontSize(this.STYLE.FONT_SIZE.TINY);
+      doc.setTextColor(20, 20, 20);
+      doc.text(num, M + 10, s2Y);
+      doc.setTextColor(0, 0, 0);
+      s2Y =
+        this.tinyText(
+          doc,
+          String(s),
+          M + 24,
+          s2Y,
+          W - M * 2 - 32,
+          this.STYLE.TEXT_LINE_HEIGHT,
+        ) + this.STYLE.TEXT_ITEM_SPACING;
+    });
     const ssCardHeight = s2Y - y2 + this.STYLE.BOX_CONTENT_PADDING;
 
     this.drawBox(doc, M - this.STYLE.BOX_MARGIN, s2Top, iW, ssCardHeight);
@@ -1572,11 +1591,15 @@ class PDFGenerator {
     );
 
     // Use only the canonical value from analysis.bars.confidenceToSign
-    const confidenceRaw = data.analysis && data.analysis.bars ? data.analysis.bars.confidenceToSign : undefined;
-    const confidencePct = confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
+    const confidenceRaw =
+      data.analysis && data.analysis.bars
+        ? data.analysis.bars.confidenceToSign
+        : undefined;
+    const confidencePct =
+      confidenceRaw !== undefined ? Math.round(Number(confidenceRaw)) : 0;
     barRow(
       tr.confidenceToSign,
-      confV,
+      Math.round(Number(meters.confidence ?? 70)),
       IM.confidence,
       extendedMargin + leftW + gap,
       y2,

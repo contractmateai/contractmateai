@@ -65,7 +65,24 @@ export default function Home() {
   const [rolePickerVisible, setRolePickerVisible] = useState(false);
   const [reviewBtnVisible, setReviewBtnVisible] = useState(true);
   const [activeRole, setActiveRole] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const progressStages = [
+    { pct: 10, label: "Uploading document..." },
+    { pct: 25, label: "Extracting text..." },
+    { pct: 45, label: "AI is analyzing clauses..." },
+    { pct: 65, label: "Evaluating risks..." },
+    { pct: 80, label: "Generating suggestions..." },
+    { pct: 95, label: "Almost done..." },
+    { pct: 100, label: "Complete!" },
+  ];
+  function getProgressLabel(pct) {
+    for (let i = progressStages.length - 1; i >= 0; i--) {
+      if (pct >= progressStages[i].pct) return progressStages[i].label;
+    }
+    return progressStages[0].label;
+  }
 
   // camera bottom sheet (iOS-style overlay)
   const [sheetVisible, setSheetVisible] = useState(false);
@@ -798,7 +815,6 @@ export default function Home() {
     // Progress bar logic: fill smoothly from 0 to 99% over up to 40 seconds, then 100% when done
     let running = true;
     let pct = 0;
-    setProgress(0);
     const maxPct = 99;
     const fillDuration = 40000; // 40 seconds max to reach 99%
     const fillStep = maxPct / (fillDuration / 100);
@@ -813,7 +829,8 @@ export default function Home() {
     }
     tick();
 
-    setIsAnalyzing(true);
+    let apiError = null;
+    let analysisResult = null;
 
     try {
       if (!pickedFilesRef.current.length) {
@@ -822,7 +839,8 @@ export default function Home() {
       const file = pickedFilesRef.current[0];
       if (file.size > 10_000_000) {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
-        setIsAnalyzing(false);
+        setShowProgressBar(false);
+        setRolePickerVisible(true);
         return;
       }
 
@@ -859,10 +877,7 @@ export default function Home() {
       }
       localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
       window.location.href = "/analysis";
-    } catch (e) {
-      setIsAnalyzing(false);
-      alert(`Error processing file: ${e.message}`);
-    }
+    }, 600);
   };
 
   // ===== sheet buttons =====
@@ -1022,352 +1037,72 @@ export default function Home() {
             )}
           </div>
 
-          <div
-            id="rolePicker"
-            className="role-picker"
-            hidden={!rolePickerVisible}
-          >
-            {isAnalyzing && (
-              <>
-                <style>{`
-                  @keyframes fadeInScale {
-                    from {
-                      opacity: 0;
-                      transform: scale(0.95);
-                    }
-                    to {
-                      opacity: 1;
-                      transform: scale(1);
-                    }
-                  }
-                  @keyframes spin {
-                    to { transform: rotate(360deg); }
-                  }
-                  @keyframes spinReverse {
-                    to { transform: rotate(-360deg); }
-                  }
-                  @keyframes pulse {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.5; }
-                  }
-                  @keyframes glow {
-                    0%, 100% { 
-                      box-shadow: 0 0 30px rgba(190, 242, 100, 0.3),
-                                  0 0 60px rgba(190, 242, 100, 0.15),
-                                  inset 0 0 20px rgba(190, 242, 100, 0.1);
-                    }
-                    50% { 
-                      box-shadow: 0 0 40px rgba(190, 242, 100, 0.4),
-                                  0 0 80px rgba(190, 242, 100, 0.2),
-                                  inset 0 0 30px rgba(190, 242, 100, 0.15);
-                    }
-                  }
-                  @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(250%); }
-                  }
-                  @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-10px); }
-                  }
-                  @keyframes dots {
-                    0%, 20% { content: '.'; }
-                    40% { content: '..'; }
-                    60%, 100% { content: '...'; }
-                  }
-                  @keyframes gradientShift {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                  }
-                `}</style>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background:
-                      "linear-gradient(135deg, rgba(14, 12, 19, 0.98) 0%, rgba(20, 18, 28, 0.98) 100%)",
-                    backdropFilter: "blur(12px)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "32px",
-                    borderRadius: "16px",
-                    zIndex: 10,
-                    animation:
-                      "fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                    border: "1px solid rgba(190, 242, 100, 0.1)",
-                  }}
+          {/* Role Picker or Progress Bar */}
+          {!showProgressBar && (
+            <div
+              id="rolePicker"
+              className="role-picker"
+              hidden={!rolePickerVisible}
+            >
+              <span className="role-title">You are:</span>
+              <div className="role-buttons">
+                <button
+                  type="button"
+                  className={`role-btn ${activeRole === "signer" ? "active" : ""}`}
+                  data-role="signer"
+                  onClick={() => onRolePick("signer")}
                 >
-                  {/* Animated background glow */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: "300px",
-                      height: "300px",
-                      background:
-                        "radial-gradient(circle, rgba(190, 242, 100, 0.08) 0%, transparent 70%)",
-                      animation: "pulse 3s ease-in-out infinite",
-                      pointerEvents: "none",
-                    }}
-                  />
-
-                  {/* Multi-layered spinner with gradient */}
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "80px",
-                      height: "80px",
-                      animation: "float 3s ease-in-out infinite",
-                    }}
-                  >
-                    {/* Outer ring */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                        border: "3px solid transparent",
-                        borderTopColor: "#BEF264",
-                        borderRightColor: "#BEF264",
-                        borderRadius: "50%",
-                        animation:
-                          "spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite",
-                        filter: "drop-shadow(0 0 8px rgba(190, 242, 100, 0.5))",
-                      }}
-                    />
-                    {/* Middle ring */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "12px",
-                        left: "12px",
-                        width: "calc(100% - 24px)",
-                        height: "calc(100% - 24px)",
-                        border: "2px solid transparent",
-                        borderBottomColor: "rgba(255, 255, 255, 0.6)",
-                        borderLeftColor: "rgba(255, 255, 255, 0.6)",
-                        borderRadius: "50%",
-                        animation: "spinReverse 1.5s linear infinite",
-                      }}
-                    />
-                    {/* Inner core with glow */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "32px",
-                        height: "32px",
-                        background:
-                          "linear-gradient(135deg, #BEF264 0%, #A3E635 100%)",
-                        borderRadius: "50%",
-                        animation: "glow 2s ease-in-out infinite",
-                      }}
-                    />
-                    {/* Center dot */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "12px",
-                        height: "12px",
-                        background: "#fff",
-                        borderRadius: "50%",
-                        animation: "pulse 1.5s ease-in-out infinite",
-                      }}
-                    />
-                  </div>
-
-                  {/* Main text with gradient */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        background:
-                          "linear-gradient(90deg, #fff 0%, #BEF264 50%, #fff 100%)",
-                        backgroundSize: "200% auto",
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        fontSize: "20px",
-                        fontWeight: 600,
-                        textAlign: "center",
-                        letterSpacing: "0.5px",
-                        animation: "gradientShift 3s ease infinite",
-                      }}
-                    >
-                      Analyzing Your Contract
-                      <span
-                        style={{
-                          display: "inline-block",
-                          width: "24px",
-                          textAlign: "left",
-                        }}
-                      >
-                        <span
-                          style={{
-                            animation: "pulse 1.5s ease-in-out infinite",
-                          }}
-                        >
-                          ...
-                        </span>
-                      </span>
-                    </div>
-
-                    {/* Subtitle with icon */}
-                    <div
-                      style={{
-                        color: "#d1d5db",
-                        fontSize: "14px",
-                        textAlign: "center",
-                        maxWidth: "320px",
-                        lineHeight: "1.6",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "8px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          style={{ flexShrink: 0 }}
-                        >
-                          <path
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            stroke="#BEF264"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span style={{ fontWeight: 500 }}>
-                          AI is processing your document
-                        </span>
-                      </div>
-                      <span style={{ fontSize: "13px", color: "#9ca3af" }}>
-                        Typically takes 10-60 seconds
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Enhanced progress bar */}
-                  <div
-                    style={{
-                      width: "260px",
-                      height: "4px",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      borderRadius: "4px",
-                      overflow: "hidden",
-                      position: "relative",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                    }}
-                  >
-                    {/* Animated gradient bar */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        height: "100%",
-                        width: "50%",
-                        background:
-                          "linear-gradient(90deg, transparent, #BEF264 20%, #A3E635 50%, #BEF264 80%, transparent)",
-                        animation: "shimmer 2s ease-in-out infinite",
-                        filter: "drop-shadow(0 0 4px rgba(190, 242, 100, 0.6))",
-                      }}
-                    />
-                  </div>
-
-                  {/* Status indicators */}
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "16px",
-                      alignItems: "center",
-                    }}
-                  >
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        style={{
-                          width: "8px",
-                          height: "8px",
-                          borderRadius: "50%",
-                          background: "#BEF264",
-                          animation: `pulse 1.5s ease-in-out infinite`,
-                          animationDelay: `${i * 0.2}s`,
-                          boxShadow: "0 0 8px rgba(190, 242, 100, 0.6)",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-            <span className="role-title">You are:</span>
-            <div className="role-buttons">
-              <button
-                type="button"
-                className={`role-btn ${activeRole === "signer" ? "active" : ""}`}
-                data-role="signer"
-                onClick={() => onRolePick("signer")}
-                disabled={isAnalyzing}
-                style={{
-                  opacity: isAnalyzing ? 0.5 : 1,
-                  cursor: isAnalyzing ? "not-allowed" : "pointer",
-                }}
-              >
-                The Signer
-              </button>
-              <button
-                type="button"
-                className={`role-btn ${activeRole === "writer" ? "active" : ""}`}
-                data-role="writer"
-                onClick={() => onRolePick("writer")}
-                disabled={isAnalyzing}
-                style={{
-                  opacity: isAnalyzing ? 0.5 : 1,
-                  cursor: isAnalyzing ? "not-allowed" : "pointer",
-                }}
-              >
-                The Writer
-              </button>
+                  The Signer
+                </button>
+                <button
+                  type="button"
+                  className={`role-btn ${activeRole === "writer" ? "active" : ""}`}
+                  data-role="writer"
+                  onClick={() => onRolePick("writer")}
+                >
+                  The Writer
+                </button>
+              </div>
             </div>
           )}
           {showProgressBar && (
-            <div className="progress-bar-wrap" style={{ width: 340, margin: '32px auto 0', textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: 22, fontWeight: 600, marginBottom: 10 }}>{progress}% complete</div>
-              <div style={{ background: '#23304a', borderRadius: 8, height: 6, width: '100%', overflow: 'hidden', marginBottom: 14 }}>
-                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)', transition: 'width 0.3s' }}></div>
+            <div
+              className="progress-bar-wrap"
+              style={{ width: 340, margin: "32px auto 0", textAlign: "center" }}
+            >
+              <div
+                style={{
+                  color: "#fff",
+                  fontSize: 22,
+                  fontWeight: 600,
+                  marginBottom: 10,
+                }}
+              >
+                {progress}% complete
               </div>
-              <div style={{ color: '#b6c6e3', fontSize: 16, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
+              <div
+                style={{
+                  background: "#23304a",
+                  borderRadius: 8,
+                  height: 6,
+                  width: "100%",
+                  overflow: "hidden",
+                  marginBottom: 14,
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${progress}%`,
+                    background:
+                      "linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)",
+                    transition: "width 0.3s",
+                  }}
+                ></div>
+              </div>
+              <div style={{ color: "#b6c6e3", fontSize: 16, fontWeight: 500 }}>
+                {getProgressLabel(progress)}
+              </div>
             </div>
           )}
 
