@@ -334,7 +334,7 @@ export default async function handler(req, res) {
     "summary": ["string","string","string"],
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string (each clause must be 2.5x to 3x longer than usual, detailed, and specific)","string","string","string","string"],
+    "mainClauses": ["string (each clause must be a short, clear sentence, max 70 characters, no lists, no long explanations, no ellipsis, no parenthetical notes, just the clause itself as a concise summary)","string","string","string","string"],
     "potentialIssues": ["string (each issue must be 4-5 words longer than usual, more detailed)","string","string","string","string"],
     "smartSuggestions": [
       "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
@@ -492,8 +492,8 @@ RULES:
         summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
         mainClauses: (src.mainClauses || [])
           .map((s) => {
-            // Make each clause shorter: max 90 chars, no expansion, no parentheticals, no lists, no ellipsis
-            let t = stripLead(cap(s, 90));
+            // Make each clause much shorter: max 70 chars, no expansion, no parentheticals, no lists, no ellipsis
+            let t = stripLead(cap(s, 70));
             t = t.replace(/\([^)]*\)/g, ""); // remove parentheticals
             t = t.replace(/\.\.\.|…/g, ""); // remove ellipsis
             t = t.replace(/\s*[-–—]\s*/g, ". "); // remove list dashes
