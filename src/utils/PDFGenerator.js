@@ -1580,10 +1580,11 @@ class PDFGenerator {
     const scoreTextStartY =
       scoreRightY + scoreTopComponentHeight + componentGap;
 
-    // Use static sentence for final score
+    // Use translated sentence for final score
+    const scoreLine = tr.scoreStatic || "Determines the final score.";
     this.tinyText(
       doc,
-      "Determines the final score.",
+      scoreLine,
       scoreRightColX,
       scoreTextStartY,
       scoreRightColWidth,

@@ -491,7 +491,15 @@ RULES:
         title: cap(src.title || "", 200),
         summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
         mainClauses: (src.mainClauses || [])
-          .map((s) => expandClause(stripLead(cap(s, 900))))
+          .map((s) => {
+            // Make each clause shorter: max 90 chars, no expansion, no parentheticals, no lists, no ellipsis
+            let t = stripLead(cap(s, 90));
+            t = t.replace(/\([^)]*\)/g, ""); // remove parentheticals
+            t = t.replace(/\.\.\.|…/g, ""); // remove ellipsis
+            t = t.replace(/\s*[-–—]\s*/g, ". "); // remove list dashes
+            t = t.replace(/\s+/g, " ").trim();
+            return t;
+          })
           .slice(0, 5),
         potentialIssues: (src.potentialIssues || [])
           .map((s) => expandIssue(stripLead(cap(s, 1000))))
