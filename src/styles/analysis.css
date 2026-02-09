@@ -220,15 +220,17 @@ body, .analysis-root {
 .circle .val { position: absolute; font-weight: 400; font-size: 26px; }
 .circle circle.track { stroke: var(--black); stroke-width: 14; fill: none; }
 .circle circle.arc {
+  /* stroke is set dynamically by React, do not set a default color here */
   stroke-linecap: round;
   transition: stroke-dashoffset 900ms ease, stroke 250ms ease;
   stroke-width: 14;
   fill: none;
-  /* IMPORTANT: do NOT set dasharray/dashoffset in CSS,
-     React will set them inline so the % works */
+  stroke-dasharray: 440;
+  /* stroke-dashoffset is set dynamically by React, but default to 431 for 2% arc */
+  stroke-dashoffset: 431;
   filter: blur(0.5px);
+  /* stroke is set dynamically by React */
 }
-
 .htext { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .muted { color: var(--muted); font-size: 15px; }
 .status { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
@@ -287,19 +289,8 @@ body, .analysis-root {
 }
 @media (max-width: 980px) {
   .sidebar { display: none !important; }
-  .layout {
-    grid-template-columns: 1fr !important;
-    margin: 0 auto !important;
-    max-width: 100vw !important;
-    width: 100vw !important;
-  }
-  .main {
-    padding: 12px 8px 140px !important;
-    box-sizing: border-box !important;
-    margin: 0 auto !important;
-    max-width: 100vw !important;
-    width: 100vw !important;
-  }
+  .layout { grid-template-columns: 1fr !important; }
+  .main { padding: 0 !important; }
   .download-wrap { left: 0 !important; }
   .circle svg { width: 100px !important; height: 100px !important; }
   .circle { width: 100px !important; height: 100px !important; position: relative !important; flex: 0 0 100px !important; display: flex !important; align-items: center !important; justify-content: center !important; }

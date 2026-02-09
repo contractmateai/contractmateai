@@ -334,8 +334,8 @@ export default async function handler(req, res) {
     "summary": ["string","string","string"],
     "risk": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "generally safe|not that safe|not safe" },
     "clarity": { "value": 0-100, "note": "string", "band": "green|orange|red", "safety": "safe|not that safe|not safe" },
-    "mainClauses": ["string (each clause must be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, no parenthetical notes, no extra explanations, just the clause itself as a clear, concise summary)","string","string","string","string"],
-    "potentialIssues": ["string (each issue must be a short, finished sentence, no parenthetical notes, no extra explanations, just the issue itself as a clear, concise summary)","string","string","string","string"],
+    "mainClauses": ["string (each clause must be 2.5x to 3x longer than usual, detailed, and specific)","string","string","string","string"],
+    "potentialIssues": ["string (each issue must be 4-5 words longer than usual, more detailed)","string","string","string","string"],
     "smartSuggestions": [
       "Include governing law, e.g., 'This contract shall be governed by the laws of Italy.'",
       "Clarify opt-outs, e.g., 'Parties may opt-out of certain liability clauses.'",
@@ -355,7 +355,7 @@ RULES:
 - Main “analysis” must be in detectedLang.
 - If detectedLang is NOT one of: en,it,de,es,fr,pt,nl,ro,sq,tr,ja,zh → use **English**.
 - summary must be exactly 3 clean sentences.
-- mainClauses must each be a short, finished sentence, max 180 characters, no lists, no long explanations, no ellipsis, just a clear, concise summary.
+- mainClauses must each be 2.5x to 3x longer than typical, detailed, and specific.
 - potentialIssues must each be 4-5 words longer than typical, more detailed.
 - smartSuggestions exactly 3, each with e.g.
 - scoreChecker.line must logically match verdict.
@@ -477,8 +477,8 @@ RULES:
       // Helper to expand text length for mainClauses and potentialIssues
       const expandClause = (s) => {
         if (!s) return s;
-        // Make about 1.5x longer if not already
-        if (s.length < 80) return s + ' (This clause is further explained for clarity.)';
+        // Make only slightly longer if very short, otherwise leave as is
+        if (s.length < 60) return s + ' (clarified)';
         return s;
       };
       const expandIssue = (s) => {
@@ -491,15 +491,7 @@ RULES:
         title: cap(src.title || "", 200),
         summary: (src.summary || []).map((s) => cap(s, 320)).slice(0, 3),
         mainClauses: (src.mainClauses || [])
-          .map((s) => {
-            // Make each clause shorter: max 90 chars, no expansion, no parentheticals, no lists, no ellipsis
-            let t = stripLead(cap(s, 90));
-            t = t.replace(/\([^)]*\)/g, ""); // remove parentheticals
-            t = t.replace(/\.\.\.|…/g, ""); // remove ellipsis
-            t = t.replace(/\s*[-–—]\s*/g, ". "); // remove list dashes
-            t = t.replace(/\s+/g, " ").trim();
-            return t;
-          })
+          .map((s) => expandClause(stripLead(cap(s, 900))))
           .slice(0, 5),
         potentialIssues: (src.potentialIssues || [])
           .map((s) => expandIssue(stripLead(cap(s, 1000))))

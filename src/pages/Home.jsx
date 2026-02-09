@@ -28,22 +28,22 @@ const featuresBottom = [
 // - AOS (optional; if you don't use it in React, nothing breaks)
 // - pdfjsLib (PDF.js) and mammoth (DOCX)
 // PDF.js import (local, not global)
-import * as pdfjsLib from 'pdfjs-dist';
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
+import * as pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.js";
 
 export default function Home() {
-    // ===== app preview tilt on scroll =====
-    useEffect(() => {
-      const wrapper = appWrapperRef.current;
-      if (!wrapper) return;
-      const handleScroll = () => {
-        const st = window.scrollY;
-        wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+  // ===== app preview tilt on scroll =====
+  useEffect(() => {
+    const wrapper = appWrapperRef.current;
+    if (!wrapper) return;
+    const handleScroll = () => {
+      const st = window.scrollY;
+      wrapper.style.transform = st > 50 ? "rotateX(0deg)" : "rotateX(12deg)";
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const topbarWrapRef = useRef(null);
   const topbarRef = useRef(null);
   const menuToggleRef = useRef(null);
@@ -67,23 +67,22 @@ export default function Home() {
   const [activeRole, setActiveRole] = useState(null);
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [progress, setProgress] = useState(0);
-  // Evenly spread progress bar stages
-  const progressStageLabels = [
-    'Preparing report',
-    'Creating summary',
-    'Listing main clauses',
-    'Listing potential issues',
-    'Preparing suggestions',
-    'Finishing up',
-    'Final touches',
+
+  const progressStages = [
+    { pct: 10, label: "Uploading document..." },
+    { pct: 25, label: "Extracting text..." },
+    { pct: 45, label: "AI is analyzing clauses..." },
+    { pct: 65, label: "Evaluating risks..." },
+    { pct: 80, label: "Generating suggestions..." },
+    { pct: 95, label: "Almost done..." },
+    { pct: 100, label: "Complete!" },
   ];
-  const getProgressLabel = (pct) => {
-    const idx = Math.min(
-      progressStageLabels.length - 1,
-      Math.floor((pct / 100) * progressStageLabels.length)
-    );
-    return progressStageLabels[idx];
-  };
+  function getProgressLabel(pct) {
+    for (let i = progressStages.length - 1; i >= 0; i--) {
+      if (pct >= progressStages[i].pct) return progressStages[i].label;
+    }
+    return progressStages[0].label;
+  }
 
   // camera bottom sheet (iOS-style overlay)
   const [sheetVisible, setSheetVisible] = useState(false);
@@ -98,7 +97,9 @@ export default function Home() {
 
   // ===== stage reveal =====
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     document.body.classList.add("stage1");
     if (reduce) {
       document.body.classList.add("stage2", "stage3");
@@ -123,13 +124,11 @@ export default function Home() {
     }
   }, []);
 
-
-
   // ===== particles =====
   const [particles, setParticles] = useState([]);
   useEffect(() => {
     // Only show on desktop (not mobile)
-    if (window.matchMedia('(max-width: 980px)').matches) {
+    if (window.matchMedia("(max-width: 980px)").matches) {
       setParticles([]);
       return;
     }
@@ -144,7 +143,7 @@ export default function Home() {
         width: size,
         height: size,
         animationDuration: duration,
-        key: i + '-' + Math.random().toString(36).slice(2)
+        key: i + "-" + Math.random().toString(36).slice(2),
       });
     }
     setParticles(arr);
@@ -206,16 +205,33 @@ export default function Home() {
         last = performance.now();
         raf = requestAnimationFrame(tick);
       };
-      const stop = () => { if (raf) cancelAnimationFrame(raf); };
+      const stop = () => {
+        if (raf) cancelAnimationFrame(raf);
+      };
       const onResize = () => measure();
       window.addEventListener("resize", onResize, { passive: true });
-      media.addEventListener?.("change", () => { stop(); start(); });
+      media.addEventListener?.("change", () => {
+        stop();
+        start();
+      });
       start();
-      return () => { stop(); window.removeEventListener("resize", onResize); };
+      return () => {
+        stop();
+        window.removeEventListener("resize", onResize);
+      };
     };
-    const cleanTop = makeTicker(topRow, { pxPerSecond: 36, direction: "right" });
-    const cleanBot = makeTicker(bottomRow, { pxPerSecond: 36, direction: "left" });
-    return () => { cleanTop?.(); cleanBot?.(); };
+    const cleanTop = makeTicker(topRow, {
+      pxPerSecond: 36,
+      direction: "right",
+    });
+    const cleanBot = makeTicker(bottomRow, {
+      pxPerSecond: 36,
+      direction: "left",
+    });
+    return () => {
+      cleanTop?.();
+      cleanBot?.();
+    };
   }, []);
 
   // ===== logo strip ticker =====
@@ -372,7 +388,8 @@ export default function Home() {
 
     // triple clone
     track.innerHTML = "";
-    for (let k = 0; k < 3; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+    for (let k = 0; k < 3; k++)
+      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
 
     let perPage = 3;
     const computePerPage = () => {
@@ -463,7 +480,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -488,7 +505,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -502,7 +519,7 @@ export default function Home() {
           recenterIfNeeded();
           updateDots();
         },
-        { once: true }
+        { once: true },
       );
     };
 
@@ -630,7 +647,9 @@ export default function Home() {
     const btn = e.currentTarget;
     const item = btn.parentElement;
     if (!item.classList.contains("open")) {
-      document.querySelectorAll(".faq-item.open").forEach((i) => i.classList.remove("open"));
+      document
+        .querySelectorAll(".faq-item.open")
+        .forEach((i) => i.classList.remove("open"));
     }
     item.classList.toggle("open");
   };
@@ -662,11 +681,13 @@ export default function Home() {
       }
 
       if (
-        mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        mime ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         ext.endsWith(".docx")
       ) {
         const mammoth = window.mammoth;
-        if (!mammoth) throw new Error("mammoth not found. Include Mammoth.js in your app.");
+        if (!mammoth)
+          throw new Error("mammoth not found. Include Mammoth.js in your app.");
         const buf = await file.arrayBuffer();
         const res = await mammoth.extractRawText({ arrayBuffer: buf });
         return { text: res.value || "", originalName: name, mime };
@@ -770,7 +791,8 @@ export default function Home() {
     pickedFilesRef.current = Array.from(inputCamera.files);
 
     const first = inputCamera.files[0];
-    const usedCamera = inputCamera.files.length === 1 && first.type.startsWith("image/");
+    const usedCamera =
+      inputCamera.files.length === 1 && first.type.startsWith("image/");
 
     if (usedCamera) {
       setTimeout(() => {
@@ -793,7 +815,6 @@ export default function Home() {
     // Progress bar logic: fill smoothly from 0 to 99% over up to 40 seconds, then 100% when done
     let running = true;
     let pct = 0;
-    setProgress(0);
     const maxPct = 99;
     const fillDuration = 40000; // 40 seconds max to reach 99%
     const fillStep = maxPct / (fillDuration / 100);
@@ -808,18 +829,25 @@ export default function Home() {
     }
     tick();
 
-    // Start API call in parallel
     let apiError = null;
     let analysisResult = null;
+
     try {
       if (!pickedFilesRef.current.length) {
         throw new Error("Please choose a contract file first.");
       }
       const file = pickedFilesRef.current[0];
       if (file.size > 10_000_000) {
-        throw new Error(`File ${file.name} is too large. Maximum size is 10MB.`);
+        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+        setShowProgressBar(false);
+        setRolePickerVisible(true);
+        return;
       }
-      const payloadArr = await Promise.all(pickedFilesRef.current.map(fileToPayload));
+
+      const payloadArr = await Promise.all(
+        pickedFilesRef.current.map(fileToPayload),
+      );
+
       const body = {
         ...payloadArr[0],
         role: role || "signer",
@@ -849,7 +877,7 @@ export default function Home() {
       }
       localStorage.setItem("analysisRaw", JSON.stringify(analysisResult));
       window.location.href = "/analysis";
-    }, 400);
+    }, 600);
   };
 
   // ===== sheet buttons =====
@@ -869,7 +897,11 @@ export default function Home() {
         <div className="topbar" id="topbar" ref={topbarRef}>
           <div className="topbar-left">
             <a href="index.html">
-              <img className="topbar-logo" src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
+              <img
+                className="topbar-logo"
+                src="https://imgur.com/t8UWYN3.png"
+                alt="SignSense logo"
+              />
             </a>
             <a href="index.html" className="topbar-brand">
               SignSense
@@ -877,14 +909,23 @@ export default function Home() {
           </div>
 
           <nav className="topbar-nav">
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               See How It Works
             </a>
             <a href="index.html">Home</a>
             <a href="/contact">Contact</a>
           </nav>
 
-          <button className="menu-toggle" id="menuToggle" aria-label="Menu" ref={menuToggleRef}>
+          <button
+            className="menu-toggle"
+            id="menuToggle"
+            aria-label="Menu"
+            ref={menuToggleRef}
+          >
             <span className="bar b1"></span>
             <span className="bar b2"></span>
             <span className="bar b3"></span>
@@ -894,9 +935,19 @@ export default function Home() {
 
       <div className="menu-overlay" id="menuOverlay" ref={menuOverlayRef}></div>
 
-      <div className="menu-panel" id="menuPanel" aria-hidden="true" ref={menuPanelRef}>
+      <div
+        className="menu-panel"
+        id="menuPanel"
+        aria-hidden="true"
+        ref={menuPanelRef}
+      >
         <nav className="menu-list">
-          <a className="menu-item" href="https://youtube.com" target="_blank" rel="noopener">
+          <a
+            className="menu-item"
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener"
+          >
             See How It Works <span className="chev">›</span>
           </a>
           <a className="menu-item" href="index.html">
@@ -959,7 +1010,8 @@ export default function Home() {
 
             {/* DESKTOP */}
             <p className="subtext hide-on-mobile">
-              Free contract reviewing and no need at all for any account creation or sign up.
+              Free contract reviewing and no need at all for any account
+              creation or sign up.
             </p>
 
             {/* MOBILE */}
@@ -972,7 +1024,11 @@ export default function Home() {
 
           <div id="ctaWrap" className="cta-wrapper">
             {reviewBtnVisible && (
-              <button id="reviewBtn" className="cta-btn animated-arrow-bttn" onClick={onReviewClick}>
+              <button
+                id="reviewBtn"
+                className="cta-btn animated-arrow-bttn"
+                onClick={onReviewClick}
+              >
                 Review A Contract{" "}
                 <span className="animated-arrow diag" aria-hidden="true">
                   ↗
@@ -983,7 +1039,11 @@ export default function Home() {
 
           {/* Role Picker or Progress Bar */}
           {!showProgressBar && (
-            <div id="rolePicker" className="role-picker" hidden={!rolePickerVisible}>
+            <div
+              id="rolePicker"
+              className="role-picker"
+              hidden={!rolePickerVisible}
+            >
               <span className="role-title">You are:</span>
               <div className="role-buttons">
                 <button
@@ -1006,12 +1066,43 @@ export default function Home() {
             </div>
           )}
           {showProgressBar && (
-            <div className="progress-bar-wrap" style={{ width: 340, margin: '32px auto 0', textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: 22, fontWeight: 600, marginBottom: 10 }}>{progress}% complete</div>
-              <div style={{ background: '#23304a', borderRadius: 8, height: 6, width: '100%', overflow: 'hidden', marginBottom: 14 }}>
-                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)', transition: 'width 0.3s' }}></div>
+            <div
+              className="progress-bar-wrap"
+              style={{ width: 340, margin: "32px auto 0", textAlign: "center" }}
+            >
+              <div
+                style={{
+                  color: "#fff",
+                  fontSize: 22,
+                  fontWeight: 600,
+                  marginBottom: 10,
+                }}
+              >
+                {progress}% complete
               </div>
-              <div style={{ color: '#b6c6e3', fontSize: 16, fontWeight: 500 }}>{getProgressLabel(progress)}</div>
+              <div
+                style={{
+                  background: "#23304a",
+                  borderRadius: 8,
+                  height: 6,
+                  width: "100%",
+                  overflow: "hidden",
+                  marginBottom: 14,
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${progress}%`,
+                    background:
+                      "linear-gradient(90deg, #5ecfff 60%, #3b82f6 100%)",
+                    transition: "width 0.3s",
+                  }}
+                ></div>
+              </div>
+              <div style={{ color: "#b6c6e3", fontSize: 16, fontWeight: 500 }}>
+                {getProgressLabel(progress)}
+              </div>
             </div>
           )}
 
@@ -1033,7 +1124,11 @@ export default function Home() {
           <div className="app-wrapper" id="appWrapper" ref={appWrapperRef}>
             <div className="app-frame">
               <div className="glint-line" aria-hidden="true"></div>
-              <img className="app-preview" src="https://i.imgur.com/slsiM6i.png" alt="App Preview" />
+              <img
+                className="app-preview"
+                src="https://i.imgur.com/slsiM6i.png"
+                alt="App Preview"
+              />
             </div>
           </div>
         </div>
@@ -1096,15 +1191,33 @@ export default function Home() {
 
           <div className="insight-right hide-on-mobile">
             <div className="insight-icon-row">
-              <img className="circle-icon" src="https://i.imgur.com/VVGvghi.png" alt="AI icon" loading="lazy" />
-              <img className="circle-icon" src="https://i.imgur.com/woCjWUt.png" alt="Speed icon" loading="lazy" />
-              <img className="circle-icon" src="https://i.imgur.com/0IzXvgs.png" alt="Shield/Secure icon" loading="lazy" />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/VVGvghi.png"
+                alt="AI icon"
+                loading="lazy"
+              />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/woCjWUt.png"
+                alt="Speed icon"
+                loading="lazy"
+              />
+              <img
+                className="circle-icon"
+                src="https://i.imgur.com/0IzXvgs.png"
+                alt="Shield/Secure icon"
+                loading="lazy"
+              />
             </div>
             <h2>
               Understand Your Contract <br />
               <span>Instantly with AI</span>
             </h2>
-            <p>Reveal hidden risks and key terms so you can review contracts clearly, quickly, and without confusion.</p>
+            <p>
+              Reveal hidden risks and key terms so you can review contracts
+              clearly, quickly, and without confusion.
+            </p>
             <a
               id="insightReviewBtn"
               href="https://youtube.com"
@@ -1125,9 +1238,15 @@ export default function Home() {
       <div className="scroll-full">
         <div className="scroll-wrapper">
           <section className="scroll-section" data-aos="fade-up">
-            <h3>Everything you need for clarity &amp; security in one seamless experience.</h3>
+            <h3>
+              Everything you need for clarity &amp; security in one seamless
+              experience.
+            </h3>
             <div className="scroll-strip top-row" id="featuresTopRow"></div>
-            <div className="scroll-strip bottom-row" id="featuresBottomRow"></div>
+            <div
+              className="scroll-strip bottom-row"
+              id="featuresBottomRow"
+            ></div>
             <div className="scroll-shadow-left"></div>
             <div className="scroll-shadow-right"></div>
           </section>
@@ -1146,8 +1265,8 @@ export default function Home() {
               really works.
             </h2>
             <p>
-              Curious how SignSense works? Watch our video for a clear, step-by-step look at how we simplify your
-              contracts
+              Curious how SignSense works? Watch our video for a clear,
+              step-by-step look at how we simplify your contracts
             </p>
             <a
               id="watchBtn"
@@ -1182,12 +1301,22 @@ export default function Home() {
             <h2>
               What <span className="green">Our Clients</span> Say
             </h2>
-            <div className="reviews-sub">Hear Directly From Our Satisfied Users</div>
+            <div className="reviews-sub">
+              Hear Directly From Our Satisfied Users
+            </div>
           </div>
         </div>
 
-        <div className="reviews-viewport" id="reviewsViewport" ref={reviewsViewportRef}>
-          <div className="reviews-track" id="reviewsTrack" ref={reviewsTrackRef}>
+        <div
+          className="reviews-viewport"
+          id="reviewsViewport"
+          ref={reviewsViewportRef}
+        >
+          <div
+            className="reviews-track"
+            id="reviewsTrack"
+            ref={reviewsTrackRef}
+          >
             <div className="review-card">
               <img src="https://i.imgur.com/jX2IqjQ.png" alt="Review 1" />
             </div>
@@ -1209,7 +1338,12 @@ export default function Home() {
         <div className="review-dots" id="reviewDots" ref={reviewDotsRef}></div>
 
         <div className="leave-review-wrap">
-          <a className="leave-review animated-arrow-bttn" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">
+          <a
+            className="leave-review animated-arrow-bttn"
+            href="https://tally.so/r/3EGJpA"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Leave A Review{" "}
             <span className="animated-arrow diag" aria-hidden="true">
               ↗
@@ -1227,25 +1361,40 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>What languages do you support?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              We support English, Spanish, German, French, Italian, Portuguese, Dutch, Romanian, Albanian, Chinese,
-              Japanese, and Turkish. More coming soon!
+              We support English, Spanish, German, French, Italian, Portuguese,
+              Dutch, Romanian, Albanian, Chinese, Japanese, and Turkish. More
+              coming soon!
             </div>
           </div>
 
           <div className="faq-item">
             <button className="faq-q" type="button" onClick={onFaqClick}>
-              <span>Is SignSense legally binding or a replacement for a lawyer?</span>
+              <span>
+                Is SignSense legally binding or a replacement for a lawyer?
+              </span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              No. SignSense explains your contract using AI, but it isn’t legally binding and doesn’t replace
-              professional legal advice.
+              No. SignSense explains your contract using AI, but it isn’t
+              legally binding and doesn’t replace professional legal advice.
             </div>
           </div>
 
@@ -1253,11 +1402,18 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>What types of contracts can I upload?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              Most standard agreements—leases, NDAs, freelance/service contracts, employment offers, and more.
+              Most standard agreements—leases, NDAs, freelance/service
+              contracts, employment offers, and more.
             </div>
           </div>
 
@@ -1265,11 +1421,18 @@ export default function Home() {
             <button className="faq-q" type="button" onClick={onFaqClick}>
               <span>Is my data secure when I upload a contract?</span>
               <svg className="chev" viewBox="0 0 24 24" width="26" height="26">
-                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
             <div className="faq-a">
-              Yes. Uploads are processed securely; we don’t sell your data or share your files with third parties.
+              Yes. Uploads are processed securely; we don’t sell your data or
+              share your files with third parties.
             </div>
           </div>
         </div>
@@ -1280,7 +1443,11 @@ export default function Home() {
         <footer className="site-footer desktop-only">
           <div className="footer-left">
             <a href="index.html">
-              <img className="footer-logo" src="https://imgur.com/BcUqgKZ.png" alt="SignSense logo" />
+              <img
+                className="footer-logo"
+                src="https://imgur.com/BcUqgKZ.png"
+                alt="SignSense logo"
+              />
             </a>
             <div className="footer-left-inner">
               <a href="index.html" className="footer-brand">
@@ -1296,10 +1463,18 @@ export default function Home() {
           <div className="footer-col">
             <div className="footer-title">Quick Menu</div>
             <nav className="footer-links">
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 How it Works
               </a>
-              <a href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://tally.so/r/3EGJpA"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Leave Review
               </a>
             </nav>
@@ -1316,10 +1491,18 @@ export default function Home() {
           <div className="footer-col">
             <div className="footer-title">Socials</div>
             <nav className="footer-links">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Instagram
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 YouTube
               </a>
               <a href="https://x.com" target="_blank" rel="noopener noreferrer">
@@ -1337,7 +1520,9 @@ export default function Home() {
               <a href="/terms">Terms of Service</a>
               <a href="/cookies">Cookie Policy</a>
             </div>
-            <span className="footer-copy">© 2025 SignSense. All rights reserved.</span>
+            <span className="footer-copy">
+              © 2025 SignSense. All rights reserved.
+            </span>
           </div>
         </div>
       </div>
@@ -1350,18 +1535,34 @@ export default function Home() {
               <img src="https://imgur.com/t8UWYN3.png" alt="SignSense logo" />
               <span>SignSense</span>
             </div>
-            <div className="footer-copy">© 2025 SignSense. All rights reserved.</div>
-            <div className="footer-disclaimer">For informational use only. Not legal advice.</div>
+            <div className="footer-copy">
+              © 2025 SignSense. All rights reserved.
+            </div>
+            <div className="footer-disclaimer">
+              For informational use only. Not legal advice.
+            </div>
           </div>
 
           <div className="footer-socials">
-            <a className="social-btn" href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+            <a
+              className="social-btn"
+              href="https://x.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="X"
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M18.244 2H21l-6.52 7.45L22.5 22h-6.73l-4.7-6.35L5.6 22H3l7.07-8.07L1.5 2h6.8l4.22 5.8L18.244 2Zm-1.18 18h1.77L8.05 4h-1.8l10.82 16Z" />
               </svg>
             </a>
 
-            <a className="social-btn" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+            <a
+              className="social-btn"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook"
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22 12.07C22 6.52 17.52 2 12 2S2 6.52 2 12.07c0 5.02 3.66 9.19 8.44 9.93v-7.03H7.9V12.1h2.54V9.79c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.87h-2.34V22c4.78-.74 8.44-4.91 8.44-9.93Z" />
               </svg>
@@ -1386,14 +1587,24 @@ export default function Home() {
               <a className="footer-link" href="/contact">
                 Contact us
               </a>
-              <a className="footer-link" href="https://youtube.com" target="_blank" rel="noopener">
+              <a
+                className="footer-link"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener"
+              >
                 How it Works
               </a>
             </div>
 
             <div className="footer-col">
               <h4>Product</h4>
-              <a className="footer-link" href="https://tally.so/r/3EGJpA" target="_blank" rel="noopener">
+              <a
+                className="footer-link"
+                href="https://tally.so/r/3EGJpA"
+                target="_blank"
+                rel="noopener"
+              >
                 Leave Review
               </a>
             </div>
@@ -1439,15 +1650,27 @@ export default function Home() {
 
       {/* iOS Bottom Sheet: Add More Photos */}
       {sheetVisible && (
-        <div id="addMoreSheet" className="sheet-backdrop" style={{ display: "flex" }}>
+        <div
+          id="addMoreSheet"
+          className="sheet-backdrop"
+          style={{ display: "flex" }}
+        >
           <div className="sheet-panel">
             <div className="sheet-title" id="sheetCount">
               {sheetCount}/10 photos added
             </div>
-            <button className="sheet-btn sheet-yes" id="sheetAddMore" onClick={onSheetAddMore}>
+            <button
+              className="sheet-btn sheet-yes"
+              id="sheetAddMore"
+              onClick={onSheetAddMore}
+            >
               Add More
             </button>
-            <button className="sheet-btn sheet-no" id="sheetContinue" onClick={onSheetContinue}>
+            <button
+              className="sheet-btn sheet-no"
+              id="sheetContinue"
+              onClick={onSheetContinue}
+            >
               Continue
             </button>
           </div>
