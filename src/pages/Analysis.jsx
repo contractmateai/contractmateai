@@ -901,6 +901,7 @@ const Analysis = () => {
   verdictDotColor.unsafe;
 
   return (
+
     <>
       <AnalysisDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
@@ -910,6 +911,36 @@ const Analysis = () => {
         <main className="main">
           <div className="analysis-header-row">
             <div className="analysis-header-left">
+              {/* Hamburger/Menu button for mobile */}
+              <button
+                className="menu-btn"
+                aria-label="Open menu"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  marginRight: 12,
+                  cursor: 'pointer',
+                  height: 38,
+                  width: 38,
+                  borderRadius: 8,
+                  boxShadow: 'none',
+                  outline: 'none',
+                  // Only show on mobile
+                  '@media (min-width: 981px)': { display: 'none' },
+                }}
+                onClick={() => setDrawerOpen(true)}
+              >
+                <span style={{ position: 'absolute', left: -9999 }}>Open menu</span>
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect y="5" width="28" height="3.5" rx="1.75" fill="#fff" />
+                  <rect y="12.25" width="28" height="3.5" rx="1.75" fill="#fff" />
+                  <rect y="19.5" width="28" height="3.5" rx="1.75" fill="#fff" />
+                </svg>
+              </button>
               <span className="analysis-overview-label" id="uiOverview">
                 {ui.overview || "Overview"}
               </span>
